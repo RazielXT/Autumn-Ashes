@@ -1,0 +1,1166 @@
+#include "stdafx.h"
+#include "Gorilla.h"
+#include "GuiOverlay.h"
+#include <string.h>
+#include <stdio.h>
+#include <fstream>
+#include "PostProcessMgr.h"
+
+using namespace Ogre;
+
+#define OPEN_OPTIONS_SOUND "../../media/oMopen.wav"
+#define CLOSE_OPTIONS_SOUND "../../media/oMopen.wav"
+#define OPEN_LEVELS_SOUND "../../media/oMopen.wav"
+#define CLOSE_LEVELS_SOUND "../../media/oMopen.wav"
+#define SWITCH_OPTIONS_SOUND "../../media/oMclick.wav"
+#define OVER_OPTIONS_SOUND "../../media/oMmove.wav"
+#define SWITCH_MENU_SOUND "../../media/mMchange.wav"
+#define LEVEL_START_SOUND "../../media/mMchange.wav"
+#define LEVEL_LOCKED_SOUND "../../media/mMchange.wav"
+#define LEVEL_SWITCH_SOUND "../../media/mMchange.wav"
+
+void GuiOverlay::showOptions()
+{
+    engine->play2D(OPEN_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+    atm=380;
+    currentMenu=TOOM;
+    oMenuState=RESOLUTION;
+    movingDir=-1;
+
+    for(auto myIterator = oMenuButtons.begin(); myIterator != oMenuButtons.end(); myIterator++)
+    {
+        Gorilla::Caption* c=(*myIterator);
+        c->colour(Ogre::ColourValue(1,1,1,0.3));
+    }
+
+    cButton=firstOptionButton;
+    cButton->mButton->colour(Ogre::ColourValue(1,1,1,1));
+    cOptionButtonA=firstOptionButtonA;
+    cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,1));
+}
+
+void GuiOverlay::showLevels()
+{
+    engine->play2D(OPEN_LEVELS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+    atm=340;
+    currentMenu=TOSM;
+    movingDir=-1;
+
+    for(auto myIterator = lMenuButtons.begin(); myIterator != lMenuButtons.end(); myIterator++)
+    {
+        Gorilla::Rectangle* c=(*myIterator)->r;
+        if(!(*myIterator)->unlocked)
+            c->background_colour(Gorilla::Colours::Red);
+        Real alpha=1-Math::Abs((c->left()-690)/999.0f);
+        c->yes_background(alpha);
+    }
+}
+
+void GuiOverlay::saveCfg()
+{
+    std::ofstream cfgFile("config.ini");
+    cfgFile << "[renderer]\n";
+    cfgFile << "width = " << std::string(Ogre::StringConverter::toString(gConfig->width) + "\n");
+    cfgFile << "height = " << std::string(Ogre::StringConverter::toString(gConfig->height) + "\n");
+    cfgFile << "shadow = " << std::string(Ogre::StringConverter::toString(gConfig->shadow) + "\n");
+    cfgFile << "ssao = " << std::string(Ogre::StringConverter::toString(gConfig->ssao) + "\n");
+    cfgFile << "fullscreen = " << std::string(Ogre::StringConverter::toString(gConfig->fs) + "\n");
+}
+
+void GuiOverlay::closeOptions()
+{
+    engine->play2D(CLOSE_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+
+    atm=380;
+    currentMenu=FROM;
+    movingDir=1;
+
+    for(auto myIterator = oMenuButtons.begin(); myIterator != oMenuButtons.end(); myIterator++)
+    {
+        Gorilla::Caption* c=(*myIterator);
+        c->colour(Ogre::ColourValue(1,1,1,0.3));
+    }
+
+    saveCfg();
+}
+
+void GuiOverlay::closeLevels()
+{
+    engine->play2D(CLOSE_LEVELS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+
+    atm=340;
+    currentMenu=FRSM;
+    movingDir=1;
+
+    for(auto myIterator = lMenuButtons.begin(); myIterator != lMenuButtons.end(); myIterator++)
+    {
+        Gorilla::Rectangle* c=(*myIterator)->r;
+        c->yes_background(0.3);
+    }
+}
+
+int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
+{
+
+    if(currentMenu==MAINM && !moving)
+    {
+        switch (arg.key)
+        {
+        case OIS::KC_LEFT:
+            if(!moving)
+            {
+                movingDir=1;
+                moving=true;
+                mMenuState=mMenuState->prevState;
+            }
+            break;
+        case OIS::KC_RIGHT:
+            if(!moving)
+            {
+                movingDir=-1;
+                moving=true;
+                mMenuState=mMenuState->nextState;
+            }
+            break;
+
+        case OIS::KC_RETURN:
+            if(mMenuState->mState==QUIT)
+            {
+                saveCfg();
+                return 1;
+            }
+            if(mMenuState->mState==OPTIONS)
+            {
+                showOptions();
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    else if(currentMenu==OPTIONSM)
+    {
+        switch (arg.key)
+        {
+        case OIS::KC_UP:
+            /*oMenuState=oMenuState->prevState;
+            cOptionButton->mButton->colour(Ogre::ColourValue(1,1,1,0.3));
+            cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,0.3));
+            cOptionButton=cOptionButton->prevState;
+            cOptionButtonA=cOptionButtonA->prevState;
+            cOptionButton->mButton->colour(Ogre::ColourValue(1,1,1,1));
+            cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,1));*/
+            break;
+        case OIS::KC_DOWN:
+            /*oMenuState=oMenuState->nextState;
+            cOptionButton->mButton->colour(Ogre::ColourValue(1,1,1,0.3));
+            cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,0.3));
+            cOptionButton=cOptionButton->nextState;
+            cOptionButtonA=cOptionButtonA->nextState;
+            cOptionButton->mButton->colour(Ogre::ColourValue(1,1,1,1));
+            cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,1));*/
+            break;
+        case OIS::KC_LEFT:
+            /*if(oMenuState->mState==AA)
+            {if(gConfig->aa) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
+            gConfig->aa=!gConfig->aa;}
+            if(oMenuState->mState==SHR)
+            {if(gConfig->godRay) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
+            gConfig->godRay=!gConfig->godRay;}
+            if(oMenuState->mState==SHF)
+            {if(gConfig->hdr) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
+            gConfig->hdr=!gConfig->hdr;}
+            if(oMenuState->mState==PP)
+            {if(gConfig->vsync) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
+            gConfig->vsync=!gConfig->vsync;}*/
+            break;
+        case OIS::KC_RIGHT:
+            /*if(oMenuState->mState==AA)
+            {if(gConfig->aa) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
+            gConfig->aa=!gConfig->aa;}
+            if(oMenuState->mState==SHR)
+            {if(gConfig->godRay) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
+            gConfig->godRay=!gConfig->godRay;}
+            if(oMenuState->mState==SHF)
+            {if(gConfig->hdr) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
+            gConfig->hdr=!gConfig->hdr;}
+            if(oMenuState->mState==PP)
+            {if(gConfig->vsync) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
+            gConfig->vsync=!gConfig->vsync;}*/
+            break;
+        case OIS::KC_RETURN:
+            break;
+        case OIS::KC_BACK:
+            // Ogre::LogManager::getSingleton().getDefaultLog()->logMessage("sfs",Ogre::LML_NORMAL);
+            closeOptions();
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    return 0;
+}
+
+GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::RenderWindow* mWin,Ogre::RenderSystem* rs,irrklang::ISoundEngine* eng)
+{
+    engine=eng;
+
+    gConfig=new GameConfig();
+    Ogre::ConfigFile cfgFile;
+    cfgFile.loadDirect("config.ini");
+    std::string wString = cfgFile.getSetting("width", "renderer");
+    std::string hString = cfgFile.getSetting("height", "renderer");
+    std::string shdString = cfgFile.getSetting("shadow", "renderer");
+    std::string ssaoString = cfgFile.getSetting("ssao", "renderer");
+    std::string fsString = cfgFile.getSetting("fullscreen", "renderer");
+    gConfig->width=Ogre::StringConverter::parseInt(wString);
+    gConfig->height=Ogre::StringConverter::parseInt(hString);
+    gConfig->shadow=Ogre::StringConverter::parseInt(shdString);
+    gConfig->ssao=Ogre::StringConverter::parseBool(ssaoString);
+    gConfig->fs=Ogre::StringConverter::parseBool(fsString);
+
+    Ogre::ConfigOptionMap& CurrentRendererOptions = rs->getConfigOptions();
+    Ogre::ConfigOptionMap::iterator configItr = CurrentRendererOptions.begin();
+    while( configItr != CurrentRendererOptions.end() )
+    {
+        if( (configItr)->first == "Video Mode" )
+        {
+            // Store Available Resolutions
+            mFoundResolutions = ((configItr)->second.possibleValues);
+        }
+        configItr++;
+    }
+
+    int i=mFoundResolutions.size();
+    std::string currentR=Ogre::StringConverter::toString(gConfig->width)+"x"+Ogre::StringConverter::toString(gConfig->height);
+
+    resLoop* trLoop=resolutionsLoop= new resLoop();
+    resLoop* trLoopC=resolutionsLoop;
+    std::string s=mFoundResolutions.at(i/2);
+
+    char * cstr;
+    cstr = new char [s.size()+1];
+    strcpy (cstr, s.c_str());
+    std::string s1=strtok(cstr," ");
+    strtok(NULL," ");
+    std::string s2=strtok(NULL," ");
+    std::string res=s1+"x"+s2;
+    resolutionsLoop->res=new std::string(res);
+    resolutionsLoop->w=Ogre::StringConverter::parseInt(s1);
+    resolutionsLoop->h=Ogre::StringConverter::parseInt(s2);
+
+    for(int o=(i/2)+1; o<i; o++)
+    {
+        std::string s=mFoundResolutions.at(o);
+        char * cstr;
+        cstr = new char [s.size()+1];
+        strcpy (cstr, s.c_str());
+
+
+        std::string s1=strtok(cstr," ");
+        strtok(NULL," ");
+        std::string s2=strtok(NULL," ");
+        std::string res=s1+"x"+s2;
+        resLoop* trLoopN= new resLoop();
+        trLoopN->w=Ogre::StringConverter::parseInt(s1);
+        trLoopN->h=Ogre::StringConverter::parseInt(s2);
+        trLoopN->res=new std::string(res);
+        if(Ogre::StringUtil::match(currentR,res)) trLoopC=trLoopN;
+        trLoopN->prevRes=trLoop;
+        trLoop->nextRes=trLoopN;
+        trLoop=trLoopN;
+    }
+    resolutionsLoop->prevRes=trLoop;
+    trLoop->nextRes=resolutionsLoop;
+    resolutionsLoop=trLoopC;
+
+    Ogre::LogManager::getSingleton().getDefaultLog()->logMessage("Possible resolutions: ",Ogre::LML_NORMAL);
+    for(int o=(i/2); o<i; o++)
+    {
+        Ogre::LogManager::getSingleton().getDefaultLog()->logMessage(*resolutionsLoop->res,Ogre::LML_NORMAL);
+        resolutionsLoop=resolutionsLoop->nextRes;
+    }
+
+    mMenuState= new MenuLoop();
+    MenuLoop* mMenuState0= new MenuLoop();
+    MenuLoop* mMenuState2= new MenuLoop();
+    mMenuState->mState=START;
+    mMenuState->nextState=mMenuState2;
+    mMenuState->prevState=mMenuState0;
+    mMenuState0->mState=QUIT;
+    mMenuState0->nextState=mMenuState;
+    mMenuState0->prevState=mMenuState2;
+    mMenuState2->mState=OPTIONS;
+    mMenuState2->nextState=mMenuState0;
+    mMenuState2->prevState=mMenuState;
+
+    oMenuState= RESOLUTION;
+
+    gMenuState= new MenuLoop();
+    MenuLoop* gMenuState0= new MenuLoop();
+    MenuLoop* gMenuState1= new MenuLoop();
+    MenuLoop* gMenuState3= new MenuLoop();
+    MenuLoop* gMenuState4= new MenuLoop();
+
+    gMenuState0->mState=QUIT;
+    gMenuState0->nextState=gMenuState1;
+    gMenuState0->prevState=gMenuState4;
+    gMenuState1->mState=START;
+    gMenuState1->nextState=gMenuState;
+    gMenuState1->prevState=gMenuState0;
+    gMenuState->mState=RESUME;
+    gMenuState->nextState=gMenuState3;
+    gMenuState->prevState=gMenuState1;
+    gMenuState3->mState=RESTART;
+    gMenuState3->nextState=gMenuState4;
+    gMenuState3->prevState=gMenuState;
+    gMenuState4->mState=OPTIONS;
+    gMenuState4->nextState=gMenuState0;
+    gMenuState4->prevState=gMenuState3;
+
+    currentMenu=MAINM;
+
+    moving=false;
+    atm=0;
+    movingDir=1;
+    mSceneMgr=mSceneM;
+    lvlMoving=false;
+
+    mSilverback = new Gorilla::Silverback();
+    mSilverback->loadAtlas("dejavu");
+    mSilverback->loadAtlas("lvlsThumb");
+
+    mScreenLvls = mSilverback->createScreen(mCam->getViewport(), "lvlsThumb");
+    mScreenLvls->setOrientation(Ogre::OrientationMode::OR_DEGREE_0);
+    mScreen = mSilverback->createScreen(mCam->getViewport(), "dejavu");
+    mScreen->setOrientation(Ogre::OrientationMode::OR_DEGREE_0);
+
+    Ogre::Real vpW = mScreen->getWidth(), vpH = mScreen->getHeight();
+
+    mLayer = mScreen->createLayer(0);
+    mLvlsLayer = mScreenLvls->createLayer(0);
+    mouseLayer = mScreen->createLayer(1);
+
+    mousePointer = mouseLayer->createRectangle(0,0,41,42);
+    mousePointer->background_image("mousepointer");
+    mousePointer->yes_background(1);
+
+    fpsCaption = mouseLayer->createCaption(48, 50, 5, "007");
+    fpsCaption->size(1500,50);
+    fpsCaption->colour(Ogre::ColourValue(0,255,0));
+    fpsCaption->align(Gorilla::TextAlign_Right);
+
+    debugCaption = mouseLayer->createCaption(48, 50, 5, "007");
+    debugCaption->size(1500,50);
+    debugCaption->align(Gorilla::TextAlign_Left);
+
+    infoTextTimer = 0;
+    shownInfoText = false;
+    shownUseGui = false;
+    wantUseGui = false;
+
+    infoTextCaption = mouseLayer->createCaption(48, 50, 900, "");
+    infoTextCaption->size(1600,50);
+    infoTextCaption->align(Gorilla::TextAlign_Centre);
+    infoTextCaption->vertical_align(Gorilla::VerticalAlign_Bottom);
+
+    useTextCaption = mouseLayer->createCaption(48, 50, 500, "");
+    useTextCaption->size(1580,50);
+    useTextCaption->align(Gorilla::TextAlign_Centre);
+    useTextCaption->vertical_align(Gorilla::VerticalAlign_Middle);
+
+    (*Global::globalData)["Gui"] = this;
+}
+
+
+void GuiOverlay::createOptionMenuButtons()
+{
+    cButton=firstOptionButton=new buttonLoop();
+    buttonLoop* cButton2=new buttonLoop();
+    buttonLoop* cButton3=new buttonLoop();
+    buttonLoop* cButton4=new buttonLoop();
+    cButton->prevState=cButton4;
+    cButton->nextState=cButton2;
+    cButton2->prevState=cButton;
+    cButton2->nextState=cButton3;
+    cButton3->prevState=cButton2;
+    cButton3->nextState=cButton4;
+    cButton4->prevState=cButton3;
+    cButton4->nextState=cButton;
+    Gorilla::Caption* caption = mLayer->createCaption(48, 350, 1060 , "Resolution");
+    caption->size(600,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Left);
+    oMenuButtons.push_back(caption);
+    cButton->mButton=caption;
+    caption = mLayer->createCaption(48, 350, 1150 , "Fullscreen");
+    caption->size(601,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Left);
+    oMenuButtons.push_back(caption);
+    cButton2->mButton=caption;
+    caption = mLayer->createCaption(48, 350, 1240 , "Shadows");
+    caption->size(602,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Left);
+    oMenuButtons.push_back(caption);
+    cButton3->mButton=caption;
+    caption = mLayer->createCaption(48, 350, 1330 , "SSAO");
+    caption->size(603,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Left);
+    oMenuButtons.push_back(caption);
+    cButton4->mButton=caption;
+
+    cOptionButtonA=firstOptionButtonA=new buttonLoop();
+    buttonLoop* cOptionButtonA2=new buttonLoop();
+    buttonLoop* cOptionButtonA3=new buttonLoop();
+    buttonLoop* cOptionButtonA4=new buttonLoop();
+    cOptionButtonA->prevState=cOptionButtonA4;
+    cOptionButtonA->nextState=cOptionButtonA2;
+    cOptionButtonA2->prevState=cOptionButtonA;
+    cOptionButtonA2->nextState=cOptionButtonA3;
+    cOptionButtonA3->prevState=cOptionButtonA2;
+    cOptionButtonA3->nextState=cOptionButtonA4;
+    cOptionButtonA4->prevState=cOptionButtonA3;
+    cOptionButtonA4->nextState=cOptionButtonA;
+
+    ri= mLayer->createRectangle(720,1005,217,35);
+    ri->background_image("restartimage");
+    ri->no_background();
+
+    std::string resolutionStr=Ogre::StringConverter::toString(gConfig->width)+"x"+Ogre::StringConverter::toString(gConfig->height);
+    caption = mLayer->createCaption(48, 1000, 1060 , resolutionStr);
+    caption->size(350,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Left);
+    oMenuButtons.push_back(caption);
+    cOptionButtonA->mButton=caption;
+    if(gConfig->fs)
+        caption = mLayer->createCaption(48, 1000, 1150 , "On");
+    else
+        caption = mLayer->createCaption(48, 1000, 1150 , "Off");
+    caption->size(351,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Left);
+    oMenuButtons.push_back(caption);
+    cOptionButtonA2->mButton=caption;
+    if(gConfig->shadow==0)
+        caption = mLayer->createCaption(48, 1000, 1240 , "Low");
+    else if(gConfig->shadow==1)
+        caption = mLayer->createCaption(48, 1000, 1240 , "Medium");
+    else
+        caption = mLayer->createCaption(48, 1000, 1240 , "High");
+    caption->size(352,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Left);
+    oMenuButtons.push_back(caption);
+    cOptionButtonA3->mButton=caption;
+    if(gConfig->ssao)
+        caption = mLayer->createCaption(48, 1000, 1330 , "On");
+    else
+        caption = mLayer->createCaption(48, 1000, 1330 , "Off");
+    caption->size(353,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Left);
+    oMenuButtons.push_back(caption);
+    cOptionButtonA4->mButton=caption;
+}
+
+
+void GuiOverlay::createMainMenuButtons()
+{
+    Gorilla::Caption* caption = mLayer->createCaption(48, 670, 900 , "Start");
+    caption->size(300,50);
+    caption->colour(Ogre::ColourValue(1,1,1,1));
+    caption->align(Gorilla::TextAlign_Centre);
+    mMenuButtons.push_back(caption);
+    caption = mLayer->createCaption(48, 1339.5, 900 , "Options");
+    caption->size(300,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Centre);
+    mMenuButtons.push_back(caption);
+    caption = mLayer->createCaption(48, 20.5, 900 , "Quit");
+    caption->size(300,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Centre);
+    mMenuButtons.push_back(caption);
+}
+
+void GuiOverlay::createIngameMenuButtons()
+{
+    Gorilla::Caption* caption = mLayer->createCaption(48, -629, 900 , "Quit");
+    caption->size(300,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Centre);
+    mMenuButtons.push_back(caption);
+    caption = mLayer->createCaption(48, 20.5, 900 , "Start");
+    caption->size(300,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Centre);
+    mMenuButtons.push_back(caption);
+    caption = mLayer->createCaption(48, 690, 900 , "Resume");
+    caption->size(300,50);
+    caption->colour(Ogre::ColourValue(1,1,1,1));
+    caption->align(Gorilla::TextAlign_Centre);
+    mMenuButtons.push_back(caption);
+    caption = mLayer->createCaption(48, 1339.5, 900 , "Restart");
+    caption->size(300,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Centre);
+    mMenuButtons.push_back(caption);
+    caption = mLayer->createCaption(48, 1989, 900 , "Options");
+    caption->size(300,50);
+    caption->colour(Ogre::ColourValue(1,1,1,0.3));
+    caption->align(Gorilla::TextAlign_Centre);
+    mMenuButtons.push_back(caption);
+}
+
+void GuiOverlay::createLevelsMenuButtons()
+{
+    float pos = 1680/2.0f;
+    Gorilla::Rectangle* r = mLvlsLayer->createRectangle(pos-210,1050,420,270);
+    r->background_image("lvl1");
+    lvlButton* b = new lvlButton(r,1,true,pos);
+    lMenuButtons.push_back(b);
+    firstLevelButton = curLvlButton = b;
+
+    pos+=400;
+    r = mLvlsLayer->createRectangle(pos-100,1050,230,160);
+    r->background_image("lvl2");
+    b = new lvlButton(r,2,true,pos);
+    lMenuButtons.push_back(b);
+
+    pos+=400;
+    r = mLvlsLayer->createRectangle(pos-100,1050,230,160);
+    r->background_image("lvl3");
+    b = new lvlButton(r,3,true,pos);
+    lMenuButtons.push_back(b);
+
+    pos+=400;
+    r = mLvlsLayer->createRectangle(pos-100,1050,230,160);
+    r->background_image("lvl4");
+    b = new lvlButton(r,4,false,pos);
+    lMenuButtons.push_back(b);
+
+    pos+=400;
+    r = mLvlsLayer->createRectangle(pos-100,1050,230,160);
+    r->background_image("lvl5");
+    b = new lvlButton(r,5,false,pos);
+    lMenuButtons.push_back(b);
+
+    pos+=400;
+    r = mLvlsLayer->createRectangle(pos-100,1050,230,160);
+    r->background_image("lvl6");
+    b = new lvlButton(r,6,false,pos);
+    lMenuButtons.push_back(b);
+}
+
+void GuiOverlay::setMainMenu()
+{
+    mousePointer->yes_background(1);
+    mLayer->show();
+    mLvlsLayer->show();
+
+    createMainMenuButtons();
+    createOptionMenuButtons();
+    createLevelsMenuButtons();
+    currentMenu=MAINM;
+
+    ingamemenu = false;
+}
+
+void GuiOverlay::setIngameMenu()
+{
+    mousePointer->yes_background(1);
+    mLayer->show();
+    mLvlsLayer->show();
+
+    createIngameMenuButtons();
+    createOptionMenuButtons();
+    createLevelsMenuButtons();
+    currentMenu=MAINM;
+
+    while(gMenuState->mState!=RESUME)
+        gMenuState = gMenuState->nextState;
+
+    ingamemenu = true;
+}
+
+void GuiOverlay::clearMenu()
+{
+    mMenuButtons.clear();
+    mLayer->hide();
+    mLayer->destroyAllCaptions();
+    mLvlsLayer->hide();
+    mLvlsLayer->destroyAllRectangles();
+    mousePointer->no_background();
+    oMenuButtons.clear();
+    for(auto myIterator = lMenuButtons.begin(); myIterator != lMenuButtons.end(); myIterator++)
+        delete (*myIterator);
+    lMenuButtons.clear();
+    ingamemenu = false;
+    moving = false;
+}
+
+void GuiOverlay::mouseMoveUpdate(int x,int y)
+{
+    Vector2 pos=mousePointer->position();
+    mousePointer->position(Math::Clamp<float>(pos.x+x,0,1680-15),Math::Clamp<float>(pos.y+y,0,1050-22));
+
+    if(currentMenu==OPTIONSM)
+    {
+        std::vector<Gorilla::Caption*>::iterator myIterator;
+        for(myIterator = oMenuButtons.begin(); myIterator != oMenuButtons.end(); myIterator++)
+        {
+            Gorilla::Caption* c=(*myIterator);
+            if(c->intersects(pos))
+            {
+                if(!(cButton->mButton->width()==c->width() || cOptionButtonA->mButton->width()==c->width()))
+                {
+                    int found1 = 0,found2 = 0;
+
+                    if(c->width()==600 || c->width()==350)
+                    {
+                        oMenuState=RESOLUTION;
+                        found1 = 600;
+                        found2 = 350;
+                    }
+
+                    if(c->width()==601 || c->width()==351)
+                    {
+                        oMenuState=FULLSCREEN;
+                        found1 = 601;
+                        found2 = 351;
+                    }
+
+                    if(c->width()==602 || c->width()==352)
+                    {
+                        oMenuState=SHADOWS;
+                        found1 = 602;
+                        found2 = 352;
+                    }
+
+                    if(c->width()==603 || c->width()==353)
+                    {
+                        oMenuState=SSAO;
+                        found1 = 603;
+                        found2 = 353;
+                    }
+
+                    if(found1)
+                    {
+                        cButton->mButton->colour(Ogre::ColourValue(1,1,1,0.3));
+                        cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,0.3));
+                        while(cButton->mButton->width()!=found1)
+                            cButton=cButton->prevState;
+                        while(cOptionButtonA->mButton->width()!=found2)
+                            cOptionButtonA=cOptionButtonA->prevState;
+                        cButton->mButton->colour(Ogre::ColourValue(1,1,1,1));
+                        cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,1));
+
+                        engine->play2D(OVER_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+int GuiOverlay::mainMenuPressed()
+{
+    if(moving || lvlMoving)
+        return 0;
+
+    Vector2 mPos=mousePointer->position();
+
+    for(auto myIterator = mMenuButtons.begin(); myIterator != mMenuButtons.end(); myIterator++)
+    {
+        Gorilla::Caption* c=(*myIterator);
+        if(c->intersects(mPos))
+        {
+            if(currentMenu==MAINM)
+            {
+                if(!ingamemenu)
+                {
+                    if((mMenuState->mState==START && Ogre::StringUtil::match(c->text(),"Quit")) ||
+                            (mMenuState->mState==OPTIONS && Ogre::StringUtil::match(c->text(),"Start"))||
+                            (mMenuState->mState==QUIT && Ogre::StringUtil::match(c->text(),"Options"))
+                      )
+                    {
+                        movingDir=1;
+                        moving=true;
+                        mMenuState=mMenuState->prevState;
+                        engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                    }
+                    else if((mMenuState->mState==START && Ogre::StringUtil::match(c->text(),"Options")) ||
+                            (mMenuState->mState==OPTIONS && Ogre::StringUtil::match(c->text(),"Quit"))||
+                            (mMenuState->mState==QUIT && Ogre::StringUtil::match(c->text(),"Start"))
+                           )
+                    {
+                        movingDir=-1;
+                        moving=true;
+                        mMenuState=mMenuState->nextState;
+                        engine->play2D(SWITCH_MENU_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                    }
+                    else if(Ogre::StringUtil::match(c->text(),"Quit"))
+                    {
+                        return -3;
+                    }
+                    else if(Ogre::StringUtil::match(c->text(),"Start"))
+                    {
+                        showLevels();
+                    }
+                    else if(mMenuState->mState==OPTIONS)
+                    {
+                        showOptions();
+                    }
+                }
+                else
+                {
+                    if((gMenuState->mState==QUIT && Ogre::StringUtil::match(c->text(),"Options")) ||
+                            (gMenuState->mState==START && Ogre::StringUtil::match(c->text(),"Quit"))||
+                            (gMenuState->mState==RESUME && Ogre::StringUtil::match(c->text(),"Start")) ||
+                            (gMenuState->mState==RESTART && Ogre::StringUtil::match(c->text(),"Resume"))||
+                            (gMenuState->mState==OPTIONS && Ogre::StringUtil::match(c->text(),"Restart"))
+                      )
+                    {
+                        movingDir=1;
+                        moving=true;
+                        gMenuState=gMenuState->prevState;
+                        engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                    }
+                    else if((gMenuState->mState==QUIT && Ogre::StringUtil::match(c->text(),"Start")) ||
+                            (gMenuState->mState==START && Ogre::StringUtil::match(c->text(),"Resume"))||
+                            (gMenuState->mState==RESUME && Ogre::StringUtil::match(c->text(),"Restart")) ||
+                            (gMenuState->mState==RESTART && Ogre::StringUtil::match(c->text(),"Options"))||
+                            (gMenuState->mState==OPTIONS && Ogre::StringUtil::match(c->text(),"Quit"))
+                           )
+                    {
+                        movingDir=-1;
+                        moving=true;
+                        gMenuState=gMenuState->nextState;
+                        engine->play2D(SWITCH_MENU_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                    }
+                    else if(Ogre::StringUtil::match(c->text(),"Quit"))
+                    {
+                        clearMenu();
+                        return -3;
+                    }
+                    else if(Ogre::StringUtil::match(c->text(),"Start"))
+                    {
+                        showLevels();
+                    }
+                    else if(Ogre::StringUtil::match(c->text(),"Restart"))
+                    {
+                        clearMenu();
+                        return -2;
+                    }
+                    else if(Ogre::StringUtil::match(c->text(),"Resume"))
+                    {
+                        clearMenu();
+                        return -1;
+                    }
+                    else if(Ogre::StringUtil::match(c->text(),"Options") && gMenuState->mState==OPTIONS)
+                    {
+                        showOptions();
+                    }
+                }
+            }
+            else if(currentMenu==OPTIONSM)
+            {
+                if(ingamemenu && gMenuState->mState==OPTIONS || !ingamemenu && mMenuState->mState==OPTIONS)
+                {
+                    closeOptions();
+                }
+            }
+            else if(currentMenu==STARTM)
+            {
+                closeLevels();
+            }
+        }
+    }
+
+    if(currentMenu==OPTIONSM)
+        for(auto myIterator = oMenuButtons.begin(); myIterator != oMenuButtons.end(); myIterator++)
+        {
+            Gorilla::Caption* c=(*myIterator);
+            if(c->intersects(mPos))
+            {
+                if(c->width()==600 || c->width()==350)
+                {
+                    resolutionsLoop=resolutionsLoop->nextRes;
+                    cOptionButtonA->mButton->text(*resolutionsLoop->res);
+                    gConfig->height=resolutionsLoop->h;
+                    gConfig->width=resolutionsLoop->w;
+                    ri->yes_background(1);
+
+                    engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                }
+                if(c->width()==601 || c->width()==351)
+                {
+                    if(gConfig->fs)
+                    {
+                        cOptionButtonA->mButton->text("Off");
+                        gConfig->fs = false;
+                    }
+                    else
+                    {
+                        cOptionButtonA->mButton->text("On");
+                        gConfig->fs = true;
+                    }
+                    ri->yes_background(1);
+
+                    engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                    /*if(gConfig->fshadowR)
+                    {cOptionButtonA->mButton->text("Low"); mSceneMgr->setShadowTextureSettings(512,4, PF_FLOAT32_R);}
+                    else
+                    {cOptionButtonA->mButton->text("High"); mSceneMgr->setShadowTextureSettings(1024,4, PF_FLOAT32_R);}
+                    gConfig->shadowR=!gConfig->shadowR;
+                    HighLevelGpuProgramPtr gpuProgram = HighLevelGpuProgramManager::getSingleton().getByName("diffuse_ps_bop");
+                    gpuProgram->setSourceFile("general_bop2.cg");
+                    gpuProgram->reload();
+                    engine->play2D("../../media/oMclick.wav", false, false, false, irrklang::ESM_NO_STREAMING, false);*/
+                }
+                if(c->width()==602 || c->width()==352)
+                {
+                    if(gConfig->shadow == 0)
+                    {
+                        cOptionButtonA->mButton->text("Medium");
+                        gConfig->shadow = 1;
+                    }
+                    else if(gConfig->shadow == 1)
+                    {
+                        cOptionButtonA->mButton->text("High");
+                        gConfig->shadow = 2;
+                    }
+                    else if(gConfig->shadow == 2)
+                    {
+                        cOptionButtonA->mButton->text("Low");
+                        gConfig->shadow = 0;
+                    }
+
+                    engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                }
+                if(c->width()==603 || c->width()==353)
+                {
+                    if(gConfig->ssao)
+                    {
+                        cOptionButtonA->mButton->text("Off");
+                        (Global::mPPMgr)->setSSAO(false);
+                        gConfig->ssao = false;
+                    }
+                    else
+                    {
+                        cOptionButtonA->mButton->text("On");
+                        (Global::mPPMgr)->setSSAO(true);
+                        gConfig->ssao = true;
+                    }
+
+                    engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                }
+            }
+        }
+
+    if(currentMenu==STARTM)
+        for(auto myIterator = lMenuButtons.begin(); myIterator != lMenuButtons.end(); myIterator++)
+        {
+            lvlButton* b=(*myIterator);
+            if(b->r->intersects(mPos))
+            {
+                if(b == curLvlButton)
+                {
+                    if(b->unlocked)
+                    {
+                        engine->play2D(LEVEL_START_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                        return b->id;
+                    }
+                    else
+                    {
+                        engine->play2D(LEVEL_LOCKED_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                        return 0;
+                    }
+                }
+                else
+                {
+
+                    lvlMoving = true;
+                    atm=400;
+                    engine->play2D(LEVEL_SWITCH_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+
+                    if(b->id > curLvlButton->id)
+                    {
+                        movingDir=-1;
+                        curLvlButton = lMenuButtons.at(curLvlButton->id);
+                    }
+                    else
+                    {
+                        movingDir=1;
+                        curLvlButton = lMenuButtons.at(curLvlButton->id-2);
+                    }
+
+                    return 0;
+                }
+            }
+        }
+
+    return 0;
+}
+
+void GuiOverlay::setDebugValue(Ogre::Real value1, Ogre::Real value2)
+{
+    fpsCaption->text(Ogre::StringConverter::toString(value1));
+    debugCaption->text(Ogre::StringConverter::toString(value2));
+}
+
+void GuiOverlay::showDebug(bool show)
+{
+    if(show)
+    {
+        fpsCaption->colour(Ogre::ColourValue(0,255,0,1));
+        debugCaption->colour(Ogre::ColourValue(0,255,0,1));
+    }
+    else
+    {
+        fpsCaption->colour(Ogre::ColourValue(0,255,0,0));
+        debugCaption->colour(Ogre::ColourValue(0,255,0,0));
+    }
+}
+
+void GuiOverlay::updateLevelsMove(Ogre::Real time)
+{
+
+    Real rotSpeed=time*1100;
+    atm=atm-rotSpeed;
+
+    if(lvlMoving)
+    {
+        if(atm<=0)
+        {
+            currentMenu=STARTM;
+            rotSpeed=rotSpeed+atm;
+            atm=0;
+            lvlMoving=false;
+        }
+
+        rotSpeed*=movingDir;
+
+        for(auto myIterator = lMenuButtons.begin(); myIterator != lMenuButtons.end(); myIterator++)
+        {
+            float scaler = 1 - Ogre::Math::Clamp(abs((*myIterator)->pos-840)/500.0f,0.0f,1.0f);
+
+            Gorilla::Rectangle* c=(*myIterator)->r;
+            (*myIterator)->pos+=rotSpeed;
+            c->left((*myIterator)->pos-115-scaler*85);
+            c->width(230+scaler*190);
+            c->height(160+scaler*110);
+
+            Real alpha=1-Math::Abs((c->left()-690)/999.0f);
+            c->yes_background(alpha);
+        }
+    }
+    else
+    {
+        if(currentMenu==TOSM && atm<=0)
+        {
+            currentMenu=STARTM;
+            rotSpeed=rotSpeed+atm;
+            atm=0;
+        }
+        else if(currentMenu==FRSM && atm<=0)
+        {
+            currentMenu=MAINM;
+            rotSpeed=rotSpeed+atm;
+            atm=0;
+        }
+
+        rotSpeed*=movingDir;
+
+        for(auto myIterator = mMenuButtons.begin(); myIterator != mMenuButtons.end(); myIterator++)
+        {
+            Gorilla::Caption* c=(*myIterator);
+            c->top(c->top()+rotSpeed);
+        }
+
+        for(auto myIterator = lMenuButtons.begin(); myIterator != lMenuButtons.end(); myIterator++)
+        {
+            Gorilla::Rectangle* c=(*myIterator)->r;
+            c->top(c->top()+rotSpeed);
+        }
+
+        ri->top(ri->top()+rotSpeed);
+    }
+}
+
+void GuiOverlay::updateOptionsMove(Ogre::Real time)
+{
+    Real rotSpeed=time*1100;
+    atm=atm-rotSpeed;
+
+    if(currentMenu==TOOM && atm<=0)
+    {
+        currentMenu=OPTIONSM;
+        rotSpeed=rotSpeed+atm;
+        atm=0;
+    }
+    else if(currentMenu==FROM && atm<=0)
+    {
+        currentMenu=MAINM;
+        rotSpeed=rotSpeed+atm;
+        atm=0;
+    }
+
+    rotSpeed*=movingDir;
+
+    for(auto myIterator = mMenuButtons.begin(); myIterator != mMenuButtons.end(); myIterator++)
+    {
+        Gorilla::Caption* c=(*myIterator);
+        c->top(c->top()+rotSpeed);
+    }
+
+    for(auto myIterator = oMenuButtons.begin(); myIterator != oMenuButtons.end(); myIterator++)
+    {
+        Gorilla::Caption* c=(*myIterator);
+        c->top(c->top()+rotSpeed);
+    }
+
+    ri->top(ri->top()+rotSpeed);
+}
+
+
+void GuiOverlay::updateMainMenu(Ogre::Real time)
+{
+
+    if(currentMenu==TOOM || currentMenu==FROM)
+        updateOptionsMove(time);
+    else if(lvlMoving || currentMenu==TOSM || currentMenu==FRSM)
+        updateLevelsMove(time);
+    else if(moving)
+    {
+        Real rotSpeed=time*1400;
+        atm=atm+rotSpeed;
+        if(atm>=666)
+        {
+            moving=false;
+            rotSpeed=rotSpeed-(atm-666);
+            atm=0;
+        }
+
+        for(auto myIterator = mMenuButtons.begin(); myIterator != mMenuButtons.end(); myIterator++)
+        {
+            //1680+2*309, roz 766
+            Gorilla::Caption* c=(*myIterator);
+            c->left(c->left()+rotSpeed*movingDir);
+
+            if(c->left()>=1689 && movingDir==1)
+            {
+                c->left(-309+(c->left()-1689));
+
+            }
+            if(c->left()<=-309  && movingDir==-1)
+                c->left(1689-(-309-c->left()));
+
+            Real alpha=1-Math::Abs((c->left()-690)/999);
+            c->colour(Ogre::ColourValue(1,1,1,alpha));
+        }
+    }
+
+}
+
+
+void GuiOverlay::showIngameText(Ogre::String text)
+{
+    infoTextCaption->text(text);
+
+    infoTextTimer = Ogre::Math::Clamp(0.1f*text.length(),2.0f,8.0f);
+    shownInfoText = true;
+}
+
+void GuiOverlay::showUseGui(char id)
+{
+    wantUseGui = true;
+
+    if(!shownUseGui || id != currUseGui)
+    {
+        shownUseGui = true;
+        currUseGui = id;
+
+        switch(id)
+        {
+        case 0:
+            useTextCaption->text("pickup");
+            break;
+        case 1:
+            useTextCaption->text("use");
+            break;
+        case 2:
+            useTextCaption->text("climb");
+            break;
+        default:
+            useTextCaption->text("default");
+        }
+    }
+}
+
+void GuiOverlay::updateIngame(Ogre::Real time)
+{
+    if(shownUseGui && !wantUseGui)
+    {
+        useTextCaption->text("");
+        shownUseGui = false;
+    }
+
+    wantUseGui = false;
+
+    if(shownInfoText)
+    {
+        infoTextTimer -= time;
+        infoTextCaption->colour(Ogre::ColourValue(1,1,1,Ogre::Math::Clamp(infoTextTimer*2,0.0f,1.0f)));
+
+        if(infoTextTimer<=0)
+        {
+            infoTextCaption->text("");
+            shownInfoText = false;
+        }
+    }
+}
+
+
+void GuiOverlay::updateIngameMenu(Ogre::Real time)
+{
+
+    if(currentMenu==TOOM || currentMenu==FROM)
+        updateOptionsMove(time);
+    else if(lvlMoving || currentMenu==TOSM || currentMenu==FRSM)
+        updateLevelsMove(time);
+    else if(moving)
+    {
+        Real rotSpeed=time*1400;
+        atm=atm+rotSpeed;
+        if(atm>=666)
+        {
+            moving=false;
+            rotSpeed=rotSpeed-(atm-666);
+            atm=0;
+        }
+
+        for(auto myIterator = mMenuButtons.begin(); myIterator != mMenuButtons.end(); myIterator++)
+        {
+            //1680+2*309, roz 766
+            Gorilla::Caption* c=(*myIterator);
+            c->left(c->left()+rotSpeed*movingDir);
+
+            if(c->left()>=2355 && movingDir==1)
+                c->left(-975+(c->left()-2355));
+            if(c->left()<=-975  && movingDir==-1)
+                c->left(2355-(-975-c->left()));
+
+            Real alpha=1-Math::Abs((c->left()-690)/999.0f);
+            c->colour(Ogre::ColourValue(1,1,1,alpha));
+        }
+    }
+
+}

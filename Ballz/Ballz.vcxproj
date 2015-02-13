@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>AutumnAshes</ProjectName>
+    <ProjectGuid>{5C2C3E15-A84B-4C96-8884-356E6F86BB6B}</ProjectGuid>
+    <RootNamespace>Ballz</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bin\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">obj\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">bin\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">obj\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>D:\PagedGeometry1.1.1\include;$(OGRE_HOME)\include\OGRE;$(NEWTON_HOME)/sdk/dCustomJoints;$(NEWTON_HOME)/sdk/dContainers;$(NEWTON_HOME)/sdk/dMath;D:\irrKlang-1.3.0\include;$(OGRE_HOME)\include\OIS;D:\boost_1_47;$(NEWTON_HOME)/sdk;D:\ogrenewt4\inc;include;$(OGRE_HOME)\samples\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalOptions>-Zm147 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>irrKlang.lib;PagedGeometry_d.lib;OgreMain_d.lib;OIS_d.lib;OgreNewt_d.lib;dJointLibrary_d.lib;newton.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>D:\PagedGeometry1.1.1\lib;$(OGRE_HOME)\lib\debug;D:\irrKlang-1.3.0\lib\Win32-visualStudio;$(NEWTON_HOME)/sdk/x32;$(NEWTON_HOME)/sdk/x32/dll_vs9;$(NEWTON_HOME)/sdk/x32/lib_vs9_md;D:\boost_1_47\lib;$(OGRENEWT_HOME)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)Ballz.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Message>Copying exe to samples bin directory ...</Message>
+      <Command>copy "$(OutDir)$(TargetFileName)" "$(OGRE_HOME)\Bin\$(Configuration)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>-Zm210 %(AdditionalOptions)</AdditionalOptions>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <AdditionalIncludeDirectories>D:\AA\Ogre_src\include;D:\AA\Ogre_src\ogre_src_v1-8-0\OgreMain\include;D:\AA\PagedGeometry1.1.1\include;D:\AA\OIS\trunk\includes;D:\AA\NewtonWin-2.24/sdk/dCustomJoints;D:\AA\NewtonWin-2.24/sdk/dContainers;D:\AA\NewtonWin-2.24/sdk/dMath;D:\AA\irrKlang-1.3.0\include;D:\AA\boost_1_47;D:\AA\NewtonWin-2.24/sdk;D:\AA\ogrenewt4\inc;include;D:\OgreSDK_vc10_v1-8-0\samples\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <MinimalRebuild>true</MinimalRebuild>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>OgreMain.lib;OIS_static.lib;newton.lib;dJointLibrary.lib;OgreNewt.lib;irrKlang.lib;PagedGeometry.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>D:\AA\OIS\trunk\lib;D:\AA\PagedGeometry1.1.1\lib;D:\AA\Ogre_src\lib\release;D:\AA\irrKlang-1.3.0\lib\Win32-visualStudio;D:\AA\NewtonWin-2.24/sdk/x32;D:\AA\NewtonWin-2.24/sdk/x32/dll_vs9;D:\AA\NewtonWin-2.24/sdk/x32/lib_vs9_md;D:\AA\boost_1_47\lib;D:\AA\ogrenewt4\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+    </Link>
+    <PostBuildEvent>
+      <Message>Copying exe to samples bin directory ...</Message>
+      <Command>copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.exe" "D:\OgreSDK\bin\release"
+copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\AAmain.cpp" />
+    <ClCompile Include="src\AudioLibrary.cpp" />
+    <ClCompile Include="src\baloon.cpp" />
+    <ClCompile Include="src\bird.cpp" />
+    <ClCompile Include="src\BridgeMaker.cpp" />
+    <ClCompile Include="src\ChainsSoundReaction.cpp" />
+    <ClCompile Include="src\Console.cpp" />
+    <ClCompile Include="src\DefaultObjectContactCallback.cpp" />
+    <ClCompile Include="src\defSM.cpp" />
+    <ClCompile Include="src\EffectsReactions.cpp" />
+    <ClCompile Include="src\EntityMovementReaction.cpp" />
+    <ClCompile Include="src\EnvironmentSound.cpp" />
+    <ClCompile Include="src\EventsManager.cpp" />
+    <ClCompile Include="src\EventTask.cpp" />
+    <ClCompile Include="src\GameStateManager.cpp" />
+    <ClCompile Include="src\Gorilla.cpp" />
+    <ClCompile Include="src\HandGripReaction.cpp" />
+    <ClCompile Include="src\LoadNextPart.cpp" />
+    <ClCompile Include="src\lvl1Reactions.cpp" />
+    <ClCompile Include="src\lvl_update.cpp" />
+    <ClCompile Include="src\GuiOverlay.cpp" />
+    <ClCompile Include="src\PagingManager.cpp" />
+    <ClCompile Include="src\PostProcessMgr.cpp" />
+    <ClCompile Include="src\Tasks.cpp" />
+    <ClCompile Include="src\TransformationTaskTemplate.cpp" />
+    <ClCompile Include="src\mShC.cpp" />
+    <ClCompile Include="src\OgreGpuCommandBufferFlush.cpp" />
+    <ClCompile Include="src\player.cpp" />
+    <ClCompile Include="src\globals.cpp" />
+    <ClCompile Include="src\rope.cpp" />
+    <ClCompile Include="src\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml.cpp" />
+    <ClCompile Include="src\tinyxmlerror.cpp" />
+    <ClCompile Include="src\tinyxmlparser.cpp" />
+    <ClCompile Include="src\TriggerObjectContactCallback.cpp" />
+    <ClCompile Include="include\TriggerPlayerContactCallback.cpp" />
+    <ClCompile Include="src\HandFromGroundReaction.cpp" />
+    <ClCompile Include="src\TestReaction.cpp" />
+    <ClCompile Include="src\CommonReactions.cpp" />
+    <ClCompile Include="src\ReflectionTask.cpp" />
+    <ClCompile Include="src\WaterArea.cpp" />
+    <ClCompile Include="src\WorldMaterials.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\AudioLibrary.h" />
+    <ClInclude Include="include\baloon.h" />
+    <ClInclude Include="include\BasicPPListener.h" />
+    <ClInclude Include="include\bird.h" />
+    <ClInclude Include="include\BridgeMaker.h" />
+    <ClInclude Include="include\ChainsSoundTask.h" />
+    <ClInclude Include="include\Console.h" />
+    <ClInclude Include="include\DebugKeys.h" />
+    <ClInclude Include="include\DefaultObjectContactCallback.h" />
+    <ClInclude Include="include\defSM.h" />
+    <ClInclude Include="include\EffectsTasks.h" />
+    <ClInclude Include="include\EntityMovementTask.h" />
+    <ClInclude Include="include\EnvironmentSound.h" />
+    <ClInclude Include="include\EventsManager.h" />
+    <ClInclude Include="include\flistener.h" />
+    <ClInclude Include="include\GameStateManager.h" />
+    <ClInclude Include="include\globals.h" />
+    <ClInclude Include="include\godraylistener.h" />
+    <ClInclude Include="include\Gorilla.h" />
+    <ClInclude Include="include\GrassHeightFunction.h" />
+    <ClInclude Include="include\HandBasic.h" />
+    <ClInclude Include="include\HandGripTask.h" />
+    <ClInclude Include="include\InputListener.h" />
+    <ClInclude Include="include\levels.h" />
+    <ClInclude Include="include\LoadNextPart.h" />
+    <ClInclude Include="include\lvl1Tasks.h" />
+    <ClInclude Include="include\lvl_update.h" />
+    <ClInclude Include="include\GuiOverlay.h" />
+    <ClInclude Include="include\NewtonListener.h" />
+    <ClInclude Include="include\PagingManager.h" />
+    <ClInclude Include="include\SceneParser.h" />
+    <ClInclude Include="include\ScaryPPListener.h" />
+    <ClInclude Include="include\ITransformationTask.h" />
+    <ClInclude Include="include\mShC.h" />
+    <ClInclude Include="include\nlistener.h" />
+    <ClInclude Include="include\OgreGpuCommandBufferFlush.h" />
+    <ClInclude Include="include\player.h" />
+    <ClInclude Include="include\PostProcessMgr.h" />
+    <ClInclude Include="include\premenne.h" />
+    <ClInclude Include="include\CommonTasks.h" />
+    <ClInclude Include="include\ReflectionTask.h" />
+    <ClInclude Include="include\WaterArea.h" />
+    <ClInclude Include="include\WorldMaterials.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
+    <ClInclude Include="include\rope.h" />
+    <ClInclude Include="include\start.h" />
+    <ClInclude Include="include\stdafx.h" />
+    <ClInclude Include="include\tinyxml.h" />
+    <ClInclude Include="include\TriggerObjectContactCallback.h" />
+    <ClInclude Include="include\TriggerPlayerContactCallback.h" />
+    <ClInclude Include="include\bodyUserData.h" />
+    <ClInclude Include="include\EventTask.h" />
+    <ClInclude Include="include\HandFromGroundTask.h" />
+    <ClInclude Include="include\Tasks.h" />
+    <ClInclude Include="include\TestTask.h" />
+    <ClInclude Include="include\TriggerInfo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AutumnAshes.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="icon1.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
