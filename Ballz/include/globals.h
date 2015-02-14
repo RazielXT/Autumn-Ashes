@@ -23,7 +23,7 @@ struct Global
 
     static Player* player;
     static float timestep;
-	static AudioLibrary* audioLib;
+    static AudioLibrary* audioLib;
     static float fallSoundOffsetH;
     static float fallSoundOffsetL;
 

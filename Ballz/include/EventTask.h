@@ -18,7 +18,7 @@ public:
     virtual void setIdentifier(short id);
 
     float taskDelay = 0;
-	GameState stateExecution = PLAY;
+    GameState stateExecution = PLAY;
 
 protected:
 

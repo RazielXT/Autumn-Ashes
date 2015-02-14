@@ -15,7 +15,7 @@ Player::Player(WorldMaterials* wMaterials)
     cameraWalkFinisher=0;
     fallPitchSize=0;
     Gbody=NULL;
-	soundEngine = Global::soundEngine;
+    soundEngine = Global::soundEngine;
     walkSoundTimer=0;
     noClimbTimer=0;
     fallPitch=0;
@@ -322,8 +322,8 @@ void Player::walkingSound(Ogre::Real time)
     if(walkSoundTimer>0.4)
     {
         Vector3 ppos=pbody->getPosition();
-        
-		Global::audioLib->playWalkingSound(ppos.x, ppos.y - 2, ppos.z, groundID);
+
+        Global::audioLib->playWalkingSound(ppos.x, ppos.y - 2, ppos.z, groundID);
 
         walkSoundTimer=0;
     }
@@ -378,7 +378,7 @@ void Player::skoc()
     else if(is_climbing==2 || is_climbing==6)
     {
         Vector3 pos=pbody->getPosition();
-		irrklang::ISound* s = soundEngine->play3D(AudioLibrary::getPath("pullup.wav").c_str(), irrklang::vec3df(pos.x, pos.y + 2, pos.z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
+        irrklang::ISound* s = soundEngine->play3D(AudioLibrary::getPath("pullup.wav").c_str(), irrklang::vec3df(pos.x, pos.y + 2, pos.z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
         s->setMaxDistance(5);
         s->setVolume(0.7);
         climb_pullup=0.05;
@@ -473,7 +473,7 @@ void Player::manageFall()
         fallPitchTimer=0;
     }
 
-	Global::audioLib->playFallSound(ppos.x, ppos.y - 2, ppos.z, groundID);
+    Global::audioLib->playFallSound(ppos.x, ppos.y - 2, ppos.z, groundID);
 }
 
 Ogre::Vector3 Player::getFacingDirection()
@@ -1578,7 +1578,7 @@ void Player::tryToGrab()
                         }
 
                         if(a0->trigger->cooldown>0)
-							Global::mEventsMgr->cooldownTrigger(a0);
+                            Global::mEventsMgr->cooldownTrigger(a0);
                     }
                 }
             }
@@ -1593,36 +1593,36 @@ bool Player::canClimb(char direction, bool soundIfTrue, bool needSpeed, bool sec
     //0-left,1-right,2-up,3-down
     switch (direction)
     {
-	case 0:
-	{
-		Real temp(off.x);
-		off.x = -off.z;
-		off.z = temp;
-		break;
-	}
-	case 1:
-	{
-		Real temp(off.x);
-		off.x = off.z;
-		off.z = -temp;
-		break;
-	}
-	case 2:
-	{
-		off.y = 0;
-		off.y = off.length();
-		off.x = 0;
-		off.z = 0;
-		break;
-	}
-	case 3:
-	{
-		off.y = 0;
-		off.y = -off.length();
-		off.x = 0;
-		off.z = 0;
-		break;
-	}
+    case 0:
+    {
+        Real temp(off.x);
+        off.x = -off.z;
+        off.z = temp;
+        break;
+    }
+    case 1:
+    {
+        Real temp(off.x);
+        off.x = off.z;
+        off.z = -temp;
+        break;
+    }
+    case 2:
+    {
+        off.y = 0;
+        off.y = off.length();
+        off.x = 0;
+        off.z = 0;
+        break;
+    }
+    case 3:
+    {
+        off.y = 0;
+        off.y = -off.length();
+        off.x = 0;
+        off.z = 0;
+        break;
+    }
     };
 
     Vector3 targetPos=necknode->_getDerivedPosition()+Vector3(0,0.25,0)+off/3;

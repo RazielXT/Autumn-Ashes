@@ -7,15 +7,15 @@ class WaterArea : public EventTask
 {
 public:
 
-	WaterArea();
-	~WaterArea();
+    WaterArea();
+    ~WaterArea();
 
-	bool update(Ogre::Real tslf);
+    bool update(Ogre::Real tslf);
 
-	void init(Ogre::Entity* water);
+    void init(Ogre::Entity* water);
 
 private:
-	Ogre::AxisAlignedBox b;
-	bool inside = false;
-	Player* p;
+    Ogre::AxisAlignedBox b;
+    bool inside = false;
+    Player* p;
 };

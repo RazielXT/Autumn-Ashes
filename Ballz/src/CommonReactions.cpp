@@ -1392,7 +1392,7 @@ void WalkingAnim::setUserData(void* data)
 
 bool WalkingAnim::start()
 {
-	Global::mEventsMgr->addInputListener(this);
+    Global::mEventsMgr->addInputListener(this);
 
     Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
     walkSinTimer = 0;

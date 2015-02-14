@@ -37,7 +37,7 @@ public:
 
     ~MainListener()
     {
-		delete Global::audioLib;
+        delete Global::audioLib;
         delete mEventMgr;
         delete pagingMgr;
 
@@ -77,7 +77,7 @@ public:
         mWorld->setSolverModel(3);
         mCamera=mSceneMgr->getCamera("Camera");
         wMaterials = new WorldMaterials();
-        
+
         postProcMgr = new PostProcessMgr(mCamera);
         postProcMgr->setToScaryBloom();
 
@@ -89,10 +89,10 @@ public:
         Global::mPPMgr = postProcMgr;
         Global::mPagingMgr = pagingMgr;
 
-		Global::audioLib = new AudioLibrary();
+        Global::audioLib = new AudioLibrary();
 
-		gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem(), wMaterials);
-		Global::gameMgr = gameMgr;
+        gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem(), wMaterials);
+        Global::gameMgr = gameMgr;
 
         mKeyboard=keyboard;
         mMouse=mouse;
@@ -106,7 +106,7 @@ public:
 
         (*Global::globalData)["MatFlag"] = wMaterials->flag_mat;
 
-		mEventMgr->addInputListener(&dbg);
+        mEventMgr->addInputListener(&dbg);
 
     }
 
@@ -142,7 +142,7 @@ public:
 
     virtual bool keyPressed(const OIS::KeyEvent &arg)
     {
-		Global::mEventsMgr->listenersKeyPressed(arg);
+        Global::mEventsMgr->listenersKeyPressed(arg);
 
         if (gameMgr->gameState == PLAY)
             Global::player->pressedKey(arg);

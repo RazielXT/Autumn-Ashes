@@ -117,6 +117,12 @@
       <Command>copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.exe" "D:\OgreSDK\bin\release"
 copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call "D:\AA\AAsvn\Ballz\runAstyle.bat"</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Formatting code with Astyle</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\AAmain.cpp" />

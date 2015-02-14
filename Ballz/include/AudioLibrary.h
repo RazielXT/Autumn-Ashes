@@ -4,9 +4,9 @@
 
 enum SoundType
 {
-	SoundEffect,
-	Music,
-	Ui
+    SoundEffect,
+    Music,
+    Ui
 };
 
 struct ObjectAudio;
@@ -14,21 +14,21 @@ struct ObjectAudio;
 class AudioLibrary
 {
 public:
-	AudioLibrary();
-	~AudioLibrary();
+    AudioLibrary();
+    ~AudioLibrary();
 
-	void playWalkingSound(float x, float y, float z, int groundID);
-	void playFallSound(float x, float y, float z, int groundID);
+    void playWalkingSound(float x, float y, float z, int groundID);
+    void playFallSound(float x, float y, float z, int groundID);
 
-	std::map<Ogre::String, ObjectAudio*> dynamicsAudio;
+    std::map<Ogre::String, ObjectAudio*> dynamicsAudio;
 
-	static std::string getPath(std::string file, SoundType type = SoundEffect);
+    static std::string getPath(std::string file, SoundType type = SoundEffect);
 
 private:
 
-	void fillMaterialAudio();
-	void fillMoveAudio();
-	
-	
-	std::map<int, std::vector<Ogre::String>* > movementAudio;
+    void fillMaterialAudio();
+    void fillMoveAudio();
+
+
+    std::map<int, std::vector<Ogre::String>* > movementAudio;
 };

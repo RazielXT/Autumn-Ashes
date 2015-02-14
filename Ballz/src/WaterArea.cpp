@@ -14,21 +14,21 @@ WaterArea::~WaterArea()
 
 void WaterArea::init(Ogre::Entity* water)
 {
-	inside = false;
-	b = water->getBoundingBox();
-	p = Global::player;
+    inside = false;
+    b = water->getBoundingBox();
+    p = Global::player;
 }
 
 bool WaterArea::update(Ogre::Real tslf)
 {
-	bool now = b.contains(p->getBody()->getPosition());
+    bool now = b.contains(p->getBody()->getPosition());
 
-	if (!inside && now)
-	{
-		//splash
-	}
-	else
-		inside = now;
+    if (!inside && now)
+    {
+        //splash
+    }
+    else
+        inside = now;
 
-	return 1;
+    return 1;
 }

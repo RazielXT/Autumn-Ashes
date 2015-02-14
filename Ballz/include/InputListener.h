@@ -8,7 +8,7 @@ class InputListener
 {
 public:
 
-	GameState executionState = PLAY;
+    GameState executionState = PLAY;
     virtual void keyInput(const OIS::KeyEvent &arg) = 0;
 
     void unregisterKeyListening()

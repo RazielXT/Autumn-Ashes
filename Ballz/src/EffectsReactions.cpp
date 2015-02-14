@@ -26,19 +26,19 @@ bool QuickScaryBlink::start()
     }
     else if(id==2)
     {
-		soundName = AudioLibrary::getPath("staticBlinkShort.wav");
+        soundName = AudioLibrary::getPath("staticBlinkShort.wav");
         effectStr = 0.7;
         totalTime = 0.4f;
     }
     else if(id==3)
     {
-		soundName = AudioLibrary::getPath("staticBlinkLong.wav");
+        soundName = AudioLibrary::getPath("staticBlinkLong.wav");
         effectStr = 0.5;
         totalTime = 0.85f;
     }
     else
     {
-		soundName = AudioLibrary::getPath("staticBlink.wav");
+        soundName = AudioLibrary::getPath("staticBlink.wav");
         effectStr = 1;
         totalTime = 0.55f;
     }

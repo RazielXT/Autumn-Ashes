@@ -5,10 +5,10 @@
 class DebugKeys : public InputListener
 {
 public:
-	DebugKeys()
-	{
-		executionState = UNDEFINED;
-	}
+    DebugKeys()
+    {
+        executionState = UNDEFINED;
+    }
 
     void keyInput(const OIS::KeyEvent &arg)
     {

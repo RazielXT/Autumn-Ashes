@@ -11,7 +11,7 @@ LvlMenuUpdate::LvlMenuUpdate(Ogre::SceneNode* cRot, Forests::PagedGeometry *gr)
     cRotator->yaw(Ogre::Degree(-30));
 
     grass = gr;
-	stateExecution = UNDEFINED;
+    stateExecution = UNDEFINED;
 };
 
 bool LvlMenuUpdate::update(Ogre::Real evt)
@@ -25,7 +25,7 @@ bool LvlMenuUpdate::update(Ogre::Real evt)
 
 Lvl2Update::Lvl2Update()
 {
-	stateExecution = UNDEFINED;
+    stateExecution = UNDEFINED;
 }
 
 bool Lvl2Update::update(Ogre::Real evt)

@@ -28,19 +28,18 @@ void EventsManager::addCachedTask(EventTask* r)
 
 void EventsManager::addTask(EventTask* r)
 {
-	auto& t = typeid(*r);
-	Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("One time task of " + Ogre::String(t.name()) + " added to event manager, total: " + Ogre::StringConverter::toString(oneTimeTasks.size()), Ogre::LML_NORMAL);
+    auto& t = typeid(*r);
+    Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("One time task of " + Ogre::String(t.name()) + " added to event manager, total: " + Ogre::StringConverter::toString(oneTimeTasks.size()), Ogre::LML_NORMAL);
 
     if(r->taskDelay)
     {
         DelayedTask dr(r,r->taskDelay);
         oneTimeDelayedTasks.push_back(dr);
     }
-	else
-	if (r->start())
-		oneTimeTasks.push_back(r);
-	else
-		delete r;
+    else if (r->start())
+        oneTimeTasks.push_back(r);
+    else
+        delete r;
 }
 
 void EventsManager::cooldownTrigger(bodyUserData* t)
@@ -63,14 +62,14 @@ void EventsManager::update(Ogre::Real time)
 {
     //update tasks
     std::list<EventTask*>::iterator iter = currentCachedTasks.begin();
-	auto state = Global::gameMgr->gameState;
+    auto state = Global::gameMgr->gameState;
 
     while(iter != currentCachedTasks.end())
     {
-		if (((*iter)->stateExecution != state && (*iter)->stateExecution != UNDEFINED) || (*iter)->update(time))
-			iter++;
-		else
-			iter = currentCachedTasks.erase(iter);
+        if (((*iter)->stateExecution != state && (*iter)->stateExecution != UNDEFINED) || (*iter)->update(time))
+            iter++;
+        else
+            iter = currentCachedTasks.erase(iter);
     }
 
     iter = oneTimeTasks.begin();
@@ -78,33 +77,33 @@ void EventsManager::update(Ogre::Real time)
     //update one time tasks
     while(iter != oneTimeTasks.end())
     {
-			if (((*iter)->stateExecution != state && (*iter)->stateExecution != UNDEFINED) || (*iter)->update(time))
-				++iter;
-			else
-			{
-				EventTask* r = (*iter);
-				iter = oneTimeTasks.erase(iter);
-				delete r;
-			}
+        if (((*iter)->stateExecution != state && (*iter)->stateExecution != UNDEFINED) || (*iter)->update(time))
+            ++iter;
+        else
+        {
+            EventTask* r = (*iter);
+            iter = oneTimeTasks.erase(iter);
+            delete r;
+        }
     }
 
-	if (state != PLAY)
-		return;
+    if (state != PLAY)
+        return;
 
     //used triggers cooldown
     std::list<bodyUserData*>::iterator iter2 = unavailableTriggers.begin();
 
     while(iter2 != unavailableTriggers.end())
     {
-		(*iter2)->trigger->timer += time;
+        (*iter2)->trigger->timer += time;
 
-		if ((*iter2)->trigger->timer >= (*iter2)->trigger->cooldown)
-		{
-			(*iter2)->enabledTrigger = true;
-			iter2 = unavailableTriggers.erase(iter2);
-		}
-		else
-			++iter2;
+        if ((*iter2)->trigger->timer >= (*iter2)->trigger->cooldown)
+        {
+            (*iter2)->enabledTrigger = true;
+            iter2 = unavailableTriggers.erase(iter2);
+        }
+        else
+            ++iter2;
     }
 
 
@@ -113,16 +112,16 @@ void EventsManager::update(Ogre::Real time)
 
     while(iter3 != currentDelayedCachedTasks.end())
     {
-		(*iter3).timer -= time;
+        (*iter3).timer -= time;
 
-		if ((*iter3).timer <= 0)
-		{
-			if ((*iter3).r->start())
-				currentCachedTasks.push_back((*iter3).r);
-			iter3 = currentDelayedCachedTasks.erase(iter3);
-		}
-		else
-			iter3++;
+        if ((*iter3).timer <= 0)
+        {
+            if ((*iter3).r->start())
+                currentCachedTasks.push_back((*iter3).r);
+            iter3 = currentDelayedCachedTasks.erase(iter3);
+        }
+        else
+            iter3++;
     }
 
     iter3 = oneTimeDelayedTasks.begin();
@@ -157,11 +156,11 @@ void EventsManager::removeInputListener(InputListener* l)
 
 void EventsManager::listenersKeyPressed(const OIS::KeyEvent &arg)
 {
-	auto state = Global::gameMgr->gameState;
+    auto state = Global::gameMgr->gameState;
 
     for (auto l : keyListeners)
     {
-		if (l->executionState == state || l->executionState == UNDEFINED)
-			l->keyInput(arg);
+        if (l->executionState == state || l->executionState == UNDEFINED)
+            l->keyInput(arg);
     }
 }

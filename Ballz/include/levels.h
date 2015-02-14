@@ -72,7 +72,7 @@ void createLevelTuto(WorldMaterials* wMaterials)
 
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBoxToDark");
     Global::mWorld->setWorldSize(Vector3(-2000,-500,-2000),Vector3(2000,500,2000));
-	SceneParser::instance.loadScene("../../media/park/park.scene", Global::mPagingMgr, wMaterials);
+    SceneParser::instance.loadScene("../../media/park/park.scene", Global::mPagingMgr, wMaterials);
 
     irrklang::ISound* music = Global::soundEngine->play2D("../../media/tokyostreetatnight.ogg",true , false, true, irrklang::ESM_AUTO_DETECT, true);
     //music->setMinDistance(20);
@@ -287,7 +287,7 @@ void createLevel1_1(WorldMaterials* wMaterials)
 
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
     Global::mWorld->setWorldSize(Vector3(-2000,-500,-2000),Vector3(2000,500,2000));
-	SceneParser::instance.loadScene("../../media/caves.scene", Global::mPagingMgr, wMaterials);
+    SceneParser::instance.loadScene("../../media/caves.scene", Global::mPagingMgr, wMaterials);
 
     irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
     //music->setMinDistance(20);
@@ -304,8 +304,8 @@ void createLevel1_1(WorldMaterials* wMaterials)
     ppMgr->radialHorizBlurVignette = 0.0;
     ppMgr->ColouringShift = Ogre::Vector4(0.95, 0.89, 1, 0);
 
-	auto lvlUp = new Lvl2Update();
-	Global::mEventsMgr->addTask(lvlUp);
+    auto lvlUp = new Lvl2Update();
+    Global::mEventsMgr->addTask(lvlUp);
 
     ppMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 }
@@ -315,9 +315,9 @@ void createLevel2(WorldMaterials* wMaterials)
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
     Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
 
-	SceneParser::instance.loadScene("../../media/valley/valley.scene", Global::mPagingMgr, wMaterials);
+    SceneParser::instance.loadScene("../../media/valley/valley.scene", Global::mPagingMgr, wMaterials);
 
-	irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(), true, false, true, irrklang::ESM_AUTO_DETECT, true);
+    irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(), true, false, true, irrklang::ESM_AUTO_DETECT, true);
     //music->setMinDistance(20);
     //music->setMaxDistance(100);
 
@@ -334,5 +334,5 @@ void createLevel2(WorldMaterials* wMaterials)
     ppMgr->setGodraySunPositionFar(Vector3(d.x,d.y,d.z));
 
     auto lvlUp = new Lvl2Update();
-	Global::mEventsMgr->addTask(lvlUp);
+    Global::mEventsMgr->addTask(lvlUp);
 }
