@@ -155,27 +155,27 @@ void Player::default_callback(OgreNewt::Body* me, float timeStep, int threadInde
 {
     me->addForce(Ogre::Vector3(0,-6,0));
 }
-void Player::grabbed_callback(OgreNewt::Body* me, float timeStep, int threadIndex )
+void Player::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threadIndex )
 {
     Vector3 p;
-    p=me->getOgreNode()->_getDerivedPosition();
+    p=obj->getOgreNode()->_getDerivedPosition();
     Vector3 p2;
     p2=necknode->_getDerivedPosition()+mCamera->getDerivedOrientation()*Vector3(0,0,-3);
 
     Vector3 s=(p2-p)*10;
 
-    Vector3 o=me->getVelocity();
-    Radian r=s.angleBetween(o);
-    Real rad=r.valueDegrees();
+    Vector3 o=obj->getVelocity();
+	Real rad = s.angleBetween(o).valueDegrees();
 
     if(rad>45)
     {
-        me->setVelocity(me->getVelocity()/2);
+        obj->setVelocity(obj->getVelocity()/2);
         s*=rad/40;
     }
-    me->setForce(s);
-    //me->setTorque(Ogre::Vector3(0,10,0));
-    me->setPositionOrientation(me->getPosition(),necknode->getOrientation());
+    obj->setForce(s);
+    obj->setPositionOrientation(obj->getPosition(),necknode->getOrientation());
+
+	//release if too far away
     if(s.squaredLength()>2025)
     {
         Gbody->setMaterialGroupID(m_World->getDefaultMaterialID());
@@ -401,7 +401,7 @@ void Player::skoc()
 
         if(angle>50)
         {
-            canClimb(3,true);
+            canClimb(Down,true);
 
             noClimbTimer=0.1;
             stopClimbing();
@@ -926,7 +926,7 @@ void Player::update(Real time)
             //right
             if(climb_move_side>0)
             {
-                if(canClimb(1))
+                if(canClimb(Right))
                 {
                     climbDir=climb_normal;
                     climbDir.y=0;
@@ -954,7 +954,7 @@ void Player::update(Real time)
                 //left
                 if(climb_move_side<0)
                 {
-                    if(canClimb(0))
+                    if(canClimb(Left))
                     {
                         climbDir=climb_normal;
                         climbDir.y=0;
@@ -991,7 +991,7 @@ void Player::update(Real time)
 
                 if(climbDir.y>=0)
                 {
-                    if(!canClimb(2))
+                    if(!canClimb(Up))
                     {
                         climbDir=Vector3::ZERO;
                         pbody->setMaterialGroupID(stoji_mat);
@@ -999,7 +999,7 @@ void Player::update(Real time)
                 }
                 else
                 {
-                    if(!canClimb(3))
+                    if(!canClimb(Down))
                     {
                         climbDir=Vector3::ZERO;
                         pbody->setMaterialGroupID(stoji_mat);
@@ -1030,7 +1030,7 @@ void Player::update(Real time)
 
                             if(pohlad.y>0)
                             {
-                                if(canClimb(2,true))
+                                if(canClimb(Up,true))
                                 {
                                     climbDir=Vector3(0,1.5,0);
                                     pbody->setMaterialGroupID(ide_mat);
@@ -1039,7 +1039,7 @@ void Player::update(Real time)
                             }
                             else
                             {
-                                if(canClimb(3,true))
+                                if(canClimb(Down,true))
                                 {
                                     climbDir=Vector3(0,-1.5,0);
                                     pbody->setMaterialGroupID(ide_mat);
@@ -1078,7 +1078,7 @@ void Player::update(Real time)
 
                                 if(pohlad.y>0)
                                 {
-                                    if(canClimb(2,true,false,true))
+                                    if(canClimb(Up,true,false,true))
                                     {
                                         climbDir=Vector3(0,1.5,0);
                                         pbody->setMaterialGroupID(ide_mat);
@@ -1087,7 +1087,7 @@ void Player::update(Real time)
                                 }
                                 else
                                 {
-                                    if(canClimb(3,true,false,true))
+                                    if(canClimb(Down,true,false,true))
                                     {
                                         climbDir=Vector3(0,-1.5,0);
                                         pbody->setMaterialGroupID(ide_mat);
@@ -1122,7 +1122,7 @@ void Player::update(Real time)
 
                     if(pohlad.y>=0)
                     {
-                        if(canClimb(2, true))
+                        if(canClimb(Up, true))
                         {
                             climbDir=Vector3(0,2,0);
                             climb_move_vert=2;
@@ -1133,7 +1133,7 @@ void Player::update(Real time)
                     }
                     else
                     {
-                        if(canClimb(3, true))
+                        if(canClimb(Down, true))
                         {
                             climbDir=-climb_normal;
                             float slope = abs(climbDir.y);
@@ -1152,7 +1152,7 @@ void Player::update(Real time)
                 }
                 else if(vlavo)
                 {
-                    if(canClimb(0, true, true))
+                    if(canClimb(Left, true, true))
                     {
                         pbody->setMaterialGroupID(ide_mat);
                         climbDir=climb_normal;
@@ -1173,7 +1173,7 @@ void Player::update(Real time)
                 }
                 else if(vpravo)
                 {
-                    if(canClimb(1, true, true))
+                    if(canClimb(Right, true, true))
                     {
                         pbody->setMaterialGroupID(ide_mat);
                         climbDir=climb_normal;
@@ -1562,52 +1562,35 @@ void Player::tryToGrab()
             if(!any.isEmpty())
             {
                 bodyUserData* a0=Ogre::any_cast<bodyUserData*>(any);
-                if(a0->enabledTrigger)
-                {
-                    short a=a0->trigger->playerAction;
-
-                    std::map<short,std::vector<EventTask*>>::iterator it=a0->trigger->tasks.find(a);
-                    if(it!=a0->trigger->tasks.end())
-                    {
-                        for(unsigned int j=0; j<(*it).second.size(); j++)
-                        {
-                            if((*it).second.at(j)->taskDelay || (*it).second.at(j)->start())
-                            {
-                                Global::mEventsMgr->addCachedTask((*it).second.at(j));
-                            }
-                        }
-
-                        if(a0->trigger->cooldown>0)
-                            Global::mEventsMgr->cooldownTrigger(a0);
-                    }
-                }
+				if (a0->enabledTrigger)
+					Global::mEventsMgr->activatePlayerTrigger(a0);
             }
         }
     }
 }
 
-bool Player::canClimb(char direction, bool soundIfTrue, bool needSpeed, bool secondTerm)
+bool Player::canClimb(Direction direction, bool soundIfTrue, bool needSpeed, bool secondTerm)
 {
     Vector3 off=climb_normal;
 
     //0-left,1-right,2-up,3-down
     switch (direction)
     {
-    case 0:
+    case Left:
     {
         Real temp(off.x);
         off.x = -off.z;
         off.z = temp;
         break;
     }
-    case 1:
+    case Right:
     {
         Real temp(off.x);
         off.x = off.z;
         off.z = -temp;
         break;
     }
-    case 2:
+    case Up:
     {
         off.y = 0;
         off.y = off.length();
@@ -1615,7 +1598,7 @@ bool Player::canClimb(char direction, bool soundIfTrue, bool needSpeed, bool sec
         off.z = 0;
         break;
     }
-    case 3:
+    case Down:
     {
         off.y = 0;
         off.y = -off.length();
