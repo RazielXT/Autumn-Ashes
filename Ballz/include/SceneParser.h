@@ -16,19 +16,6 @@ BODY TYPES
 
 using namespace Ogre;
 
-enum BodyType
-{
-    Default = 0,
-    Pullup = 2,
-    Grab = 3,
-    Baloon = 4,
-    Climb = 5,
-    Climb2 = 6,
-    Rope = 7,
-    Trigger = 9,
-    Bridge = 10
-};
-
 struct TriggerAndIDs
 {
     TriggerInfo* trigger;
@@ -826,11 +813,17 @@ private:
                 body->attachNode(node);
 
             auto type = getElementValue(rootElement, "Type");
+			myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
 
-            myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
-            body->setType(Ogre::StringConverter::parseInt(type));
-            if (body->getType() == 11) body->setMaterialGroupID(wMaterials->selfIgnore_mat);
-            if (body->getType() == 12) body->setMaterialGroupID(wMaterials->playerIgnore_mat);
+			int typeID = Ogre::StringConverter::parseInt(type);
+                  
+			if (typeID == SelfIgnore)
+				body->setMaterialGroupID(wMaterials->selfIgnore_mat);
+			else
+				if (typeID == PlayerIgnore)
+				body->setMaterialGroupID(wMaterials->playerIgnore_mat);
+			else
+				body->setType(typeID);
 
             loadedBodies[ent->getName()] = body;
 
@@ -891,13 +884,22 @@ private:
             Real mass = Ogre::StringConverter::parseReal(massStr);
             body->setMassMatrix(mass, inertia);
 
-            auto type = getElementValue(rootElement, "Type");
-            myLog->logMessage("type je: " + type, LML_NORMAL);
-            body->setType(Ogre::StringConverter::parseInt(type));
+			auto type = getElementValue(rootElement, "Type");
+			myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
 
-            if (body->getType() == 2 || body->getType() == 5 || body->getType() == 6 || body->getType() == 8) body->setMaterialGroupID(wMaterials->flag_mat);
-            if (body->getType() == 11) body->setMaterialGroupID(wMaterials->selfIgnore_mat);
-            if (body->getType() == 12) body->setMaterialGroupID(wMaterials->playerIgnore_mat);
+			int typeID = Ogre::StringConverter::parseInt(type);
+
+			if (typeID == SelfIgnore)
+				body->setMaterialGroupID(wMaterials->selfIgnore_mat);
+			else
+				if (typeID == PlayerIgnore)
+					body->setMaterialGroupID(wMaterials->playerIgnore_mat);
+				else
+					body->setType(typeID);
+
+			if (typeID == Pullup_old || typeID == Climb || typeID == Climb_Pullup || Dynamic_Pullup == 8)
+				body->setMaterialGroupID(wMaterials->flag_mat);
+
             body->setCenterOfMass(offset);
             body->setLinearDamping(0.3);
             body->setPositionOrientation(node->_getDerivedPosition(), node->_getDerivedOrientation());
@@ -933,13 +935,21 @@ private:
             Real mass = Ogre::StringConverter::parseReal(massStr);
             body->setMassMatrix(mass, inertia);
 
-            auto type = getElementValue(rootElement, "Type");
+			auto type = getElementValue(rootElement, "Type");
+			myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
 
-            myLog->logMessage("type je: " + type, LML_NORMAL);
-            body->setType(Ogre::StringConverter::parseInt(type));
-            if (body->getType() == 2 || body->getType() == 5 || body->getType() == 6 || body->getType() == 8) body->setMaterialGroupID(wMaterials->flag_mat);
-            if (body->getType() == 11) body->setMaterialGroupID(wMaterials->selfIgnore_mat);
-            if (body->getType() == 12) body->setMaterialGroupID(wMaterials->playerIgnore_mat);
+			int typeID = Ogre::StringConverter::parseInt(type);
+
+			if (typeID == SelfIgnore)
+				body->setMaterialGroupID(wMaterials->selfIgnore_mat);
+			else
+				if (typeID == PlayerIgnore)
+					body->setMaterialGroupID(wMaterials->playerIgnore_mat);
+				else
+					body->setType(typeID);
+
+			if (typeID == Pullup_old || typeID == Climb || typeID == Climb_Pullup || Dynamic_Pullup == 8)
+				body->setMaterialGroupID(wMaterials->flag_mat);
 
             body->setCenterOfMass(offset);
             body->setLinearDamping(0.3);
@@ -1476,7 +1486,7 @@ private:
                         {
                             any_cast<bodyUserData*>(any)->trigger = trigger;
 
-                            if (!trigger->activationType) body->setType(9);
+							if (!trigger->activationType) body->setType(Trigger);
 
                             if (element->GetText() || (trigger->playerAction && trigger->activationType))
                                 body->setMaterialGroupID(wMaterials->trig_mat);
@@ -1508,7 +1518,7 @@ private:
                         {
                             any_cast<bodyUserData*>(any)->trigger = trigger;
 
-                            if (!trigger->activationType) body->setType(9);
+							if (!trigger->activationType) body->setType(Trigger);
 
                             if (element->GetText() || (trigger->playerAction && trigger->activationType))
                                 body->setMaterialGroupID(wMaterials->trig_mat);

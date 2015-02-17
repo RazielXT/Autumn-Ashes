@@ -1327,7 +1327,7 @@ void Player::updateStats()
         {
             if(!visi && noClimbTimer<=0)
             {
-                if(info.mBody->getType()==4)
+				if (info.mBody->getType() == Baloon)
                 {
                     Ogre::Any any = info.mBody->getOgreNode()->getUserAny();
 
@@ -1339,7 +1339,7 @@ void Player::updateStats()
                 }
             }
 
-            if(info.mBody->getType()==7 && !onRope && noClimbTimer<=0.25)
+			if (info.mBody->getType() == Rope  && !onRope && noClimbTimer <= 0.25)
             {
                 climbJoint = new OgreNewt::BallAndSocket(info.mBody, pbody, p ,0);
                 onRope=true;
@@ -1353,7 +1353,7 @@ void Player::updateStats()
         info = ray.getInfoAt(0);
         if (info.mBody)
         {
-            if (info.mBody->getType()==8)
+			if (info.mBody->getType() == Dynamic_Pullup)
             {
                 climbJoint = new OgreNewt::BallAndSocket(pbody, info.mBody,  pbody->getPosition()+Vector3(0,2,0) ,0);
                 visi=true;
@@ -1363,7 +1363,7 @@ void Player::updateStats()
                 climb_normal.normalise();
                 climb_yaw = Gbody->getOrientation().getYaw().valueRadians();
             }
-            else if (info.mBody->getType()==5 || info.mBody->getType()==2 || info.mBody->getType()==6)
+			else if (info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old || info.mBody->getType() == Climb_Pullup)
             {
                 climb_normal=info.mNormal.normalisedCopy();
 
@@ -1379,7 +1379,7 @@ void Player::updateStats()
 
                 startClimbing(info.mBody->getType());
 
-                if(info.mBody->getType()==2)
+				if (info.mBody->getType() == Pullup_old)
                 {
                     pullupPos=info.getBody()->getPosition().y-0.15f;
                     Vector3 pos=pbody->getPosition();
@@ -1401,7 +1401,7 @@ void Player::updateStats()
         info = ray.getInfoAt(0);
         if (info.mBody)
         {
-            if ((info.mBody->getType()==5 || info.mBody->getType()==2 || info.mBody->getType()==6)&& !nazemi)
+			if ((info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old || info.mBody->getType() == Climb_Pullup) && !nazemi)
             {
                 is_climbing=info.mBody->getType();
                 Ogre::Vector3 c_normal=info.mNormal.normalisedCopy();
@@ -1432,19 +1432,19 @@ void Player::updateStats()
         if (info.mBody)
         {
             //grabbable
-            if (info.mBody->getType()==3)
+			if (info.mBody->getType() == Grabbable)
             {
                 ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(0);
             }
             else
                 //climbable
-                if (info.mBody->getType()==2)
+				if (info.mBody->getType() == Pullup_old)
                 {
                     ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(2);
                 }
                 else
                     //trigger
-                    if(info.mBody->getType()==9)
+					if (info.mBody->getType() == Trigger)
                     {
                         Ogre::Any any = info.mBody->getUserData();
 
@@ -1539,7 +1539,7 @@ void Player::tryToGrab()
     if (info.mBody)
     {
         //grabbable
-        if (info.mBody->getType()==3)
+		if (info.mBody->getType() == Grabbable)
         {
             Gbody=info.mBody;
             Gbody->setMaterialGroupID(grab_mat);
@@ -1555,7 +1555,7 @@ void Player::tryToGrab()
         }
 
         //trigger
-        if(info.mBody->getType()==9)
+		if (info.mBody->getType() == Trigger)
         {
             Ogre::Any any = info.mBody->getUserData();
 
@@ -1615,7 +1615,7 @@ bool Player::canClimb(Direction direction, bool soundIfTrue, bool needSpeed, boo
     OgreNewt::BasicRaycast ray(m_World,targetPos,targetPos+climb_normal*-3 ,true);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
 
-    if (info.mBody && (info.mBody->getType()==6 || info.mBody->getType()==5 || info.mBody->getType()==2))
+	if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
     {
         if(soundIfTrue)
         {
@@ -1644,13 +1644,13 @@ bool Player::canClimb(Direction direction, bool soundIfTrue, bool needSpeed, boo
         ray = OgreNewt::BasicRaycast(m_World,targetPos,targetPos+climb_normal*-3 ,true);
         info = ray.getInfoAt(0);
 
-        if (info.mBody && (info.mBody->getType()==6 || info.mBody->getType()==5 || info.mBody->getType()==2))
+		if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
         {
             targetPos+=off;
             ray = OgreNewt::BasicRaycast(m_World,targetPos,targetPos+climb_normal*-3 ,true);
             info = ray.getInfoAt(0);
 
-            if (info.mBody && (info.mBody->getType()==6 || info.mBody->getType()==5 || info.mBody->getType()==2))
+			if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
             {
                 if(soundIfTrue)
                 {

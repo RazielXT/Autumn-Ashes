@@ -58,7 +58,7 @@ void BridgeMaker::makeBridge(Ogre::Vector3 position, Ogre::Vector3 target, Ogre:
     bridgeB->setCenterOfMass(offset);
     bridgeB->setPositionOrientation( position, planksOr );
     bridgeB->attachNode(bNode );
-    bridgeB->setType(10);
+	bridgeB->setType(Bridge);
 
     parent=bridgeB;
 
@@ -91,7 +91,7 @@ void BridgeMaker::makeBridge(Ogre::Vector3 position, Ogre::Vector3 target, Ogre:
         bridgeB->setCustomForceAndTorqueCallback<BridgeMaker>(&BridgeMaker::move_callback, this);
         bridgeB->setAngularDamping(Vector3(1,1,1)*0.6);
         bridgeB->setLinearDamping(0.6);
-        bridgeB->setType(10);
+		bridgeB->setType(Bridge);
 
         OgreNewt::BallAndSocket* b=new OgreNewt::BallAndSocket(parent,bridgeB,position+flatDir/2.0f+(float)i*flatDir,pinAngle);//+Vector3(0,0,scale*(0.9f+i*1.8f))
         b->setCollisionState(0);

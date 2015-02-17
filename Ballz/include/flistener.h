@@ -249,7 +249,7 @@ public:
         body->setMassMatrix( mass, mass*inertia );
         body->setCenterOfMass(offset);
         body->attachNode( node );
-        body->setType(3);
+		body->setType(Grabbable);
         body->setCustomForceAndTorqueCallback<MainListener>(&MainListener::default_callback, this);
         body->setPositionOrientation( Global::player->getBody()->getPosition()+Vector3(0,5,0), Ogre::Quaternion::IDENTITY );
     }
