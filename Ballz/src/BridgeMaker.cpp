@@ -43,7 +43,7 @@ void BridgeMaker::makeBridge(Ogre::Vector3 position, Ogre::Vector3 target, Ogre:
 
 
     Entity* bridgeEnd = mSceneMgr->createEntity("bridgePlank.mesh" );
-    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,bridgeEnd,1));
+    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,bridgeEnd,10));
     bridgeEnd->setMaterialName(material);
     bridgeEnd->setVisibilityFlags(visibilityFlag);
     OgreNewt::Body* bridgeB = new OgreNewt::Body( mWorld, col );
@@ -72,7 +72,7 @@ void BridgeMaker::makeBridge(Ogre::Vector3 position, Ogre::Vector3 target, Ogre:
         bNode->setScale(Vector3(scale));
         bridgeE->setVisibilityFlags(visibilityFlag);
         //rNode->_updateBounds();//showBoundingBox(true);
-        col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,bridgeE,1));
+        col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,bridgeE,10));
 
         bridgeB = new OgreNewt::Body( mWorld, col );
 

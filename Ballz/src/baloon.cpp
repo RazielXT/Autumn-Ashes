@@ -13,7 +13,7 @@ Baloon::Baloon(Ogre::SceneManager *mSceneM, OgreNewt::World *W, Ogre::Vector3 po
     mWorld=W;
 
     baloonEnt = mSceneMgr->createEntity(  "balon"+Ogre::StringConverter::toString(counter), "Sphere01.mesh" );
-    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,baloonEnt,1));
+    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,baloonEnt,10));
     baloonEnt->setMaterialName("testMat");
     baloonB = new OgreNewt::Body( mWorld, col );
     baloonNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
@@ -35,7 +35,7 @@ Baloon::Baloon(Ogre::SceneManager *mSceneM, OgreNewt::World *W, Ogre::Vector3 po
 
 
     ropeEnt = mSceneMgr->createEntity( "lano"+Ogre::StringConverter::toString(counter), "Cone02.mesh" );
-    col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,ropeEnt,1));
+    col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,ropeEnt,10));
     ropeB = new OgreNewt::Body( mWorld, col );
     ropeEnt->setMaterialName("lanoMat");
     col->calculateInertialMatrix(inertia, offset);

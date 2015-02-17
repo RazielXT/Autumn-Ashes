@@ -70,7 +70,7 @@ Player::Player(WorldMaterials* wMaterials)
     node->attachObject( ent );
     ent->setCastShadows( false );
     ent->setVisible(false);
-    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World,ent,1));
+    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World,ent,10));
     pbody = new OgreNewt::Body( m_World, col );
     pbody->setContinuousCollisionMode(1);
     uv = new OgreNewt::UpVector(pbody, Vector3::UNIT_Y);
@@ -113,7 +113,7 @@ Player::Player(WorldMaterials* wMaterials)
       mSceneMgr->getParticleSystem("Smoke")->setRenderQueueGroup(91);*/
 
     ent = mSceneMgr->createEntity( "ent_podstava", "cone_p2.mesh" );
-    col_p = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World,ent,1));
+    col_p = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World,ent,10));
 }
 
 Player::~Player ()

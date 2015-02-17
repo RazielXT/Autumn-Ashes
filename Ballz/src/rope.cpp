@@ -14,7 +14,7 @@ Rope::Rope(Ogre::SceneManager *mSceneM, OgreNewt::World *W, Ogre::Vector3 positi
     OgreNewt::Body* parent;
 
     Entity* ropeEnd = mSceneMgr->createEntity(  "rope"+Ogre::StringConverter::toString(counter++), "ropeV.mesh" );
-    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,ropeEnd,1));
+    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,ropeEnd,10));
     ropeEnd->setMaterialName("kamenbob10");
     OgreNewt::Body* ropeB = new OgreNewt::Body( mWorld, col );
     SceneNode* rNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
@@ -37,7 +37,7 @@ Rope::Rope(Ogre::SceneManager *mSceneM, OgreNewt::World *W, Ogre::Vector3 positi
         SceneNode* rNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
         rNode->attachObject( ropeE );
         rNode->setScale(Vector3(4,scale,4));
-        col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,ropeE,1));
+        col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,ropeE,10));
         rNode->setScale(Vector3(2,scale,2));
         //ropeE->setMaterialName("ropeM");
         ropeB = new OgreNewt::Body( mWorld, col );

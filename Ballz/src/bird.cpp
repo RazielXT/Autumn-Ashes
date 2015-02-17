@@ -11,7 +11,7 @@ Bird::Bird(Ogre::SceneManager *mSceneM, OgreNewt::World *W, Ogre::Vector3 positi
     tracker=tr;
 
     Entity* ent = mSceneM->createEntity(  "bird"+Ogre::StringConverter::toString(counter++), "Bird.mesh" );
-    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(W,ent,1));
+    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(W,ent,10));
     ent->setMaterialName("birdMat");
     OgreNewt::Body* mBody = new OgreNewt::Body( W, col );
     SceneNode* bNode2 = mSceneM->getRootSceneNode()->createChildSceneNode();
