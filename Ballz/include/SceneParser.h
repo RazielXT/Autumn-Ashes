@@ -559,8 +559,8 @@ private:
         grass->addDetailLevel<Forests::GrassPage>((float)maxRange, (float)transLength);
 
         TerrainHeightQueryData* offsets = new TerrainHeightQueryData();
-        offsets->offset_x = ent->getBoundingBox().getMaximum().y + node->getPosition().y;
-        offsets->offset_y = ent->getBoundingBox().getMinimum().y + node->getPosition().y;
+        offsets->offset_maxY = ent->getBoundingBox().getMaximum().y + node->getPosition().y;
+        offsets->offset_minY = ent->getBoundingBox().getMinimum().y + node->getPosition().y;
         offsets->world = Global::mWorld;
 
         Forests::GrassLoader *grassLoader = new Forests::GrassLoader(grass);
