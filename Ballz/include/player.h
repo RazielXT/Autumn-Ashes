@@ -95,7 +95,7 @@ public:
     void enableMovement(bool enable);
     void attachCamera(Ogre::Camera* cam);
     Ogre::Vector3 getFacingDirection();
-	bool canClimb(Direction direction, bool soundIfTrue = false, bool needSpeed = false, bool secondTerm = false);
+	bool canClimb(Direction direction, bool soundIfTrue = false, bool needSpeed = false, bool secondPhase = false);
     Ogre::SceneNode* getCamNode()
     {
         return camnode;
@@ -109,6 +109,9 @@ public:
 
 private:
 
+	void initBody();
+	void tryClimbToSide(Direction dir);
+
     bool alive;
     float timestep;
     OgreNewt::World* m_World;
@@ -118,12 +121,12 @@ private:
     OgreNewt::Body* pbody, *Gbody;
     Ogre::Vector3 climb_normal;
     irrklang::ISoundEngine* soundEngine;
-    bool stoji,vpravo,vlavo,vzad,vpred,nazemi,visi,leti,grabbed,onRope,camShaking, inControl, inMoveControl;
+    bool stoji,vpravo,vlavo,vzad,vpred,onGround,visi,leti,grabbed,onRope,camShaking, inControl, inMoveControl;
     Ogre::Vector3 forceDirection,gNormal,climbDir,lastSpeed;
     OgreNewt::MaterialID* stoji_mat, *ide_mat,*flag_mat,*grab_mat;
     Ogre::SceneNode* camnode, *necknode,* headnode,* shakeNode;
     OgreNewt::ConvexCollisionPtr col_p;
-    Ogre::Real camPitch,fallVelocity,bodyVelocity,bodySpeedAccum,acceleration,crouch_am,noClimbTimer,movespeed,walkSoundTimer,climb_yaw,climb_move_side,climb_move_vert,climb_pullup;
+    Ogre::Real camPitch,fallVelocity,bodyVelocity,bodySpeedAccum,startMoveBoost,crouch_am,noClimbTimer,movespeed,walkSoundTimer,climb_yaw,climb_move_side,climb_move_vert,climb_pullup;
     char fallPitch,crouch,cameraWalkFinisher,is_climbing;
     OgreNewt::BallAndSocket* climbJoint;
     Ogre::Real fallPitchSize,fallPitchTimer,cam_walking,head_turning,pullupPos;
