@@ -4,7 +4,6 @@
 EntityMovementReaction::EntityMovementReaction()
 {
     running=false;
-    id = 0;
 }
 
 EntityMovementReaction::~EntityMovementReaction()

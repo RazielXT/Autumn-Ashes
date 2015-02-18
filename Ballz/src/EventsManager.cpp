@@ -14,23 +14,23 @@ EventsManager::EventsManager()
 
 void EventsManager::activatePlayerTrigger(bodyUserData* t)
 {
-	auto trigger = t->trigger;
-	short a = trigger->playerAction;
+    auto trigger = t->trigger;
+    short a = trigger->playerAction;
 
-	std::map<short, std::vector<EventTask*>>::iterator it = trigger->tasks.find(a);
-	if (it != trigger->tasks.end())
-	{
-		for (unsigned int j = 0; j < (*it).second.size(); j++)
-		{
-			if ((*it).second.at(j)->taskDelay || (*it).second.at(j)->start())
-			{
-				Global::mEventsMgr->addCachedTask((*it).second.at(j));
-			}
-		}
+    std::map<short, std::vector<EventTask*>>::iterator it = trigger->tasks.find(a);
+    if (it != trigger->tasks.end())
+    {
+        for (unsigned int j = 0; j < (*it).second.size(); j++)
+        {
+            if ((*it).second.at(j)->taskDelay || (*it).second.at(j)->start())
+            {
+                Global::mEventsMgr->addCachedTask((*it).second.at(j));
+            }
+        }
 
-		if (trigger->cooldown>0)
-			Global::mEventsMgr->cooldownTrigger(t);
-	}
+        if (trigger->cooldown>0)
+            Global::mEventsMgr->cooldownTrigger(t);
+    }
 }
 
 void EventsManager::addCachedTask(EventTask* r)

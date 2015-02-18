@@ -30,7 +30,7 @@ public:
 
     EventsManager();
 
-	void activatePlayerTrigger(bodyUserData* trigger);
+    void activatePlayerTrigger(bodyUserData* trigger);
 
     void addCachedTask(EventTask* r);
 

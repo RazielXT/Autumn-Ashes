@@ -495,7 +495,7 @@ private:
         }
     }
 
-    std::string strok_str(std::string& txt, char delim)
+    std::string strtok_str(std::string& txt, char delim)
     {
         auto dPos = txt.find_first_of(delim);
         std::string ret = txt;
@@ -570,16 +570,16 @@ private:
 
         for (int i = 0; i < layersNum; i++)
         {
-            String curMat = strok_str(materials, delim);
-            Real curMinSizeW = Ogre::StringConverter::parseReal(strok_str(minSizesW, delim));
-            Real curMinSizeH = Ogre::StringConverter::parseReal(strok_str(minSizesH, delim));
-            Real curMaxSizeW = Ogre::StringConverter::parseReal(strok_str(maxSizesW, delim));
-            Real curMaxSizeH = Ogre::StringConverter::parseReal(strok_str(maxSizesH, delim));
+            String curMat = strtok_str(materials, delim);
+            Real curMinSizeW = Ogre::StringConverter::parseReal(strtok_str(minSizesW, delim));
+            Real curMinSizeH = Ogre::StringConverter::parseReal(strtok_str(minSizesH, delim));
+            Real curMaxSizeW = Ogre::StringConverter::parseReal(strtok_str(maxSizesW, delim));
+            Real curMaxSizeH = Ogre::StringConverter::parseReal(strtok_str(maxSizesH, delim));
 
-            Real curSwayDistr = Ogre::StringConverter::parseReal(strok_str(SwayDistributions, delim));
-            Real curSwayLen = Ogre::StringConverter::parseReal(strok_str(SwayLengths, delim));
-            Real curSwaySpeed = Ogre::StringConverter::parseReal(strok_str(SwaySpeeds, delim));
-            Real curDensity = Ogre::StringConverter::parseReal(strok_str(densities, delim));
+            Real curSwayDistr = Ogre::StringConverter::parseReal(strtok_str(SwayDistributions, delim));
+            Real curSwayLen = Ogre::StringConverter::parseReal(strtok_str(SwayLengths, delim));
+            Real curSwaySpeed = Ogre::StringConverter::parseReal(strtok_str(SwaySpeeds, delim));
+            Real curDensity = Ogre::StringConverter::parseReal(strtok_str(densities, delim));
 
             Forests::GrassLayer *layer = grassLoader->addLayer(curMat);
             layer->setMaterial(curMat);
@@ -594,14 +594,14 @@ private:
 
             if (usesDensityMap)
             {
-                String curDenMat = strok_str(densityMaps, delim);
+                String curDenMat = strtok_str(densityMaps, delim);
                 layer->setDensityMap(curDenMat);
                 myLog->logMessage("Grass Area loaded density map " + curDenMat, LML_NORMAL);
             }
 
             if (usesColorMap)
             {
-                String curColMat = strok_str(colorMaps, delim);
+                String curColMat = strtok_str(colorMaps, delim);
                 layer->setColorMap(curColMat);
                 myLog->logMessage("Grass Area loaded color map " + curColMat, LML_NORMAL);
             }
@@ -813,17 +813,16 @@ private:
                 body->attachNode(node);
 
             auto type = getElementValue(rootElement, "Type");
-			myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
+            myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
 
-			int typeID = Ogre::StringConverter::parseInt(type);
-                  
-			if (typeID == SelfIgnore)
-				body->setMaterialGroupID(wMaterials->selfIgnore_mat);
-			else
-				if (typeID == PlayerIgnore)
-				body->setMaterialGroupID(wMaterials->playerIgnore_mat);
-			else
-				body->setType(typeID);
+            int typeID = Ogre::StringConverter::parseInt(type);
+
+            if (typeID == SelfIgnore)
+                body->setMaterialGroupID(wMaterials->selfIgnore_mat);
+            else if (typeID == PlayerIgnore)
+                body->setMaterialGroupID(wMaterials->playerIgnore_mat);
+            else
+                body->setType(typeID);
 
             loadedBodies[ent->getName()] = body;
 
@@ -884,21 +883,20 @@ private:
             Real mass = Ogre::StringConverter::parseReal(massStr);
             body->setMassMatrix(mass, inertia);
 
-			auto type = getElementValue(rootElement, "Type");
-			myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
+            auto type = getElementValue(rootElement, "Type");
+            myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
 
-			int typeID = Ogre::StringConverter::parseInt(type);
+            int typeID = Ogre::StringConverter::parseInt(type);
 
-			if (typeID == SelfIgnore)
-				body->setMaterialGroupID(wMaterials->selfIgnore_mat);
-			else
-				if (typeID == PlayerIgnore)
-					body->setMaterialGroupID(wMaterials->playerIgnore_mat);
-				else
-					body->setType(typeID);
+            if (typeID == SelfIgnore)
+                body->setMaterialGroupID(wMaterials->selfIgnore_mat);
+            else if (typeID == PlayerIgnore)
+                body->setMaterialGroupID(wMaterials->playerIgnore_mat);
+            else
+                body->setType(typeID);
 
-			if (typeID == Pullup_old || typeID == Climb || typeID == Climb_Pullup || Dynamic_Pullup == 8)
-				body->setMaterialGroupID(wMaterials->flag_mat);
+            if (typeID == Pullup_old || typeID == Climb || typeID == Climb_Pullup || typeID == Dynamic_Pullup)
+                body->setMaterialGroupID(wMaterials->flag_mat);
 
             body->setCenterOfMass(offset);
             body->setLinearDamping(0.3);
@@ -935,21 +933,20 @@ private:
             Real mass = Ogre::StringConverter::parseReal(massStr);
             body->setMassMatrix(mass, inertia);
 
-			auto type = getElementValue(rootElement, "Type");
-			myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
+            auto type = getElementValue(rootElement, "Type");
+            myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
 
-			int typeID = Ogre::StringConverter::parseInt(type);
+            int typeID = Ogre::StringConverter::parseInt(type);
 
-			if (typeID == SelfIgnore)
-				body->setMaterialGroupID(wMaterials->selfIgnore_mat);
-			else
-				if (typeID == PlayerIgnore)
-					body->setMaterialGroupID(wMaterials->playerIgnore_mat);
-				else
-					body->setType(typeID);
+            if (typeID == SelfIgnore)
+                body->setMaterialGroupID(wMaterials->selfIgnore_mat);
+            else if (typeID == PlayerIgnore)
+                body->setMaterialGroupID(wMaterials->playerIgnore_mat);
+            else
+                body->setType(typeID);
 
-			if (typeID == Pullup_old || typeID == Climb || typeID == Climb_Pullup || Dynamic_Pullup == 8)
-				body->setMaterialGroupID(wMaterials->flag_mat);
+            if (typeID == Pullup_old || typeID == Climb || typeID == Climb_Pullup || typeID == Dynamic_Pullup)
+                body->setMaterialGroupID(wMaterials->flag_mat);
 
             body->setCenterOfMass(offset);
             body->setLinearDamping(0.3);
@@ -1290,7 +1287,7 @@ private:
                 er.task = r;
                 r->taskDelay = delay;
                 r->setUserData(data);
-                r->setIdentifier(id);
+                //r->setIdentifier(id);
                 er.id = Ogre::StringConverter::parseInt(action);
                 loadedTasks.push_back(er);
             }
@@ -1486,7 +1483,7 @@ private:
                         {
                             any_cast<bodyUserData*>(any)->trigger = trigger;
 
-							if (!trigger->activationType) body->setType(Trigger);
+                            if (!trigger->activationType) body->setType(Trigger);
 
                             if (element->GetText() || (trigger->playerAction && trigger->activationType))
                                 body->setMaterialGroupID(wMaterials->trig_mat);
@@ -1518,7 +1515,7 @@ private:
                         {
                             any_cast<bodyUserData*>(any)->trigger = trigger;
 
-							if (!trigger->activationType) body->setType(Trigger);
+                            if (!trigger->activationType) body->setType(Trigger);
 
                             if (element->GetText() || (trigger->playerAction && trigger->activationType))
                                 body->setMaterialGroupID(wMaterials->trig_mat);
@@ -1564,7 +1561,7 @@ private:
                             if (r != NULL)
                             {
                                 r->setUserData(ent);
-                                r->setIdentifier(id);
+                                //r->setIdentifier(id);
                                 r->taskDelay = delay;
 
                                 mEventMgr->addTask(r);
@@ -1602,7 +1599,7 @@ private:
                             if (r != NULL)
                             {
                                 r->setUserData(ent);
-                                r->setIdentifier(id);
+                                //r->setIdentifier(id);
                                 r->taskDelay = delay;
 
                                 mEventMgr->addTask(r);

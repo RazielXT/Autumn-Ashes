@@ -32,7 +32,7 @@ struct resLoop
 {
     struct resLoop* nextRes;
     struct resLoop* prevRes;
-    std::string* res;
+    std::string res;
     int w;
     int h;
 };

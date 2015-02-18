@@ -74,7 +74,7 @@ void createLevelTuto(WorldMaterials* wMaterials)
     Global::mWorld->setWorldSize(Vector3(-2000,-500,-2000),Vector3(2000,500,2000));
     SceneParser::instance.loadScene("../../media/park/park.scene", Global::mPagingMgr, wMaterials);
 
-    irrklang::ISound* music = Global::soundEngine->play2D("../../media/tokyostreetatnight.ogg",true , false, true, irrklang::ESM_AUTO_DETECT, true);
+    irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("tokyostreetatnight.ogg").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
     //music->setMinDistance(20);
     //music->setMaxDistance(100);
     music->setVolume(0.4);

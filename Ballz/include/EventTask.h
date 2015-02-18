@@ -15,14 +15,9 @@ public:
     virtual void setUserData(void* data);
     virtual bool start();
     virtual bool update(Ogre::Real tslf);
-    virtual void setIdentifier(short id);
 
     float taskDelay = 0;
     GameState stateExecution = PLAY;
-
-protected:
-
-    short id = 0;
 
 };
 

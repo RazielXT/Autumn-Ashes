@@ -23,10 +23,10 @@ private:
 
 class Player
 {
-	enum Direction
-	{
-		Left, Right, Up, Down
-	};
+    enum Direction
+    {
+        Left, Right, Up, Down
+    };
 
 public:
 
@@ -95,7 +95,7 @@ public:
     void enableMovement(bool enable);
     void attachCamera(Ogre::Camera* cam);
     Ogre::Vector3 getFacingDirection();
-	bool canClimb(Direction direction, bool soundIfTrue = false, bool needSpeed = false, bool secondPhase = false);
+    bool canClimb(Direction direction, bool soundIfTrue = false, bool needSpeed = false, bool secondPhase = false);
     Ogre::SceneNode* getCamNode()
     {
         return camnode;
@@ -109,8 +109,8 @@ public:
 
 private:
 
-	void initBody();
-	void tryClimbToSide(Direction dir);
+    void initBody();
+    void tryClimbToSide(Direction dir);
 
     bool alive;
     float timestep;

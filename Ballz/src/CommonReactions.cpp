@@ -189,7 +189,7 @@ PlaySound::PlaySound(Ogre::String soundName)
     char* token;
 
     char* temp = strtok_s(const_cast<char *> (text),"/",&token);
-    sound = "../../media/"+Ogre::String(temp);
+    sound = AudioLibrary::getPath(Ogre::String(temp));
 
     temp = strtok_s(NULL,"/",&token);
     if(temp==NULL)

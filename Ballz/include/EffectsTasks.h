@@ -20,6 +20,7 @@ private:
     float totalTime, effectStr;
     bool doneBlink;
     PostProcessMgr* mgr;
+    short id;
 };
 
 #endif

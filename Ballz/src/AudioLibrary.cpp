@@ -80,18 +80,18 @@ void AudioLibrary::playFallSound(float x, float y, float z, int groundID)
     case 0:
     case 2:
     case 8:
-        music = soundEngine->play3D(getPath("../../media/grass_run_02.wav").c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
+        music = soundEngine->play3D(getPath("grass_run_02.wav").c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
         music->setMaxDistance(10);
         break;
     case 4:
     case 5:
     case 6:
-        music = soundEngine->play3D(getPath("../../media/wood_run_02.wav").c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
+        music = soundEngine->play3D(getPath("wood_run_02.wav").c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
         music->setMaxDistance(10);
         break;
     case 3:
     default:
-        music = soundEngine->play3D(getPath("../../media/metalgrate1.wav").c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
+        music = soundEngine->play3D(getPath("metalgrate1.wav").c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
         music->setMaxDistance(10);
         break;
 

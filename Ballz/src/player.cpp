@@ -66,7 +66,7 @@ Player::Player(WorldMaterials* wMaterials)
     mCamera->setPosition(0,0,0);
     mCamera->lookAt(Vector3(0,0,-1));
 
-	initBody();
+    initBody();
 
     /*  Ogre::SceneNode* panode = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0,0,0));
       Ogre::ParticleSystem* ps=mSceneMgr->createParticleSystem("Smoke", "Examples/Smoke");
@@ -81,50 +81,50 @@ Player::~Player ()
 
 void Player::initBody()
 {
-	Ogre::Entity* ent = mSceneMgr->createEntity("name", "play2.mesh");
-	SceneNode* node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CenterNode");
-	node->attachObject(ent);
-	ent->setCastShadows(false);
-	ent->setVisible(false);
-	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World, ent, 10));
-	pbody = new OgreNewt::Body(m_World, col);
+    Ogre::Entity* ent = mSceneMgr->createEntity("name", "play2.mesh");
+    SceneNode* node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CenterNode");
+    node->attachObject(ent);
+    ent->setCastShadows(false);
+    ent->setVisible(false);
+    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World, ent, 10));
+    pbody = new OgreNewt::Body(m_World, col);
 
-	uv = new OgreNewt::UpVector(pbody, Vector3::UNIT_Y);
-	uv2 = new OgreNewt::UpVector(pbody, Vector3::UNIT_Z);
+    uv = new OgreNewt::UpVector(pbody, Vector3::UNIT_Y);
+    uv2 = new OgreNewt::UpVector(pbody, Vector3::UNIT_Z);
 
-	Ogre::Vector3 inertia, offset;
-	col->calculateInertialMatrix(inertia, offset);
+    Ogre::Vector3 inertia, offset;
+    col->calculateInertialMatrix(inertia, offset);
 #ifdef OGRENEWT_NO_COLLISION_SHAREDPTR
-	//no longer need the collision shape object
-	delete col;
+    //no longer need the collision shape object
+    delete col;
 #endif
-	pbody->setMassMatrix(0.5, Vector3(20, 20, 20));
-	pbody->setCenterOfMass(offset);
-	pbody->setContinuousCollisionMode(1);
-	pbody->setPositionOrientation(Ogre::Vector3(0, 100, 0), Ogre::Quaternion::IDENTITY);
-	pbody->setLinearDamping(0.8);
-	pbody->attachNode(node);
-	pbody->setAutoSleep(0);
-	//body->setMaterialGroupID(pmat);
-	pbody->setCustomForceAndTorqueCallback<Player>(&Player::move_callback, this);
+    pbody->setMassMatrix(0.5, Vector3(20, 20, 20));
+    pbody->setCenterOfMass(offset);
+    pbody->setContinuousCollisionMode(1);
+    pbody->setPositionOrientation(Ogre::Vector3(0, 100, 0), Ogre::Quaternion::IDENTITY);
+    pbody->setLinearDamping(0.8);
+    pbody->attachNode(node);
+    pbody->setAutoSleep(0);
+    //body->setMaterialGroupID(pmat);
+    pbody->setCustomForceAndTorqueCallback<Player>(&Player::move_callback, this);
 
 
-	necknode = node->createChildSceneNode("NeckNod");
-	necknode->setPosition(Vector3(0, 1, 0));
+    necknode = node->createChildSceneNode("NeckNod");
+    necknode->setPosition(Vector3(0, 1, 0));
 
-	headnode = necknode->createChildSceneNode("HeadNod");
-	headnode->setPosition(Vector3(0, 0, 0));
+    headnode = necknode->createChildSceneNode("HeadNod");
+    headnode->setPosition(Vector3(0, 0, 0));
 
-	shakeNode = headnode->createChildSceneNode("ShakeHeadNod");
-	shakeNode->setPosition(Vector3(0, 0, 0));
-	shaker = new Shaker(shakeNode);
+    shakeNode = headnode->createChildSceneNode("ShakeHeadNod");
+    shakeNode->setPosition(Vector3(0, 0, 0));
+    shaker = new Shaker(shakeNode);
 
-	camnode = shakeNode->createChildSceneNode("CamNod");
-	camnode->attachObject(mCamera);
-	camnode->setPosition(Vector3(0, 0, 0));
+    camnode = shakeNode->createChildSceneNode("CamNod");
+    camnode->attachObject(mCamera);
+    camnode->setPosition(Vector3(0, 0, 0));
 
-	ent = mSceneMgr->createEntity("ent_podstava", "cone_p2.mesh");
-	col_p = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World, ent, 10));
+    ent = mSceneMgr->createEntity("ent_podstava", "cone_p2.mesh");
+    col_p = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World, ent, 10));
 }
 
 void Player::enableControl(bool enable)
@@ -171,7 +171,7 @@ void Player::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threadInd
     Vector3 s=(p2-p)*10;
 
     Vector3 o=obj->getVelocity();
-	Real rad = s.angleBetween(o).valueDegrees();
+    Real rad = s.angleBetween(o).valueDegrees();
 
     if(rad>45)
     {
@@ -181,7 +181,7 @@ void Player::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threadInd
     obj->setForce(s);
     obj->setPositionOrientation(obj->getPosition(),necknode->getOrientation());
 
-	//release if too far away
+    //release if too far away
     if(s.squaredLength()>2025)
     {
         Gbody->setMaterialGroupID(m_World->getDefaultMaterialID());
@@ -405,7 +405,7 @@ void Player::skoc()
         pohlad.normalise();
         Real angle=abs(climb_normal.angleBetween(pohlad).valueDegrees());
 
-		//jump from wall
+        //jump from wall
         if(angle>50)
         {
             canClimb(Down,true);
@@ -417,7 +417,7 @@ void Player::skoc()
         }
     }
     else
-    //if(nazemi)
+        //if(nazemi)
     {
         Vector3 vel=pbody->getVelocity();
         pbody->setVelocity(vel+Vector3(0,9,0));
@@ -671,7 +671,7 @@ void Player::updateHead(Real time)
         }
     }
     else
-    //not crouching
+        //not crouching
     {
 
         //walking camera
@@ -763,78 +763,78 @@ void Player::update(Real time)
 
     forceDirection=Vector3::ZERO;
 
-	if (!is_climbing)
-	{
-		if (!vpravo && !vpred && !vzad && !vlavo)
-		{
-			pbody->setMaterialGroupID(stoji_mat);
-			stoji = true;
-			walkSoundTimer = 0.37;
-		}
-		else
-		{
-			if (stoji)
-				startMoveBoost = 1;
+    if (!is_climbing)
+    {
+        if (!vpravo && !vpred && !vzad && !vlavo)
+        {
+            pbody->setMaterialGroupID(stoji_mat);
+            stoji = true;
+            walkSoundTimer = 0.37;
+        }
+        else
+        {
+            if (stoji)
+                startMoveBoost = 1;
 
-			pbody->setMaterialGroupID(ide_mat);
-			stoji = false;
+            pbody->setMaterialGroupID(ide_mat);
+            stoji = false;
 
-			Vector3 movedDir = Vector3::ZERO;
-			if (vpred) movedDir.z--;
-			if (vzad) movedDir.z++;
-			if (vpravo) movedDir.x++;
-			if (vlavo) movedDir.x--;
+            Vector3 movedDir = Vector3::ZERO;
+            if (vpred) movedDir.z--;
+            if (vzad) movedDir.z++;
+            if (vpravo) movedDir.x++;
+            if (vlavo) movedDir.x--;
 
-			forceDirection = mCamera->getDerivedOrientation()*movedDir;
-			forceDirection.normalise();
+            forceDirection = mCamera->getDerivedOrientation()*movedDir;
+            forceDirection.normalise();
 
-			if (onGround)
-			{
-				Vector3 lookDirection = mCamera->getDerivedOrientation()*Vector3(0, 0, -1);
-				lookDirection.y = 0;
-				Vector3 vel = pbody->getVelocity();
-				vel.y = 0;
+            if (onGround)
+            {
+                Vector3 lookDirection = mCamera->getDerivedOrientation()*Vector3(0, 0, -1);
+                lookDirection.y = 0;
+                Vector3 vel = pbody->getVelocity();
+                vel.y = 0;
 
-				if (gNormal.y > 0.8f)
-					forceDirection += (1 - gNormal.y)*forceDirection * 2;
+                if (gNormal.y > 0.8f)
+                    forceDirection += (1 - gNormal.y)*forceDirection * 2;
 
-				Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
+                Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
 
-				if (dirAngleDiff > 45 && vpred && !vzad && !vpravo && !vlavo)
-					forceDirection *= movespeed*dirAngleDiff / 30;
-				else
-				{
-					Real ebd = 1.0f;
-					//brzdi pri velkej rychlosti z kopca
-					if (bodyVelocity > 9)
-					{
-						ebd = 1 / (bodyVelocity - 8);
-					}
+                if (dirAngleDiff > 45 && vpred && !vzad && !vpravo && !vlavo)
+                    forceDirection *= movespeed*dirAngleDiff / 30;
+                else
+                {
+                    Real ebd = 1.0f;
+                    //brzdi pri velkej rychlosti z kopca
+                    if (bodyVelocity > 9)
+                    {
+                        ebd = 1 / (bodyVelocity - 8);
+                    }
 
-					forceDirection *= movespeed*ebd*slowingDown;
-				}
+                    forceDirection *= movespeed*ebd*slowingDown;
+                }
 
-				if (gNormal.y > 0.7f)
-				{
-					Vector3 antiSlide = -gNormal;
-					antiSlide.y *= -1;
-					forceDirection += antiSlide * 20 * (1 - gNormal.y);
-				}
-				else
-				{
-					//too steep
-					forceDirection *= 0.25f;
-				}
+                if (gNormal.y > 0.7f)
+                {
+                    Vector3 antiSlide = -gNormal;
+                    antiSlide.y *= -1;
+                    forceDirection += antiSlide * 20 * (1 - gNormal.y);
+                }
+                else
+                {
+                    //too steep
+                    forceDirection *= 0.25f;
+                }
 
-				forceDirection += forceDirection*startMoveBoost;
+                forceDirection += forceDirection*startMoveBoost;
 
-				if (crouch > 0) forceDirection /= 3.0f;
-			}
-			//midair
-			else
-				forceDirection *= 3 / (1 + bodyVelocity);
-		}
-	}
+                if (crouch > 0) forceDirection /= 3.0f;
+            }
+            //midair
+            else
+                forceDirection *= 3 / (1 + bodyVelocity);
+        }
+    }
 
     //making pullup
     if(climb_pullup)
@@ -1094,7 +1094,7 @@ void Player::update(Real time)
                     }
             }
             else
-            //not moving yet
+                //not moving yet
             {
                 if(vpred)
                 {
@@ -1132,12 +1132,12 @@ void Player::update(Real time)
                 }
                 else if(vlavo)
                 {
-					tryClimbToSide(Left);
-                    
+                    tryClimbToSide(Left);
+
                 }
                 else if(vpravo)
                 {
-					tryClimbToSide(Right);
+                    tryClimbToSide(Right);
                 }
                 else
                     climbDir=Vector3::ZERO;
@@ -1181,26 +1181,26 @@ void Player::update(Real time)
 
 void Player::tryClimbToSide(Direction dir)
 {
-	float dir = (dir == Left) ? 1 : -1;
+    float f = (dir == Left) ? 1.f : -1.f;
 
-	if (canClimb(dir, true, true))
-	{
-		pbody->setMaterialGroupID(ide_mat);
-		climbDir = climb_normal;
-		climbDir.y = 0;
-		climbDir.normalise();
-		Real temp(climbDir.x);
-		climbDir.x = dir * - 2 * climbDir.z;
-		climbDir.z = dir * 2 * temp;
+    if (canClimb(dir, true, true))
+    {
+        pbody->setMaterialGroupID(ide_mat);
+        climbDir = climb_normal;
+        climbDir.y = 0;
+        climbDir.normalise();
+        Real temp(climbDir.x);
+        climbDir.x = f * - 2 * climbDir.z;
+        climbDir.z = f * 2 * temp;
 
-		Vector3 movement = pbody->getVelocity();
-		movement.y = 0;
+        Vector3 movement = pbody->getVelocity();
+        movement.y = 0;
 
-		if (!climb_move_side && movement.squaredLength() > 0.01f)
-			climb_move_side = dir * - 2;
-	}
-	else
-		pbody->setMaterialGroupID(stoji_mat);
+        if (!climb_move_side && movement.squaredLength() > 0.01f)
+            climb_move_side = f * - 2;
+    }
+    else
+        pbody->setMaterialGroupID(stoji_mat);
 }
 
 void Player::updateStats()
@@ -1293,7 +1293,7 @@ void Player::updateStats()
         {
             if(!visi && noClimbTimer<=0)
             {
-				if (info.mBody->getType() == Baloon)
+                if (info.mBody->getType() == BaloonT)
                 {
                     Ogre::Any any = info.mBody->getOgreNode()->getUserAny();
 
@@ -1305,7 +1305,7 @@ void Player::updateStats()
                 }
             }
 
-			if (info.mBody->getType() == Rope  && !onRope && noClimbTimer <= 0.25)
+            if (info.mBody->getType() == Rope  && !onRope && noClimbTimer <= 0.25)
             {
                 climbJoint = new OgreNewt::BallAndSocket(info.mBody, pbody, p ,0);
                 onRope=true;
@@ -1319,7 +1319,7 @@ void Player::updateStats()
         info = ray.getInfoAt(0);
         if (info.mBody)
         {
-			if (info.mBody->getType() == Dynamic_Pullup)
+            if (info.mBody->getType() == Dynamic_Pullup)
             {
                 climbJoint = new OgreNewt::BallAndSocket(pbody, info.mBody,  pbody->getPosition()+Vector3(0,2,0) ,0);
                 visi=true;
@@ -1329,7 +1329,7 @@ void Player::updateStats()
                 climb_normal.normalise();
                 climb_yaw = Gbody->getOrientation().getYaw().valueRadians();
             }
-			else if (info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old || info.mBody->getType() == Climb_Pullup)
+            else if (info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old || info.mBody->getType() == Climb_Pullup)
             {
                 climb_normal=info.mNormal.normalisedCopy();
 
@@ -1345,7 +1345,7 @@ void Player::updateStats()
 
                 startClimbing(info.mBody->getType());
 
-				if (info.mBody->getType() == Pullup_old)
+                if (info.mBody->getType() == Pullup_old)
                 {
                     pullupPos=info.getBody()->getPosition().y-0.15f;
                     Vector3 pos=pbody->getPosition();
@@ -1367,7 +1367,7 @@ void Player::updateStats()
         info = ray.getInfoAt(0);
         if (info.mBody)
         {
-			if ((info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old || info.mBody->getType() == Climb_Pullup) && !onGround)
+            if ((info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old || info.mBody->getType() == Climb_Pullup) && !onGround)
             {
                 is_climbing=info.mBody->getType();
                 Ogre::Vector3 c_normal=info.mNormal.normalisedCopy();
@@ -1398,19 +1398,19 @@ void Player::updateStats()
         if (info.mBody)
         {
             //grabbable
-			if (info.mBody->getType() == Grabbable)
+            if (info.mBody->getType() == Grabbable)
             {
                 ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(0);
             }
             else
                 //climbable
-				if (info.mBody->getType() == Pullup_old)
+                if (info.mBody->getType() == Pullup_old)
                 {
                     ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(2);
                 }
                 else
                     //trigger
-					if (info.mBody->getType() == Trigger)
+                    if (info.mBody->getType() == Trigger)
                     {
                         Ogre::Any any = info.mBody->getUserData();
 
@@ -1505,7 +1505,7 @@ void Player::tryToGrab()
     if (info.mBody)
     {
         //grabbable
-		if (info.mBody->getType() == Grabbable)
+        if (info.mBody->getType() == Grabbable)
         {
             Gbody=info.mBody;
             Gbody->setMaterialGroupID(grab_mat);
@@ -1521,15 +1521,15 @@ void Player::tryToGrab()
         }
 
         //trigger
-		if (info.mBody->getType() == Trigger)
+        if (info.mBody->getType() == Trigger)
         {
             Ogre::Any any = info.mBody->getUserData();
 
             if(!any.isEmpty())
             {
                 bodyUserData* a0=Ogre::any_cast<bodyUserData*>(any);
-				if (a0->enabledTrigger)
-					Global::mEventsMgr->activatePlayerTrigger(a0);
+                if (a0->enabledTrigger)
+                    Global::mEventsMgr->activatePlayerTrigger(a0);
             }
         }
     }
@@ -1581,7 +1581,7 @@ bool Player::canClimb(Direction direction, bool soundIfTrue, bool needSpeed, boo
     OgreNewt::BasicRaycast ray(m_World,targetPos,targetPos+climb_normal*-3 ,true);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
 
-	if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
+    if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
     {
         if(soundIfTrue)
         {
@@ -1610,13 +1610,13 @@ bool Player::canClimb(Direction direction, bool soundIfTrue, bool needSpeed, boo
         ray = OgreNewt::BasicRaycast(m_World,targetPos,targetPos+climb_normal*-3 ,true);
         info = ray.getInfoAt(0);
 
-		if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
+        if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
         {
             targetPos+=off;
             ray = OgreNewt::BasicRaycast(m_World,targetPos,targetPos+climb_normal*-3 ,true);
             info = ray.getInfoAt(0);
 
-			if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
+            if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
             {
                 if(soundIfTrue)
                 {

@@ -203,6 +203,22 @@ int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
     return 0;
 }
 
+std::string strtok_str(std::string& txt, char delim)
+{
+    auto dPos = txt.find_first_of(delim);
+    std::string ret = txt;
+
+    if (dPos != std::string::npos)
+    {
+        ret.erase(dPos, std::string::npos);
+        txt.erase(0, dPos + 1);
+    }
+    else
+        txt.clear();
+
+    return ret;
+}
+
 GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::RenderWindow* mWin,Ogre::RenderSystem* rs,irrklang::ISoundEngine* eng)
 {
     engine=eng;
@@ -240,33 +256,26 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
     resLoop* trLoopC=resolutionsLoop;
     std::string s=mFoundResolutions.at(i/2);
 
-    char * cstr;
-    cstr = new char [s.size()+1];
-    strcpy (cstr, s.c_str());
-    std::string s1=strtok(cstr," ");
-    strtok(NULL," ");
-    std::string s2=strtok(NULL," ");
+    std::string s1=strtok_str(s,' ');
+    strtok_str(s, ' ');
+    std::string s2 = strtok_str(s, ' ');
     std::string res=s1+"x"+s2;
-    resolutionsLoop->res=new std::string(res);
+    resolutionsLoop->res = res;
     resolutionsLoop->w=Ogre::StringConverter::parseInt(s1);
     resolutionsLoop->h=Ogre::StringConverter::parseInt(s2);
 
     for(int o=(i/2)+1; o<i; o++)
     {
         std::string s=mFoundResolutions.at(o);
-        char * cstr;
-        cstr = new char [s.size()+1];
-        strcpy (cstr, s.c_str());
 
-
-        std::string s1=strtok(cstr," ");
-        strtok(NULL," ");
-        std::string s2=strtok(NULL," ");
+        std::string s1 = strtok_str(s, ' ');
+        strtok_str(s, ' ');
+        std::string s2 = strtok_str(s, ' ');
         std::string res=s1+"x"+s2;
         resLoop* trLoopN= new resLoop();
         trLoopN->w=Ogre::StringConverter::parseInt(s1);
         trLoopN->h=Ogre::StringConverter::parseInt(s2);
-        trLoopN->res=new std::string(res);
+        trLoopN->res=res;
         if(Ogre::StringUtil::match(currentR,res)) trLoopC=trLoopN;
         trLoopN->prevRes=trLoop;
         trLoop->nextRes=trLoopN;
@@ -279,7 +288,7 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
     Ogre::LogManager::getSingleton().getDefaultLog()->logMessage("Possible resolutions: ",Ogre::LML_NORMAL);
     for(int o=(i/2); o<i; o++)
     {
-        Ogre::LogManager::getSingleton().getDefaultLog()->logMessage(*resolutionsLoop->res,Ogre::LML_NORMAL);
+        Ogre::LogManager::getSingleton().getDefaultLog()->logMessage(resolutionsLoop->res,Ogre::LML_NORMAL);
         resolutionsLoop=resolutionsLoop->nextRes;
     }
 
@@ -793,7 +802,7 @@ int GuiOverlay::mainMenuPressed()
                 if(c->width()==600 || c->width()==350)
                 {
                     resolutionsLoop=resolutionsLoop->nextRes;
-                    cOptionButtonA->mButton->text(*resolutionsLoop->res);
+                    cOptionButtonA->mButton->text(resolutionsLoop->res);
                     gConfig->height=resolutionsLoop->h;
                     gConfig->width=resolutionsLoop->w;
                     ri->yes_background(1);

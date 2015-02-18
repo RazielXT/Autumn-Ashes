@@ -11,6 +11,8 @@ QuickScaryBlink::QuickScaryBlink()
 
 bool QuickScaryBlink::start()
 {
+    id = 1;
+
     if(timer>0)
         return false;
 
