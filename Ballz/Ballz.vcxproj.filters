@@ -320,6 +320,9 @@
     <ClInclude Include="include\WaterArea.h">
       <Filter>Header Files\tasks</Filter>
     </ClInclude>
+    <ClInclude Include="include\ListLoop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AutumnAshes.rc">

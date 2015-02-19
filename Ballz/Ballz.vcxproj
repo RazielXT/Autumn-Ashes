@@ -196,6 +196,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\HandGripTask.h" />
     <ClInclude Include="include\InputListener.h" />
     <ClInclude Include="include\levels.h" />
+    <ClInclude Include="include\ListLoop.h" />
     <ClInclude Include="include\LoadNextPart.h" />
     <ClInclude Include="include\lvl1Tasks.h" />
     <ClInclude Include="include\lvl_update.h" />

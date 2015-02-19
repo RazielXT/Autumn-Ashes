@@ -2,6 +2,7 @@
 #define GUIOVR_H
 
 #include "Gorilla.h"
+#include "ListLoop.h"
 
 enum mMenuEnum {START,OPTIONS,QUIT,RESUME,RESTART};
 enum menusEnum {MAINM,STARTM,OPTIONSM,QUITM,TOSM,FRSM,TOOM,FROM,TOQM,FRQM};
@@ -28,10 +29,8 @@ struct buttonLoop
     Gorilla::Caption* mButton;
 };
 
-struct resLoop
+struct resolution
 {
-    struct resLoop* nextRes;
-    struct resLoop* prevRes;
     std::string res;
     int w;
     int h;
@@ -63,12 +62,16 @@ struct GameConfig
 };
 
 
+
 class GuiOverlay
 {
 public:
 
     GuiOverlay(Ogre::SceneManager * sceneMgr, Ogre::Camera* mCam,Ogre::RenderWindow* mWin,Ogre::RenderSystem* rs,irrklang::ISoundEngine* eng);
-    ~GuiOverlay () {}
+    ~GuiOverlay()
+    {
+        clear();
+    }
 
     void setMainMenu();
     void setIngameMenu();
@@ -100,15 +103,20 @@ private:
     void createIngameMenuButtons();
     void createLevelsMenuButtons();
 
-    MenuLoop* mMenuState;
-    MenuLoop* gMenuState;
+    void clear();
+
+    ListLoop<mMenuEnum>* mMenuState;
+    ListLoop<mMenuEnum>* gMenuState;
     menusEnum currentMenu;
     oMenuEnum oMenuState;
-    buttonLoop* cButton;
-    buttonLoop* cOptionButtonA;
-    buttonLoop* firstOptionButton;
-    buttonLoop* firstOptionButtonA;
-    resLoop* resolutionsLoop;
+
+    ListLoop<Gorilla::Caption*>* cButton;
+    ListLoop<Gorilla::Caption*>* cOptionButtonA;
+    ListLoop<Gorilla::Caption*>* firstOptionButton;
+    ListLoop<Gorilla::Caption*>* firstOptionButtonA;
+
+    ListLoop<resolution>* resolutionsLoop;
+
     char movingDir;
     bool moving, lvlMoving;
     Gorilla::Rectangle* ri;
@@ -128,7 +136,7 @@ private:
     Gorilla::Caption*       useTextCaption;
     Gorilla::Caption*       debugCaption;
     Gorilla::Rectangle*      mousePointer;
-    struct GameConfig* gConfig;
+    GameConfig gConfig;
     bool ingamemenu;
     float infoTextTimer;
     bool shownInfoText;

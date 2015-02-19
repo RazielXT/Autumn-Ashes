@@ -34,9 +34,9 @@ void GuiOverlay::showOptions()
     }
 
     cButton=firstOptionButton;
-    cButton->mButton->colour(Ogre::ColourValue(1,1,1,1));
+    cButton->value->colour(Ogre::ColourValue(1, 1, 1, 1));
     cOptionButtonA=firstOptionButtonA;
-    cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,1));
+    cOptionButtonA->value->colour(Ogre::ColourValue(1, 1, 1, 1));
 }
 
 void GuiOverlay::showLevels()
@@ -60,11 +60,11 @@ void GuiOverlay::saveCfg()
 {
     std::ofstream cfgFile("config.ini");
     cfgFile << "[renderer]\n";
-    cfgFile << "width = " << std::string(Ogre::StringConverter::toString(gConfig->width) + "\n");
-    cfgFile << "height = " << std::string(Ogre::StringConverter::toString(gConfig->height) + "\n");
-    cfgFile << "shadow = " << std::string(Ogre::StringConverter::toString(gConfig->shadow) + "\n");
-    cfgFile << "ssao = " << std::string(Ogre::StringConverter::toString(gConfig->ssao) + "\n");
-    cfgFile << "fullscreen = " << std::string(Ogre::StringConverter::toString(gConfig->fs) + "\n");
+    cfgFile << "width = " << std::string(Ogre::StringConverter::toString(gConfig.width) + "\n");
+    cfgFile << "height = " << std::string(Ogre::StringConverter::toString(gConfig.height) + "\n");
+    cfgFile << "shadow = " << std::string(Ogre::StringConverter::toString(gConfig.shadow) + "\n");
+    cfgFile << "ssao = " << std::string(Ogre::StringConverter::toString(gConfig.ssao) + "\n");
+    cfgFile << "fullscreen = " << std::string(Ogre::StringConverter::toString(gConfig.fs) + "\n");
 }
 
 void GuiOverlay::closeOptions()
@@ -99,6 +99,15 @@ void GuiOverlay::closeLevels()
     }
 }
 
+void GuiOverlay::clear()
+{
+    delete mMenuState;
+    delete gMenuState;
+    delete cButton;
+    delete cOptionButtonA;
+    delete resolutionsLoop;
+}
+
 int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
 {
 
@@ -111,7 +120,7 @@ int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
             {
                 movingDir=1;
                 moving=true;
-                mMenuState=mMenuState->prevState;
+                mMenuState=mMenuState->previous;
             }
             break;
         case OIS::KC_RIGHT:
@@ -119,17 +128,17 @@ int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
             {
                 movingDir=-1;
                 moving=true;
-                mMenuState=mMenuState->nextState;
+                mMenuState=mMenuState->next;
             }
             break;
 
         case OIS::KC_RETURN:
-            if(mMenuState->mState==QUIT)
+            if (mMenuState->value == QUIT)
             {
                 saveCfg();
                 return 1;
             }
-            if(mMenuState->mState==OPTIONS)
+            if (mMenuState->value == OPTIONS)
             {
                 showOptions();
             }
@@ -223,7 +232,6 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
 {
     engine=eng;
 
-    gConfig=new GameConfig();
     Ogre::ConfigFile cfgFile;
     cfgFile.loadDirect("config.ini");
     std::string wString = cfgFile.getSetting("width", "renderer");
@@ -231,11 +239,11 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
     std::string shdString = cfgFile.getSetting("shadow", "renderer");
     std::string ssaoString = cfgFile.getSetting("ssao", "renderer");
     std::string fsString = cfgFile.getSetting("fullscreen", "renderer");
-    gConfig->width=Ogre::StringConverter::parseInt(wString);
-    gConfig->height=Ogre::StringConverter::parseInt(hString);
-    gConfig->shadow=Ogre::StringConverter::parseInt(shdString);
-    gConfig->ssao=Ogre::StringConverter::parseBool(ssaoString);
-    gConfig->fs=Ogre::StringConverter::parseBool(fsString);
+    gConfig.width=Ogre::StringConverter::parseInt(wString);
+    gConfig.height=Ogre::StringConverter::parseInt(hString);
+    gConfig.shadow=Ogre::StringConverter::parseInt(shdString);
+    gConfig.ssao=Ogre::StringConverter::parseBool(ssaoString);
+    gConfig.fs=Ogre::StringConverter::parseBool(fsString);
 
     Ogre::ConfigOptionMap& CurrentRendererOptions = rs->getConfigOptions();
     Ogre::ConfigOptionMap::iterator configItr = CurrentRendererOptions.begin();
@@ -250,19 +258,18 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
     }
 
     int i=mFoundResolutions.size();
-    std::string currentR=Ogre::StringConverter::toString(gConfig->width)+"x"+Ogre::StringConverter::toString(gConfig->height);
+    std::string currentR=Ogre::StringConverter::toString(gConfig.width)+"x"+Ogre::StringConverter::toString(gConfig.height);
 
-    resLoop* trLoop=resolutionsLoop= new resLoop();
-    resLoop* trLoopC=resolutionsLoop;
+    resolutionsLoop= new ListLoop<resolution>();
     std::string s=mFoundResolutions.at(i/2);
 
     std::string s1=strtok_str(s,' ');
     strtok_str(s, ' ');
     std::string s2 = strtok_str(s, ' ');
     std::string res=s1+"x"+s2;
-    resolutionsLoop->res = res;
-    resolutionsLoop->w=Ogre::StringConverter::parseInt(s1);
-    resolutionsLoop->h=Ogre::StringConverter::parseInt(s2);
+    resolutionsLoop->value.res = res;
+    resolutionsLoop->value.w = Ogre::StringConverter::parseInt(s1);
+    resolutionsLoop->value.h = Ogre::StringConverter::parseInt(s2);
 
     for(int o=(i/2)+1; o<i; o++)
     {
@@ -272,62 +279,34 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
         strtok_str(s, ' ');
         std::string s2 = strtok_str(s, ' ');
         std::string res=s1+"x"+s2;
-        resLoop* trLoopN= new resLoop();
-        trLoopN->w=Ogre::StringConverter::parseInt(s1);
-        trLoopN->h=Ogre::StringConverter::parseInt(s2);
-        trLoopN->res=res;
-        if(Ogre::StringUtil::match(currentR,res)) trLoopC=trLoopN;
-        trLoopN->prevRes=trLoop;
-        trLoop->nextRes=trLoopN;
-        trLoop=trLoopN;
+        resolution trLoopN;
+        trLoopN.w=Ogre::StringConverter::parseInt(s1);
+        trLoopN.h=Ogre::StringConverter::parseInt(s2);
+        trLoopN.res=res;
+
+        auto added = resolutionsLoop->addToEnd(trLoopN);
+
+        if (Ogre::StringUtil::match(currentR, res)) resolutionsLoop = added;
     }
-    resolutionsLoop->prevRes=trLoop;
-    trLoop->nextRes=resolutionsLoop;
-    resolutionsLoop=trLoopC;
 
     Ogre::LogManager::getSingleton().getDefaultLog()->logMessage("Possible resolutions: ",Ogre::LML_NORMAL);
     for(int o=(i/2); o<i; o++)
     {
-        Ogre::LogManager::getSingleton().getDefaultLog()->logMessage(resolutionsLoop->res,Ogre::LML_NORMAL);
-        resolutionsLoop=resolutionsLoop->nextRes;
+        Ogre::LogManager::getSingleton().getDefaultLog()->logMessage(resolutionsLoop->value.res,Ogre::LML_NORMAL);
+        resolutionsLoop=resolutionsLoop->next;
     }
 
-    mMenuState= new MenuLoop();
-    MenuLoop* mMenuState0= new MenuLoop();
-    MenuLoop* mMenuState2= new MenuLoop();
-    mMenuState->mState=START;
-    mMenuState->nextState=mMenuState2;
-    mMenuState->prevState=mMenuState0;
-    mMenuState0->mState=QUIT;
-    mMenuState0->nextState=mMenuState;
-    mMenuState0->prevState=mMenuState2;
-    mMenuState2->mState=OPTIONS;
-    mMenuState2->nextState=mMenuState0;
-    mMenuState2->prevState=mMenuState;
+    mMenuState = new ListLoop<mMenuEnum>(START);
+    mMenuState->addToEnd(OPTIONS);
+    mMenuState->addToEnd(QUIT);
 
     oMenuState= RESOLUTION;
 
-    gMenuState= new MenuLoop();
-    MenuLoop* gMenuState0= new MenuLoop();
-    MenuLoop* gMenuState1= new MenuLoop();
-    MenuLoop* gMenuState3= new MenuLoop();
-    MenuLoop* gMenuState4= new MenuLoop();
-
-    gMenuState0->mState=QUIT;
-    gMenuState0->nextState=gMenuState1;
-    gMenuState0->prevState=gMenuState4;
-    gMenuState1->mState=START;
-    gMenuState1->nextState=gMenuState;
-    gMenuState1->prevState=gMenuState0;
-    gMenuState->mState=RESUME;
-    gMenuState->nextState=gMenuState3;
-    gMenuState->prevState=gMenuState1;
-    gMenuState3->mState=RESTART;
-    gMenuState3->nextState=gMenuState4;
-    gMenuState3->prevState=gMenuState;
-    gMenuState4->mState=OPTIONS;
-    gMenuState4->nextState=gMenuState0;
-    gMenuState4->prevState=gMenuState3;
+    gMenuState = new ListLoop<mMenuEnum>(RESUME);
+    gMenuState->addToEnd(RESTART);
+    gMenuState->addToEnd(OPTIONS);
+    gMenuState->addToEnd(QUIT);
+    gMenuState->addToEnd(START);
 
     currentMenu=MAINM;
 
@@ -386,68 +365,47 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
 
 void GuiOverlay::createOptionMenuButtons()
 {
-    cButton=firstOptionButton=new buttonLoop();
-    buttonLoop* cButton2=new buttonLoop();
-    buttonLoop* cButton3=new buttonLoop();
-    buttonLoop* cButton4=new buttonLoop();
-    cButton->prevState=cButton4;
-    cButton->nextState=cButton2;
-    cButton2->prevState=cButton;
-    cButton2->nextState=cButton3;
-    cButton3->prevState=cButton2;
-    cButton3->nextState=cButton4;
-    cButton4->prevState=cButton3;
-    cButton4->nextState=cButton;
+    cButton = firstOptionButton = new ListLoop<Gorilla::Caption*>();
+
     Gorilla::Caption* caption = mLayer->createCaption(48, 350, 1060 , "Resolution");
     caption->size(600,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
-    cButton->mButton=caption;
+    cButton->value = caption;
     caption = mLayer->createCaption(48, 350, 1150 , "Fullscreen");
     caption->size(601,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
-    cButton2->mButton=caption;
+    cButton->addToEnd(caption);
     caption = mLayer->createCaption(48, 350, 1240 , "Shadows");
     caption->size(602,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
-    cButton3->mButton=caption;
+    cButton->addToEnd(caption);
     caption = mLayer->createCaption(48, 350, 1330 , "SSAO");
     caption->size(603,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
-    cButton4->mButton=caption;
+    cButton->addToEnd(caption);
 
-    cOptionButtonA=firstOptionButtonA=new buttonLoop();
-    buttonLoop* cOptionButtonA2=new buttonLoop();
-    buttonLoop* cOptionButtonA3=new buttonLoop();
-    buttonLoop* cOptionButtonA4=new buttonLoop();
-    cOptionButtonA->prevState=cOptionButtonA4;
-    cOptionButtonA->nextState=cOptionButtonA2;
-    cOptionButtonA2->prevState=cOptionButtonA;
-    cOptionButtonA2->nextState=cOptionButtonA3;
-    cOptionButtonA3->prevState=cOptionButtonA2;
-    cOptionButtonA3->nextState=cOptionButtonA4;
-    cOptionButtonA4->prevState=cOptionButtonA3;
-    cOptionButtonA4->nextState=cOptionButtonA;
+    cOptionButtonA = firstOptionButtonA = new ListLoop<Gorilla::Caption*>();
 
     ri= mLayer->createRectangle(720,1005,217,35);
     ri->background_image("restartimage");
     ri->no_background();
 
-    std::string resolutionStr=Ogre::StringConverter::toString(gConfig->width)+"x"+Ogre::StringConverter::toString(gConfig->height);
+    std::string resolutionStr=Ogre::StringConverter::toString(gConfig.width)+"x"+Ogre::StringConverter::toString(gConfig.height);
     caption = mLayer->createCaption(48, 1000, 1060 , resolutionStr);
     caption->size(350,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
-    cOptionButtonA->mButton=caption;
-    if(gConfig->fs)
+    cOptionButtonA->value=caption;
+    if(gConfig.fs)
         caption = mLayer->createCaption(48, 1000, 1150 , "On");
     else
         caption = mLayer->createCaption(48, 1000, 1150 , "Off");
@@ -455,10 +413,10 @@ void GuiOverlay::createOptionMenuButtons()
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
-    cOptionButtonA2->mButton=caption;
-    if(gConfig->shadow==0)
+    cOptionButtonA->addToEnd(caption);
+    if(gConfig.shadow==0)
         caption = mLayer->createCaption(48, 1000, 1240 , "Low");
-    else if(gConfig->shadow==1)
+    else if(gConfig.shadow==1)
         caption = mLayer->createCaption(48, 1000, 1240 , "Medium");
     else
         caption = mLayer->createCaption(48, 1000, 1240 , "High");
@@ -466,8 +424,8 @@ void GuiOverlay::createOptionMenuButtons()
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
-    cOptionButtonA3->mButton=caption;
-    if(gConfig->ssao)
+    cOptionButtonA->addToEnd(caption);
+    if(gConfig.ssao)
         caption = mLayer->createCaption(48, 1000, 1330 , "On");
     else
         caption = mLayer->createCaption(48, 1000, 1330 , "Off");
@@ -475,7 +433,7 @@ void GuiOverlay::createOptionMenuButtons()
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
-    cOptionButtonA4->mButton=caption;
+    cOptionButtonA->addToEnd(caption);
 }
 
 
@@ -592,8 +550,8 @@ void GuiOverlay::setIngameMenu()
     createLevelsMenuButtons();
     currentMenu=MAINM;
 
-    while(gMenuState->mState!=RESUME)
-        gMenuState = gMenuState->nextState;
+    while(gMenuState->value!=RESUME)
+        gMenuState = gMenuState->next;
 
     ingamemenu = true;
 }
@@ -627,7 +585,7 @@ void GuiOverlay::mouseMoveUpdate(int x,int y)
             Gorilla::Caption* c=(*myIterator);
             if(c->intersects(pos))
             {
-                if(!(cButton->mButton->width()==c->width() || cOptionButtonA->mButton->width()==c->width()))
+                if (!(cButton->value->width() == c->width() || cOptionButtonA->value->width() == c->width()))
                 {
                     int found1 = 0,found2 = 0;
 
@@ -661,14 +619,14 @@ void GuiOverlay::mouseMoveUpdate(int x,int y)
 
                     if(found1)
                     {
-                        cButton->mButton->colour(Ogre::ColourValue(1,1,1,0.3));
-                        cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,0.3));
-                        while(cButton->mButton->width()!=found1)
-                            cButton=cButton->prevState;
-                        while(cOptionButtonA->mButton->width()!=found2)
-                            cOptionButtonA=cOptionButtonA->prevState;
-                        cButton->mButton->colour(Ogre::ColourValue(1,1,1,1));
-                        cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,1));
+                        cButton->value->colour(Ogre::ColourValue(1, 1, 1, 0.3));
+                        cOptionButtonA->value->colour(Ogre::ColourValue(1, 1, 1, 0.3));
+                        while (cButton->value->width() != found1)
+                            cButton=cButton->previous;
+                        while (cOptionButtonA->value->width() != found2)
+                            cOptionButtonA=cOptionButtonA->previous;
+                        cButton->value->colour(Ogre::ColourValue(1, 1, 1, 1));
+                        cOptionButtonA->value->colour(Ogre::ColourValue(1, 1, 1, 1));
 
                         engine->play2D(OVER_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                     }
@@ -695,24 +653,24 @@ int GuiOverlay::mainMenuPressed()
             {
                 if(!ingamemenu)
                 {
-                    if((mMenuState->mState==START && Ogre::StringUtil::match(c->text(),"Quit")) ||
-                            (mMenuState->mState==OPTIONS && Ogre::StringUtil::match(c->text(),"Start"))||
-                            (mMenuState->mState==QUIT && Ogre::StringUtil::match(c->text(),"Options"))
-                      )
+                    if ((mMenuState->value == START && Ogre::StringUtil::match(c->text(), "Quit")) ||
+                            (mMenuState->value == OPTIONS && Ogre::StringUtil::match(c->text(), "Start")) ||
+                            (mMenuState->value == QUIT && Ogre::StringUtil::match(c->text(), "Options"))
+                       )
                     {
                         movingDir=1;
                         moving=true;
-                        mMenuState=mMenuState->prevState;
+                        mMenuState=mMenuState->previous;
                         engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                     }
-                    else if((mMenuState->mState==START && Ogre::StringUtil::match(c->text(),"Options")) ||
-                            (mMenuState->mState==OPTIONS && Ogre::StringUtil::match(c->text(),"Quit"))||
-                            (mMenuState->mState==QUIT && Ogre::StringUtil::match(c->text(),"Start"))
-                           )
+                    else if ((mMenuState->value == START && Ogre::StringUtil::match(c->text(), "Options")) ||
+                             (mMenuState->value == OPTIONS && Ogre::StringUtil::match(c->text(), "Quit")) ||
+                             (mMenuState->value == QUIT && Ogre::StringUtil::match(c->text(), "Start"))
+                            )
                     {
                         movingDir=-1;
                         moving=true;
-                        mMenuState=mMenuState->nextState;
+                        mMenuState=mMenuState->next;
                         engine->play2D(SWITCH_MENU_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                     }
                     else if(Ogre::StringUtil::match(c->text(),"Quit"))
@@ -723,35 +681,35 @@ int GuiOverlay::mainMenuPressed()
                     {
                         showLevels();
                     }
-                    else if(mMenuState->mState==OPTIONS)
+                    else if (mMenuState->value == OPTIONS)
                     {
                         showOptions();
                     }
                 }
                 else
                 {
-                    if((gMenuState->mState==QUIT && Ogre::StringUtil::match(c->text(),"Options")) ||
-                            (gMenuState->mState==START && Ogre::StringUtil::match(c->text(),"Quit"))||
-                            (gMenuState->mState==RESUME && Ogre::StringUtil::match(c->text(),"Start")) ||
-                            (gMenuState->mState==RESTART && Ogre::StringUtil::match(c->text(),"Resume"))||
-                            (gMenuState->mState==OPTIONS && Ogre::StringUtil::match(c->text(),"Restart"))
-                      )
+                    if ((gMenuState->value == QUIT && Ogre::StringUtil::match(c->text(), "Options")) ||
+                            (gMenuState->value == START && Ogre::StringUtil::match(c->text(), "Quit")) ||
+                            (gMenuState->value == RESUME && Ogre::StringUtil::match(c->text(), "Start")) ||
+                            (gMenuState->value == RESTART && Ogre::StringUtil::match(c->text(), "Resume")) ||
+                            (gMenuState->value == OPTIONS && Ogre::StringUtil::match(c->text(), "Restart"))
+                       )
                     {
                         movingDir=1;
                         moving=true;
-                        gMenuState=gMenuState->prevState;
+                        gMenuState=gMenuState->previous;
                         engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                     }
-                    else if((gMenuState->mState==QUIT && Ogre::StringUtil::match(c->text(),"Start")) ||
-                            (gMenuState->mState==START && Ogre::StringUtil::match(c->text(),"Resume"))||
-                            (gMenuState->mState==RESUME && Ogre::StringUtil::match(c->text(),"Restart")) ||
-                            (gMenuState->mState==RESTART && Ogre::StringUtil::match(c->text(),"Options"))||
-                            (gMenuState->mState==OPTIONS && Ogre::StringUtil::match(c->text(),"Quit"))
-                           )
+                    else if ((gMenuState->value == QUIT && Ogre::StringUtil::match(c->text(), "Start")) ||
+                             (gMenuState->value == START && Ogre::StringUtil::match(c->text(), "Resume")) ||
+                             (gMenuState->value == RESUME && Ogre::StringUtil::match(c->text(), "Restart")) ||
+                             (gMenuState->value == RESTART && Ogre::StringUtil::match(c->text(), "Options")) ||
+                             (gMenuState->value == OPTIONS && Ogre::StringUtil::match(c->text(), "Quit"))
+                            )
                     {
                         movingDir=-1;
                         moving=true;
-                        gMenuState=gMenuState->nextState;
+                        gMenuState=gMenuState->next;
                         engine->play2D(SWITCH_MENU_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                     }
                     else if(Ogre::StringUtil::match(c->text(),"Quit"))
@@ -773,7 +731,7 @@ int GuiOverlay::mainMenuPressed()
                         clearMenu();
                         return -1;
                     }
-                    else if(Ogre::StringUtil::match(c->text(),"Options") && gMenuState->mState==OPTIONS)
+                    else if (Ogre::StringUtil::match(c->text(), "Options") && gMenuState->value == OPTIONS)
                     {
                         showOptions();
                     }
@@ -781,7 +739,7 @@ int GuiOverlay::mainMenuPressed()
             }
             else if(currentMenu==OPTIONSM)
             {
-                if(ingamemenu && gMenuState->mState==OPTIONS || !ingamemenu && mMenuState->mState==OPTIONS)
+                if (ingamemenu && gMenuState->value == OPTIONS || !ingamemenu && mMenuState->value == OPTIONS)
                 {
                     closeOptions();
                 }
@@ -801,30 +759,30 @@ int GuiOverlay::mainMenuPressed()
             {
                 if(c->width()==600 || c->width()==350)
                 {
-                    resolutionsLoop=resolutionsLoop->nextRes;
-                    cOptionButtonA->mButton->text(resolutionsLoop->res);
-                    gConfig->height=resolutionsLoop->h;
-                    gConfig->width=resolutionsLoop->w;
+                    resolutionsLoop=resolutionsLoop->next;
+                    cOptionButtonA->value->text(resolutionsLoop->value.res);
+                    gConfig.height = resolutionsLoop->value.h;
+                    gConfig.width = resolutionsLoop->value.w;
                     ri->yes_background(1);
 
                     engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                 }
                 if(c->width()==601 || c->width()==351)
                 {
-                    if(gConfig->fs)
+                    if(gConfig.fs)
                     {
-                        cOptionButtonA->mButton->text("Off");
-                        gConfig->fs = false;
+                        cOptionButtonA->value->text("Off");
+                        gConfig.fs = false;
                     }
                     else
                     {
-                        cOptionButtonA->mButton->text("On");
-                        gConfig->fs = true;
+                        cOptionButtonA->value->text("On");
+                        gConfig.fs = true;
                     }
                     ri->yes_background(1);
 
                     engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
-                    /*if(gConfig->fshadowR)
+                    /*if(gConfig.fshadowR)
                     {cOptionButtonA->mButton->text("Low"); mSceneMgr->setShadowTextureSettings(512,4, PF_FLOAT32_R);}
                     else
                     {cOptionButtonA->mButton->text("High"); mSceneMgr->setShadowTextureSettings(1024,4, PF_FLOAT32_R);}
@@ -836,37 +794,37 @@ int GuiOverlay::mainMenuPressed()
                 }
                 if(c->width()==602 || c->width()==352)
                 {
-                    if(gConfig->shadow == 0)
+                    if(gConfig.shadow == 0)
                     {
-                        cOptionButtonA->mButton->text("Medium");
-                        gConfig->shadow = 1;
+                        cOptionButtonA->value->text("Medium");
+                        gConfig.shadow = 1;
                     }
-                    else if(gConfig->shadow == 1)
+                    else if(gConfig.shadow == 1)
                     {
-                        cOptionButtonA->mButton->text("High");
-                        gConfig->shadow = 2;
+                        cOptionButtonA->value->text("High");
+                        gConfig.shadow = 2;
                     }
-                    else if(gConfig->shadow == 2)
+                    else if(gConfig.shadow == 2)
                     {
-                        cOptionButtonA->mButton->text("Low");
-                        gConfig->shadow = 0;
+                        cOptionButtonA->value->text("Low");
+                        gConfig.shadow = 0;
                     }
 
                     engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                 }
                 if(c->width()==603 || c->width()==353)
                 {
-                    if(gConfig->ssao)
+                    if(gConfig.ssao)
                     {
-                        cOptionButtonA->mButton->text("Off");
+                        cOptionButtonA->value->text("Off");
                         (Global::mPPMgr)->setSSAO(false);
-                        gConfig->ssao = false;
+                        gConfig.ssao = false;
                     }
                     else
                     {
-                        cOptionButtonA->mButton->text("On");
+                        cOptionButtonA->value->text("On");
                         (Global::mPPMgr)->setSSAO(true);
-                        gConfig->ssao = true;
+                        gConfig.ssao = true;
                     }
 
                     engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
