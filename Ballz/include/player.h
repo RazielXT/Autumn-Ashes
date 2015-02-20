@@ -18,7 +18,7 @@ public:
 
 private:
 
-    float rollingLeft, rollingDuration;
+    float rollingLeft = 0, rollingDuration;
     Ogre::SceneNode* rollNode;
 
     bool camShaking = false;

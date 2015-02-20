@@ -294,8 +294,11 @@ void Player::releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 }
 void Player::movedMouse(const OIS::MouseEvent &e)
 {
-    mouseX = (int) (-1*e.state.X.rel*timestep);
+	if (!rolling)
+		mouseX = (int) (-1*e.state.X.rel*timestep);
+
     int mouseY = (int) (-1*e.state.Y.rel*timestep);
+
     rotateCamera(mouseX/10.0f,mouseY/10.0f);
 }
 
@@ -448,7 +451,7 @@ void Player::manageFall()
 
             if (dirAngleDiff < 45)
             {
-                rolling = shaker->doRoll(1.0f, headnode);
+                rolling = shaker->doRoll(0.75f, headnode);
             }
         }
 
@@ -1627,7 +1630,7 @@ Shaker::~Shaker()
 
 float Shaker::doRoll(float duration, Ogre::SceneNode* rNode)
 {
-    if (rollingLeft)
+    if (rollingLeft>0)
         return rollingLeft;
 
     rollNode = rNode;
@@ -1638,7 +1641,7 @@ float Shaker::doRoll(float duration, Ogre::SceneNode* rNode)
 
 void Shaker::updateCameraShake(float time)
 {
-    if (rollingLeft)
+    if (rollingLeft>0)
     {
         rollingLeft -= time;
         Ogre::Radian roll(0);
@@ -1650,8 +1653,8 @@ void Shaker::updateCameraShake(float time)
         }
         else
         {
-            roll = ((rollingDuration - rollingLeft)*Ogre::Math::TWO_PI);
-            heightDiff = -2 * std::min(rollingDuration - rollingLeft, rollingLeft);
+            roll = ((rollingDuration - rollingLeft) / rollingDuration*-Ogre::Math::TWO_PI);
+            heightDiff = -1 * std::min(rollingDuration - rollingLeft, rollingLeft);
         }
 
         Ogre::Quaternion q(roll, Vector3(1,0,0));
