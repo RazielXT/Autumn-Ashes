@@ -82,6 +82,8 @@ void GuiOverlay::closeOptions()
     }
 
     saveCfg();
+
+    Global::mWindow->setFullscreen(gConfig.fs, gConfig.width, gConfig.height);
 }
 
 void GuiOverlay::closeLevels()
@@ -261,7 +263,7 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
     std::string currentR=Ogre::StringConverter::toString(gConfig.width)+"x"+Ogre::StringConverter::toString(gConfig.height);
 
     resolutionsLoop= new ListLoop<resolution>();
-    std::string s=mFoundResolutions.at(i/2);
+    std::string s=mFoundResolutions.at(0);
 
     std::string s1=strtok_str(s,' ');
     strtok_str(s, ' ');
@@ -271,7 +273,7 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
     resolutionsLoop->value.w = Ogre::StringConverter::parseInt(s1);
     resolutionsLoop->value.h = Ogre::StringConverter::parseInt(s2);
 
-    for(int o=(i/2)+1; o<i; o++)
+    for(int o=1; o<i; o++)
     {
         std::string s=mFoundResolutions.at(o);
 
@@ -286,11 +288,12 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
 
         auto added = resolutionsLoop->addToEnd(trLoopN);
 
-        if (Ogre::StringUtil::match(currentR, res)) resolutionsLoop = added;
+        if (Ogre::StringUtil::match(currentR, res))
+            resolutionsLoop = added;
     }
 
     Ogre::LogManager::getSingleton().getDefaultLog()->logMessage("Possible resolutions: ",Ogre::LML_NORMAL);
-    for(int o=(i/2); o<i; o++)
+    for(int o=0; o<i; o++)
     {
         Ogre::LogManager::getSingleton().getDefaultLog()->logMessage(resolutionsLoop->value.res,Ogre::LML_NORMAL);
         resolutionsLoop=resolutionsLoop->next;
@@ -393,10 +396,6 @@ void GuiOverlay::createOptionMenuButtons()
     cButton->addToEnd(caption);
 
     cOptionButtonA = firstOptionButtonA = new ListLoop<Gorilla::Caption*>();
-
-    ri= mLayer->createRectangle(720,1005,217,35);
-    ri->background_image("restartimage");
-    ri->no_background();
 
     std::string resolutionStr=Ogre::StringConverter::toString(gConfig.width)+"x"+Ogre::StringConverter::toString(gConfig.height);
     caption = mLayer->createCaption(48, 1000, 1060 , resolutionStr);
@@ -763,7 +762,6 @@ int GuiOverlay::mainMenuPressed()
                     cOptionButtonA->value->text(resolutionsLoop->value.res);
                     gConfig.height = resolutionsLoop->value.h;
                     gConfig.width = resolutionsLoop->value.w;
-                    ri->yes_background(1);
 
                     engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                 }
@@ -779,7 +777,6 @@ int GuiOverlay::mainMenuPressed()
                         cOptionButtonA->value->text("On");
                         gConfig.fs = true;
                     }
-                    ri->yes_background(1);
 
                     engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                     /*if(gConfig.fshadowR)
@@ -958,7 +955,6 @@ void GuiOverlay::updateLevelsMove(Ogre::Real time)
             c->top(c->top()+rotSpeed);
         }
 
-        ri->top(ri->top()+rotSpeed);
     }
 }
 
@@ -993,8 +989,6 @@ void GuiOverlay::updateOptionsMove(Ogre::Real time)
         Gorilla::Caption* c=(*myIterator);
         c->top(c->top()+rotSpeed);
     }
-
-    ri->top(ri->top()+rotSpeed);
 }
 
 
@@ -1060,7 +1054,7 @@ void GuiOverlay::showUseGui(UiInfo id)
         case Ui_Pickup:
             useTextCaption->text("pickup");
             break;
-		case Ui_Use:
+        case Ui_Use:
             useTextCaption->text("use");
             break;
         case Ui_Climb:

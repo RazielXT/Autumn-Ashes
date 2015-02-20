@@ -22,7 +22,7 @@ void PagingManager::clear()
 
 void PagingManager::update()
 {
-	auto it = pagedGeometries.begin();
+    auto it = pagedGeometries.begin();
 
     while(it != pagedGeometries.end())
     {

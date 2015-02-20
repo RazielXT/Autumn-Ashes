@@ -65,7 +65,7 @@ void AudioLibrary::playWalkingSound(float x, float y, float z, int groundID)
     if (Global::timestep < 1)
         music->getSoundEffectControl()->enableWavesReverbSoundEffect(0, -10 * Global::timestep, 2600, 0.5);
 
-	music->drop();
+    music->drop();
 }
 
 void AudioLibrary::playFallSound(float x, float y, float z, int groundID)
@@ -104,7 +104,7 @@ void AudioLibrary::playFallSound(float x, float y, float z, int groundID)
     if (Global::timestep < 1)
         music->getSoundEffectControl()->enableWavesReverbSoundEffect(0, -10 * Global::timestep, 2600, 0.5);
 
-	music->drop();
+    music->drop();
 }
 
 void AudioLibrary::fillMaterialAudio()

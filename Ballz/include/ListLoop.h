@@ -28,7 +28,7 @@ public:
         auto it = this;
         while (!it->last) it = it->next;
 
-        last = false;
+        it->last = false;
 
         auto added = new ListLoop<T>(data, false, true);
         added->previous = it;

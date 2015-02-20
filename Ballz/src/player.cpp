@@ -51,7 +51,7 @@ Player::Player(WorldMaterials* wMaterials)
     inMoveControl=true;
     immortal=false;
     alive=true;
-	rolling = false;
+    rolling = false;
     camPitch=0;
     lastSpeed=0;
     stoji_mat = wMaterials->stoji_mat;
@@ -336,7 +336,7 @@ void Player::skoc()
     if(climb_pullup)
         return;
 
-	if(visi)
+    if(visi)
     {
         delete climbJoint;
 
@@ -436,21 +436,21 @@ void Player::manageFall()
         {
             die();
         }
-		else
-		{
-			Vector3 vel = pbody->getVelocity();
-			vel.y = 0;
+        else
+        {
+            Vector3 vel = pbody->getVelocity();
+            vel.y = 0;
 
-			Vector3 lookDirection = mCamera->getDerivedOrientation()*Vector3(0, 0, -1);
-			lookDirection.y = 0;
+            Vector3 lookDirection = mCamera->getDerivedOrientation()*Vector3(0, 0, -1);
+            lookDirection.y = 0;
 
-			Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
+            Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
 
-			if (dirAngleDiff < 45)
-			{
-				rolling = shaker->doRoll(1.0f, headnode);
-			}
-		}
+            if (dirAngleDiff < 45)
+            {
+                rolling = shaker->doRoll(1.0f, headnode);
+            }
+        }
 
         *ppFall=std::min(fallVelocity/7.0f,8.0f);
 
@@ -465,7 +465,7 @@ void Player::manageFall()
         if(timestep<1)
             music->getSoundEffectControl()->enableWavesReverbSoundEffect(0,-10*timestep,2600,0.5);
 
-		music->drop();
+        music->drop();
 
     }
 
@@ -543,9 +543,9 @@ void Player::rotateCamera(Real hybX,Real hybY)
 
     if(!is_climbing)
     {
-		//damp turning speed if moving quickly midair
-		if (!onGround && bodyVelocity>10)
-			hybX *= std::max(0.f, (100-bodyVelocity)/90.f);
+        //damp turning speed if moving quickly midair
+        if (!onGround && bodyVelocity>10)
+            hybX *= std::max(0.f, (100-bodyVelocity)/90.f);
 
         necknode->yaw(Degree(hybX), Node::TS_WORLD);
     }
@@ -833,11 +833,11 @@ void Player::update(Real time)
         }
     }
 
-	if (rolling>0)
-	{
-		rolling -= tslf;
-		forceDirection += mCamera->getDerivedOrientation()*Vector3(0,0,-0.5f);
-	}
+    if (rolling>0)
+    {
+        rolling -= tslf;
+        forceDirection += mCamera->getDerivedOrientation()*Vector3(0,0,-0.5f);
+    }
 
     //making pullup
     if(climb_pullup)
@@ -1439,10 +1439,10 @@ void Player::startClimbing(char type)
 
     is_climbing=type;
 
-	if (type > 2)
-		startCameraShake(0.2f, 0.3f, 0.4f);
-	else
-		startCameraShake(0.15f, 0.1f, 0.15f);
+    if (type > 2)
+        startCameraShake(0.2f, 0.3f, 0.4f);
+    else
+        startCameraShake(0.15f, 0.1f, 0.15f);
 
     if(bodySpeedAccum>5)
         bodySpeedAccum = 5;
@@ -1627,41 +1627,41 @@ Shaker::~Shaker()
 
 float Shaker::doRoll(float duration, Ogre::SceneNode* rNode)
 {
-	if (rollingLeft)
-		return rollingLeft;
+    if (rollingLeft)
+        return rollingLeft;
 
-	rollNode = rNode;
-	rollingDuration = rollingLeft = duration;
+    rollNode = rNode;
+    rollingDuration = rollingLeft = duration;
 
-	return duration;
+    return duration;
 }
 
 void Shaker::updateCameraShake(float time)
 {
-	if (rollingLeft)
-	{
-		rollingLeft -= time;
-		Ogre::Radian roll(0);
-		float heightDiff = 0;
+    if (rollingLeft)
+    {
+        rollingLeft -= time;
+        Ogre::Radian roll(0);
+        float heightDiff = 0;
 
-		if (rollingLeft < 0)
-		{
-			rollingLeft = 0;
-		}
-		else
-		{
-			roll = ((rollingDuration - rollingLeft)*Ogre::Math::TWO_PI);
-			heightDiff = -2 * std::min(rollingDuration - rollingLeft, rollingLeft);
-		}
+        if (rollingLeft < 0)
+        {
+            rollingLeft = 0;
+        }
+        else
+        {
+            roll = ((rollingDuration - rollingLeft)*Ogre::Math::TWO_PI);
+            heightDiff = -2 * std::min(rollingDuration - rollingLeft, rollingLeft);
+        }
 
-		Ogre::Quaternion q(roll, Vector3(1,0,0));
+        Ogre::Quaternion q(roll, Vector3(1,0,0));
 
-		rollNode->setPosition(0, heightDiff, 0);
-		rollNode->setOrientation(q);
-	}
+        rollNode->setPosition(0, heightDiff, 0);
+        rollNode->setOrientation(q);
+    }
 
-	if (!camShaking)
-		return;
+    if (!camShaking)
+        return;
 
     camShakeTimer+=time;
     Ogre::Quaternion shakeOr = Ogre::Quaternion::Slerp(camShakeTimer/camShakeTimerEnd,camShakePrev,camShakeTarget);
@@ -1673,8 +1673,8 @@ void Shaker::updateCameraShake(float time)
         if(!camShakeTimeLeft)
         {
             node->resetOrientation();
-			camShaking = false;
-			return;
+            camShaking = false;
+            return;
         }
 
         float timerVar = Ogre::Math::Clamp(camShakeTimeLeft/4.0f+0.5f,0.5f,1.0f);
@@ -1712,15 +1712,15 @@ void Shaker::updateCameraShake(float time)
 
 void Shaker::startCameraShake(float time,float power,float impulse)
 {
-	if (!camShaking)
-	{
-		camShakeTimeLeft = time;
-		camShakePower = power;
-		camShakeImpulse = Ogre::Math::Clamp(0.5f - impulse, 0.01f, 0.5f);
-		camShakeTimer = 0;
-		camShakeTimerEnd = 0.01;
+    if (!camShaking)
+    {
+        camShakeTimeLeft = time;
+        camShakePower = power;
+        camShakeImpulse = Ogre::Math::Clamp(0.5f - impulse, 0.01f, 0.5f);
+        camShakeTimer = 0;
+        camShakeTimerEnd = 0.01;
 
-		camShakePrev = Ogre::Quaternion::IDENTITY;
-		camShakeTarget = Ogre::Quaternion::IDENTITY;
-	}   
+        camShakePrev = Ogre::Quaternion::IDENTITY;
+        camShakeTarget = Ogre::Quaternion::IDENTITY;
+    }
 }

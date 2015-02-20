@@ -17,9 +17,9 @@ struct resolution
 
 enum UiInfo
 {
-	Ui_Pickup,
-	Ui_Use,
-	Ui_Climb
+    Ui_Pickup,
+    Ui_Use,
+    Ui_Climb
 };
 
 struct lvlButton
@@ -71,7 +71,7 @@ public:
     void clearMenu();
 
     void showIngameText(Ogre::String text);
-	void showUseGui(UiInfo id);
+    void showUseGui(UiInfo id);
     void updateIngame(Ogre::Real time);
     void updateIngameMenu(Ogre::Real time);
 
@@ -105,7 +105,6 @@ private:
 
     char movingDir;
     bool moving, lvlMoving;
-    Gorilla::Rectangle* ri;
     irrklang::ISoundEngine* engine;
     Ogre::StringVector mFoundResolutions;
     Ogre::Real atm;
