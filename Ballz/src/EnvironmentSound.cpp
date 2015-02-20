@@ -38,7 +38,7 @@ void EnvironmentSounds::reset()
     for(unsigned int i=0; i<sounds.size(); i++)
     {
         EnvSound* s=sounds.at(i);
-        delete s->sound;
+        s->sound->drop();
         delete s;
     }
     sounds.clear();

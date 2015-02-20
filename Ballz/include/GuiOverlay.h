@@ -8,32 +8,18 @@ enum mMenuEnum {START,OPTIONS,QUIT,RESUME,RESTART};
 enum menusEnum {MAINM,STARTM,OPTIONSM,QUITM,TOSM,FRSM,TOOM,FROM,TOQM,FRQM};
 enum oMenuEnum {RESOLUTION,FULLSCREEN,SHADOWS,SSAO};
 
-struct MenuLoop
-{
-    struct MenuLoop* nextState;
-    struct MenuLoop* prevState;
-    mMenuEnum mState;
-};
-
-struct oMenuLoop
-{
-    struct oMenuLoop* nextState;
-    struct oMenuLoop* prevState;
-    oMenuEnum mState;
-};
-
-struct buttonLoop
-{
-    struct buttonLoop* nextState;
-    struct buttonLoop* prevState;
-    Gorilla::Caption* mButton;
-};
-
 struct resolution
 {
     std::string res;
     int w;
     int h;
+};
+
+enum UiInfo
+{
+	Ui_Pickup,
+	Ui_Use,
+	Ui_Climb
 };
 
 struct lvlButton
@@ -85,7 +71,7 @@ public:
     void clearMenu();
 
     void showIngameText(Ogre::String text);
-    void showUseGui(char id);
+	void showUseGui(UiInfo id);
     void updateIngame(Ogre::Real time);
     void updateIngameMenu(Ogre::Real time);
 

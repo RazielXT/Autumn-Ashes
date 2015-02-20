@@ -12,10 +12,16 @@ class Shaker
 public:
     Shaker(Ogre::SceneNode* node);
     ~Shaker();
-    bool updateCameraShake(float time);
+    void updateCameraShake(float time);
     void startCameraShake(float time,float power,float impulse);
+	void doRoll(float duration, Ogre::SceneNode* rNode);
 
 private:
+
+	float rollingLeft, rollingDuration;
+	Ogre::SceneNode* rollNode;
+
+	bool camShaking = false;
     Ogre::SceneNode* node;
     float camShakeTimer,camShakeTimerEnd,camShakePower,camShakeImpulse,camShakeTimeLeft;
     Ogre::Quaternion camShakePrev,camShakeTarget;
@@ -72,10 +78,7 @@ public:
         vzad=false;
         pbody->setVelocity(Ogre::Vector3(0,0,0));
     };
-    void setBaloonTrack(Ogre::SceneNode* t)
-    {
-        track=t;
-    }
+
     void walkingSound(Ogre::Real time);
     char getCrouch()
     {
@@ -112,34 +115,45 @@ private:
     void initBody();
     void tryClimbToSide(Direction dir);
 
-    bool alive;
     float timestep;
+	Shaker* shaker;
     OgreNewt::World* m_World;
-    Shaker* shaker;
-    Ogre::Real tslf,slowingDown;
     Ogre::SceneManager * mSceneMgr;
-    OgreNewt::Body* pbody, *Gbody;
-    Ogre::Vector3 climb_normal;
     irrklang::ISoundEngine* soundEngine;
-    bool stoji,vpravo,vlavo,vzad,vpred,onGround,visi,leti,grabbed,onRope,camShaking, inControl, inMoveControl;
-    Ogre::Vector3 forceDirection,gNormal,climbDir,lastSpeed;
-    OgreNewt::MaterialID* stoji_mat, *ide_mat,*flag_mat,*grab_mat;
-    Ogre::SceneNode* camnode, *necknode,* headnode,* shakeNode;
-    OgreNewt::ConvexCollisionPtr col_p;
-    Ogre::Real camPitch,fallVelocity,bodyVelocity,bodySpeedAccum,startMoveBoost,crouch_am,noClimbTimer,movespeed,walkSoundTimer,climb_yaw,climb_move_side,climb_move_vert,climb_pullup;
-    char fallPitch,crouch,cameraWalkFinisher,is_climbing;
-    OgreNewt::BallAndSocket* climbJoint;
-    Ogre::Real fallPitchSize,fallPitchTimer,cam_walking,head_turning,pullupPos;
-    Ogre::SceneNode* track;
-    int groundID,mouseX;
+    
+	Ogre::Camera* mCamera;
+	Ogre::SceneNode* camnode, *necknode, *headnode, *shakeNode;
+
+	//physics
+	OgreNewt::Body* pbody;
     OgreNewt::UpVector* uv;
-    OgreNewt::UpVector* uv2;
+    OgreNewt::UpVector* uv2;	
+	OgreNewt::ConvexCollisionPtr col_p;
+	OgreNewt::MaterialID* stoji_mat, *ide_mat, *flag_mat, *grab_mat;
+
+	//state
+	bool alive, stoji, vpravo, vlavo, vzad, vpred, onGround, visi, grabbed, camShaking, inControl, inMoveControl;
+	Ogre::Real camPitch,fallVelocity,bodyVelocity,bodySpeedAccum,startMoveBoost,crouch_am,noClimbTimer,movespeed,walkSoundTimer;
+	float climb_yaw, climb_move_side, climb_move_vert, climb_pullup;
+    char fallPitch,crouch,cameraWalkFinisher,is_climbing;  
+    Ogre::Real fallPitchSize,fallPitchTimer,cam_walking,head_turning,pullupPos;
+	int groundID, mouseX;
+	Ogre::Real tslf, slowingDown;
+	Ogre::Vector3 forceDirection, gNormal, climbDir, lastSpeed;
+
+	//movement helpers
+	Ogre::Vector3 climb_normal;
+	OgreNewt::BallAndSocket* climbJoint;
+
+	//grabbed obj
     Ogre::Vector3 gADT;
     Ogre::Real gLDT;
+	OgreNewt::Body* Gbody;
+
+	//motion blur
     Ogre::Real* ppFall, *ppMotionBlur;
     Ogre::Matrix4* iVP,*pVP;
-    Ogre::Matrix4 prevVP;
-    Ogre::Camera* mCamera;
+    Ogre::Matrix4 prevVP; 
     Ogre::Vector3 prevPos;
     Ogre::Quaternion prevOr;
     Ogre::Real mPreviousFPS;

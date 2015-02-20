@@ -8,7 +8,7 @@ void PagingManager::addPagedGeometry(Forests::PagedGeometry *g)
 
 void PagingManager::clear()
 {
-    std::list<Forests::PagedGeometry *>::iterator it = pagedGeometries.begin();
+    auto it = pagedGeometries.begin();
 
     while(it != pagedGeometries.end())
     {
@@ -22,7 +22,7 @@ void PagingManager::clear()
 
 void PagingManager::update()
 {
-    std::list<Forests::PagedGeometry *>::iterator it = pagedGeometries.begin();
+	auto it = pagedGeometries.begin();
 
     while(it != pagedGeometries.end())
     {

@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "player.h"
-#include "baloon.h"
 #include "PostProcessMgr.h"
 
 using namespace Ogre;
@@ -47,10 +46,7 @@ Player::Player(WorldMaterials* wMaterials)
     vzad=false;
     stoji=true;
     visi=false;
-    leti=false;
     onGround=false;
-    onRope=false;
-    camShaking=false;
     inControl=true;
     inMoveControl=true;
     immortal=false;
@@ -279,7 +275,6 @@ void Player::pressedMouse(const OIS::MouseEvent &arg,OIS::MouseButtonID id)
 }
 void Player::releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
-
     switch (id)
     {
     case OIS::MB_Right:
@@ -340,20 +335,10 @@ void Player::skoc()
     if(climb_pullup)
         return;
 
-    if(onRope)
-    {
-        delete climbJoint;
-        onRope=false;
-        noClimbTimer=0.35;
-
-        Vector3 vel=pbody->getVelocity();
-        pbody->setVelocity(vel+Vector3(0,9,0));
-    }
-    else if(visi)
+	if(visi)
     {
         delete climbJoint;
 
-        //visi = false;
         OgreNewt::CollisionPtr col = pbody->getCollision();//OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(GlobalPointer->mWorld,Ogre::Vector3(0.1,0.1,0.1),0));
         OgreNewt::Body* mHelpBody = new OgreNewt::Body( m_World, col );
         mHelpBody->setPositionOrientation( pbody->getPosition(), Ogre::Quaternion::IDENTITY );
@@ -361,7 +346,6 @@ void Player::skoc()
         mHelpBody->setCustomForceAndTorqueCallback<Player>(&Player::default_callback, this);
         mHelpBody->setMaterialGroupID((OgreNewt::MaterialID*)Global::globalData->find("MatFlag")->second);
         climbJoint = new OgreNewt::BallAndSocket(mHelpBody,Gbody, pbody->getPosition(),0 );
-
 
         climb_normal.normalise();
         float climb_yaw_change = climb_yaw - Gbody->getOrientation().getYaw().valueRadians();
@@ -371,12 +355,6 @@ void Player::skoc()
         pbody->setVelocity(pbody->getVelocity()+Vector3(0,15,0));
         inMoveControl = false;
         Gbody = mHelpBody;
-
-        if(leti)
-        {
-            pbody->setCustomForceAndTorqueCallback<Player>(&Player::move_callback, this);
-            leti=false;
-        }
 
         noClimbTimer=0.5;
         climb_pullup=0.05;
@@ -457,6 +435,19 @@ void Player::manageFall()
         {
             die();
         }
+		else
+		{
+			Vector3 vel = pbody->getVelocity();
+			vel.y = 0;
+
+			Vector3 lookDirection = mCamera->getDerivedOrientation()*Vector3(0, 0, -1);
+			lookDirection.y = 0;
+
+			Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
+
+			if (dirAngleDiff < 45)
+				shaker->doRoll(1.0f, headnode);
+		}
 
         *ppFall=std::min(fallVelocity/7.0f,8.0f);
 
@@ -466,11 +457,12 @@ void Player::manageFall()
         slowingDown=0;
         music = soundEngine->play3D(AudioLibrary::getPath("pad.wav").c_str(),irrklang::vec3df(ppos.x,ppos.y,ppos.z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
         music->setMaxDistance(10);
-
         music->setPlaybackSpeed(timestep);
 
         if(timestep<1)
             music->getSoundEffectControl()->enableWavesReverbSoundEffect(0,-10*timestep,2600,0.5);
+
+		music->drop();
 
     }
 
@@ -497,7 +489,6 @@ void Player::attachCamera(Ogre::Camera* cam)
     cam_walking=0;
     head_turning=0;
     mouseX=0;
-    camShaking=false;
     camPitch=0;
     lastSpeed=0;
     stoji=true;
@@ -549,6 +540,10 @@ void Player::rotateCamera(Real hybX,Real hybY)
 
     if(!is_climbing)
     {
+		//damp turning speed if moving quickly midair
+		if (!onGround && bodyVelocity>10)
+			hybX *= std::max(0.f, (100-bodyVelocity)/90.f);
+
         necknode->yaw(Degree(hybX), Node::TS_WORLD);
     }
     else
@@ -582,8 +577,7 @@ void Player::rotateCamera(Real hybX,Real hybY)
 
 void Player::updateHead(Real time)
 {
-    if(camShaking)
-        camShaking=shaker->updateCameraShake(time);
+    shaker->updateCameraShake(time);
 
     if(!stoji && onGround)
     {
@@ -1284,36 +1278,7 @@ void Player::updateStats()
     predsebou.normalise();
     predsebou*=2;
 
-
-    if(!onGround)
-    {
-        ray = OgreNewt::BasicRaycast( m_World,p,predsebou+p ,true);
-        info = ray.getInfoAt(0);
-        if (info.mBody)
-        {
-            if(!visi && noClimbTimer<=0)
-            {
-                if (info.mBody->getType() == BaloonT)
-                {
-                    Ogre::Any any = info.mBody->getOgreNode()->getUserAny();
-
-                    any_cast<Baloon*>(any)->setTracker(track);
-                    climbJoint = new OgreNewt::BallAndSocket(info.mBody, pbody, p,0 );
-                    visi=true;
-                    leti=true;
-                    pbody->setCustomForceAndTorqueCallback<Player>(&Player::move_callback_nothing, this);
-                }
-            }
-
-            if (info.mBody->getType() == Rope  && !onRope && noClimbTimer <= 0.25)
-            {
-                climbJoint = new OgreNewt::BallAndSocket(info.mBody, pbody, p ,0);
-                onRope=true;
-            }
-        }
-    }
-
-    if(!onRope && !onGround && !visi && !is_climbing && noClimbTimer<=0)
+    if(!onGround && !visi && !is_climbing && noClimbTimer<=0)
     {
         ray = OgreNewt::BasicRaycast( m_World,p,p+predsebou/1.3f ,true);
         info = ray.getInfoAt(0);
@@ -1400,13 +1365,13 @@ void Player::updateStats()
             //grabbable
             if (info.mBody->getType() == Grabbable)
             {
-                ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(0);
+                ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(Ui_Pickup);
             }
             else
                 //climbable
                 if (info.mBody->getType() == Pullup_old)
                 {
-                    ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(2);
+                    ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(Ui_Climb);
                 }
                 else
                     //trigger
@@ -1419,7 +1384,7 @@ void Player::updateStats()
                             bodyUserData* a0=Ogre::any_cast<bodyUserData*>(any);
                             if(a0->enabledTrigger)
                             {
-                                ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(1);
+                                ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(Ui_Use);
                             }
                         }
                     }
@@ -1465,13 +1430,10 @@ void Player::startClimbing(char type)
 
     is_climbing=type;
 
-    if(!camShaking)
-    {
-        if(type>2)
-            startCameraShake(0.2f,0.3f,0.4f);
-        else
-            startCameraShake(0.15f,0.1f,0.15f);
-    }
+	if (type > 2)
+		startCameraShake(0.2f, 0.3f, 0.4f);
+	else
+		startCameraShake(0.15f, 0.1f, 0.15f);
 
     if(bodySpeedAccum>5)
         bodySpeedAccum = 5;
@@ -1492,7 +1454,6 @@ void Player::stopClimbing()
 
 void Player::startCameraShake(float time,float power,float impulse)
 {
-    camShaking = true;
     shaker->startCameraShake(time,power,impulse);
 }
 
@@ -1655,8 +1616,42 @@ Shaker::~Shaker()
 {
 }
 
-bool Shaker::updateCameraShake(float time)
+void Shaker::doRoll(float duration, Ogre::SceneNode* rNode)
 {
+	if (rollingLeft)
+		return;
+
+	rollNode = rNode;
+	rollingDuration = rollingLeft = duration;
+}
+
+void Shaker::updateCameraShake(float time)
+{
+	if (rollingLeft)
+	{
+		rollingLeft -= time;
+		Ogre::Radian roll(0);
+		float heightDiff = 0;
+
+		if (rollingLeft < 0)
+		{
+			rollingLeft = 0;
+		}
+		else
+		{
+			roll = ((rollingDuration - rollingLeft)*Ogre::Math::TWO_PI);
+			heightDiff = -2 * std::min(rollingDuration - rollingLeft, rollingLeft);
+		}
+
+		Ogre::Quaternion q(roll, Vector3(1,0,0));
+
+		rollNode->setPosition(0, heightDiff, 0);
+		rollNode->setOrientation(q);
+	}
+
+	if (!camShaking)
+		return;
+
     camShakeTimer+=time;
     Ogre::Quaternion shakeOr = Ogre::Quaternion::Slerp(camShakeTimer/camShakeTimerEnd,camShakePrev,camShakeTarget);
 
@@ -1667,7 +1662,8 @@ bool Shaker::updateCameraShake(float time)
         if(!camShakeTimeLeft)
         {
             node->resetOrientation();
-            return false;
+			camShaking = false;
+			return;
         }
 
         float timerVar = Ogre::Math::Clamp(camShakeTimeLeft/4.0f+0.5f,0.5f,1.0f);
@@ -1700,20 +1696,20 @@ bool Shaker::updateCameraShake(float time)
             camShakePrev = camShakeTarget;
             camShakeTarget.FromAngleAxis(random*Ogre::Degree(std::min<float>(camShakePower*timerVar*50,65)),Ogre::Vector3(camShakeDirectionX,camShakeDirectionY,camShakeDirectionZ));
         }
-
     }
-
-    return true;
 }
 
 void Shaker::startCameraShake(float time,float power,float impulse)
 {
-    camShakeTimeLeft = time;
-    camShakePower = power;
-    camShakeImpulse = Ogre::Math::Clamp(0.5f - impulse,0.01f,0.5f);
-    camShakeTimer = 0;
-    camShakeTimerEnd = 0.01;
+	if (!camShaking)
+	{
+		camShakeTimeLeft = time;
+		camShakePower = power;
+		camShakeImpulse = Ogre::Math::Clamp(0.5f - impulse, 0.01f, 0.5f);
+		camShakeTimer = 0;
+		camShakeTimerEnd = 0.01;
 
-    camShakePrev = Ogre::Quaternion::IDENTITY;
-    camShakeTarget = Ogre::Quaternion::IDENTITY;
+		camShakePrev = Ogre::Quaternion::IDENTITY;
+		camShakeTarget = Ogre::Quaternion::IDENTITY;
+	}   
 }

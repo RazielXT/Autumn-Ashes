@@ -1046,7 +1046,7 @@ void GuiOverlay::showIngameText(Ogre::String text)
     shownInfoText = true;
 }
 
-void GuiOverlay::showUseGui(char id)
+void GuiOverlay::showUseGui(UiInfo id)
 {
     wantUseGui = true;
 
@@ -1057,13 +1057,13 @@ void GuiOverlay::showUseGui(char id)
 
         switch(id)
         {
-        case 0:
+        case Ui_Pickup:
             useTextCaption->text("pickup");
             break;
-        case 1:
+		case Ui_Use:
             useTextCaption->text("use");
             break;
-        case 2:
+        case Ui_Climb:
             useTextCaption->text("climb");
             break;
         default:

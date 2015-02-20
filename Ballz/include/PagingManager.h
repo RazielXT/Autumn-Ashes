@@ -14,7 +14,7 @@ public:
 
 private:
 
-    std::list<Forests::PagedGeometry *> pagedGeometries;
+    std::vector<Forests::PagedGeometry *> pagedGeometries;
 };
 
 #endif

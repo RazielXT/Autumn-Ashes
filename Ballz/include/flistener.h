@@ -5,7 +5,6 @@
 #include "EventsManager.h"
 #include "PagingManager.h"
 #include <SceneParser.h>
-#include <baloon.h>
 #include <bird.h>
 #include "DefaultObjectContactCallback.h"
 #include "TriggerObjectContactCallback.h"
