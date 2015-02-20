@@ -14,7 +14,7 @@ public:
     ~Shaker();
     void updateCameraShake(float time);
     void startCameraShake(float time,float power,float impulse);
-	void doRoll(float duration, Ogre::SceneNode* rNode);
+	float doRoll(float duration, Ogre::SceneNode* rNode);
 
 private:
 
@@ -136,7 +136,7 @@ private:
 	Ogre::Real camPitch,fallVelocity,bodyVelocity,bodySpeedAccum,startMoveBoost,crouch_am,noClimbTimer,movespeed,walkSoundTimer;
 	float climb_yaw, climb_move_side, climb_move_vert, climb_pullup;
     char fallPitch,crouch,cameraWalkFinisher,is_climbing;  
-    Ogre::Real fallPitchSize,fallPitchTimer,cam_walking,head_turning,pullupPos;
+    Ogre::Real fallPitchSize,fallPitchTimer,cam_walking,head_turning,pullupPos,rolling;
 	int groundID, mouseX;
 	Ogre::Real tslf, slowingDown;
 	Ogre::Vector3 forceDirection, gNormal, climbDir, lastSpeed;

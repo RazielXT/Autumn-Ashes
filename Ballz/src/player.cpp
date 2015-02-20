@@ -51,6 +51,7 @@ Player::Player(WorldMaterials* wMaterials)
     inMoveControl=true;
     immortal=false;
     alive=true;
+	rolling = false;
     camPitch=0;
     lastSpeed=0;
     stoji_mat = wMaterials->stoji_mat;
@@ -446,7 +447,9 @@ void Player::manageFall()
 			Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
 
 			if (dirAngleDiff < 45)
-				shaker->doRoll(1.0f, headnode);
+			{
+				rolling = shaker->doRoll(1.0f, headnode);
+			}
 		}
 
         *ppFall=std::min(fallVelocity/7.0f,8.0f);
@@ -829,6 +832,12 @@ void Player::update(Real time)
                 forceDirection *= 3 / (1 + bodyVelocity);
         }
     }
+
+	if (rolling>0)
+	{
+		rolling -= tslf;
+		forceDirection += mCamera->getDerivedOrientation()*Vector3(0,0,-0.5f);
+	}
 
     //making pullup
     if(climb_pullup)
@@ -1616,13 +1625,15 @@ Shaker::~Shaker()
 {
 }
 
-void Shaker::doRoll(float duration, Ogre::SceneNode* rNode)
+float Shaker::doRoll(float duration, Ogre::SceneNode* rNode)
 {
 	if (rollingLeft)
-		return;
+		return rollingLeft;
 
 	rollNode = rNode;
 	rollingDuration = rollingLeft = duration;
+
+	return duration;
 }
 
 void Shaker::updateCameraShake(float time)
