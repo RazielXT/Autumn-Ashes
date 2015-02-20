@@ -108,6 +108,7 @@ public:
     impulse-0.1 slow,0.4 strong  */
     void startCameraShake(float time,float power,float impulse);
 
+    inline void updateVerticalClimb(bool leftPhase);
     bool immortal;
 
 private:

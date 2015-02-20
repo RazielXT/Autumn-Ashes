@@ -49,7 +49,7 @@ Player::Player(WorldMaterials* wMaterials)
     onGround=false;
     inControl=true;
     inMoveControl=true;
-    immortal=false;
+    immortal=true;
     alive=true;
     rolling = false;
     camPitch=0;
@@ -294,8 +294,8 @@ void Player::releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 }
 void Player::movedMouse(const OIS::MouseEvent &e)
 {
-	if (!rolling)
-		mouseX = (int) (-1*e.state.X.rel*timestep);
+    if (rolling<=0)
+        mouseX = (int) (-1*e.state.X.rel*timestep);
 
     int mouseY = (int) (-1*e.state.Y.rel*timestep);
 
@@ -451,7 +451,7 @@ void Player::manageFall()
 
             if (dirAngleDiff < 45)
             {
-                rolling = shaker->doRoll(0.75f, headnode);
+                rolling = shaker->doRoll(1.2f, headnode);
             }
         }
 
@@ -763,7 +763,7 @@ void Player::update(Real time)
 
     forceDirection=Vector3::ZERO;
 
-    if (!is_climbing)
+    if (!is_climbing && rolling<=0)
     {
         if (!vpravo && !vpred && !vzad && !vlavo)
         {
@@ -787,6 +787,7 @@ void Player::update(Real time)
 
             forceDirection = mCamera->getDerivedOrientation()*movedDir;
             forceDirection.normalise();
+            forceDirection.y = 0;
 
             if (onGround)
             {
@@ -838,8 +839,16 @@ void Player::update(Real time)
 
     if (rolling>0)
     {
+        pbody->setMaterialGroupID(ide_mat);
+        stoji = false;
+        walkSoundTimer = 0.2f;
+
+        auto dirVec = lastSpeed;
+        dirVec.y = 0;
+        dirVec.normalise();
+        forceDirection += dirVec * 8;
+
         rolling -= tslf;
-        forceDirection += mCamera->getDerivedOrientation()*Vector3(0,0,-0.5f);
     }
 
     //making pullup
@@ -1003,49 +1012,16 @@ void Player::update(Real time)
                     }
                 }
 
+                if (climb_move_vert != 0)
+                    updateVerticalClimb(climb_move_vert < 0);
+
                 //right phase
                 if(climb_move_vert>0)
                 {
                     climb_move_vert-=tslf*4;
                     if(climb_move_vert<=0)
                     {
-                        if(vpred)
-                        {
-                            Vector3 pohlad=mCamera->getDerivedOrientation()*Vector3(0,0,-1);
-                            bool con=false;
-
-                            if(pohlad.y>0)
-                            {
-                                if(canClimb(Up,true))
-                                {
-                                    climbDir=Vector3(0,1.5,0);
-                                    pbody->setMaterialGroupID(ide_mat);
-                                    con=true;
-                                }
-                            }
-                            else
-                            {
-                                if(canClimb(Down,true))
-                                {
-                                    climbDir=Vector3(0,-1.5,0);
-                                    pbody->setMaterialGroupID(ide_mat);
-                                    con=true;
-                                }
-                            }
-
-                            if(con)
-                            {
-                                climb_move_vert=-2-climb_move_vert;
-                                camnode->setOrientation(Quaternion(Ogre::Radian((abs(climb_move_vert+1)-1)/20),Vector3(-0.5,0,1)));
-                            }
-                            else pbody->setMaterialGroupID(stoji_mat);
-                        }
-                        else
-                        {
-                            climb_move_vert=0;
-                            camnode->setOrientation(Quaternion(Ogre::Radian((1-abs(climb_move_vert-1))/20),Vector3(0.5,0,1)));
-                            pbody->setMaterialGroupID(stoji_mat);
-                        }
+                        updateVerticalClimb(false);
                     }
                     else
                         camnode->setOrientation(Quaternion(Ogre::Radian((1-abs(climb_move_vert-1))/20),Vector3(-0.5,0,1)));
@@ -1057,43 +1033,7 @@ void Player::update(Real time)
                         climb_move_vert+=tslf*4;
                         if(climb_move_vert>=0)
                         {
-                            if(vpred)
-                            {
-                                Vector3 pohlad=mCamera->getDerivedOrientation()*Vector3(0,0,-1);
-                                bool con=false;
-
-                                if(pohlad.y>0)
-                                {
-                                    if(canClimb(Up,true,false,true))
-                                    {
-                                        climbDir=Vector3(0,1.5,0);
-                                        pbody->setMaterialGroupID(ide_mat);
-                                        con=true;
-                                    }
-                                }
-                                else
-                                {
-                                    if(canClimb(Down,true,false,true))
-                                    {
-                                        climbDir=Vector3(0,-1.5,0);
-                                        pbody->setMaterialGroupID(ide_mat);
-                                        con=true;
-                                    }
-                                }
-
-                                if(con)
-                                {
-                                    climb_move_vert=2-climb_move_vert;
-                                    camnode->setOrientation(Quaternion(Ogre::Radian((1-abs(climb_move_vert-1))/20),Vector3(0.5,0,1)));
-                                }
-                                else pbody->setMaterialGroupID(stoji_mat);
-                            }
-                            else
-                            {
-                                camnode->setOrientation(Quaternion(Ogre::Radian((abs(climb_move_vert+1)-1)/20),Vector3(-0.5,0,1)));
-                                climb_move_vert=0;
-                                pbody->setMaterialGroupID(stoji_mat);
-                            }
+                            updateVerticalClimb(true);
                         }
                         else
                             camnode->setOrientation(Quaternion(Ogre::Radian((abs(climb_move_vert+1)-1)/20),Vector3(0.5,0,1)));
@@ -1183,6 +1123,49 @@ void Player::update(Real time)
     }
 
     updateHead(time);
+}
+
+void Player::updateVerticalClimb(bool leftPhase)
+{
+    float diff = leftPhase ? -1.f : 1.f;
+
+    if (vpred)
+    {
+        Vector3 pohlad = mCamera->getDerivedOrientation()*Vector3(0, 0, -1);
+        bool con = false;
+
+        if (pohlad.y > 0)
+        {
+            if (canClimb(Up, true, false, leftPhase))
+            {
+                climbDir = Vector3(0, 1.5, 0);
+                pbody->setMaterialGroupID(ide_mat);
+                con = true;
+            }
+        }
+        else
+        {
+            if (canClimb(Down, true, false, leftPhase))
+            {
+                climbDir = Vector3(0, -1.5, 0);
+                pbody->setMaterialGroupID(ide_mat);
+                con = true;
+            }
+        }
+
+        if (con)
+        {
+            climb_move_vert = -2 - climb_move_vert;
+            camnode->setOrientation(Quaternion(Ogre::Radian((-1 + abs(climb_move_vert + 1 * diff)) / 20 * diff), Vector3(-0.5, 0, 1)));
+        }
+        else pbody->setMaterialGroupID(stoji_mat);
+    }
+    else
+    {
+        climb_move_vert = 0;
+        camnode->setOrientation(Quaternion(Ogre::Radian((1 - abs(climb_move_vert - 1 * diff)) / -20*diff), Vector3(0.5, 0, 1)));
+        pbody->setMaterialGroupID(stoji_mat);
+    }
 }
 
 void Player::tryClimbToSide(Direction dir)
@@ -1636,6 +1619,8 @@ float Shaker::doRoll(float duration, Ogre::SceneNode* rNode)
     rollNode = rNode;
     rollingDuration = rollingLeft = duration;
 
+    startCameraShake(duration, 0.4f, 0.6f);
+
     return duration;
 }
 
@@ -1653,8 +1638,14 @@ void Shaker::updateCameraShake(float time)
         }
         else
         {
-            roll = ((rollingDuration - rollingLeft) / rollingDuration*-Ogre::Math::TWO_PI);
-            heightDiff = -1 * std::min(rollingDuration - rollingLeft, rollingLeft);
+            float rRoll = ((rollingDuration - rollingLeft) / rollingDuration);
+            rRoll *= 1.5f;
+            rRoll -= 0.05f;
+            rRoll = Math::Clamp(rRoll, 0.f, 1.0f);
+            rRoll *= -Ogre::Math::TWO_PI;
+
+            roll = rRoll;
+            heightDiff = std::max(-1.5f,-2 * std::min(rollingDuration - rollingLeft, rollingLeft));
         }
 
         Ogre::Quaternion q(roll, Vector3(1,0,0));
