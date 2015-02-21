@@ -14,12 +14,13 @@ public:
     ~Shaker();
     void updateCameraShake(float time);
     void startCameraShake(float time,float power,float impulse);
-    float doRoll(float duration, Ogre::SceneNode* rNode);
+    float doRoll(float duration, Ogre::SceneNode* rNode, Ogre::SceneNode* hNode);
 
 private:
 
     float rollingLeft = 0, rollingDuration;
     Ogre::SceneNode* rollNode;
+    Ogre::SceneNode* heightNode;
 
     bool camShaking = false;
     Ogre::SceneNode* node;

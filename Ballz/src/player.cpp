@@ -316,7 +316,7 @@ void Player::setCrouch(char b)
         stopClimbing();
         noClimbTimer=1;
     }
-    else
+    else if (rolling<=0)
         crouch=b;
 }
 
@@ -433,7 +433,7 @@ void Player::manageFall()
     Vector3 ppos=pbody->getPosition();
     irrklang::ISound* music;
 
-    if(fallVelocity>35)
+    if(fallVelocity>25)
     {
         if(!immortal && fallVelocity>55)
         {
@@ -442,6 +442,7 @@ void Player::manageFall()
         else
         {
             Vector3 vel = pbody->getVelocity();
+            vel.normalise();
             vel.y = 0;
 
             Vector3 lookDirection = mCamera->getDerivedOrientation()*Vector3(0, 0, -1);
@@ -449,26 +450,30 @@ void Player::manageFall()
 
             Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
 
-            if (dirAngleDiff < 45)
+            if (dirAngleDiff < 45 && vel.length()>0.25f)
             {
-                rolling = shaker->doRoll(1.2f, headnode);
+                rolling = shaker->doRoll(1.2f, headnode, necknode);
+                crouch = 0;
             }
         }
 
-        *ppFall=std::min(fallVelocity/7.0f,8.0f);
+        if (fallVelocity > 35)
+        {
+            *ppFall = std::min(fallVelocity / 7.0f, 8.0f);
 
-        if(!fallPitch)
-            fallVelocity=80;
+            if (!fallPitch)
+                fallVelocity = 80;
 
-        slowingDown=0;
-        music = soundEngine->play3D(AudioLibrary::getPath("pad.wav").c_str(),irrklang::vec3df(ppos.x,ppos.y,ppos.z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
-        music->setMaxDistance(10);
-        music->setPlaybackSpeed(timestep);
+            slowingDown = 0;
+            music = soundEngine->play3D(AudioLibrary::getPath("pad.wav").c_str(), irrklang::vec3df(ppos.x, ppos.y, ppos.z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
+            music->setMaxDistance(10);
+            music->setPlaybackSpeed(timestep);
 
-        if(timestep<1)
-            music->getSoundEffectControl()->enableWavesReverbSoundEffect(0,-10*timestep,2600,0.5);
+            if (timestep < 1)
+                music->getSoundEffectControl()->enableWavesReverbSoundEffect(0, -10 * timestep, 2600, 0.5);
 
-        music->drop();
+            music->drop();
+        }
 
     }
 
@@ -843,10 +848,10 @@ void Player::update(Real time)
         stoji = false;
         walkSoundTimer = 0.2f;
 
-        auto dirVec = lastSpeed;
+        auto dirVec = necknode->_getDerivedOrientation()*Vector3(0, 0, -1);
         dirVec.y = 0;
         dirVec.normalise();
-        forceDirection += dirVec * 8;
+        forceDirection += dirVec * 10 * rolling;
 
         rolling -= tslf;
     }
@@ -1012,8 +1017,8 @@ void Player::update(Real time)
                     }
                 }
 
-                if (climb_move_vert != 0)
-                    updateVerticalClimb(climb_move_vert < 0);
+                //if (climb_move_vert != 0)
+                //   updateVerticalClimb(climb_move_vert < 0);
 
                 //right phase
                 if(climb_move_vert>0)
@@ -1022,6 +1027,7 @@ void Player::update(Real time)
                     if(climb_move_vert<=0)
                     {
                         updateVerticalClimb(false);
+
                     }
                     else
                         camnode->setOrientation(Quaternion(Ogre::Radian((1-abs(climb_move_vert-1))/20),Vector3(-0.5,0,1)));
@@ -1155,15 +1161,15 @@ void Player::updateVerticalClimb(bool leftPhase)
 
         if (con)
         {
-            climb_move_vert = -2 - climb_move_vert;
-            camnode->setOrientation(Quaternion(Ogre::Radian((-1 + abs(climb_move_vert + 1 * diff)) / 20 * diff), Vector3(-0.5, 0, 1)));
+            climb_move_vert = diff*-2 - climb_move_vert;
+            camnode->setOrientation(Quaternion(Ogre::Radian(diff*(-1 + abs(climb_move_vert + diff)) / 20), Vector3(diff*-0.5, 0, 1)));
         }
         else pbody->setMaterialGroupID(stoji_mat);
     }
     else
     {
         climb_move_vert = 0;
-        camnode->setOrientation(Quaternion(Ogre::Radian((1 - abs(climb_move_vert - 1 * diff)) / -20*diff), Vector3(0.5, 0, 1)));
+        camnode->setOrientation(Quaternion(Ogre::Radian(diff*(1 - abs(climb_move_vert - diff)) / 20), Vector3(diff*0.5, 0, 1)));
         pbody->setMaterialGroupID(stoji_mat);
     }
 }
@@ -1329,15 +1335,15 @@ void Player::updateStats()
         {
             if ((info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old || info.mBody->getType() == Climb_Pullup) && !onGround)
             {
-                is_climbing=info.mBody->getType();
-                Ogre::Vector3 c_normal=info.mNormal.normalisedCopy();
+                is_climbing = info.mBody->getType();
+                Ogre::Vector3 c_normal = info.mNormal.normalisedCopy();
 
-                if(c_normal!=climb_normal)
+                if (c_normal != climb_normal)
                 {
-                    if(!climb_yaw && (climb_move_vert || climb_move_side))
-                        climb_yaw=-c_normal.getRotationTo(climb_normal).getYaw().valueRadians();
+                    if (!climb_yaw && (climb_move_vert || climb_move_side))
+                        climb_yaw = -c_normal.getRotationTo(climb_normal).getYaw().valueRadians();
 
-                    climb_normal=c_normal;
+                    climb_normal = c_normal;
                 }
             }
             else
@@ -1346,6 +1352,8 @@ void Player::updateStats()
                 //	stopClimbing();
             }
         }
+        else
+            stopClimbing();
     }
 
 
@@ -1611,11 +1619,12 @@ Shaker::~Shaker()
 {
 }
 
-float Shaker::doRoll(float duration, Ogre::SceneNode* rNode)
+float Shaker::doRoll(float duration, Ogre::SceneNode* rNode, Ogre::SceneNode* hNode)
 {
     if (rollingLeft>0)
         return rollingLeft;
 
+    heightNode = hNode;
     rollNode = rNode;
     rollingDuration = rollingLeft = duration;
 
@@ -1650,7 +1659,7 @@ void Shaker::updateCameraShake(float time)
 
         Ogre::Quaternion q(roll, Vector3(1,0,0));
 
-        rollNode->setPosition(0, heightDiff, 0);
+        heightNode->setPosition(0, heightDiff, 0);
         rollNode->setOrientation(q);
     }
 
