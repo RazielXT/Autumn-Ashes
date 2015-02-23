@@ -2,7 +2,7 @@
 #include "globals.h"
 
 
-std::string AudioLibrary::getPath(std::string file, SoundType type)
+inline std::string AudioLibrary::getPath(std::string file, SoundType type)
 {
     switch (type)
     {

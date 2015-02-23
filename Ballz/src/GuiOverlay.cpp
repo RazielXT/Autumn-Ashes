@@ -149,67 +149,6 @@ int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
             break;
         }
     }
-    else if(currentMenu==OPTIONSM)
-    {
-        switch (arg.key)
-        {
-        case OIS::KC_UP:
-            /*oMenuState=oMenuState->prevState;
-            cOptionButton->mButton->colour(Ogre::ColourValue(1,1,1,0.3));
-            cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,0.3));
-            cOptionButton=cOptionButton->prevState;
-            cOptionButtonA=cOptionButtonA->prevState;
-            cOptionButton->mButton->colour(Ogre::ColourValue(1,1,1,1));
-            cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,1));*/
-            break;
-        case OIS::KC_DOWN:
-            /*oMenuState=oMenuState->nextState;
-            cOptionButton->mButton->colour(Ogre::ColourValue(1,1,1,0.3));
-            cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,0.3));
-            cOptionButton=cOptionButton->nextState;
-            cOptionButtonA=cOptionButtonA->nextState;
-            cOptionButton->mButton->colour(Ogre::ColourValue(1,1,1,1));
-            cOptionButtonA->mButton->colour(Ogre::ColourValue(1,1,1,1));*/
-            break;
-        case OIS::KC_LEFT:
-            /*if(oMenuState->mState==AA)
-            {if(gConfig->aa) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
-            gConfig->aa=!gConfig->aa;}
-            if(oMenuState->mState==SHR)
-            {if(gConfig->godRay) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
-            gConfig->godRay=!gConfig->godRay;}
-            if(oMenuState->mState==SHF)
-            {if(gConfig->hdr) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
-            gConfig->hdr=!gConfig->hdr;}
-            if(oMenuState->mState==PP)
-            {if(gConfig->vsync) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
-            gConfig->vsync=!gConfig->vsync;}*/
-            break;
-        case OIS::KC_RIGHT:
-            /*if(oMenuState->mState==AA)
-            {if(gConfig->aa) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
-            gConfig->aa=!gConfig->aa;}
-            if(oMenuState->mState==SHR)
-            {if(gConfig->godRay) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
-            gConfig->godRay=!gConfig->godRay;}
-            if(oMenuState->mState==SHF)
-            {if(gConfig->hdr) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
-            gConfig->hdr=!gConfig->hdr;}
-            if(oMenuState->mState==PP)
-            {if(gConfig->vsync) cOptionButtonA->mButton->text("Low"); else cOptionButtonA->mButton->text("High");
-            gConfig->vsync=!gConfig->vsync;}*/
-            break;
-        case OIS::KC_RETURN:
-            break;
-        case OIS::KC_BACK:
-            // Ogre::LogManager::getSingleton().getDefaultLog()->logMessage("sfs",Ogre::LML_NORMAL);
-            closeOptions();
-            break;
-
-        default:
-            break;
-        }
-    }
 
     return 0;
 }
@@ -249,6 +188,7 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
 
     Ogre::ConfigOptionMap& CurrentRendererOptions = rs->getConfigOptions();
     Ogre::ConfigOptionMap::iterator configItr = CurrentRendererOptions.begin();
+	Ogre::StringVector mFoundResolutions;
     while( configItr != CurrentRendererOptions.end() )
     {
         if( (configItr)->first == "Video Mode" )
@@ -376,18 +316,21 @@ void GuiOverlay::createOptionMenuButtons()
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
     cButton->value = caption;
+
     caption = mLayer->createCaption(48, 350, 1150 , "Fullscreen");
     caption->size(601,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
     cButton->addToEnd(caption);
+
     caption = mLayer->createCaption(48, 350, 1240 , "Shadows");
     caption->size(602,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
     cButton->addToEnd(caption);
+
     caption = mLayer->createCaption(48, 350, 1330 , "SSAO");
     caption->size(603,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
@@ -404,30 +347,22 @@ void GuiOverlay::createOptionMenuButtons()
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
     cOptionButtonA->value=caption;
-    if(gConfig.fs)
-        caption = mLayer->createCaption(48, 1000, 1150 , "On");
-    else
-        caption = mLayer->createCaption(48, 1000, 1150 , "Off");
+
+	caption = mLayer->createCaption(48, 1000, 1150, gConfig.fs ? "On" : "Off");
     caption->size(351,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
     cOptionButtonA->addToEnd(caption);
-    if(gConfig.shadow==0)
-        caption = mLayer->createCaption(48, 1000, 1240 , "Low");
-    else if(gConfig.shadow==1)
-        caption = mLayer->createCaption(48, 1000, 1240 , "Medium");
-    else
-        caption = mLayer->createCaption(48, 1000, 1240 , "High");
+
+	caption = mLayer->createCaption(48, 1000, 1240, gConfig.shadow == 0 ? "Low" : (gConfig.shadow == 1 ? "Medium" : "High"));
     caption->size(352,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
     cOptionButtonA->addToEnd(caption);
-    if(gConfig.ssao)
-        caption = mLayer->createCaption(48, 1000, 1330 , "On");
-    else
-        caption = mLayer->createCaption(48, 1000, 1330 , "Off");
+
+	caption = mLayer->createCaption(48, 1000, 1330, gConfig.ssao ? "On" : "Off");
     caption->size(353,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
@@ -443,11 +378,13 @@ void GuiOverlay::createMainMenuButtons()
     caption->colour(Ogre::ColourValue(1,1,1,1));
     caption->align(Gorilla::TextAlign_Centre);
     mMenuButtons.push_back(caption);
+
     caption = mLayer->createCaption(48, 1339.5, 900 , "Options");
     caption->size(300,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Centre);
     mMenuButtons.push_back(caption);
+
     caption = mLayer->createCaption(48, 20.5, 900 , "Quit");
     caption->size(300,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
@@ -462,21 +399,25 @@ void GuiOverlay::createIngameMenuButtons()
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Centre);
     mMenuButtons.push_back(caption);
+
     caption = mLayer->createCaption(48, 20.5, 900 , "Start");
     caption->size(300,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Centre);
     mMenuButtons.push_back(caption);
+
     caption = mLayer->createCaption(48, 690, 900 , "Resume");
     caption->size(300,50);
     caption->colour(Ogre::ColourValue(1,1,1,1));
     caption->align(Gorilla::TextAlign_Centre);
     mMenuButtons.push_back(caption);
+
     caption = mLayer->createCaption(48, 1339.5, 900 , "Restart");
     caption->size(300,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Centre);
     mMenuButtons.push_back(caption);
+
     caption = mLayer->createCaption(48, 1989, 900 , "Options");
     caption->size(300,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
@@ -896,7 +837,6 @@ void GuiOverlay::showDebug(bool show)
 
 void GuiOverlay::updateLevelsMove(Ogre::Real time)
 {
-
     Real rotSpeed=time*1100;
     atm=atm-rotSpeed;
 
@@ -1061,7 +1001,7 @@ void GuiOverlay::showUseGui(UiInfo id)
             useTextCaption->text("climb");
             break;
         default:
-            useTextCaption->text("default");
+            useTextCaption->text("??");
         }
     }
 }

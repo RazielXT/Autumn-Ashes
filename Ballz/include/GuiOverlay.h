@@ -106,7 +106,6 @@ private:
     char movingDir;
     bool moving, lvlMoving;
     irrklang::ISoundEngine* engine;
-    Ogre::StringVector mFoundResolutions;
     Ogre::Real atm;
     Ogre::SceneManager * mSceneMgr;
     std::vector<Gorilla::Caption*> mMenuButtons;
@@ -120,7 +119,7 @@ private:
     Gorilla::Caption*       infoTextCaption;
     Gorilla::Caption*       useTextCaption;
     Gorilla::Caption*       debugCaption;
-    Gorilla::Rectangle*      mousePointer;
+    Gorilla::Rectangle*     mousePointer;
     GameConfig gConfig;
     bool ingamemenu;
     float infoTextTimer;

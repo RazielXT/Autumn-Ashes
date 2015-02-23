@@ -116,24 +116,26 @@ public:
 
     bool frameStarted(const FrameEvent& evt)
     {
-        postProcMgr->update(evt.timeSinceLastFrame);
+		float tslf = evt.timeSinceLastFrame;
+
+		postProcMgr->update(tslf);
         pagingMgr->update();
-        mEventMgr->update(evt.timeSinceLastFrame);
+		mEventMgr->update(tslf);
 
         mKeyboard->capture();
         mMouse->capture();
 
-        gameMgr->update(evt.timeSinceLastFrame);
+		gameMgr->update(tslf);
 
         if(gameMgr->gameState==PLAY)
         {
-            Global::player->update(evt.timeSinceLastFrame);
+			Global::player->update(tslf);
+
             Vector3 pos=mCamera->getDerivedPosition();
             Vector3 or=mCamera->getDerivedOrientation()*Vector3(0,0,1);
             engine->setListenerPosition(irrklang::vec3df(pos.x,pos.y,pos.z), irrklang::vec3df(or.x,or.y,or.z));
-            //env->update(pos);
-
-            nListener.frameStarted(evt);
+            
+			nListener.frameStarted(tslf);
         }
 
         return continueExecution;

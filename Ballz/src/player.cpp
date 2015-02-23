@@ -1659,7 +1659,7 @@ void Shaker::updateCameraShake(float time)
 
         Ogre::Quaternion q(roll, Vector3(1,0,0));
 
-        heightNode->setPosition(0, heightDiff, 0);
+        heightNode->setPosition(0, 1 + heightDiff, 0);
         rollNode->setOrientation(q);
     }
 
