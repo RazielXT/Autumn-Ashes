@@ -207,7 +207,6 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\ScaryPPListener.h" />
     <ClInclude Include="include\ITransformationTask.h" />
     <ClInclude Include="include\mShC.h" />
-    <ClInclude Include="include\nlistener.h" />
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h" />
     <ClInclude Include="include\player.h" />
     <ClInclude Include="include\PostProcessMgr.h" />
