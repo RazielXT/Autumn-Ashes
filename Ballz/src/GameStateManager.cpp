@@ -128,14 +128,22 @@ void GameStateManager::switchState(int target, float time)
 	switchStateTimer = time;
 
 	Global::mPPMgr->colourOut(Vector3(0, 0, 0), time);
+	myMenu->clearMenu();
 }
 
 void GameStateManager::updateStateSwitching(float tslf)
 {
-	switchStateTimer -= tslf;
-
-	if (switchStateTimer == 0) 
+	if (switchStateTimer > 0)
+	{
+		switchStateTimer -= tslf;
 		return;
+	}
+	else
+	if (!switchingState)
+	{
+		switchingState = true;
+		return;
+	}
 
 	if (stateTarget > 0)
 	{
@@ -147,15 +155,16 @@ void GameStateManager::updateStateSwitching(float tslf)
 	}
 	if (stateTarget == -2)
 	{
-		gameState = PLAY;
-		myMenu->clearMenu();
 		restartLevel();
 	}
+
+	stateTarget = 0;
+	switchingState = false;
 }
 
 void GameStateManager::update(float tslf)
 {
-	if (switchingState)
+	if (stateTarget!=0)
 		updateStateSwitching(tslf);
 	else
     switch (gameState)

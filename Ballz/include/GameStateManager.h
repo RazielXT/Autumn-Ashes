@@ -28,7 +28,7 @@ private:
 
 	void switchState(int target, float time);
 	void updateStateSwitching(float tslf);
-	int stateTarget;
+	int stateTarget=0;
 	bool switchingState = false;
 	float switchStateTimer;
 
