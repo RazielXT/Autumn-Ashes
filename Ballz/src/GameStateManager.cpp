@@ -95,12 +95,12 @@ bool GameStateManager::insideMenuPressed()
 
     if (i > 0)
     {
-        switchToLevel(i);
+		switchState(i, 1.0f);
     }
     if (i == -3)
     {
         if (gameState == PAUSE)
-            switchToMainMenu();
+            switchState(i, 1.0f);
         else
             continueExecution = false;
     }
@@ -111,9 +111,7 @@ bool GameStateManager::insideMenuPressed()
     }
     if (i == -2)
     {
-        gameState = PLAY;
-        myMenu->clearMenu();
-        restartLevel();
+		switchState(i, 1.0f);
     }
 
     return continueExecution;
@@ -124,8 +122,42 @@ void GameStateManager::insideMenuMoved(int x, int y)
     myMenu->mouseMoveUpdate(x,y);
 }
 
+void GameStateManager::switchState(int target, float time)
+{
+	stateTarget = target;
+	switchStateTimer = time;
+
+	Global::mPPMgr->colourOut(Vector3(0, 0, 0), time);
+}
+
+void GameStateManager::updateStateSwitching(float tslf)
+{
+	switchStateTimer -= tslf;
+
+	if (switchStateTimer == 0) 
+		return;
+
+	if (stateTarget > 0)
+	{
+		switchToLevel(stateTarget);
+	}
+	if (stateTarget == -3)
+	{
+		switchToMainMenu();
+	}
+	if (stateTarget == -2)
+	{
+		gameState = PLAY;
+		myMenu->clearMenu();
+		restartLevel();
+	}
+}
+
 void GameStateManager::update(float tslf)
 {
+	if (switchingState)
+		updateStateSwitching(tslf);
+	else
     switch (gameState)
     {
     case PLAY:

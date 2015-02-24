@@ -26,6 +26,12 @@ public:
 
 private:
 
+	void switchState(int target, float time);
+	void updateStateSwitching(float tslf);
+	int stateTarget;
+	bool switchingState = false;
+	float switchStateTimer;
+
     int lastLVL;
     GuiOverlay* myMenu;
     WorldMaterials* wMaterials;
