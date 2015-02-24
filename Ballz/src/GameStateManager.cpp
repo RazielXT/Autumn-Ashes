@@ -74,13 +74,6 @@ void GameStateManager::switchToLevel(int lvl)
     default:
         switchToMainMenu();
     }
-
-    /*if (lvl < 4)
-    {
-    	Vector3 pos = p->getBody()->getOgreNode()->_getDerivedPosition();
-    	Vector3 or = mCamera->getDerivedOrientation()*Vector3(0, 0, 1);
-    	engine->setListenerPosition(irrklang::vec3df(pos.x, pos.y, pos.z), irrklang::vec3df(or.x, or.y, or.z));
-    }*/
 }
 
 void GameStateManager::restartLevel()
