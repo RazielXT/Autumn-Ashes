@@ -88,12 +88,12 @@ bool GameStateManager::insideMenuPressed()
 
     if (i > 0)
     {
-		switchState(i, 1.0f);
+		switchState(i);
     }
-    if (i == -3)
+	if (i == SS_MAINMENU)
     {
         if (gameState == PAUSE)
-            switchState(i, 1.0f);
+            switchState(i);
         else
             continueExecution = false;
     }
@@ -102,9 +102,9 @@ bool GameStateManager::insideMenuPressed()
         Global::mPPMgr->radialHorizBlurVignette.z = 0.0;
         gameState = PLAY;
     }
-    if (i == -2)
+    if (i == SS_RESTART)
     {
-		switchState(i, 1.0f);
+		switchState(i);
     }
 
     return continueExecution;
@@ -142,11 +142,11 @@ void GameStateManager::updateStateSwitching(float tslf)
 	{
 		switchToLevel(stateTarget);
 	}
-	if (stateTarget == -3)
+	if (stateTarget == SS_MAINMENU)
 	{
 		switchToMainMenu();
 	}
-	if (stateTarget == -2)
+	if (stateTarget == SS_RESTART)
 	{
 		restartLevel();
 	}

@@ -29,7 +29,7 @@ bool LoadNextPart::update(Ogre::Real tslf)
         auto pos = Global::player->getBody()->getPosition();
         auto or = Global::mSceneMgr->getCamera("Camera")->getOrientation();
 
-        Global::gameMgr->switchToLevel(0);
+		Global::gameMgr->switchState(SS_MAINMENU);
 
         if (Global::player)
         {
