@@ -35,7 +35,7 @@ PostProcessMgr::PostProcessMgr(Ogre::Camera* camera)
 
     totalBlacktime = currentBlacktime = 0;
 
-    colourOut(Ogre::Vector3(0,0,0),2);
+    fadeIn(Ogre::Vector3(0,0,0),2);
 }
 
 PostProcessMgr::~PostProcessMgr()
@@ -99,30 +99,32 @@ void PostProcessMgr::update(float tslf)
 
     godrayEdge = Ogre::Math::Clamp(par/0.65f-0.25f,0.0f,0.75f);
 
-
-    if(totalBlacktime != currentBlacktime)
-    {
-        if(totalBlacktime < currentBlacktime)
+    if (!skipFadeFrame)
+        if(totalBlacktime != currentBlacktime)
         {
-            //out
-            totalBlacktime += tslf;
-            if(totalBlacktime > currentBlacktime)
-                totalBlacktime = currentBlacktime;
-
-            colourOverlaying.w = 1 - totalBlacktime / currentBlacktime;
-        }
-        else
-        {
-            //in
-            currentBlacktime += tslf;
             if(totalBlacktime < currentBlacktime)
-                currentBlacktime = totalBlacktime;
+            {
+                //out
+                totalBlacktime += tslf;
+                if(totalBlacktime > currentBlacktime)
+                    totalBlacktime = currentBlacktime;
 
-            colourOverlaying.w = currentBlacktime / totalBlacktime;
+                colourOverlaying.w = 1 - totalBlacktime / currentBlacktime;
+            }
+            else
+            {
+                //in
+                currentBlacktime += tslf;
+                if(totalBlacktime < currentBlacktime)
+                    currentBlacktime = totalBlacktime;
+
+                colourOverlaying.w = currentBlacktime / totalBlacktime;
+            }
+
+            dirty = true;
         }
 
-        dirty = true;
-    }
+    skipFadeFrame = false;
 }
 
 void PostProcessMgr::setToBasicBloom()
@@ -193,7 +195,7 @@ void PostProcessMgr::setSSAO(bool enabled)
     }
 }
 
-void PostProcessMgr::colourIn(Ogre::Vector3 colour, float duration)
+void PostProcessMgr::fadeOut(Ogre::Vector3 colour, float duration, bool skipFrame)
 {
     dirty = true;
     colourOverlaying = colour;
@@ -201,9 +203,10 @@ void PostProcessMgr::colourIn(Ogre::Vector3 colour, float duration)
 
     totalBlacktime = 0;
     currentBlacktime = duration;
+    skipFadeFrame = skipFrame;
 }
 
-void PostProcessMgr::colourOut(Ogre::Vector3 colour, float duration)
+void PostProcessMgr::fadeIn(Ogre::Vector3 colour, float duration, bool skipFrame)
 {
     dirty = true;
     colourOverlaying = colour;
@@ -211,4 +214,5 @@ void PostProcessMgr::colourOut(Ogre::Vector3 colour, float duration)
 
     totalBlacktime = duration;
     currentBlacktime = 0;
+    skipFadeFrame = skipFrame;
 }

@@ -12,7 +12,7 @@ LoadNextPart::LoadNextPart(Ogre::String target)
 
 bool LoadNextPart::start()
 {
-    Global::mPPMgr->colourOut(Ogre::Vector3(0,0,0), 1);
+    Global::mPPMgr->fadeIn(Ogre::Vector3(0,0,0), 1);
     Global::player->stopMoving();
     Global::player->enableControl(false);
     timer = 0;
@@ -29,7 +29,7 @@ bool LoadNextPart::update(Ogre::Real tslf)
         auto pos = Global::player->getBody()->getPosition();
         auto or = Global::mSceneMgr->getCamera("Camera")->getOrientation();
 
-		Global::gameMgr->switchState(SS_MAINMENU);
+        Global::gameMgr->switchState(SS_MAINMENU);
 
         if (Global::player)
         {

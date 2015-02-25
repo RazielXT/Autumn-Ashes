@@ -74,6 +74,8 @@ void GameStateManager::switchToLevel(int lvl)
     default:
         switchToMainMenu();
     }
+
+    Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
 }
 
 void GameStateManager::restartLevel()
@@ -88,9 +90,9 @@ bool GameStateManager::insideMenuPressed()
 
     if (i > 0)
     {
-		switchState(i);
+        switchState(i);
     }
-	if (i == SS_MAINMENU)
+    if (i == SS_MAINMENU)
     {
         if (gameState == PAUSE)
             switchState(i);
@@ -104,7 +106,7 @@ bool GameStateManager::insideMenuPressed()
     }
     if (i == SS_RESTART)
     {
-		switchState(i);
+        switchState(i);
     }
 
     return continueExecution;
@@ -117,61 +119,60 @@ void GameStateManager::insideMenuMoved(int x, int y)
 
 void GameStateManager::switchState(int target, float time)
 {
-	stateTarget = target;
-	switchStateTimer = time;
+    stateTarget = target;
+    switchStateTimer = time;
 
-	Global::mPPMgr->colourOut(Vector3(0, 0, 0), time);
-	myMenu->clearMenu();
+    Global::mPPMgr->fadeOut(Vector3(0, 0, 0), time);
+    myMenu->clearMenu();
 }
 
 void GameStateManager::updateStateSwitching(float tslf)
 {
-	if (switchStateTimer > 0)
-	{
-		switchStateTimer -= tslf;
-		return;
-	}
-	else
-	if (!switchingState)
-	{
-		switchingState = true;
-		return;
-	}
+    if (switchStateTimer > 0)
+    {
+        switchStateTimer -= tslf;
+        return;
+    }
+    else if (!switchingState)
+    {
+        switchingState = true;
+        return;
+    }
 
-	if (stateTarget > 0)
-	{
-		switchToLevel(stateTarget);
-	}
-	if (stateTarget == SS_MAINMENU)
-	{
-		switchToMainMenu();
-	}
-	if (stateTarget == SS_RESTART)
-	{
-		restartLevel();
-	}
+    if (stateTarget > 0)
+    {
+        switchToLevel(stateTarget);
+    }
+    if (stateTarget == SS_MAINMENU)
+    {
+        switchToMainMenu();
+    }
+    if (stateTarget == SS_RESTART)
+    {
+        restartLevel();
+    }
 
-	stateTarget = 0;
-	switchingState = false;
+    stateTarget = 0;
+    switchingState = false;
 }
 
 void GameStateManager::update(float tslf)
 {
-	if (stateTarget!=0)
-		updateStateSwitching(tslf);
-	else
-    switch (gameState)
-    {
-    case PLAY:
-        myMenu->setDebugValue(Global::mWindow->getLastFPS(), 0);
-        break;
-    case PAUSE:
-        myMenu->updateIngameMenu(tslf);
-        break;
-    case MENU:
-        myMenu->updateMainMenu(tslf);
-        break;
-    }
+    if (stateTarget!=0)
+        updateStateSwitching(tslf);
+    else
+        switch (gameState)
+        {
+        case PLAY:
+            myMenu->setDebugValue(Global::mWindow->getLastFPS(), 0);
+            break;
+        case PAUSE:
+            myMenu->updateIngameMenu(tslf);
+            break;
+        case MENU:
+            myMenu->updateMainMenu(tslf);
+            break;
+        }
 
 }
 

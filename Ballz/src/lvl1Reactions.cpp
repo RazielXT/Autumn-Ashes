@@ -13,7 +13,7 @@ void ParkToDreamReaction::setUserData(void* data)
 
 bool ParkToDreamReaction::start()
 {
-    Global::mPPMgr->colourIn(Ogre::Vector3(1,1,1),1);
+    Global::mPPMgr->fadeOut(Ogre::Vector3(1,1,1),1);
     timer=0;
 
     return true;
@@ -30,7 +30,7 @@ bool ParkToDreamReaction::update(Ogre::Real tslf)
         mgr->ColouringShift.y = 1.0;
         mgr->ColouringShift.z = 1.7;
 
-        mgr->colourOut(Ogre::Vector3(1, 1, 1), 2);
+        mgr->fadeIn(Ogre::Vector3(1, 1, 1), 2);
         Global::mSceneMgr->setVisibilityMask(2);
         return false;
     }

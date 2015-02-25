@@ -15,7 +15,7 @@ public:
 
     bool frameStarted(const float tslf)
     {
-		m_elapsed += tslf*1.5f;
+        m_elapsed += tslf*1.5f;
 
         if ((m_elapsed>m_update)&&(m_elapsed<1.0f))
         {

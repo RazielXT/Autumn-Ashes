@@ -131,7 +131,7 @@ private:
     OgreNewt::UpVector* uv;
     OgreNewt::UpVector* uv2;
     OgreNewt::ConvexCollisionPtr col_p;
-	WorldMaterials* wmaterials;
+    WorldMaterials* wmaterials;
 
     //state
     bool alive, stoji, vpravo, vlavo, vzad, vpred, onGround, visi, grabbed, camShaking, inControl, inMoveControl;

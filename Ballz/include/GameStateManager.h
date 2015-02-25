@@ -7,9 +7,9 @@
 enum GameState { PLAY, PAUSE, MENU, CONSOLE, UNDEFINED };
 
 enum StateSwitching
-{ 
-	SS_MAINMENU = -3,
-	SS_RESTART = -2
+{
+    SS_MAINMENU = -3,
+    SS_RESTART = -2
 };
 
 class GameStateManager
@@ -20,9 +20,9 @@ public:
     ~GameStateManager();
 
     void switchToMainMenu();
-	void switchToLevel(int lvl);
+    void switchToLevel(int lvl);
     void restartLevel();
-	void switchState(int target, float time = 1.0f);
+    void switchState(int target, float time = 1.0f);
 
     void update(float tslf);
     bool insideMenuPressed();
@@ -33,11 +33,11 @@ public:
 
 private:
 
-	
-	void updateStateSwitching(float tslf);
-	int stateTarget=0;
-	bool switchingState = false;
-	float switchStateTimer;
+
+    void updateStateSwitching(float tslf);
+    int stateTarget=0;
+    bool switchingState = false;
+    float switchStateTimer;
 
     int lastLVL;
     GuiOverlay* myMenu;

@@ -188,7 +188,7 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
 
     Ogre::ConfigOptionMap& CurrentRendererOptions = rs->getConfigOptions();
     Ogre::ConfigOptionMap::iterator configItr = CurrentRendererOptions.begin();
-	Ogre::StringVector mFoundResolutions;
+    Ogre::StringVector mFoundResolutions;
     while( configItr != CurrentRendererOptions.end() )
     {
         if( (configItr)->first == "Video Mode" )
@@ -348,21 +348,21 @@ void GuiOverlay::createOptionMenuButtons()
     oMenuButtons.push_back(caption);
     cOptionButtonA->value=caption;
 
-	caption = mLayer->createCaption(48, 1000, 1150, gConfig.fs ? "On" : "Off");
+    caption = mLayer->createCaption(48, 1000, 1150, gConfig.fs ? "On" : "Off");
     caption->size(351,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
     cOptionButtonA->addToEnd(caption);
 
-	caption = mLayer->createCaption(48, 1000, 1240, gConfig.shadow == 0 ? "Low" : (gConfig.shadow == 1 ? "Medium" : "High"));
+    caption = mLayer->createCaption(48, 1000, 1240, gConfig.shadow == 0 ? "Low" : (gConfig.shadow == 1 ? "Medium" : "High"));
     caption->size(352,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
     cOptionButtonA->addToEnd(caption);
 
-	caption = mLayer->createCaption(48, 1000, 1330, gConfig.ssao ? "On" : "Off");
+    caption = mLayer->createCaption(48, 1000, 1330, gConfig.ssao ? "On" : "Off");
     caption->size(353,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);

@@ -16,8 +16,8 @@ public:
     void update(float tslf);
     void resetValues();
 
-    void colourIn(Ogre::Vector3 colour, float duration);
-    void colourOut(Ogre::Vector3 colour, float duration);
+    void fadeOut(Ogre::Vector3 targetColor, float duration, bool skipFrame = false);
+    void fadeIn(Ogre::Vector3 startColor, float duration, bool skipFrame = false);
 
     void setToBasicBloom();
     void setToScaryBloom();
@@ -37,6 +37,7 @@ public:
 
 private:
 
+    bool skipFadeFrame = false;
     bool dirty;
     float totalBlacktime,currentBlacktime;
     bool basicPP,scaryPP,advancedPP,ssaoEnabled;

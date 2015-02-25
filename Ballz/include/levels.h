@@ -16,7 +16,7 @@ void createMenuLevel(WorldMaterials* wMaterials)
     PagingManager* pagingMgr = Global::mPagingMgr;
     PostProcessMgr* postProcMgr = Global::mPPMgr;
     postProcMgr->ColouringShift = Ogre::Vector4(1.08, 1.12, 1.16, postProcMgr->ColouringShift.w);
-    postProcMgr->colourOut(Vector3(1, 1, 1), 2);
+    postProcMgr->fadeIn(Vector3(1, 1, 1), 2);
     postProcMgr->radialHorizBlurVignette.z = 1.0;
     postProcMgr->ContSatuSharpNoise = 0.0;
     postProcMgr->bloomStrDep.y = 10.0;
