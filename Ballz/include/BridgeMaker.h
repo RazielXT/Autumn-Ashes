@@ -11,7 +11,7 @@ public:
     ~BridgeMaker ();
 
     /*looseness- 1=very loose, 0=very tight */
-    void makeBridge(Ogre::Vector3 position, Ogre::Vector3 target, Ogre::Real scale, Ogre::Real looseness, unsigned int visibilityFlag = 1, Ogre::String material = defaultMat);
+    void makeBridge(Ogre::Vector3 position, Ogre::Vector3 target, Ogre::Real scale, Ogre::Real looseness, int matType, unsigned int visibilityFlag = 1, Ogre::String material = defaultMat);
     void move_callback(OgreNewt::Body* me, float timeStep, int threadIndex);
 
 private:

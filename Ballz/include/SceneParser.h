@@ -8,11 +8,6 @@
 #include "Tasks.h"
 #include "ReflectionTask.h"
 
-/*
-BODY TYPES
-//0-default,3-grab,6?5-climb,1-??,2-pullup,4-baloon
-9-triggers
-*/
 
 using namespace Ogre;
 
@@ -1091,9 +1086,9 @@ private:
         }
 
         if (mat.empty())
-            bm->makeBridge(pos, target, scale, loose, visibilityFlag);
+            bm->makeBridge(pos, target, scale, loose, matType, visibilityFlag);
         else
-            bm->makeBridge(pos, target, scale, loose, visibilityFlag, mat);
+            bm->makeBridge(pos, target, scale, loose, matType, visibilityFlag, mat);
 
         node->detachAllObjects();
         mSceneMgr->destroySceneNode(node);

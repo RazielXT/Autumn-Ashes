@@ -15,7 +15,7 @@ BridgeMaker::BridgeMaker(Ogre::SceneManager *mSceneM, OgreNewt::World *W)
 
 
 /*looseness- 1=very loose, 0=very tight                */
-void BridgeMaker::makeBridge(Ogre::Vector3 position, Ogre::Vector3 target, Ogre::Real scale, Ogre::Real looseness, uint32 visibilityFlag, Ogre::String material)
+void BridgeMaker::makeBridge(Ogre::Vector3 position, Ogre::Vector3 target, Ogre::Real scale, Ogre::Real looseness, int matType, uint32 visibilityFlag, Ogre::String material)
 {
     OgreNewt::Body* parent;
 
@@ -61,6 +61,10 @@ void BridgeMaker::makeBridge(Ogre::Vector3 position, Ogre::Vector3 target, Ogre:
 
     parent=bridgeB;
 
+    bodyUserData* userD = new bodyUserData();
+    userD->material = matType;
+    bridgeB->setUserData(Ogre::Any(userD));
+
     for(int i=0; i<parts; i++)
     {
 
@@ -70,6 +74,7 @@ void BridgeMaker::makeBridge(Ogre::Vector3 position, Ogre::Vector3 target, Ogre:
         bNode->attachObject( bridgeE );
         bNode->setScale(Vector3(scale));
         bridgeE->setVisibilityFlags(visibilityFlag);
+
         //rNode->_updateBounds();//showBoundingBox(true);
         col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,bridgeE,10));
 
@@ -91,6 +96,9 @@ void BridgeMaker::makeBridge(Ogre::Vector3 position, Ogre::Vector3 target, Ogre:
         bridgeB->setAngularDamping(Vector3(1,1,1)*0.6);
         bridgeB->setLinearDamping(0.6);
         bridgeB->setType(Bridge);
+        bodyUserData* userD = new bodyUserData();
+        userD->material = matType;
+        bridgeB->setUserData(Ogre::Any(userD));
 
         OgreNewt::BallAndSocket* b=new OgreNewt::BallAndSocket(parent,bridgeB,position+flatDir/2.0f+(float)i*flatDir,pinAngle);//+Vector3(0,0,scale*(0.9f+i*1.8f))
         b->setCollisionState(0);
