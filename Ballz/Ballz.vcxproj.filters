@@ -147,6 +147,9 @@
     <ClCompile Include="src\WaterArea.cpp">
       <Filter>Source Files\tasks</Filter>
     </ClCompile>
+    <ClCompile Include="include\ZipLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\baloon.h">
@@ -318,6 +321,12 @@
       <Filter>Header Files\tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\ListLoop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ZipLine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

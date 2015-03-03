@@ -7,7 +7,15 @@ using namespace Ogre;
 #define MIN_SLIDE_DISTANCE 3
 #define LOOSENESS_OF_LINE 0.05f
 
-ZipLine::ZipLineState ZipLine::getProj(Ogre::Vector3 point)
+void ZipLine::pressedKey(const OIS::KeyEvent &arg)
+{
+	if (arg.key == OIS::KC_SPACE)
+	{
+
+	}
+}
+
+ZipLine::ZipLineState ZipLine::getProjectedState(Ogre::Vector3& point)
 {
 	Vector3 dir = endD - startD;
 	auto len = dir.length();
@@ -31,14 +39,14 @@ ZipLine::ZipLineState ZipLine::getProj(Ogre::Vector3 point)
 bool ZipLine::start()
 {
 	auto pos = Global::player->getBody()->getPosition();
-	auto state = getProj(pos);
+	auto state = getProjectedState(pos);
 
 	if (state.left < MIN_SLIDE_DISTANCE || state.left > state.fullL)
 		return false;
 
 }
 
-Vector3 ZipLine::getPPos(ZipLine::ZipLineState state)
+Vector3 ZipLine::getLinePos(const ZipLine::ZipLineState& state)
 {
 	Vector3 pos = state.projPos;
 	pos.y += sin(state.cProgress*Ogre::Math::PI)* state.fullL*LOOSENESS_OF_LINE;

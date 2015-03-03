@@ -6,6 +6,7 @@
 
 #include "EventTask.h"
 #include "EventsManager.h"
+#include "PlayerListener.h"
 
 class Shaker
 {
@@ -112,7 +113,12 @@ public:
     inline void updateVerticalClimb(bool leftPhase);
     bool immortal;
 
+	void addListener(PlayerListener* l);
+	void removeListener(PlayerListener* l);
+
 private:
+
+	std::vector<PlayerListener*> listeners;
 
     void initBody();
     void tryClimbToSide(Direction dir);

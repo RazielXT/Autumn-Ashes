@@ -191,6 +191,10 @@ void Player::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threadInd
 
 void Player::pressedKey(const OIS::KeyEvent &arg)
 {
+	for (auto l : listeners)
+	{
+		l->pressedKey(arg);
+	}
 
     if(!inMoveControl)
         return;
@@ -300,6 +304,18 @@ void Player::movedMouse(const OIS::MouseEvent &e)
     rotateCamera(mouseX/10.0f,mouseY/10.0f);
 }
 
+void Player::addListener(PlayerListener* l)
+{
+	listeners.push_back(l);
+}
+
+void Player::removeListener(PlayerListener* l)
+{
+	auto it = std::find(listeners.begin(), listeners.end(), l);
+
+	if (it != listeners.end())
+		listeners.erase(it);
+}
 
 void Player::setCrouch(char b)
 {

@@ -125,6 +125,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\ZipLine.cpp" />
     <ClCompile Include="src\AAmain.cpp" />
     <ClCompile Include="src\AudioLibrary.cpp" />
     <ClCompile Include="src\baloon.cpp" />
@@ -203,6 +204,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\GuiOverlay.h" />
     <ClInclude Include="include\NewtonListener.h" />
     <ClInclude Include="include\PagingManager.h" />
+    <ClInclude Include="include\PlayerListener.h" />
     <ClInclude Include="include\SceneParser.h" />
     <ClInclude Include="include\ScaryPPListener.h" />
     <ClInclude Include="include\ITransformationTask.h" />
@@ -215,6 +217,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\ReflectionTask.h" />
     <ClInclude Include="include\WaterArea.h" />
     <ClInclude Include="include\WorldMaterials.h" />
+    <ClInclude Include="include\ZipLine.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="include\rope.h" />

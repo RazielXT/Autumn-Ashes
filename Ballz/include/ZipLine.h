@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-class ZipLine : public EventTask
+class ZipLine : public EventTask, public PlayerListener
 {
 public:
 
@@ -16,11 +16,12 @@ public:
 
 	bool start();
 	bool update(Ogre::Real tslf);
+	void pressedKey(const OIS::KeyEvent &arg);
 
 private:
 
-	inline ZipLineState getProj(Ogre::Vector3 point);
-	inline Vector3 getPPos(ZipLineState state);
+	inline ZipLineState getProjectedState(Ogre::Vector3& point);
+	inline Vector3 getLinePos(const ZipLineState& state);
 
 	Ogre::Vector3 startD;
 	Ogre::Vector3 endD;
