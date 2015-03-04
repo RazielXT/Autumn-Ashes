@@ -1,28 +1,47 @@
+#pragma once
 #include "stdafx.h"
 
 class ZipLine : public EventTask, public PlayerListener
 {
 public:
 
-	struct ZipLineState
+	struct LineProjState
 	{
 		Vector3 projPos;
-		float fullL;
 		float cProgress;
 		float left;
+		float sqDistance;
 	};
 
-	ZipLine(Ogre::Vector3 startPoint, Ogre::Vector3 endPoint) : startD(startPoint), endD(endPoint) {};
+	struct ZipLinePoint
+	{
+		Vector3 pos;
+		Vector3 dir;
+	};
+
+	struct SlideState
+	{
+		int mPoint;
+		float mProgress;
+		float speed;
+		Vector3 currentDir;
+	};
+
+	ZipLine(std::vector<Ogre::Vector3> points);
 
 	bool start();
 	bool update(Ogre::Real tslf);
+
 	void pressedKey(const OIS::KeyEvent &arg);
 
 private:
 
-	inline ZipLineState getProjectedState(Ogre::Vector3& point);
-	inline Vector3 getLinePos(const ZipLineState& state);
+	std::vector<ZipLinePoint> zipLine;
+	SlideState sliding;
 
-	Ogre::Vector3 startD;
-	Ogre::Vector3 endD;
+	bool placePointOnLine(Vector3& point);
+	inline LineProjState getProjectedState(Ogre::Vector3& point, Ogre::Vector3& start, Ogre::Vector3& end);
+	inline Vector3 getCurrentLinePos();
+
+	
 };
