@@ -17,6 +17,7 @@ public:
 	{
 		Vector3 pos;
 		Vector3 dir;
+		float lenghtCoef;
 	};
 
 	struct SlideState
@@ -24,10 +25,12 @@ public:
 		int mPoint;
 		float mProgress;
 		float speed;
+
+		Vector3 currentPos;
 		Vector3 currentDir;
 	};
 
-	ZipLine(std::vector<Ogre::Vector3> points);
+	ZipLine(const std::vector<Ogre::Vector3>& points);
 
 	bool start();
 	bool update(Ogre::Real tslf);
@@ -39,9 +42,16 @@ private:
 	std::vector<ZipLinePoint> zipLine;
 	SlideState sliding;
 
-	bool placePointOnLine(Vector3& point);
-	inline LineProjState getProjectedState(Ogre::Vector3& point, Ogre::Vector3& start, Ogre::Vector3& end);
-	inline Vector3 getCurrentLinePos();
+	void initZipLine(const std::vector<Ogre::Vector3>& points);
 
-	
+	bool placePointOnLine(Vector3& point);
+
+	inline LineProjState getProjectedState(Ogre::Vector3& point, Ogre::Vector3& start, Ogre::Vector3& end);
+	inline void getCurrentLinePos();
+	void updateSlidingState(float time);
+	inline void updateSlidingSpeed(float time);
+
+	void release();
+
+	bool active = false;
 };

@@ -12,8 +12,14 @@ void ZipLine::pressedKey(const OIS::KeyEvent &arg)
 	}
 }
 
-ZipLine::ZipLine(std::vector<Ogre::Vector3> points)
+ZipLine::ZipLine(const std::vector<Ogre::Vector3>& points)
 {
+	initZipLine(points);
+}
+
+void ZipLine::initZipLine(const std::vector<Ogre::Vector3>& points)
+{
+	zipLine.clear();
 	zipLine.resize(points.size());
 
 	for (int i = 0; i < points.size(); i++)
@@ -26,17 +32,30 @@ ZipLine::ZipLine(std::vector<Ogre::Vector3> points)
 			point.dir = (points[1] - points[0]).normalise();
 		//last 2
 		else if (i >= points.size() - 2)
-			point.dir = (points[points.size() - 1] - points[points.size()-2]).normalise();
-		//rest inside
+			point.dir = (points[points.size() - 1] - points[points.size() - 2]).normalise();
+		//else inside
 		else
 		{
-			auto dirB = (points[i] - points[i-1]);
+			auto dirB = (points[i] - points[i - 1]);
 			dirB.normalise();
 			auto dirF = (points[i + 1] - points[i]);
 			dirF.normalise();
 
 			point.dir = (dirB + dirF).normalise();
 		}
+	}
+
+	zipLine[0].lenghtCoef = 1;
+	zipLine[zipLine.size()-1].lenghtCoef = 1;
+
+	for (int i = 1; i < points.size() - 1; i++)
+	{
+		auto generalDir = zipLine[i + 1].pos - zipLine[i].pos;
+		auto angleDeviation = zipLine[i].dir.angleBetween(generalDir);
+		angleDeviation += zipLine[i + 1].dir.angleBetween(generalDir);
+
+		//180 deg = PI deviation => full circle instead of straight line => 4*r=2*PI*r => w=PI/2 => w=dev/PI, min 1
+		zipLine[i].lenghtCoef = 1 + ((angleDeviation.valueRadians() / Ogre::Math::PI) * ((Ogre::Math::PI / 2.0f) - 1));
 	}
 }
 
@@ -98,6 +117,8 @@ bool ZipLine::start()
 	if (placePointOnLine(pos))
 	{
 		//TODO attach player
+		sliding.speed = 3;
+		active = true;
 
 		return true;
 	}
@@ -105,7 +126,53 @@ bool ZipLine::start()
 	return false;
 }
 
-Vector3 ZipLine::getCurrentLinePos()
+void ZipLine::updateSlidingSpeed(float time)
+{
+	sliding.speed = 3;
+}
+
+void ZipLine::release()
+{
+	active = false;
+}
+
+void ZipLine::updateSlidingState(float time)
+{
+	updateSlidingSpeed(time);
+
+	auto lineLenght = (zipLine[sliding.mPoint + 1].pos - zipLine[sliding.mPoint].pos).length() * zipLine[sliding.mPoint].lenghtCoef;
+
+	//jump to next line segment
+	while (lineLenght*(1 - sliding.mProgress) < time*sliding.speed && (sliding.mPoint != zipLine.size()-1))
+	{
+		time -= lineLenght*(1 - sliding.mProgress) / sliding.speed;
+
+		sliding.mPoint++;
+		sliding.mProgress = 0;
+
+		if ((sliding.mPoint != zipLine.size() - 1))
+			lineLenght = (zipLine[sliding.mPoint + 1].pos - zipLine[sliding.mPoint].pos).length() * zipLine[sliding.mPoint].lenghtCoef;
+	}
+
+	bool pastEnd = (sliding.mPoint == zipLine.size() - 1);
+
+	//get new pos, if past, get him back
+	if (!pastEnd)
+	{
+		auto addProgress = time*sliding.speed / lineLenght;
+		sliding.mProgress += addProgress;
+
+		getCurrentLinePos();
+	}
+	else
+		sliding.currentPos = zipLine[zipLine.size() - 1].pos -= zipLine[zipLine.size() - 1].dir*MIN_SLIDE_DISTANCE;
+
+	//past/near end
+	if (pastEnd || ((sliding.mPoint == zipLine.size() - 2) && (1 - sliding.mProgress)*lineLenght<MIN_SLIDE_DISTANCE))
+		release();
+}
+
+void ZipLine::getCurrentLinePos()
 {
 	auto posBase = zipLine[sliding.mPoint].pos*(1 - sliding.mProgress) + zipLine[sliding.mPoint + 1].pos*sliding.mProgress;
 
@@ -120,14 +187,22 @@ Vector3 ZipLine::getCurrentLinePos()
 
 	auto posOffset = ((1 - c)*startDir + c*endDirInv)*offWeight;
 
-	auto pos = posBase + posOffset;
+	sliding.currentPos = posBase + posOffset;
 
-	//TODO compute direction
+	//direction 0-0.5-1 = startDir/lineDir/endDir
+	auto generalDir = zipLine[sliding.mPoint + 1].pos - zipLine[sliding.mPoint].pos;
+	generalDir.normalise();
 
-	return pos;
+	if (sliding.mProgress<0.5f)
+		sliding.currentDir = zipLine[sliding.mPoint].dir*(1 - sliding.mProgress * 2) + generalDir*sliding.mProgress * 2;
+	else
+		sliding.currentDir = generalDir*(1 - (sliding.mProgress - 0.5) * 2) + zipLine[sliding.mPoint + 1].dir*(sliding.mProgress - 0.5) * 2;
+	
 }
 
 bool ZipLine::update(Ogre::Real tslf)
 {
+	updateSlidingState(tslf);
 
+	return active;
 }
