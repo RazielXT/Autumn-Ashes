@@ -3,7 +3,7 @@
 
 using namespace Ogre;
 
-inline std::string AudioLibrary::getPath(std::string file, SoundType type)
+std::string AudioLibrary::getPath(std::string file, SoundType type)
 {
     switch (type)
     {
@@ -21,7 +21,7 @@ AudioLibrary::AudioLibrary(irrklang::ISoundEngine* engine)
     fillMaterialAudio();
     fillMoveAudio();
 
-	soundEngine = engine;
+    soundEngine = engine;
 }
 
 AudioLibrary::~AudioLibrary()
@@ -48,27 +48,27 @@ AudioLibrary::~AudioLibrary()
     }
 }
 
-irrklang::ISound* AudioLibrary::playRandom3D(std::vector<std::string>& sounds, Ogre::Vector3& pos, float maxDistance, float volume)
+void AudioLibrary::playRandom3D(std::vector<std::string>& sounds, Ogre::Vector3& pos, float maxDistance, float volume)
 {
-	int rand = (int)Ogre::Math::RangeRandom(0, sounds.size() - 0.01f);
-	String sound = sounds[rand];
+    int rand = (int)Ogre::Math::RangeRandom(0, sounds.size() - 0.01f);
+    String sound = sounds[rand];
 
-	play3D(sound.c_str(), pos, maxDistance, volume);
+    play3D(sound.c_str(), pos, maxDistance, volume);
 }
 
-irrklang::ISound* AudioLibrary::play3D(const char* name, Vector3& pos, float maxDistance, float volume)
+void AudioLibrary::play3D(const char* name, Vector3& pos, float maxDistance, float volume)
 {
-	irrklang::ISound* s = soundEngine->play3D(AudioLibrary::getPath(name).c_str(), irrklang::vec3df(pos.x, pos.y + 2, pos.z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
-	s->setMaxDistance(5);
-	s->setVolume(0.7);
+    irrklang::ISound* s = soundEngine->play3D(AudioLibrary::getPath(name).c_str(), irrklang::vec3df(pos.x, pos.y + 2, pos.z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
+    s->setMaxDistance(5);
+    s->setVolume(0.7);
 
-	if (Global::timestep < 1)
-	{
-		s->setPlaybackSpeed(Global::timestep);
-		s->getSoundEffectControl()->enableWavesReverbSoundEffect(0, -10 * Global::timestep, 2600, 0.5);
-	}
+    if (Global::timestep < 1)
+    {
+        s->setPlaybackSpeed(Global::timestep);
+        s->getSoundEffectControl()->enableWavesReverbSoundEffect(0, -10 * Global::timestep, 2600, 0.5);
+    }
 
-	s->drop();
+    s->drop();
 }
 void AudioLibrary::playWalkingSound(float x, float y, float z, int groundID)
 {

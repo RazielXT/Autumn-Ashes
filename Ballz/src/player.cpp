@@ -141,10 +141,10 @@ void Player::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threadInd
 
 void Player::pressedKey(const OIS::KeyEvent &arg)
 {
-	for (auto l : listeners)
-	{
-		l->pressedKey(arg);
-	}
+    for (auto l : listeners)
+    {
+        l->pressedKey(arg);
+    }
 
     if(!inMoveControl)
         return;
@@ -242,24 +242,24 @@ void Player::releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 void Player::movedMouse(const OIS::MouseEvent &e)
 {
     if (rolling<=0)
-		mouseX = (int)(-1 * e.state.X.rel*Global::timestep);
+        mouseX = (int)(-1 * e.state.X.rel*Global::timestep);
 
-	int mouseY = (int)(-1 * e.state.Y.rel*Global::timestep);
+    int mouseY = (int)(-1 * e.state.Y.rel*Global::timestep);
 
     rotateCamera(mouseX/10.0f,mouseY/10.0f);
 }
 
 void Player::addListener(PlayerListener* l)
 {
-	listeners.push_back(l);
+    listeners.push_back(l);
 }
 
 void Player::removeListener(PlayerListener* l)
 {
-	auto it = std::find(listeners.begin(), listeners.end(), l);
+    auto it = std::find(listeners.begin(), listeners.end(), l);
 
-	if (it != listeners.end())
-		listeners.erase(it);
+    if (it != listeners.end())
+        listeners.erase(it);
 }
 
 void Player::setCrouch(char b)
@@ -387,7 +387,7 @@ void Player::rotateCamera(Real hybX,Real hybY)
     }
     else
     {
-		Vector3 camDir = getFacingDirection();
+        Vector3 camDir = getFacingDirection();
         camDir.y=0;
         camDir.normalise();
         Real angle=climb_normal.angleBetween(camDir).valueDegrees();
@@ -434,7 +434,7 @@ void Player::update(Real time)
         }
         else
         {
-			updateMovement();
+            updateMovement();
         }
     }
     else if (rolling>0)
@@ -454,79 +454,79 @@ void Player::update(Real time)
     //making pullup
     if(climb_pullup)
     {
-		updatePullup();
+        updatePullup();
     }
     else if(is_climbing)
     {
-		updateClimbMovement();
+        updateClimbMovement();
     }
 
-	if (!stoji && onGround)
-	{
-		if (movespeed < 17)
-			movespeed += time * 10;
-		else
-			movespeed = 17;
+    if (!stoji && onGround)
+    {
+        if (movespeed < 17)
+            movespeed += time * 10;
+        else
+            movespeed = 17;
 
-		walkingSound(time);
-	}
-	else movespeed = 7;
+        walkingSound(time);
+    }
+    else movespeed = 7;
 
     updateHead(time);
 }
 
 void Player::updateMotionBlur()
 {
-	//visual fall dmg
-	if (*ppFall > 0 && alive)
-	{
-		*ppFall -= tslf*2.5f;
-		if (*ppFall < 0) *ppFall = 0;
-	}
+    //visual fall dmg
+    if (*ppFall > 0 && alive)
+    {
+        *ppFall -= tslf*2.5f;
+        if (*ppFall < 0) *ppFall = 0;
+    }
 
-	float interpolationFactor = mPreviousFPS*0.03f*(*ppMotionBlur);
+    float interpolationFactor = mPreviousFPS*0.03f*(*ppMotionBlur);
 
-	Ogre::Quaternion estimatedOrientation = Ogre::Quaternion::nlerp(interpolationFactor, mCamera->getDerivedOrientation(), prevOr);
-	Ogre::Vector3    estimatedPosition = (1 - interpolationFactor)*mCamera->getDerivedPosition() + interpolationFactor*prevPos;
-	Ogre::Matrix4 viewMatrix = Ogre::Math::makeViewMatrix(estimatedPosition, estimatedOrientation);
-	Ogre::Matrix4 projectionMatrix = mCamera->getProjectionMatrix();
-	*pVP = projectionMatrix*viewMatrix;
-	*iVP = (projectionMatrix*mCamera->getViewMatrix()).inverse();
+    Ogre::Quaternion estimatedOrientation = Ogre::Quaternion::nlerp(interpolationFactor, mCamera->getDerivedOrientation(), prevOr);
+    Ogre::Vector3    estimatedPosition = (1 - interpolationFactor)*mCamera->getDerivedPosition() + interpolationFactor*prevPos;
+    Ogre::Matrix4 viewMatrix = Ogre::Math::makeViewMatrix(estimatedPosition, estimatedOrientation);
+    Ogre::Matrix4 projectionMatrix = mCamera->getProjectionMatrix();
+    *pVP = projectionMatrix*viewMatrix;
+    *iVP = (projectionMatrix*mCamera->getViewMatrix()).inverse();
 
-	mPreviousFPS = 1 / tslf;
-	prevPos = mCamera->getDerivedPosition();
-	prevOr = mCamera->getDerivedOrientation();
+    mPreviousFPS = 1 / tslf;
+    prevPos = mCamera->getDerivedPosition();
+    prevOr = mCamera->getDerivedOrientation();
 }
 
 void Player::updateStats()
 {
-	if (slowingDown < 1)
-	{
-		slowingDown += (tslf / 2);
-		if (slowingDown > 1) slowingDown = 1;
-	}
+    if (slowingDown < 1)
+    {
+        slowingDown += (tslf / 2);
+        if (slowingDown > 1) slowingDown = 1;
+    }
 
-	if (startMoveBoost)
-	{
-		startMoveBoost -= (tslf * 2);
-		if (startMoveBoost < 0) startMoveBoost = 0;
-	}
+    if (startMoveBoost)
+    {
+        startMoveBoost -= (tslf * 2);
+        if (startMoveBoost < 0) startMoveBoost = 0;
+    }
 
-	updateMotionBlur();
-	updateGroundStats();
-    
+    updateMotionBlur();
+    updateGroundStats();
+
     if(!onGround && !visi && !is_climbing && noClimbTimer<=0)
     {
-		checkClimbingPossibility();
+        checkClimbingPossibility();
     }
     else if(is_climbing)
     {
-		updateClimbingStats();
+        updateClimbingStats();
     }
 
     if(!grabbed && !is_climbing && !visi)
     {
-		updateUseGui();
+        updateUseGui();
     }
 }
 

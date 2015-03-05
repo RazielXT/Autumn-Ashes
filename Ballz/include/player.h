@@ -61,7 +61,7 @@ public:
     void pressedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
     void releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
     void movedMouse(const OIS::MouseEvent &e);
-    
+
     void setPosition(Ogre::Vector3 pos)
     {
         body->setPositionOrientation(pos,body->getOrientation());
@@ -71,7 +71,7 @@ public:
     {
         return fallPitchTimer;
     }
-    
+
     void die();
     void enableControl(bool enable);
     void enableMovement(bool enable);
@@ -80,60 +80,60 @@ public:
     impulse-0.1 slow,0.4 strong  */
     void startCameraShake(float time,float power,float impulse);
 
-	void addListener(PlayerListener* l);
-	void removeListener(PlayerListener* l);
+    void addListener(PlayerListener* l);
+    void removeListener(PlayerListener* l);
 
-	OgreNewt::Body* body = nullptr;
+    OgreNewt::Body* body = nullptr;
 
-	void stopMoving()
-	{
-		vlavo = false;
-		vpravo = false;
-		vpred = false;
-		vzad = false;
-		body->setVelocity(Ogre::Vector3(0, 0, 0));
-	};
+    void stopMoving()
+    {
+        vlavo = false;
+        vpravo = false;
+        vpred = false;
+        vzad = false;
+        body->setVelocity(Ogre::Vector3(0, 0, 0));
+    };
+
+    void attachCamera(Ogre::Camera* cam);
+    Ogre::Vector3 getFacingDirection();
+    void rotateCamera(Ogre::Real hybX, Ogre::Real hybY);
 
 protected:
 
-	void updateStats();
-	void updateMotionBlur();
-	void updateClimbingStats();
-	void updateUseGui();
-	void checkClimbingPossibility();
-	void updateGroundStats();
+    void updateStats();
+    void updateMotionBlur();
+    void updateClimbingStats();
+    void updateUseGui();
+    void checkClimbingPossibility();
+    void updateGroundStats();
 
-	void updateHead(Ogre::Real time);
-	void manageFall();
-	void rotateCamera(Ogre::Real hybX, Ogre::Real hybY);
+    void updateHead(Ogre::Real time);
+    void manageFall();
 
-	void setCrouch(char b);
-	void startClimbing(char type);
-	void stopClimbing();
+    void setCrouch(char b);
+    void startClimbing(char type);
+    void stopClimbing();
 
-	void walkingSound(Ogre::Real time);
-	char getCrouch()
-	{
-		return crouch;
-	}
-	
-	void attachCamera(Ogre::Camera* cam);
-	Ogre::Vector3 getFacingDirection();	
+    void walkingSound(Ogre::Real time);
+    char getCrouch()
+    {
+        return crouch;
+    }
 
-	inline void updateVerticalClimb(bool leftPhase);
-	void updateClimbMovement();
-	void tryClimbToSide(Direction dir);
-	bool canClimb(Direction direction, bool soundIfTrue = false, bool needSpeed = false, bool secondPhase = false);
-	void tryToGrab();
-	void updatePullup();
-	void updateMovement();
-	void jump();
+    inline void updateVerticalClimb(bool leftPhase);
+    void updateClimbMovement();
+    void tryClimbToSide(Direction dir);
+    bool canClimb(Direction direction, bool soundIfTrue = false, bool needSpeed = false, bool secondPhase = false);
+    void tryToGrab();
+    void updatePullup();
+    void updateMovement();
+    void jump();
 
-	void initBody();
-	
+    void initBody();
+
 private:
 
-	std::vector<PlayerListener*> listeners;
+    std::vector<PlayerListener*> listeners;
 
     Shaker* shaker;
     OgreNewt::World* m_World;
@@ -149,8 +149,8 @@ private:
     WorldMaterials* wmaterials;
 
     //state
-	bool alive, immortal, stoji, vpravo, vlavo, vzad, vpred;
-	bool onGround, visi, grabbed, inControl, inMoveControl;
+    bool alive, immortal, stoji, vpravo, vlavo, vzad, vpred;
+    bool onGround, visi, grabbed, inControl, inMoveControl;
     Ogre::Real camPitch,fallVelocity,bodyVelocity,bodySpeedAccum,startMoveBoost,crouch_am,noClimbTimer,movespeed,walkSoundTimer;
     float climb_yaw, climb_move_side, climb_move_vert, climb_pullup;
     char fallPitch,crouch,cameraWalkFinisher,is_climbing;

@@ -88,7 +88,7 @@ public:
         Global::mPPMgr = postProcMgr;
         Global::mPagingMgr = pagingMgr;
 
-        Global::audioLib = new AudioLibrary();
+        Global::audioLib = new AudioLibrary(engine);
 
         gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem(), wMaterials);
         Global::gameMgr = gameMgr;
