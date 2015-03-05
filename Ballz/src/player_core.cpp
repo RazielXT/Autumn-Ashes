@@ -627,10 +627,8 @@ void Player::checkClimbingPossibility()
 			ObjectAudio* a = any_cast<bodyUserData*>(any)->sounds;
 			if (a)
 			{
-				int rand = (int)Ogre::Math::RangeRandom(0, a->highHitAudio.size() - 0.01f);
-				String sound = a->highHitAudio.at(rand);
 				Vector3 pos = pos + predsebou;
-				Global::soundEngine->play3D(sound.c_str(), irrklang::vec3df(pos.x, pos.y, pos.z), false, false, false, irrklang::ESM_AUTO_DETECT, false);
+				Global::audioLib->playRandom3D(a->highHitAudio, pos);
 			}
 
 			startClimbing(info.mBody->getType());
@@ -778,9 +776,7 @@ bool Player::canClimb(Direction direction, bool soundIfTrue, bool needSpeed, boo
 				if (a)
 					if (!secondPhase || a->climbDoubleFreq)
 					{
-						int rand = (int)Ogre::Math::RangeRandom(0, a->lowHitAudio.size() - 0.01f);
-						String sound = a->lowHitAudio.at(rand);
-						Global::soundEngine->play3D(sound.c_str(), irrklang::vec3df(targetPos.x, targetPos.y, targetPos.z), false, false, false, irrklang::ESM_AUTO_DETECT, false);
+						Global::audioLib->playRandom3D(a->lowHitAudio, targetPos);
 					}
 			}
 		}
@@ -813,9 +809,7 @@ bool Player::canClimb(Direction direction, bool soundIfTrue, bool needSpeed, boo
 						if (a)
 							if (!secondPhase || a->climbDoubleFreq)
 							{
-								int rand = (int)Ogre::Math::RangeRandom(0, a->lowHitAudio.size() - 0.01f);
-								String sound = a->lowHitAudio.at(rand);
-								Global::soundEngine->play3D(sound.c_str(), irrklang::vec3df(targetPos.x, targetPos.y, targetPos.z), false, false, false, irrklang::ESM_AUTO_DETECT, false);
+								Global::audioLib->playRandom3D(a->lowHitAudio, targetPos);
 							}
 					}
 				}

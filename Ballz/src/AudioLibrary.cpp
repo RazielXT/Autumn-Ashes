@@ -48,7 +48,15 @@ AudioLibrary::~AudioLibrary()
     }
 }
 
-irrklang::ISound* AudioLibrary::play3D(char* name, Vector3& pos, float maxDistance, float volume)
+irrklang::ISound* AudioLibrary::playRandom3D(std::vector<std::string>& sounds, Ogre::Vector3& pos, float maxDistance, float volume)
+{
+	int rand = (int)Ogre::Math::RangeRandom(0, sounds.size() - 0.01f);
+	String sound = sounds[rand];
+
+	play3D(sound.c_str(), pos, maxDistance, volume);
+}
+
+irrklang::ISound* AudioLibrary::play3D(const char* name, Vector3& pos, float maxDistance, float volume)
 {
 	irrklang::ISound* s = soundEngine->play3D(AudioLibrary::getPath(name).c_str(), irrklang::vec3df(pos.x, pos.y + 2, pos.z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
 	s->setMaxDistance(5);
