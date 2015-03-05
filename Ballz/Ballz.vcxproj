@@ -149,6 +149,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\lvl_update.cpp" />
     <ClCompile Include="src\GuiOverlay.cpp" />
     <ClCompile Include="src\PagingManager.cpp" />
+    <ClCompile Include="src\player_core.cpp" />
     <ClCompile Include="src\PostProcessMgr.cpp" />
     <ClCompile Include="src\Tasks.cpp" />
     <ClCompile Include="src\TransformationTaskTemplate.cpp" />

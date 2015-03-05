@@ -97,6 +97,12 @@ public:
 protected:
 
 	void updateStats();
+	void updateMotionBlur();
+	void updateClimbingStats();
+	void updateUseGui();
+	void checkClimbingPossibility();
+	void updateGroundStats();
+
 	void updateHead(Ogre::Real time);
 	void manageFall();
 	void rotateCamera(Ogre::Real hybX, Ogre::Real hybY);
@@ -110,28 +116,21 @@ protected:
 	{
 		return crouch;
 	}
-
-	void skoc();
+	
 	void attachCamera(Ogre::Camera* cam);
-	Ogre::Vector3 getFacingDirection();
-	bool canClimb(Direction direction, bool soundIfTrue = false, bool needSpeed = false, bool secondPhase = false);
-	void tryToGrab();
+	Ogre::Vector3 getFacingDirection();	
 
 	inline void updateVerticalClimb(bool leftPhase);
-
-	void updateMotionBlur();
-	void updateClimbingStats();
-	void updateUseGui();
-	void checkClimbingPossibility();
-	void updateGroundStats();
-
-	void updateClimbing();
+	void updateClimbMovement();
+	void tryClimbToSide(Direction dir);
+	bool canClimb(Direction direction, bool soundIfTrue = false, bool needSpeed = false, bool secondPhase = false);
+	void tryToGrab();
 	void updatePullup();
 	void updateMovement();
+	void jump();
 
 	void initBody();
-	void tryClimbToSide(Direction dir);
-
+	
 private:
 
 	std::vector<PlayerListener*> listeners;
