@@ -131,6 +131,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\baloon.cpp" />
     <ClCompile Include="src\bird.cpp" />
     <ClCompile Include="src\BridgeMaker.cpp" />
+    <ClCompile Include="src\CameraShaker.cpp" />
     <ClCompile Include="src\ChainsSoundReaction.cpp" />
     <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="src\DefaultObjectContactCallback.cpp" />
@@ -178,6 +179,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\BasicPPListener.h" />
     <ClInclude Include="include\bird.h" />
     <ClInclude Include="include\BridgeMaker.h" />
+    <ClInclude Include="include\CameraShaker.h" />
     <ClInclude Include="include\ChainsSoundTask.h" />
     <ClInclude Include="include\Console.h" />
     <ClInclude Include="include\DebugKeys.h" />
