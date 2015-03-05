@@ -29,10 +29,10 @@ void ZipLine::initZipLine(const std::vector<Ogre::Vector3>& points)
 
         //first 2
         if (i == 0 || i == 1)
-            point.dir = (points[1] - points[0]).normalise();
+            point.dir = (points[1] - points[0]);
         //last 2
         else if (i >= points.size() - 2)
-            point.dir = (points[points.size() - 1] - points[points.size() - 2]).normalise();
+            point.dir = (points[points.size() - 1] - points[points.size() - 2]);
         //else inside
         else
         {
@@ -41,8 +41,10 @@ void ZipLine::initZipLine(const std::vector<Ogre::Vector3>& points)
             auto dirF = (points[i + 1] - points[i]);
             dirF.normalise();
 
-            point.dir = (dirB + dirF).normalise();
+            point.dir = (dirB + dirF);
         }
+
+        point.dir.normalise();
     }
 
     zipLine[0].lenghtCoef = 1;
@@ -112,12 +114,12 @@ bool ZipLine::placePointOnLine(Vector3& point)
 
 bool ZipLine::start()
 {
-    auto pos = Global::player->body->getPosition();
+    auto pos = zipLine[0].pos;//Global::player->body->getPosition();
 
     if (placePointOnLine(pos))
     {
         //TODO attach player
-        sliding.speed = 3;
+        sliding.speed = 2;
         active = true;
 
         return true;
@@ -128,7 +130,7 @@ bool ZipLine::start()
 
 void ZipLine::updateSlidingSpeed(float time)
 {
-    sliding.speed = 3;
+    sliding.speed = 2;
 }
 
 void ZipLine::release()
@@ -202,7 +204,9 @@ void ZipLine::getCurrentLinePos()
 
 bool ZipLine::update(Ogre::Real tslf)
 {
+    auto node = Global::mSceneMgr->getSceneNode("Test");
     updateSlidingState(tslf);
+    node->setPosition(sliding.currentPos);
 
     return active;
 }

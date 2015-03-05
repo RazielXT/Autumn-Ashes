@@ -7,6 +7,7 @@
 #include "BridgeMaker.h"
 #include "Tasks.h"
 #include "ReflectionTask.h"
+#include "ZipLine.h"
 
 
 using namespace Ogre;
@@ -1464,6 +1465,37 @@ private:
                     else if (rootTag == "Reflection")
                     {
                         loadReflection(element, ent, node, mSceneMgr);
+                    }
+                    else if (rootTag == "ZipLine")
+                    {
+                        std::vector<Ogre::Vector3> points;
+
+                        auto m = ent->getMesh().get()->getSubMesh(0);
+                        const Ogre::VertexElement* posElem = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_POSITION);
+                        Ogre::HardwareVertexBufferSharedPtr vbuf = m->vertexData->vertexBufferBinding->getBuffer(posElem->getSource());
+                        unsigned char* vertex = static_cast<unsigned char*>(vbuf->lock(Ogre::HardwareBuffer::HBL_READ_ONLY));
+                        Ogre::Real* pReal;
+
+                        for (size_t j = 0; j < m->vertexData->vertexCount; ++j, vertex += vbuf->getVertexSize())
+                        {
+                            posElem->baseVertexPointerToElement(vertex, &pReal);
+
+                            Vector3 pt;
+
+                            pt.x = (*pReal++);
+                            pt.y = (*pReal++);
+                            pt.z = (*pReal++);
+
+                            pt *= node->getScale();
+                            pt += node->getPosition();
+
+                            if (j==0 || j%2==1)
+                                points.push_back(pt);
+                        }
+                        vbuf->unlock();
+
+                        ZipLine* line = new ZipLine(points);
+                        Global::mEventsMgr->addTask(line);
                     }
                     else if (rootTag == "PhysicalBodyTrigger")
                     {
