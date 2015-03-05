@@ -26,14 +26,14 @@ bool LoadNextPart::update(Ogre::Real tslf)
 
     if (loadNext)
     {
-        auto pos = Global::player->getBody()->getPosition();
+        auto pos = Global::player->body->getPosition();
         auto or = Global::mSceneMgr->getCamera("Camera")->getOrientation();
 
         Global::gameMgr->switchState(SS_MAINMENU);
 
         if (Global::player)
         {
-            Global::player->getBody()->setPositionOrientation(pos, Global::player->getBody()->getOrientation());
+            Global::player->body->setPositionOrientation(pos, Global::player->body->getOrientation());
             Global::mSceneMgr->getCamera("Camera")->setOrientation(or);
         }
 

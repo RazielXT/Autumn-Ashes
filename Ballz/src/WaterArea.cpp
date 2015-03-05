@@ -21,7 +21,7 @@ void WaterArea::init(Ogre::Entity* water)
 
 bool WaterArea::update(Ogre::Real tslf)
 {
-    bool now = b.contains(p->getBody()->getPosition());
+    bool now = b.contains(p->body->getPosition());
 
     if (!inside && now)
     {

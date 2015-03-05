@@ -101,7 +101,7 @@ bool NearParkEndReaction::update(Ogre::Real tslf)
 
         if(!noiseSound->isFinished())
         {
-            float distance = (Ogre::Vector3(17.6,14.34,151.26)-Global::player->getBody()->getPosition()).length();
+            float distance = (Ogre::Vector3(17.6,14.34,151.26)-Global::player->body->getPosition()).length();
             float val = std::max(0.0f,1.0f-distance/50.0f);
             noiseSound->setVolume(val*0.5f);
             mgr->ContSatuSharpNoise.w = val;
@@ -184,7 +184,7 @@ bool ParkEndReaction::update(Ogre::Real tslf)
             Global::timestep = 1.0f;
             Global::player->enableMovement(false);
             Global::player->stopMoving();
-            Global::player->getBody()->setPositionOrientation(Ogre::Vector3(17.6,12.5,158.5),Global::player->getBody()->getOrientation());
+            Global::player->body->setPositionOrientation(Ogre::Vector3(17.6,12.5,158.5),Global::player->body->getOrientation());
             doneEffect1=true;
         }
     }

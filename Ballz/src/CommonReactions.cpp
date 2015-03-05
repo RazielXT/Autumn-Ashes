@@ -544,10 +544,10 @@ bool PlayRandomSound::start()
 
     if(type == 2)
     {
-        if(Global::player->getBody()->getVelocity().squaredLength()<0.01)
+        if(Global::player->body->getVelocity().squaredLength()<0.01)
             return false;
 
-        pos = Global::player->getBody()->getPosition();
+        pos = Global::player->body->getPosition();
     }
     else
     {
@@ -1203,7 +1203,7 @@ bool ShakeCamera::start()
         p->startCameraShake(steps,power,impulse);
     else
     {
-        float mod = Ogre::Math::Clamp((p->getBody()->getPosition()-mBody->getPosition()).length()/maxDistance,0.0f,1.0f);
+        float mod = Ogre::Math::Clamp((p->body->getPosition()-mBody->getPosition()).length()/maxDistance,0.0f,1.0f);
         steps*=mod;
         power*=mod;
         impulse*=mod;
@@ -1500,7 +1500,7 @@ bool WalkingAnim::update(float tslf)
                 animNode->setPosition(0,0,0);
             }
 
-            Global::player->getBody()->setPositionOrientation(animNode->_getDerivedPosition()-Ogre::Vector3(0,2,0),Ogre::Quaternion::IDENTITY);
+            Global::player->body->setPositionOrientation(animNode->_getDerivedPosition()-Ogre::Vector3(0,2,0),Ogre::Quaternion::IDENTITY);
             Global::player->enableControl(true);
             Global::player->attachCamera(Global::mSceneMgr->getCamera("Camera"));
 
@@ -1710,7 +1710,7 @@ ChangePlayerPosition::ChangePlayerPosition(Ogre::String coord)
 
 void ChangePlayerPosition::setUserData(void* data)
 {
-    mBody = Global::player->getBody();
+    mBody = Global::player->body;
 }
 
 bool ChangePlayerPosition::start()

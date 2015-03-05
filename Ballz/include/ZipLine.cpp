@@ -112,7 +112,7 @@ bool ZipLine::placePointOnLine(Vector3& point)
 
 bool ZipLine::start()
 {
-	auto pos = Global::player->getBody()->getPosition();
+	auto pos = Global::player->body->getPosition();
 
 	if (placePointOnLine(pos))
 	{

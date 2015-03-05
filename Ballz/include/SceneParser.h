@@ -1661,7 +1661,7 @@ private:
 
                             if (rootTag == "Player")
                             {
-                                loadActions(element, pl->getBody());
+                                loadActions(element, pl->body);
                             }
                         }
                     }
@@ -1965,7 +1965,7 @@ public:
         (*Global::globalData)["loadedBodies"] = &loadedBodies;
 
         if (Global::player != NULL)
-            loadedBodies["Player"] = Global::player->getBody();
+            loadedBodies["Player"] = Global::player->body;
 
         std::vector<const TiXmlElement*> compBodies;
         String elementName;
