@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "globals.h"
 
+using namespace Ogre;
 
 inline std::string AudioLibrary::getPath(std::string file, SoundType type)
 {
@@ -15,10 +16,12 @@ inline std::string AudioLibrary::getPath(std::string file, SoundType type)
 }
 
 
-AudioLibrary::AudioLibrary()
+AudioLibrary::AudioLibrary(irrklang::ISoundEngine* engine)
 {
     fillMaterialAudio();
     fillMoveAudio();
+
+	soundEngine = engine;
 }
 
 AudioLibrary::~AudioLibrary()
@@ -45,6 +48,20 @@ AudioLibrary::~AudioLibrary()
     }
 }
 
+irrklang::ISound* AudioLibrary::play3D(char* name, Vector3& pos, float maxDistance, float volume)
+{
+	irrklang::ISound* s = soundEngine->play3D(AudioLibrary::getPath(name).c_str(), irrklang::vec3df(pos.x, pos.y + 2, pos.z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
+	s->setMaxDistance(5);
+	s->setVolume(0.7);
+
+	if (Global::timestep < 1)
+	{
+		s->setPlaybackSpeed(Global::timestep);
+		s->getSoundEffectControl()->enableWavesReverbSoundEffect(0, -10 * Global::timestep, 2600, 0.5);
+	}
+
+	s->drop();
+}
 void AudioLibrary::playWalkingSound(float x, float y, float z, int groundID)
 {
     auto soundEngine = Global::soundEngine;

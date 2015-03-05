@@ -14,8 +14,10 @@ struct ObjectAudio;
 class AudioLibrary
 {
 public:
-    AudioLibrary();
+	AudioLibrary(irrklang::ISoundEngine* engine);
     ~AudioLibrary();
+
+	irrklang::ISound* play3D(char* name, Ogre::Vector3& pos, float maxDistance, float volume = 1.0f);
 
     void playWalkingSound(float x, float y, float z, int groundID);
     void playFallSound(float x, float y, float z, int groundID);
@@ -29,6 +31,7 @@ private:
     void fillMaterialAudio();
     void fillMoveAudio();
 
+	irrklang::ISoundEngine* soundEngine;
 
     std::map<int, std::vector<Ogre::String>* > movementAudio;
 };
