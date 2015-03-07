@@ -5,7 +5,7 @@ class PlayerListener
 {
 public:
 
-    void pressedKey(const OIS::KeyEvent &arg) {}
+    virtual void pressedKey(const OIS::KeyEvent &arg) {}
 
     /*
     void releasedKey(const OIS::KeyEvent &arg);

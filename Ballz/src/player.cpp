@@ -319,6 +319,26 @@ Ogre::Vector3 Player::getFacingDirection()
     return mCamera->getDerivedOrientation()*Ogre::Vector3(0,0,-1);
 }
 
+Ogre::SceneNode* Player::detachHead()
+{
+    mSceneMgr->getSceneNode("CenterNode")->removeChild(necknode);
+    //necknode->removeChild(headnode);
+
+    return necknode;
+}
+
+void Player::attachHead(Ogre::SceneNode* headNode)
+{
+    if (headNode == nullptr)
+    {
+        headNode = necknode;
+        necknode->setPosition(0, 1, 0);
+    }
+
+    // necknode->addChild(headNode);
+    mSceneMgr->getSceneNode("CenterNode")->addChild(necknode);
+}
+
 void Player::attachCamera(Ogre::Camera* cam)
 {
     camPitch = 0;
@@ -517,7 +537,7 @@ void Player::updateStats()
 
     if(!onGround && !visi && !is_climbing && noClimbTimer<=0)
     {
-        checkClimbingPossibility();
+        updateClimbingPossibility();
     }
     else if(is_climbing)
     {

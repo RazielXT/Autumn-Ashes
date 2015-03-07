@@ -1,0 +1,249 @@
+<userDataTypes>
+
+<enum name="ptype" type="string">
+        <enumItem name="Tree" value="tree" />
+        <enumItem name="Convex" value="conv" />
+		<enumItem name="Compound" value="comp" />
+</enum>
+
+<enum name="mtype" type="string">
+        <enumItem name="Regular" value="Regular" />
+        <enumItem name="Hand" value="Hand" />
+		<enumItem name="DestroyEntity" value="DestroyEntity" />
+		<enumItem name="DestroyNode" value="DestroyNode" />
+</enum>
+
+<enum name="atype" type="string">
+		<enumItem name="Volume" value="2" />
+        <enumItem name="On touch" value="1" />
+        <enumItem name="Switch" value="0" />
+</enum>
+
+<enum name="borient" type="string">
+		<enumItem name="Point" value="0" />
+        <enumItem name="Common" value="1" />
+        <enumItem name="Self" value="2" />
+</enum>
+
+<enum name="btype" type="int">
+		<enumItem name="Default" value="0" />
+        <enumItem name="Pullup_old" value="2" />
+        <enumItem name="Grabbable" value="3" />
+		<enumItem name="Climb" value="5" />
+		<enumItem name="Climb_Pullup" value="6" />
+		<enumItem name="ZipLine" value="7" />
+		<enumItem name="Dynamic_Pullup" value="8" />
+		<enumItem name="SelfIgnore" value="11" />
+		<enumItem name="PlayerIgnore" value="12" />
+</enum>
+
+<enum name="joints" type="string">
+		<enumItem name="BallAndSocket" value="0" />
+        <enumItem name="Hinge" value="1" />
+</enum>
+
+<enum name="matID" type="int">
+	   <enumItem name="Default" value="0" />
+        <enumItem name="Rock" value="1" />
+        <enumItem name="Grass" value="2" />
+		<enumItem name="Metal" value="3" />
+		<enumItem name="Wood" value="4" />
+		<enumItem name="OldWood" value="5" />
+		<enumItem name="Bush_Dynamic" value="8" />
+		<enumItem name="Wood_Dynamic" value="6" />
+		<enumItem name="Metal_Dynamic" value="7" />
+</enum>
+
+<enum name="fadeTech" type="int">
+	   <enumItem name="Alpha" value="0" />
+        <enumItem name="Grow" value="1" />
+        <enumItem name="AlphaGrow" value="2" />
+</enum>
+
+<class name="CompoundBodyPart" usage="object">
+	<data name="Target" displayName="Body target" type="string"/>
+	<data name="Visual" displayName="Visual" type="bool" defaultValue="true"/>
+	<data name="Physical" displayName="Physical" type="bool" defaultValue="true"/>
+</class>
+
+<class name="PhysicalBody" usage="object">
+	<data name="Identifier" displayName="Identifier" groupName="Modifier" type="int" defaultValue="0"/>
+	<data name="ObjectModifier" displayName="Object Modifier" type="mtype" groupName="Modifier" defaultValue="Regular"/>
+	<data name="BodyType" displayName="Body Type" type="ptype" groupName="Physics" defaultValue="conv"/>
+	<data name="MaterialID" displayName="Material" type="matID" groupName="Physics" defaultValue="0"/>
+	<data name="Mass" displayName="Mass" groupName="Physics" type="float"/>	 
+	<data name="Type" displayName="Type" groupName="Physics" type="btype"/>
+	<data name="Amaker" displayName="Action maker" type="bool" groupName="Physics" defaultValue="false"/>
+	<data name="Actions" displayName="Actions [int;int...]" groupName="Physics" type="string"/>
+	<data name="Aonstart" displayName="Startup function" groupName="Physics" type="string" editWidth="300" editHeight="50"/>
+</class>
+
+<class name="PhysicalBody+Trigger" usage="object">
+	<data name="Identifier" displayName="Identifier" groupName="Modifier" type="int" defaultValue="0"/>
+	<data name="ObjectModifier" displayName="Object Modifier" type="mtype" groupName="Modifier" defaultValue="Regular"/>
+	<data name="BodyType" displayName="Body Type" type="ptype" groupName="Physics" defaultValue="conv"/>
+	<data name="MaterialID" displayName="Material" type="matID" groupName="Physics" defaultValue="0"/>
+	<data name="Mass" displayName="Mass" groupName="Physics" type="float"/>	 
+	<data name="Type" displayName="Type" groupName="Physics" type="btype"/>
+	<data name="Amaker" displayName="Action maker" type="bool" groupName="Physics" defaultValue="false"/>
+	<data name="Actions" displayName="Actions [int;int...]" groupName="Physics" type="string"/>
+	<data name="Aonstart" displayName="Startup function" groupName="Physics" type="string" editWidth="300" editHeight="50"/>
+	<data name="triggerids" displayName="Trigger IDs [int;int...]" groupName="Trigger" type="string"/>
+	<data name="playertriggerid" displayName="Player Trigger ID" groupName="Trigger" type="int" maxValue="500"/>
+	<data name="triggerType" displayName="Trigger Type" type="atype" groupName="Trigger" defaultValue="1"/>
+	<data name="cooldown" displayName="Cooldown" groupName="Trigger" type="float"/>
+	<data name="onstart" displayName="Ready on start" type="bool" groupName="Trigger" defaultValue="true"/>
+</class>
+
+<class name="PhysicalBody+Trigger+Reaction" usage="object">
+	<data name="Identifier" displayName="Identifier" groupName="Modifier" type="int" defaultValue="0"/>
+	<data name="ObjectModifier" displayName="Object Modifier" type="mtype" groupName="Modifier" defaultValue="Regular"/>
+	<data name="BodyType" displayName="Body Type" type="ptype" groupName="Physics" defaultValue="conv"/>
+	<data name="MaterialID" displayName="Material" type="matID" groupName="Physics" defaultValue="0"/>
+	<data name="Mass" displayName="Mass" groupName="Physics" type="float"/>	 
+	<data name="Type" displayName="Type" groupName="Physics" type="btype"/>
+	<data name="Amaker" displayName="Action maker" type="bool" groupName="Physics" defaultValue="false"/>
+	<data name="Actions" displayName="Actions [int;int...]" groupName="Physics" type="string"/>
+	<data name="Aonstart" displayName="Startup function" groupName="Physics" type="string" editWidth="300" editHeight="50"/>
+	<data name="triggerids" displayName="Trigger IDs [int;int...]" groupName="Trigger" type="string"/>
+	<data name="playertriggerid" displayName="Player Trigger ID" groupName="Trigger" type="int" maxValue="500"/>
+	<data name="triggerType" displayName="Trigger Type" type="atype" groupName="Trigger" defaultValue="1"/>
+	<data name="cooldown" displayName="Cooldown" groupName="Trigger" type="float"/>
+	<data name="onstart" displayName="Ready on start" type="bool" groupName="Trigger" defaultValue="true"/>
+	<data name="reactionids" displayName="Reaction IDs [int;int...]" groupName="Reaction" type="string"/>
+	<data name="fnames" displayName="Function names [name;name...]" groupName="Reaction" editWidth="300" editHeight="100" type="string"/>
+</class>
+
+<class name="PhysicalBody+Reaction" usage="object">
+	<data name="Identifier" displayName="Identifier" groupName="Modifier" type="int" defaultValue="0"/>
+	<data name="ObjectModifier" displayName="Object Modifier" type="mtype" groupName="Modifier" defaultValue="Regular"/>
+	<data name="BodyType" displayName="Body Type" type="ptype" groupName="Physics" defaultValue="conv"/>
+	<data name="MaterialID" displayName="Material" type="matID" groupName="Physics" defaultValue="0"/>
+	<data name="Mass" displayName="Mass" groupName="Physics" type="float"/>	 
+	<data name="Type" displayName="Type" groupName="Physics" type="btype"/>
+	<data name="Amaker" displayName="Action maker" type="bool" groupName="Physics" defaultValue="false"/>
+	<data name="Actions" displayName="Actions [int;int...]" groupName="Physics" type="string"/>
+	<data name="Aonstart" displayName="Startup function" groupName="Physics" type="string" editWidth="300" editHeight="50"/>	
+	<data name="reactionids" displayName="Reaction IDs [int;int...]" groupName="Reaction" type="string"/>
+	<data name="fnames" displayName="Function names [name;name...]" groupName="Reaction" editWidth="300" editHeight="100" type="string"/>
+</class>
+
+<class name="Trigger+Reaction" usage="object">
+	<data name="Identifier" displayName="Identifier" groupName="Modifier" type="int" defaultValue="0"/>
+	<data name="ObjectModifier" displayName="Object Modifier" type="mtype" groupName="Modifier" defaultValue="Regular"/>
+	<data name="Aonstart" displayName="Startup function" groupName="Modifier" type="string" editWidth="300" editHeight="50"/>
+	<data name="triggerids" displayName="Trigger IDs [int;int...]" groupName="Trigger" type="string"/>
+	<data name="reactionids" displayName="Reaction IDs [int;int...]" groupName="Reaction" type="string"/>
+	<data name="fnames" displayName="Function names [name;name...]" editWidth="300" editHeight="100" groupName="Reaction" type="string"/>
+</class>
+
+<class name="Reaction" usage="object">
+	<data name="Identifier" displayName="Identifier" groupName="Modifier" type="int" defaultValue="0"/>
+	<data name="ObjectModifier" displayName="Object Modifier" type="mtype" groupName="Modifier" defaultValue="Regular"/>
+	<data name="Aonstart" displayName="Startup function" groupName="Modifier" type="string" editWidth="300" editHeight="50"/>
+	<data name="reactionids" displayName="Reaction IDs [int;int...]" groupName="Reaction" type="string"/>
+	<data name="fnames" displayName="Function names [name;name...]" editWidth="300" editHeight="100" groupName="Reaction" type="string"/>
+</class>
+
+<class name="RigidJoint" usage="object">
+	<data name="Body0" displayName="Child body" groupName="Joint" editWidth="300" editHeight="100"  type="string"/>
+	<data name="Body1" displayName="Parent body" groupName="Joint" editWidth="300" editHeight="100" type="string"  defaultValue="NULL"/>
+	<data name="Type" displayName="Type" groupName="Joint" type="joints" defaultValue="BallAndSocket"/>
+</class>
+
+<class name="GrassArea" usage="object">
+	<data name="PageSize" displayName="Page size" type="int" defaultValue="50"/>
+	<data name="MaxRange" displayName="Max Range" type="int" defaultValue="100"/>
+	<data name="TransLength" displayName="Transition length" type="int" defaultValue="20"/>
+	
+	<data name="Layers" displayName="Number of layers" groupName="Grass Layer" type="int" defaultValue="1"/>
+	
+	<data name="Material" displayName="Material" groupName="Grass Layer" type="string" defaultValue="grassHop"/>
+	<data name="MinSizeW" displayName="Minimum size Width" groupName="Grass Layer" type="string" defaultValue="1"/>
+	<data name="MinSizeH" displayName="Minimum size Height" groupName="Grass Layer" type="string" defaultValue="1"/>
+	<data name="MaxSizeW" displayName="Maximum size Width" groupName="Grass Layer" type="string" defaultValue="1"/>
+	<data name="MaxSizeH" displayName="Maximum size Height" groupName="Grass Layer" type="string" defaultValue="1"/>
+
+	<data name="Animation" displayName="Animation" type="bool" groupName="Grass Layer" defaultValue="true"/>
+	<data name="SwayDistr" displayName="Sway distribution" groupName="Grass Layer" type="string" defaultValue="10"/>
+	<data name="SwayLen" displayName="Sway length" groupName="Grass Layer" type="string" defaultValue="0.5"/>
+	<data name="SwaySpeed" displayName="Sway speed" groupName="Grass Layer" type="string" defaultValue="0.5"/>
+	
+	<data name="FadeTech" displayName="Fade technique" groupName="Grass Layer" type="fadeTech" defaultValue="Alpha"/>
+	<data name="Density" displayName="Density" groupName="Grass Layer" type="string" defaultValue="1"/>
+	
+	<data name="DensityMap" displayName="Density map" groupName="Grass Layer" type="string"/>
+	<data name="ColorMap" displayName="Color map" groupName="Grass Layer" type="string"/>
+</class>
+
+<class name="EnvSoundBody" usage="object">
+	<data name="Volume" displayName="Volume" type="float" groupName="Sound"	defaultValue="1"/>
+	<data name="Continual" displayName="Continual" type="bool" groupName="Sound" defaultValue="true"/>
+    <data name="Decay" displayName="Decay" groupName="Sound" type="float"/>	 
+	<data name="Sound" displayName="Sound file" groupName="Sound" type="string"/>
+</class>
+
+<class name="SoundBody" usage="object">
+	<data name="Volume" displayName="Volume" type="float" groupName="Sound"	defaultValue="1"/>
+	<data name="Loop" displayName="Loop" type="bool" groupName="Sound" defaultValue="true"/>
+    <data name="MinDist" displayName="Min Distance" groupName="Sound" type="float" defaultValue="5"/>	  
+	<data name="Sound" displayName="Sound file" groupName="Sound" type="string"/>
+</class>
+
+<class name="RigidBridge" usage="object">
+	<data name="Target" displayName="Target position" type="float3" groupName="Bridge" minValue="-100000" maxValue="100000" increment="1"/>
+	<data name="Looseness" displayName="Looseness" type="float" minValue="0" maxValue="1" increment="0.05" groupName="Bridge" defaultValue="0.2"/>
+    <data name="Scale" displayName="Scale" type="float" minValue="0" maxValue="10" increment="0.1" groupName="Bridge" defaultValue="1"/>  
+	<data name="Material" displayName="Material" groupName="Bridge" type="string"/>
+	<data name="MaterialID" displayName="Physics material" type="matID" groupName="Bridge" defaultValue="0"/>
+</class>
+
+<class name="Billboard" usage="object">
+	<data name="Billboard set" type="int" defaultValue="0"/>
+	<data name="Orientation" type="borient" defaultValue="1"/>
+</class>
+
+<class name="ZipLineTrack" usage="object">
+	<data name="Loop" displayName="Loop" type="bool" defaultValue="false"/>
+	<data name="Speed" displayName="Speed" type="float" defaultValue="1"/>
+	<data name="Sound" displayName="Sound" type="string" defaultValue="Rope"/>
+	<data name="Camera offset" displayName="Camera offset" type="float3" defaultValue="0,-1,0"/>
+</class>
+
+<class name="ZipLinePart" usage="object">
+	<data name="Track" displayName="Track" type="string"/>
+	<data name="BodyType" displayName="Body Type" type="ptype" groupName="Physics" defaultValue="conv"/>
+</class>
+
+<class name="Instanced" usage="object">
+	<data name="Geometry max" type="int" minValue="0" maxValue="2000" defaultValue="200"/>
+	<data name="Impostor max" type="int" minValue="0" maxValue="2000" defaultValue="500"/>
+	<data name="Transition" type="int" minValue="0" maxValue="2000" defaultValue="30"/>
+	<data name="Physics body" type="string" defaultValue=""/>
+</class>
+
+<class name="Reflection" usage="object">
+	<data name="Identifier" displayName="Identifier" groupName="Modifier" type="int" defaultValue="0"/>
+	<data name="ObjectModifier" displayName="Object Modifier" type="mtype" groupName="Modifier" defaultValue="Regular"/>
+	
+	<data name="Mask" displayName="Visibility mask" type="int" groupName="Reflection" defaultValue="1"/>
+	
+</class>
+
+<class name="Water" usage="object">
+	<data name="Identifier" displayName="Identifier" groupName="Modifier" type="int" defaultValue="0"/>
+	<data name="ObjectModifier" displayName="Object Modifier" type="mtype" groupName="Modifier" defaultValue="Regular"/>
+	
+	<data name="Reflection" displayName="Reflection enabled" type="bool" groupName="Reflection" defaultValue="true"/>
+	<data name="Mask" displayName="Visibility mask" type="int" groupName="Reflection" defaultValue="1"/>
+	
+</class>
+
+
+<class name="Player" usage="object">
+	<data name="reactions" displayName="Rections [int;int...]" groupName="Player" type="string"/>
+	<data name="rfunctions" displayName="Functions" groupName="Player" type="string"/>
+</class>
+
+
+</userDataTypes>

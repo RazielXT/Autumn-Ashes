@@ -18,7 +18,7 @@ public:
     {
         Vector3 pos;
         Vector3 dir;
-		float startOffset;
+        float startOffset;
     };
 
     struct SlideState
@@ -51,13 +51,17 @@ private:
     void updateSlidingState(float time);
     inline void updateSlidingSpeed(float time);
 
+    void attach();
     void release();
 
-	float currentSpeed;
-	float avgSpeed = 5;
-	std::string name = "slide";
+    float currentSpeed;
+    float avgSpeed = 5;
+    std::string name = "slide";
     bool active = false;
-	SceneNode* tracker;
-	AnimationState * mTrackerState = 0;
-	bool loop = false;
+    SceneNode* tracker;
+    AnimationState * mTrackerState = 0;
+    bool loop = false;
+    float unavailableTimer = 0;
+
+    bool enablePlayerControl = false;
 };

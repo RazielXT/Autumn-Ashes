@@ -25,7 +25,7 @@ public:
 
     std::map<Ogre::String, ObjectAudio*> dynamicsAudio;
 
-    static inline std::string getPath(std::string file, SoundType type = SoundEffect);
+    static std::string getPath(std::string file, SoundType type = SoundEffect);
 
 private:
 

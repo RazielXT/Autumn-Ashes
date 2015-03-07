@@ -98,13 +98,16 @@ public:
     Ogre::Vector3 getFacingDirection();
     void rotateCamera(Ogre::Real hybX, Ogre::Real hybY);
 
+    Ogre::SceneNode* detachHead();
+    void attachHead(Ogre::SceneNode* headNode = nullptr);
+
 protected:
 
     void updateStats();
     void updateMotionBlur();
     void updateClimbingStats();
     void updateUseGui();
-    void checkClimbingPossibility();
+    void updateClimbingPossibility();
     void updateGroundStats();
 
     void updateHead(Ogre::Real time);
@@ -159,7 +162,7 @@ private:
     Ogre::Real tslf, slowingDown;
     Ogre::Vector3 forceDirection, gNormal, climbDir, lastSpeed;
 
-    //movement helpers
+    //climb helpers
     Ogre::Vector3 climb_normal;
     OgreNewt::BallAndSocket* climbJoint;
 

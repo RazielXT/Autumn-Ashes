@@ -20,7 +20,7 @@ enum BodyType
     //BaloonT = 4,
     Climb = 5,
     Climb_Pullup = 6,
-    //Rope = 7,
+    ZipLinePart = 7,
     Dynamic_Pullup = 8,
     Trigger = 9,
     Bridge = 10,

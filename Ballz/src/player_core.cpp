@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "player.h"
 #include "PostProcessMgr.h"
+#include "ZipLine.h"
 
 using namespace Ogre;
 
@@ -597,7 +598,7 @@ void Player::tryClimbToSide(Direction dir)
 }
 
 
-void Player::checkClimbingPossibility()
+void Player::updateClimbingPossibility()
 {
     auto pos = necknode->_getDerivedPosition() + Vector3(0, 0.25, 0);
     Vector3 predsebou = getFacingDirection();
@@ -645,6 +646,15 @@ void Player::checkClimbingPossibility()
                 if (climb_pullup > 0) climb_pullup = 0;
             }
 
+        }
+        else if (info.mBody->getType() == ZipLinePart)
+        {
+            Ogre::Any any = info.mBody->getUserData();
+            auto lineName = (std::string*) any_cast<bodyUserData*>(any)->customData;
+            auto zipLine = (ZipLine*) (*Global::globalData)[*lineName];
+
+            if (zipLine->start())
+                Global::mEventsMgr->addCachedTask(zipLine);
         }
     }
 }
@@ -1001,7 +1011,7 @@ void Player::updateGroundStats()
     OgreNewt::BasicRaycast ray(m_World, (pos - Vector3(0, 1.6, 0)), (pos - Vector3(0, 2.6, 0)), true);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
 
-    if (info.mBody)
+    if (info.mBody && info.mBody->getMaterialGroupID()!=wmaterials->playerIgnore_mat)
     {
         Ogre::Any any = info.mBody->getUserData();
 
@@ -1017,10 +1027,9 @@ void Player::updateGroundStats()
     }
     else
     {
-
         OgreNewt::BasicConvexcast rayc(m_World, col_p, (pos - Vector3(0, 2, 0)), Ogre::Quaternion::IDENTITY, (pos - Vector3(0, 2.5, 0)), 1, 1);
         OgreNewt::BasicConvexcast::ConvexcastContactInfo infoc = rayc.getInfoAt(0);
-        if (infoc.mBody)
+        if (infoc.mBody && infoc.mBody->getMaterialGroupID() != wmaterials->playerIgnore_mat)
         {
             Ogre::Any any = infoc.mBody->getUserData();
 

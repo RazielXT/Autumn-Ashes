@@ -690,6 +690,78 @@ private:
 
     }
 
+    void loadZipLinePart(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, WorldMaterials* wMaterials, OgreNewt::World* mWorld)
+    {
+        String typeName = getElementValue(element, "BodyType");
+        OgreNewt::Body* body = nullptr;
+
+        if (typeName == "tree")
+        {
+
+            OgreNewt::CollisionPtr col = OgreNewt::CollisionPtr(new OgreNewt::CollisionPrimitives::TreeCollision(mWorld, ent, false, 0));
+            body = new OgreNewt::Body(mWorld, col);
+
+        }
+        else //if (typeName == "conv")
+        {
+            OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld, ent, 0));
+            body = new OgreNewt::Body(mWorld, col);
+
+            body->setMassMatrix(0, Vector3::ZERO);
+        }
+
+        body->setPositionOrientation(node->_getDerivedPosition(), node->_getDerivedOrientation());
+
+        //if (!physicsOnly)
+        body->attachNode(node);
+
+        body->setType(ZipLinePart);
+        body->setMaterialGroupID(wMaterials->playerIgnore_mat);
+
+        bodyUserData* userD = new bodyUserData();
+        userD->material = 0;
+
+        String zipLineTrackName = getElementValue(element, "Track");
+        userD->customData = new std::string("ZipLine"+zipLineTrackName);
+
+        body->setUserData(Ogre::Any(userD));
+
+        loadedBodies[ent->getName()] = body;
+    }
+
+    void loadZipLineTrack(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
+    {
+        std::vector<Ogre::Vector3> points;
+
+        auto m = ent->getMesh().get()->getSubMesh(0);
+        const Ogre::VertexElement* posElem = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_POSITION);
+        Ogre::HardwareVertexBufferSharedPtr vbuf = m->vertexData->vertexBufferBinding->getBuffer(posElem->getSource());
+        unsigned char* vertex = static_cast<unsigned char*>(vbuf->lock(Ogre::HardwareBuffer::HBL_READ_ONLY));
+        Ogre::Real* pReal;
+
+        for (size_t j = 0; j < m->vertexData->vertexCount; ++j, vertex += vbuf->getVertexSize())
+        {
+            posElem->baseVertexPointerToElement(vertex, &pReal);
+
+            Vector3 pt;
+
+            pt.x = (*pReal++);
+            pt.y = (*pReal++);
+            pt.z = (*pReal++);
+
+            pt *= node->getScale();
+            pt += node->getPosition();
+            pt = node->getOrientation()*pt;
+
+            if (j == 0 || j % 2 == 1)
+                points.push_back(pt);
+        }
+        vbuf->unlock();
+
+        ZipLine* line = new ZipLine(points);
+        (*Global::globalData)["ZipLine" + node->getName()] = line;
+    }
+
     void loadBillboard(const TiXmlElement* element, Ogre::Entity* ent, Ogre::SceneManager* mSceneMgr)
     {
         int billboardSet = Ogre::StringConverter::parseInt(element->GetText());
@@ -1466,36 +1538,13 @@ private:
                     {
                         loadReflection(element, ent, node, mSceneMgr);
                     }
-                    else if (rootTag == "ZipLine")
+                    else if (rootTag == "ZipLineTrack")
                     {
-                        std::vector<Ogre::Vector3> points;
-
-                        auto m = ent->getMesh().get()->getSubMesh(0);
-                        const Ogre::VertexElement* posElem = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_POSITION);
-                        Ogre::HardwareVertexBufferSharedPtr vbuf = m->vertexData->vertexBufferBinding->getBuffer(posElem->getSource());
-                        unsigned char* vertex = static_cast<unsigned char*>(vbuf->lock(Ogre::HardwareBuffer::HBL_READ_ONLY));
-                        Ogre::Real* pReal;
-
-                        for (size_t j = 0; j < m->vertexData->vertexCount; ++j, vertex += vbuf->getVertexSize())
-                        {
-                            posElem->baseVertexPointerToElement(vertex, &pReal);
-
-                            Vector3 pt;
-
-                            pt.x = (*pReal++);
-                            pt.y = (*pReal++);
-                            pt.z = (*pReal++);
-
-                            pt *= node->getScale();
-                            pt += node->getPosition();
-
-                            if (j==0 || j%2==1)
-                                points.push_back(pt);
-                        }
-                        vbuf->unlock();
-
-                        ZipLine* line = new ZipLine(points);
-                        Global::mEventsMgr->addTask(line);
+                        loadZipLineTrack(root, ent, node, mSceneMgr);
+                    }
+                    else if (rootTag == "ZipLinePart")
+                    {
+                        loadZipLinePart(root, ent, node, wMaterials, mWorld);
                     }
                     else if (rootTag == "PhysicalBodyTrigger")
                     {
