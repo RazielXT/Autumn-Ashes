@@ -1,10 +1,10 @@
 #pragma once
 #include "stdafx.h"
-#include "PlayerListener.h"
+#include "InputListener.h"
 
 using namespace Ogre;
 
-class ZipLine : public EventTask, public PlayerListener
+class ZipLine : public EventTask, public InputListener
 {
 public:
 
@@ -21,22 +21,13 @@ public:
         float startOffset;
     };
 
-    struct SlideState
-    {
-        int mPoint;
-        float mProgress;
-        float speed;
-
-        Vector3 currentPos;
-        Vector3 currentDir;
-    };
-
     ZipLine(const std::vector<Ogre::Vector3>& points);
 
     bool start();
     bool update(Ogre::Real tslf);
 
-    void pressedKey(const OIS::KeyEvent &arg);
+    virtual void pressedKey(const OIS::KeyEvent &arg);
+    virtual void movedMouse(const OIS::MouseEvent &e);
 
 private:
 
@@ -49,6 +40,7 @@ private:
     inline LineProjState getProjectedState(Ogre::Vector3& point, Ogre::Vector3& start, Ogre::Vector3& end);
 
     void updateSlidingState(float time);
+    inline void updateSlidingCamera(float time);
     inline void updateSlidingSpeed(float time);
 
     void attach();
@@ -59,6 +51,7 @@ private:
     std::string name = "slide";
     bool active = false;
     SceneNode* tracker;
+    SceneNode* head;
     AnimationState * mTrackerState = 0;
     bool loop = false;
     float unavailableTimer = 0;

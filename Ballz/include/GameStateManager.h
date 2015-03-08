@@ -4,7 +4,7 @@
 #include "WorldMaterials.h"
 
 
-enum GameState { PLAY, PAUSE, MENU, CONSOLE, UNDEFINED };
+enum GameState { GAME, PAUSE, MENU, CONSOLE, UNDEFINED };
 
 enum StateSwitching
 {

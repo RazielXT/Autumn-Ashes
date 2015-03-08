@@ -47,7 +47,7 @@ void GameStateManager::switchToLevel(int lvl)
     if (gameState == MENU)
         myMenu->clearMenu();
 
-    gameState = PLAY;
+    gameState = GAME;
     Global::mWorld->destroyAllBodies();
     Global::mPagingMgr->clear();
     Global::mSceneMgr->clearScene();
@@ -102,7 +102,7 @@ bool GameStateManager::insideMenuPressed()
     if (i == -1)
     {
         Global::mPPMgr->radialHorizBlurVignette.z = 0.0;
-        gameState = PLAY;
+        gameState = GAME;
     }
     if (i == SS_RESTART)
     {
@@ -163,7 +163,7 @@ void GameStateManager::update(float tslf)
     else
         switch (gameState)
         {
-        case PLAY:
+        case GAME:
             myMenu->setDebugValue(Global::mWindow->getLastFPS(), 0);
             break;
         case PAUSE:
@@ -178,7 +178,7 @@ void GameStateManager::update(float tslf)
 
 void GameStateManager::escapePressed()
 {
-    if (gameState == PLAY)
+    if (gameState == GAME)
     {
         myMenu->clearMenu();
         myMenu->setIngameMenu();
@@ -189,6 +189,6 @@ void GameStateManager::escapePressed()
     {
         myMenu->clearMenu();
         Global::mPPMgr->radialHorizBlurVignette.z = 0.0;
-        gameState = PLAY;
+        gameState = GAME;
     }
 }

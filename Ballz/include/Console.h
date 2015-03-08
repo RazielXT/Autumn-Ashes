@@ -43,7 +43,7 @@ private:
 
     float            height;
     bool            update_overlay;
-    int               start_line;
+    size_t               start_line;
     std::list<String>      lines;
     String            prompt;
     String            lastPrompt;

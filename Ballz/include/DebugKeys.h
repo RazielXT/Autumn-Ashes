@@ -10,7 +10,7 @@ public:
         executionState = UNDEFINED;
     }
 
-    void keyInput(const OIS::KeyEvent &arg)
+    void pressedKey(const OIS::KeyEvent &arg)
     {
         auto postProcMgr = Global::mPPMgr;
 

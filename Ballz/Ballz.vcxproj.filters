@@ -332,9 +332,6 @@
     <ClInclude Include="include\ZipLine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\PlayerListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\CameraShaker.h">
       <Filter>Header Files</Filter>
     </ClInclude>

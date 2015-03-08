@@ -17,7 +17,7 @@ public:
     virtual bool update(Ogre::Real tslf);
 
     float taskDelay = 0;
-    GameState stateExecution = PLAY;
+    GameState stateExecution = GAME;
 
 };
 

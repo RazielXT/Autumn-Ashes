@@ -47,6 +47,8 @@ public:
     void removeInputListener(InputListener* l);
 
     void listenersKeyPressed(const OIS::KeyEvent &arg);
+
+    void listenersMouseMoved(const OIS::MouseEvent &e);
 };
 
 #endif

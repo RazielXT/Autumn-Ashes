@@ -207,7 +207,6 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\GuiOverlay.h" />
     <ClInclude Include="include\NewtonListener.h" />
     <ClInclude Include="include\PagingManager.h" />
-    <ClInclude Include="include\PlayerListener.h" />
     <ClInclude Include="include\SceneParser.h" />
     <ClInclude Include="include\ScaryPPListener.h" />
     <ClInclude Include="include\ITransformationTask.h" />

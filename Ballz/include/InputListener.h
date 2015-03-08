@@ -8,19 +8,23 @@ class InputListener
 {
 public:
 
-    GameState executionState = PLAY;
-    virtual void keyInput(const OIS::KeyEvent &arg) = 0;
+    GameState executionState = GAME;
 
-    void unregisterKeyListening()
+    virtual void pressedKey(const OIS::KeyEvent &arg) {};
+    virtual void movedMouse(const OIS::MouseEvent &e) {};
+
+    inline void registerInputListening()
     {
-        if (Global::mEventsMgr)
-        {
-            Global::mEventsMgr->removeInputListener(this);
-        }
+        Global::mEventsMgr->addInputListener(this);
+    }
+
+    inline void unregisterInputListening()
+    {
+        Global::mEventsMgr->removeInputListener(this);
     }
 
     virtual ~InputListener()
     {
-        unregisterKeyListening();
+        unregisterInputListening();
     }
 };

@@ -524,7 +524,7 @@ public:
     bool start();
     bool update(float tslf);
 
-    void keyInput(const OIS::KeyEvent &arg);
+    void pressedKey(const OIS::KeyEvent &arg);
 
 private:
 

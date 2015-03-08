@@ -141,11 +141,6 @@ void Player::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threadInd
 
 void Player::pressedKey(const OIS::KeyEvent &arg)
 {
-    for (auto l : listeners)
-    {
-        l->pressedKey(arg);
-    }
-
     if(!inMoveControl)
         return;
 
@@ -246,20 +241,8 @@ void Player::movedMouse(const OIS::MouseEvent &e)
 
     int mouseY = (int)(-1 * e.state.Y.rel*Global::timestep);
 
-    rotateCamera(mouseX/10.0f,mouseY/10.0f);
-}
-
-void Player::addListener(PlayerListener* l)
-{
-    listeners.push_back(l);
-}
-
-void Player::removeListener(PlayerListener* l)
-{
-    auto it = std::find(listeners.begin(), listeners.end(), l);
-
-    if (it != listeners.end())
-        listeners.erase(it);
+    if (inControl)
+        rotateCamera(mouseX/10.0f,mouseY/10.0f);
 }
 
 void Player::setCrouch(char b)
@@ -321,25 +304,25 @@ Ogre::Vector3 Player::getFacingDirection()
 
 Ogre::SceneNode* Player::detachHead()
 {
-    mSceneMgr->getSceneNode("CenterNode")->removeChild(necknode);
-    //necknode->removeChild(headnode);
+    //mSceneMgr->getSceneNode("CenterNode")->removeChild(necknode);
+    necknode->removeChild(headnode);
 
-    return necknode;
+    return headnode;
 }
 
 void Player::attachHead(Ogre::SceneNode* headNode)
 {
     if (headNode == nullptr)
     {
-        headNode = necknode;
-        necknode->setPosition(0, 1, 0);
+        headNode = headnode;
+        //necknode->setPosition(0, 1, 0);
     }
 
-    // necknode->addChild(headNode);
-    mSceneMgr->getSceneNode("CenterNode")->addChild(necknode);
+    necknode->addChild(headNode);
+    //mSceneMgr->getSceneNode("CenterNode")->addChild(necknode);
 }
 
-void Player::attachCamera(Ogre::Camera* cam)
+void Player::attachCamera()
 {
     camPitch = 0;
     fallPitch=0;
@@ -364,9 +347,7 @@ void Player::attachCamera(Ogre::Camera* cam)
     camnode->setOrientation(Ogre::Quaternion::IDENTITY);
     //camnode->setPosition(Vector3(0,0,0));
 
-    mCamera = cam;
-
-    Ogre::Quaternion q = cam->getDerivedOrientation();
+    Ogre::Quaternion q = mCamera->getDerivedOrientation();
 
     mCamera->detachFromParent();
     mCamera->setDirection(Ogre::Vector3(0,0,-1));
@@ -376,9 +357,6 @@ void Player::attachCamera(Ogre::Camera* cam)
 
 void Player::rotateCamera(Real hybX,Real hybY)
 {
-    if(!inControl)
-        return;
-
     camPitch+=(hybY);
     if (camPitch>-80 && camPitch<80)
         necknode->pitch(Degree(hybY), Node::TS_LOCAL);

@@ -1392,7 +1392,7 @@ void WalkingAnim::setUserData(void* data)
 
 bool WalkingAnim::start()
 {
-    Global::mEventsMgr->addInputListener(this);
+    registerInputListening();
 
     Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
     walkSinTimer = 0;
@@ -1422,12 +1422,12 @@ bool WalkingAnim::start()
     return true;
 }
 
-void WalkingAnim::keyInput(const OIS::KeyEvent &arg)
+void WalkingAnim::pressedKey(const OIS::KeyEvent &arg)
 {
     if (arg.key == OIS::KC_SPACE)
     {
         mAnimState->setTimePosition(mAnimState->getLength());
-        unregisterKeyListening();
+        unregisterInputListening();
     }
 }
 
@@ -1502,7 +1502,7 @@ bool WalkingAnim::update(float tslf)
 
             Global::player->body->setPositionOrientation(animNode->_getDerivedPosition()-Ogre::Vector3(0,2,0),Ogre::Quaternion::IDENTITY);
             Global::player->enableControl(true);
-            Global::player->attachCamera(Global::mSceneMgr->getCamera("Camera"));
+            Global::player->attachCamera();
 
             return false;
         }

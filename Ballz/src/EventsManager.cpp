@@ -108,7 +108,7 @@ void EventsManager::update(Ogre::Real time)
         }
     }
 
-    if (state != PLAY)
+    if (state != GAME)
         return;
 
     //used triggers cooldown
@@ -182,6 +182,17 @@ void EventsManager::listenersKeyPressed(const OIS::KeyEvent &arg)
     for (auto l : keyListeners)
     {
         if (l->executionState == state || l->executionState == UNDEFINED)
-            l->keyInput(arg);
+            l->pressedKey(arg);
+    }
+}
+
+void EventsManager::listenersMouseMoved(const OIS::MouseEvent &e)
+{
+    auto state = Global::gameMgr->gameState;
+
+    for (auto l : keyListeners)
+    {
+        if (l->executionState == state || l->executionState == UNDEFINED)
+            l->movedMouse(e);
     }
 }

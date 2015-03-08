@@ -6,7 +6,6 @@
 
 #include "EventTask.h"
 #include "EventsManager.h"
-#include "PlayerListener.h"
 
 class Shaker
 {
@@ -80,9 +79,6 @@ public:
     impulse-0.1 slow,0.4 strong  */
     void startCameraShake(float time,float power,float impulse);
 
-    void addListener(PlayerListener* l);
-    void removeListener(PlayerListener* l);
-
     OgreNewt::Body* body = nullptr;
 
     void stopMoving()
@@ -94,7 +90,7 @@ public:
         body->setVelocity(Ogre::Vector3(0, 0, 0));
     };
 
-    void attachCamera(Ogre::Camera* cam);
+    void attachCamera();
     Ogre::Vector3 getFacingDirection();
     void rotateCamera(Ogre::Real hybX, Ogre::Real hybY);
 
@@ -135,8 +131,6 @@ protected:
     void initBody();
 
 private:
-
-    std::vector<PlayerListener*> listeners;
 
     Shaker* shaker;
     OgreNewt::World* m_World;

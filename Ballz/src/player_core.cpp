@@ -560,7 +560,7 @@ void Player::updateVerticalClimb(bool leftPhase)
 
         if (con)
         {
-            climb_move_vert = diff*-2 - climb_move_vert;
+            climb_move_vert = diff*-2.0f - climb_move_vert;
             camnode->setOrientation(Quaternion(Ogre::Radian(diff*(-1 + abs(climb_move_vert + diff)) / 20), Vector3(diff*-0.5, 0, 1)));
         }
         else body->setMaterialGroupID(wmaterials->stoji_mat);
@@ -568,7 +568,7 @@ void Player::updateVerticalClimb(bool leftPhase)
     else
     {
         climb_move_vert = 0;
-        camnode->setOrientation(Quaternion(Ogre::Radian(diff*(1 - abs(climb_move_vert - diff)) / 20), Vector3(diff*0.5, 0, 1)));
+        camnode->setOrientation(Quaternion(Ogre::Radian(diff*(1 - abs(climb_move_vert - diff)) / 20), Vector3(diff*0.5f, 0, 1)));
         body->setMaterialGroupID(wmaterials->stoji_mat);
     }
 }

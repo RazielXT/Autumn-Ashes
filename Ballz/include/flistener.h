@@ -105,8 +105,7 @@ public:
 
         (*Global::globalData)["MatFlag"] = wMaterials->flag_mat;
 
-        mEventMgr->addInputListener(&dbg);
-
+        dbg.registerInputListening();
     }
 
     void default_callback(OgreNewt::Body* me, float timeStep, int threadIndex )
@@ -127,7 +126,7 @@ public:
 
         gameMgr->update(tslf);
 
-        if(gameMgr->gameState==PLAY)
+        if(gameMgr->gameState==GAME)
         {
             Global::player->update(tslf);
 
@@ -145,14 +144,14 @@ public:
     {
         Global::mEventsMgr->listenersKeyPressed(arg);
 
-        if (gameMgr->gameState == PLAY)
+        if (gameMgr->gameState == GAME)
             Global::player->pressedKey(arg);
 
         switch (arg.key)
         {
         case OIS::KC_M:
         {
-            if (gameMgr->gameState == PLAY)
+            if (gameMgr->gameState == GAME)
                 makecube();
         }
         break;
@@ -189,7 +188,7 @@ public:
 
     virtual bool keyReleased(const OIS::KeyEvent &arg)
     {
-        if(gameMgr->gameState==PLAY)
+        if(gameMgr->gameState==GAME)
             Global::player->releasedKey(arg);
 
         return true;
@@ -197,8 +196,9 @@ public:
 
     virtual bool mouseMoved(const OIS::MouseEvent &e)
     {
+        Global::mEventsMgr->listenersMouseMoved(e);
 
-        if (gameMgr->gameState == PLAY)
+        if (gameMgr->gameState == GAME)
             Global::player->movedMouse(e);
         else
             gameMgr->insideMenuMoved(e.state.X.rel, e.state.Y.rel);
@@ -210,7 +210,7 @@ public:
     virtual bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
     {
 
-        if(gameMgr->gameState==PLAY)
+        if(gameMgr->gameState==GAME)
             Global::player->pressedMouse(arg, id);
         else
             continueExecution = gameMgr->insideMenuPressed();
@@ -220,7 +220,7 @@ public:
 
     virtual bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
     {
-        if(gameMgr->gameState==PLAY)
+        if(gameMgr->gameState==GAME)
             Global::player->releasedMouse(arg, id);
 
         return true;
