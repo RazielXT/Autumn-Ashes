@@ -52,6 +52,7 @@ private:
     bool active = false;
     SceneNode* tracker;
     SceneNode* head;
+    SceneNode* base;
     AnimationState * mTrackerState = 0;
     bool loop = false;
     float unavailableTimer = 0;

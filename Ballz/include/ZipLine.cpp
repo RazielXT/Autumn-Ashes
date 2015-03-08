@@ -29,7 +29,8 @@ void ZipLine::movedMouse(const OIS::MouseEvent &e)
 ZipLine::ZipLine(const std::vector<Ogre::Vector3>& points)
 {
     tracker = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    head = tracker->createChildSceneNode();
+    base = tracker->createChildSceneNode();
+    head = base->createChildSceneNode();
     head->setPosition(0, -1.5f, 0);
 
     initZipLine(points);
@@ -78,10 +79,32 @@ void ZipLine::initZipLine(const std::vector<Ogre::Vector3>& points)
 
     NodeAnimationTrack* track = anim->createNodeTrack(0, tracker);
 
+    track->setUseShortestRotationPath(true);
+
+    Quaternion previous;
+
     for (size_t i = 0; i < points.size(); i++)
     {
         Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(zipLine[i].startOffset);
         kf->setTranslate(points[i]);
+
+        auto dir = zipLine[i].dir;
+        auto q = Vector3(0, 0, -1).getRotationTo(Vector3(dir.x, 0, dir.z));
+        auto q2 = Vector3(0, 0, -1).getRotationTo(Vector3(0, dir.y, -1));
+
+        auto rotation = q*q2;
+
+        //slerp hotfix by http://ogre3d.org/forums/viewtopic.php?f=2&t=47636
+        if (i > 0)
+        {
+            float fCos = previous.Dot(rotation);
+            if (fCos < 0.0f)
+                rotation = -rotation;
+        }
+
+        kf->setRotation(rotation);
+
+        previous = rotation;
     }
 }
 
@@ -193,29 +216,7 @@ void ZipLine::release()
 
 void ZipLine::updateSlidingCamera(float time)
 {
-    auto pos = mTrackerState->getTimePosition();
-
-    for (size_t i = 1; i < zipLine.size(); i++)
-    {
-        auto& lp = zipLine[i-1];
-        auto& p = zipLine[i];
-
-        if (p.startOffset >= pos)
-        {
-            auto duration = p.startOffset - lp.startOffset;
-            auto locPos = pos - lp.startOffset;
-            auto w = locPos / duration;
-
-            auto dir = (1 - w)*lp.dir + w*p.dir;
-            auto q = Vector3(0, 0, -1).getRotationTo(Vector3(dir.x,0,dir.z), Vector3(0,1,0));
-            auto q2 = Vector3(0, 0, -1).getRotationTo(Vector3(0, dir.y, -1));
-
-            head->setOrientation(q);
-            head->rotate(q2);
-
-            break;
-        }
-    }
+    base->roll(Radian(time / 5));
 }
 
 void ZipLine::updateSlidingState(float time)
