@@ -11,7 +11,7 @@
 #include "EffectsTasks.h"
 #include "lvl1Tasks.h"
 
-float getTaskDelay(Ogre::String fname);
+float getTaskDelay(Ogre::String& fname);
 EventTask* makeTask(Ogre::String fname);
 
 

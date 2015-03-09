@@ -126,12 +126,12 @@ ZipLine::LineProjState ZipLine::getProjectedState(Ogre::Vector3& point, Ogre::Ve
     return state;
 }
 
-#define MAX_PLAYER_DISTANCE 5
+#define MAX_PLAYER_DISTANCE_SQ 5*5
 
 bool ZipLine::placePointOnLine(Vector3& point)
 {
     auto zipPos = zipLine[0];
-    float minDist = MAX_PLAYER_DISTANCE*MAX_PLAYER_DISTANCE;
+	float minDist = MAX_PLAYER_DISTANCE_SQ;
 
     for (size_t id = 1; id < zipLine.size(); id++)
     {
@@ -148,7 +148,7 @@ bool ZipLine::placePointOnLine(Vector3& point)
         }
     }
 
-    return (minDist != MAX_PLAYER_DISTANCE);
+	return (minDist != MAX_PLAYER_DISTANCE_SQ);
 }
 
 bool ZipLine::start()
@@ -170,7 +170,7 @@ bool ZipLine::start()
         mTrackerState->setEnabled(true);
         mTrackerState->setLoop(true);
 
-        //TODO figure out start speed, based on body speed
+		//TODO figure out start speed, based on body speed
         currentSpeed = 0.5f;
         active = true;
 
@@ -182,7 +182,10 @@ bool ZipLine::start()
 
 void ZipLine::updateSlidingSpeed(float time)
 {
-    currentSpeed = std::min(currentSpeed+time*0.4f, 2.5f);
+	//auto verticalDir = tracker->getOrientation().getPitch().valueRadians();
+	auto dir = tracker->getOrientation()*Vector3(0, 0, -1);
+
+	currentSpeed = Math::Clamp(currentSpeed + time*0.2f + dir.y*0.5f, 0.5f, 2.5f + dir.y);
 }
 
 void ZipLine::attach()
@@ -214,9 +217,28 @@ void ZipLine::release()
     active = false;
 }
 
+void ZipLine::updateTurningYaw(float time)
+{
+	//force to side
+	auto yaw = head->getOrientation().getYaw().valueRadians();
+	auto r = (lastYaw - yaw)*time*currentSpeed;
+	headRoll += r;
+
+	//force to center
+	float centerForce = 0.2f;
+	if (headRoll > 0)
+		headRoll = std::max(0.0f, headRoll - time*centerForce);
+	else
+		headRoll = std::min(0.0f, headRoll + time*centerForce);
+
+	base->setOrientation(Quaternion(Radian(headRoll), Vector3(0, 0, 1)));
+
+	lastYaw = yaw;
+}
+
 void ZipLine::updateSlidingCamera(float time)
 {
-    base->roll(Radian(time / 5));
+	updateTurningYaw(time);
 }
 
 void ZipLine::updateSlidingState(float time)
@@ -235,6 +257,8 @@ void ZipLine::updateSlidingState(float time)
 
 bool ZipLine::update(Ogre::Real tslf)
 {
+	tslf *= Global::timestep;
+
     if (enablePlayerControl)
     {
         Global::player->enableControl(true);

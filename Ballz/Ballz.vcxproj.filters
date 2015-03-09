@@ -93,9 +93,6 @@
     <ClCompile Include="src\EntityMovementReaction.cpp">
       <Filter>Source Files\tasks</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonReactions.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
     <ClCompile Include="src\ChainsSoundReaction.cpp">
       <Filter>Source Files\tasks</Filter>
     </ClCompile>
@@ -109,9 +106,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\lvl1Reactions.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\EffectsReactions.cpp">
       <Filter>Source Files\tasks</Filter>
     </ClCompile>
     <ClCompile Include="src\EventTask.cpp">
@@ -155,6 +149,12 @@
     </ClCompile>
     <ClCompile Include="src\player_core.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EffectsTasks.cpp">
+      <Filter>Source Files\tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommonTasks.cpp">
+      <Filter>Source Files\tasks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

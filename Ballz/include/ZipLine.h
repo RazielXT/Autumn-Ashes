@@ -41,10 +41,15 @@ private:
 
     void updateSlidingState(float time);
     inline void updateSlidingCamera(float time);
+	inline void updateTurningYaw(float time);
+
     inline void updateSlidingSpeed(float time);
 
     void attach();
     void release();
+
+	float lastYaw;
+	float headRoll;
 
     float currentSpeed;
     float avgSpeed = 5;

@@ -2,12 +2,22 @@
 #include "Tasks.h"
 
 
-float getTaskDelay(Ogre::String fname)
+float getTaskDelay(Ogre::String& fname)
 {
-
+	//Delay(5):task
+	if (!fname.compare(0, 6, "Delay("))
+	{
+		Ogre::String value = fname.substr(6, fname.find(')') - 6);
+		fname.erase(0,fname.find(':')+1);
+		return Ogre::StringConverter::parseReal(value);
+	}
+	else
+	//Delay5/task
     if (!fname.compare(0, 5, "Delay"))
     {
         Ogre::String value = fname.substr(5, fname.find('/') - 5);
+		size_t pos = fname.find('/');
+		fname = fname.substr(pos + 1, fname.length() - pos - 1);
         return Ogre::StringConverter::parseReal(value);
     }
     return 0;

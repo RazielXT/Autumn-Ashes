@@ -205,10 +205,12 @@
 
 <class name="ZipLineTrack" usage="object">
 	<data name="Loop" displayName="Loop" type="bool" defaultValue="false"/>
-	<data name="Top slide" displayName="Top slide" type="bool" defaultValue="false"/>
+	<data name="Top" displayName="Top slide" type="bool" defaultValue="false"/>
+	<data name="Bidirectional" displayName="Bidirectional" type="bool" defaultValue="false"/>
+	
 	<data name="Speed" displayName="Speed" type="float" defaultValue="1"/>
 	<data name="Sound" displayName="Sound" type="string" defaultValue="Rope"/>
-	<data name="Camera offset" displayName="Camera offset" type="float3" defaultValue="0,-1,0"/>
+	<data name="Animation" displayName="Track anim (empty for line points)" type="string" defaultValue=""/>
 </class>
 
 <class name="ZipLinePart" usage="object">

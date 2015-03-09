@@ -459,11 +459,6 @@ private:
                     taskStr.erase(0, 1);
 
                 float delay = getTaskDelay(taskStr);
-                if (delay)
-                {
-                    size_t pos = taskStr.find('/');
-                    taskStr = taskStr.substr(pos + 1, taskStr.length() - pos - 1);
-                }
 
                 //remove function parentheses characters
                 if (newForm)
@@ -1342,11 +1337,7 @@ private:
             myLog->logMessage("Task ID " + action + " with function " + rName, LML_NORMAL);
 
             float delay = getTaskDelay(rName);
-            if (delay)
-            {
-                size_t pos = rName.find('/');
-                rName = rName.substr(pos + 1, rName.length() - pos - 1);
-            }
+
             EventTask* r = makeTask(rName);
 
             if (r != NULL)
@@ -1627,11 +1618,7 @@ private:
 
                             Ogre::String rName = Ogre::String(element->GetText());
                             float delay = getTaskDelay(rName);
-                            if (delay)
-                            {
-                                size_t pos = rName.find('/');
-                                rName = rName.substr(pos + 1, rName.length() - pos - 1);
-                            }
+
                             EventTask* r = makeTask(rName);
 
                             if (r != NULL)
@@ -1665,11 +1652,7 @@ private:
                         {
                             Ogre::String rName = Ogre::String(element->GetText());
                             float delay = getTaskDelay(rName);
-                            if (delay)
-                            {
-                                size_t pos = rName.find('/');
-                                rName = rName.substr(pos + 1, rName.length() - pos - 1);
-                            }
+
                             EventTask* r = makeTask(rName);
 
                             if (r != NULL)

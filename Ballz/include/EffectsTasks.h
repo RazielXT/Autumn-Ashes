@@ -23,4 +23,28 @@ private:
     short id;
 };
 
+
+class SwitchColorSchemeFx : public EventTask
+{
+public:
+
+	/*
+	P,P,P,P
+	r,g,b,time
+	float,float,float,float
+	*/
+	SwitchColorSchemeFx(Ogre::String info);
+
+	bool start();
+	bool update(float tslf);
+
+private:
+
+	OgreNewt::Body* mBody;
+	Ogre::Vector3 colorTarget;
+	Ogre::Vector3 colorBase;
+	float fulltime;
+	float timer;
+};
+
 #endif

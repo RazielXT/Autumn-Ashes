@@ -136,7 +136,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="src\DefaultObjectContactCallback.cpp" />
     <ClCompile Include="src\defSM.cpp" />
-    <ClCompile Include="src\EffectsReactions.cpp" />
+    <ClCompile Include="src\EffectsTasks.cpp" />
     <ClCompile Include="src\EntityMovementReaction.cpp" />
     <ClCompile Include="src\EnvironmentSound.cpp" />
     <ClCompile Include="src\EventsManager.cpp" />
@@ -169,7 +169,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="include\TriggerPlayerContactCallback.cpp" />
     <ClCompile Include="src\HandFromGroundReaction.cpp" />
     <ClCompile Include="src\TestReaction.cpp" />
-    <ClCompile Include="src\CommonReactions.cpp" />
+    <ClCompile Include="src\CommonTasks.cpp" />
     <ClCompile Include="src\ReflectionTask.cpp" />
     <ClCompile Include="src\WaterArea.cpp" />
     <ClCompile Include="src\WorldMaterials.cpp" />
