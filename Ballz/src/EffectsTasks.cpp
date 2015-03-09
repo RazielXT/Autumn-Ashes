@@ -76,41 +76,41 @@ bool QuickScaryBlink::update(Ogre::Real tslf)
 
 SwitchColorSchemeFx::SwitchColorSchemeFx(Ogre::String info)
 {
-	const char* text = info.c_str();
-	char* token;
-	char* temp = strtok_s(const_cast<char *> (text), ",", &token);
+    const char* text = info.c_str();
+    char* token;
+    char* temp = strtok_s(const_cast<char *> (text), ",", &token);
 
-	colorTarget.x = Ogre::StringConverter::parseReal(temp);
-	temp = strtok_s(NULL, ",", &token);
+    colorTarget.x = Ogre::StringConverter::parseReal(temp);
+    temp = strtok_s(NULL, ",", &token);
 
-	colorTarget.y = Ogre::StringConverter::parseReal(temp);
-	temp = strtok_s(NULL, ",", &token);
+    colorTarget.y = Ogre::StringConverter::parseReal(temp);
+    temp = strtok_s(NULL, ",", &token);
 
-	colorTarget.z = Ogre::StringConverter::parseReal(temp);
-	temp = strtok_s(NULL, ",", &token);
+    colorTarget.z = Ogre::StringConverter::parseReal(temp);
+    temp = strtok_s(NULL, ",", &token);
 
-	fulltime = Ogre::StringConverter::parseReal(temp);
+    fulltime = Ogre::StringConverter::parseReal(temp);
 }
 
 bool SwitchColorSchemeFx::start()
 {
-	timer = 0;
-	colorBase.x = Global::mPPMgr->ColouringShift.x;
-	colorBase.y = Global::mPPMgr->ColouringShift.y;
-	colorBase.z = Global::mPPMgr->ColouringShift.z;
+    timer = 0;
+    colorBase.x = Global::mPPMgr->ColouringShift.x;
+    colorBase.y = Global::mPPMgr->ColouringShift.y;
+    colorBase.z = Global::mPPMgr->ColouringShift.z;
 
-	return true;
+    return true;
 }
 
 bool SwitchColorSchemeFx::update(float tslf)
 {
-	timer = std::max(fulltime, timer + tslf*Global::timestep);
+    timer = std::max(fulltime, timer + tslf*Global::timestep);
 
-	auto w = 1 - timer / fulltime;
-	Global::mPPMgr->ColouringShift = colorBase*w + colorTarget*(1-w);
+    auto w = 1 - timer / fulltime;
+    Global::mPPMgr->ColouringShift = colorBase*w + colorTarget*(1-w);
 
-	if (timer == 1)
-		return false;
+    if (timer == 1)
+        return false;
 
-	return true;
+    return true;
 }

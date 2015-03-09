@@ -28,6 +28,8 @@ struct Global
     static float fallSoundOffsetL;
 
     static std::map<std::string,void*>* globalData;
+
+    static float debug;
 };
 
 #endif GLOBALVALUES

@@ -131,7 +131,7 @@ ZipLine::LineProjState ZipLine::getProjectedState(Ogre::Vector3& point, Ogre::Ve
 bool ZipLine::placePointOnLine(Vector3& point)
 {
     auto zipPos = zipLine[0];
-	float minDist = MAX_PLAYER_DISTANCE_SQ;
+    float minDist = MAX_PLAYER_DISTANCE_SQ;
 
     for (size_t id = 1; id < zipLine.size(); id++)
     {
@@ -148,7 +148,7 @@ bool ZipLine::placePointOnLine(Vector3& point)
         }
     }
 
-	return (minDist != MAX_PLAYER_DISTANCE_SQ);
+    return (minDist != MAX_PLAYER_DISTANCE_SQ);
 }
 
 bool ZipLine::start()
@@ -167,10 +167,11 @@ bool ZipLine::start()
     {
         attach();
 
+        firstYaw = true;
         mTrackerState->setEnabled(true);
         mTrackerState->setLoop(true);
 
-		//TODO figure out start speed, based on body speed
+        //TODO figure out start speed, based on body speed
         currentSpeed = 0.5f;
         active = true;
 
@@ -182,21 +183,28 @@ bool ZipLine::start()
 
 void ZipLine::updateSlidingSpeed(float time)
 {
-	//auto verticalDir = tracker->getOrientation().getPitch().valueRadians();
-	auto dir = tracker->getOrientation()*Vector3(0, 0, -1);
+    //auto verticalDir = tracker->getOrientation().getPitch().valueRadians();
+    auto dir = tracker->getOrientation()*Vector3(0, 0, -1);
 
-	currentSpeed = Math::Clamp(currentSpeed + time*0.2f + dir.y*0.5f, 0.5f, 2.5f + dir.y);
+    currentSpeed = Math::Clamp(currentSpeed + -dir.y*0.5f*time, 1.0f, 2.5f);
 }
 
 void ZipLine::attach()
 {
+    Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
+
+    headArrival.timer = 0.5f;
+    headArrival.pos = cam->getDerivedPosition();
+    headArrival.dir = cam->getDerivedOrientation();
+
     registerInputListening();
 
-    Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
     cam->detachFromParent();
 
     Global::player->enableControl(false);
 
+    tracker->removeAllChildren();
+    Global::mSceneMgr->getRootSceneNode()->addChild(base);
     head->attachObject(cam);
 
     Global::player->body->freeze();
@@ -219,26 +227,68 @@ void ZipLine::release()
 
 void ZipLine::updateTurningYaw(float time)
 {
-	//force to side
-	auto yaw = head->getOrientation().getYaw().valueRadians();
-	auto r = (lastYaw - yaw)*time*currentSpeed;
-	headRoll += r;
+    //force to side
+    auto yaw = tracker->getOrientation().getYaw().valueRadians();
 
-	//force to center
-	float centerForce = 0.2f;
-	if (headRoll > 0)
-		headRoll = std::max(0.0f, headRoll - time*centerForce);
-	else
-		headRoll = std::min(0.0f, headRoll + time*centerForce);
+    if (firstYaw)
+    {
+        firstYaw = false;
+        lastYaw = yaw;
+    }
 
-	base->setOrientation(Quaternion(Radian(headRoll), Vector3(0, 0, 1)));
+    auto r = yaw - lastYaw;
+    if (r > Math::PI)
+        r -= Math::TWO_PI;
+    if (r < -Math::PI)
+        r += Math::TWO_PI;
 
-	lastYaw = yaw;
+    r *= time*currentSpeed * 45;
+    headRoll += r;
+    headRoll = Math::Clamp(headRoll, -1.0f, 1.0f);
+
+    //force to center
+    float centerForce = time*0.75f;
+    if (headRoll > 0)
+        headRoll = std::max(0.0f, headRoll - centerForce);
+    else
+        headRoll = std::min(0.0f, headRoll + centerForce);
+
+    base->setOrientation(Quaternion(Radian(headRoll), Vector3(0, 0, 1)));
+
+    Global::debug = headRoll;
+
+    lastYaw = yaw;
+}
+
+void ZipLine::updateHeadArrival(float time)
+{
+    headArrival.timer -= time;
+
+    if (headArrival.timer <= 0)
+    {
+        base->resetToInitialState();
+
+        base->getParentSceneNode()->removeChild(base);
+        tracker->addChild(base);
+    }
+    else
+    {
+        auto w = headArrival.timer / 0.5f;
+        Quaternion q = w*headArrival.dir + (1-w)*tracker->getOrientation();
+        Vector3 p = w*headArrival.pos + (1 - w)*tracker->getPosition();
+
+        base->setPosition(p);
+        base->setOrientation(q);
+    }
+
 }
 
 void ZipLine::updateSlidingCamera(float time)
 {
-	updateTurningYaw(time);
+    if (headArrival.timer > 0)
+        updateHeadArrival(time);
+    else
+        updateTurningYaw(time);
 }
 
 void ZipLine::updateSlidingState(float time)
@@ -257,7 +307,7 @@ void ZipLine::updateSlidingState(float time)
 
 bool ZipLine::update(Ogre::Real tslf)
 {
-	tslf *= Global::timestep;
+    tslf *= Global::timestep;
 
     if (enablePlayerControl)
     {

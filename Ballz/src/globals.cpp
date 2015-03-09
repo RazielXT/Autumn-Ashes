@@ -14,3 +14,5 @@ Player* Global::player = 0;
 GameStateManager* Global::gameMgr = 0;
 PostProcessMgr* Global::mPPMgr = 0;
 std::map<std::string,void*>* Global::globalData = new std::map<std::string,void*>();
+
+float Global::debug = 0;

@@ -164,7 +164,7 @@ void GameStateManager::update(float tslf)
         switch (gameState)
         {
         case GAME:
-            myMenu->setDebugValue(Global::mWindow->getLastFPS(), 0);
+            myMenu->setDebugValue(Global::mWindow->getLastFPS(), Global::debug);
             break;
         case PAUSE:
             myMenu->updateIngameMenu(tslf);
