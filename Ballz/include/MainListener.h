@@ -4,7 +4,7 @@
 #include "Tasks.h"
 #include "EventsManager.h"
 #include "PagingManager.h"
-#include "SceneParser.h""
+#include "SceneParser.h"
 #include "DefaultObjectContactCallback.h"
 #include "TriggerObjectContactCallback.h"
 #include "TriggerPlayerContactCallback.h"
@@ -51,13 +51,13 @@ public:
     MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse,SceneManager * sceneMgr,OgreNewt::World* nWorld, Ogre::Root *mRoot,Ogre::RenderWindow* mWin)
     {
         /*
-        		W->setMinimumFrameRate(30);
-        		W->setThreadCount(2);
-        		W->setUpdateFPS(60,1);
-        		W->setMultithreadSolverOnSingleIsland(1);
-        		W->setPlatformArchitecture(2);
-        		W->setFrictionModel(1);
-        		W->setSolverModel(1);
+        W->setMinimumFrameRate(30);
+        W->setThreadCount(2);
+        W->setUpdateFPS(60,1);
+        W->setMultithreadSolverOnSingleIsland(1);
+        W->setPlatformArchitecture(2);
+        W->setFrictionModel(1);
+        W->setSolverModel(1);
         */
 
         nListener.init(nWorld);
@@ -283,64 +283,64 @@ private:
 /*
 
 OgreNewt::Body* vytah;
-	void vcallback(OgreNewt::Body* me, float timeStep, int threadIndex )
-	{
-	Real h=me->getPosition().y;
-	if(h>40) {h=40; me->setVelocity(Vector3(0,0,0));}
-	Real force=(40-h)/1;
-	me->addForce(Vector3(0,force,0));
-	}
+void vcallback(OgreNewt::Body* me, float timeStep, int threadIndex )
+{
+Real h=me->getPosition().y;
+if(h>40) {h=40; me->setVelocity(Vector3(0,0,0));}
+Real force=(40-h)/1;
+me->addForce(Vector3(0,force,0));
+}
 
-	void vcallback2(OgreNewt::Body* me, float timeStep, int threadIndex )
-	{
-	me->setVelocity(Vector3(0,vytah->getVelocity().y*-1,0));
-	}
+void vcallback2(OgreNewt::Body* me, float timeStep, int threadIndex )
+{
+me->setVelocity(Vector3(0,vytah->getVelocity().y*-1,0));
+}
 
-		Entity* ent = mSceneMgr->createEntity( "vytahmesh", "vytah.mesh" );
-		OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,ent,1));
+Entity* ent = mSceneMgr->createEntity( "vytahmesh", "vytah.mesh" );
+OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,ent,1));
 
-	vytah = new OgreNewt::Body( mWorld, col );
+vytah = new OgreNewt::Body( mWorld, col );
 
-	SceneNode* vnode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-	vnode->attachObject( ent );
+SceneNode* vnode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+vnode->attachObject( ent );
 
-	Vector3 inertia, offset;
-    col->calculateInertialMatrix(inertia, offset);
+Vector3 inertia, offset;
+col->calculateInertialMatrix(inertia, offset);
 #ifdef OGRENEWT_NO_COLLISION_SHAREDPTR
-			//no longer need the collision shape object
-			delete col;
+//no longer need the collision shape object
+delete col;
 #endif
-			vytah->setMassMatrix( 4, inertia );
-            vytah->setCenterOfMass(offset);
-			vytah->setCustomForceAndTorqueCallback<MainListener>(&MainListener::vcallback, this);
-			//pbody->setContinuousCollisionMode(1);
-			vytah->setPositionOrientation( Ogre::Vector3(0.0,40,0.0), Ogre::Quaternion::IDENTITY );
-			//vytah->setLinearDamping(0.1);
-			vytah->attachNode( vnode );
-			OgreNewt::UpVector* uv= new OgreNewt::UpVector(vytah, Vector3::UNIT_Y);
-	OgreNewt::UpVector* uv2= new OgreNewt::UpVector(vytah, Vector3::UNIT_Z);
+vytah->setMassMatrix( 4, inertia );
+vytah->setCenterOfMass(offset);
+vytah->setCustomForceAndTorqueCallback<MainListener>(&MainListener::vcallback, this);
+//pbody->setContinuousCollisionMode(1);
+vytah->setPositionOrientation( Ogre::Vector3(0.0,40,0.0), Ogre::Quaternion::IDENTITY );
+//vytah->setLinearDamping(0.1);
+vytah->attachNode( vnode );
+OgreNewt::UpVector* uv= new OgreNewt::UpVector(vytah, Vector3::UNIT_Y);
+OgreNewt::UpVector* uv2= new OgreNewt::UpVector(vytah, Vector3::UNIT_Z);
 
 
-	ent = mSceneMgr->createEntity( "vytahmesh2", "vytah.mesh" );
-		col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,ent,1));
+ent = mSceneMgr->createEntity( "vytahmesh2", "vytah.mesh" );
+col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld,ent,1));
 
-	OgreNewt::Body* vytah2 = new OgreNewt::Body( mWorld, col );
+OgreNewt::Body* vytah2 = new OgreNewt::Body( mWorld, col );
 
-	SceneNode* vnode2 = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-	vnode2->attachObject( ent );
+SceneNode* vnode2 = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+vnode2->attachObject( ent );
 
-    col->calculateInertialMatrix(inertia, offset);
+col->calculateInertialMatrix(inertia, offset);
 #ifdef OGRENEWT_NO_COLLISION_SHAREDPTR
-			//no longer need the collision shape object
-			delete col;
+//no longer need the collision shape object
+delete col;
 #endif
-			vytah2->setMassMatrix( 4, inertia );
-            vytah2->setCenterOfMass(offset);
-			vytah2->setCustomForceAndTorqueCallback<MainListener>(&MainListener::vcallback2, this);
-			//pbody->setContinuousCollisionMode(1);
-			vytah2->setPositionOrientation( Ogre::Vector3(10.0,0.0,0.0), Ogre::Quaternion::IDENTITY );
-			//vytah->setLinearDamping(0.1);
-			vytah2->attachNode( vnode2 );
-			OgreNewt::UpVector* uv12= new OgreNewt::UpVector(vytah2, Vector3::UNIT_Y);
-	OgreNewt::UpVector* uv22= new OgreNewt::UpVector(vytah2, Vector3::UNIT_Z);
+vytah2->setMassMatrix( 4, inertia );
+vytah2->setCenterOfMass(offset);
+vytah2->setCustomForceAndTorqueCallback<MainListener>(&MainListener::vcallback2, this);
+//pbody->setContinuousCollisionMode(1);
+vytah2->setPositionOrientation( Ogre::Vector3(10.0,0.0,0.0), Ogre::Quaternion::IDENTITY );
+//vytah->setLinearDamping(0.1);
+vytah2->attachNode( vnode2 );
+OgreNewt::UpVector* uv12= new OgreNewt::UpVector(vytah2, Vector3::UNIT_Y);
+OgreNewt::UpVector* uv22= new OgreNewt::UpVector(vytah2, Vector3::UNIT_Z);
 */

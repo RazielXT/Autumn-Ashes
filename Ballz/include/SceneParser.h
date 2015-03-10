@@ -18,41 +18,41 @@ public:
 
 private:
 
-	struct TriggerAndIDs
-	{
-		TriggerInfo* trigger;
-		std::vector<int> ids;
-	};
+    struct TriggerAndIDs
+    {
+        TriggerInfo* trigger;
+        std::vector<int> ids;
+    };
 
-	struct EventTaskAndID
-	{
-		EventTask* task;
-		int id;
-	};
+    struct EventTaskAndID
+    {
+        EventTask* task;
+        int id;
+    };
 
-	struct LoadedJointInfo
-	{
-		Ogre::String body0, body1;
-		Ogre::Vector3 position;
-		char type;
-		Ogre::Vector3 pin;
-	};
+    struct LoadedJointInfo
+    {
+        Ogre::String body0, body1;
+        Ogre::Vector3 position;
+        char type;
+        Ogre::Vector3 pin;
+    };
 
-	struct CompoundBodyInfo
-	{
-		Ogre::Entity* ent;
-		Ogre::SceneNode* node;
-		bool visual;
-		bool physical;
-	};
+    struct CompoundBodyInfo
+    {
+        Ogre::Entity* ent;
+        Ogre::SceneNode* node;
+        bool visual;
+        bool physical;
+    };
 
-	struct LoadedInstanceForests
-	{
-		int gm;
-		int im;
-		int tr;
-		Forests::PagedGeometry * g;
-	};
+    struct LoadedInstanceForests
+    {
+        int gm;
+        int im;
+        int tr;
+        Forests::PagedGeometry * g;
+    };
 
     std::vector<TriggerAndIDs> loadedTriggers;
     std::vector<EventTaskAndID> loadedTasks;
@@ -183,31 +183,31 @@ private:
             return StringUtil::BLANK;
     }
 
-	std::string getElementText(const TiXmlElement* xmlElement)
-	{
-		auto txt = xmlElement->GetText();
+    std::string getElementText(const TiXmlElement* xmlElement)
+    {
+        auto txt = xmlElement->GetText();
 
-		if (txt == NULL)
-			return "";
-		else
-			return txt;
-	}
+        if (txt == NULL)
+            return "";
+        else
+            return txt;
+    }
 
-	std::string strtok_str(std::string& txt, char delim)
-	{
-		auto dPos = txt.find_first_of(delim);
-		std::string ret = txt;
+    std::string strtok_str(std::string& txt, char delim)
+    {
+        auto dPos = txt.find_first_of(delim);
+        std::string ret = txt;
 
-		if (dPos != std::string::npos)
-		{
-			ret.erase(dPos, std::string::npos);
-			txt.erase(0, dPos + 1);
-		}
-		else
-			txt.clear();
+        if (dPos != std::string::npos)
+        {
+            ret.erase(dPos, std::string::npos);
+            txt.erase(0, dPos + 1);
+        }
+        else
+            txt.clear();
 
-		return ret;
-	}
+        return ret;
+    }
 
     void LoadLightAttenuation(const TiXmlElement* objectElement, Light* light)
     {
@@ -442,38 +442,38 @@ private:
 
         auto actionsStr = getElementValue(rootElement, "Actions");
 
-		if (!actionsStr.empty())
+        if (!actionsStr.empty())
         {
             int i = 0;
-			auto aID = strtok_str(actionsStr, ';');
+            auto aID = strtok_str(actionsStr, ';');
             while (!aID.empty() && i < 4)
             {
                 //add action
                 userD->actions[i] = stoi(aID);
                 myLog->logMessage("loaded aID " + Ogre::String(aID), LML_NORMAL);
                 i++;
-				aID = strtok_str(actionsStr, ';');
+                aID = strtok_str(actionsStr, ';');
             }
             body->setMaterialGroupID(action_mat);
         }
 
-		auto startupTasks = getElementValue(rootElement, "Aonstart");
+        auto startupTasks = getElementValue(rootElement, "Aonstart");
 
         if (!startupTasks.empty())
         {
             int i = 0;
 
-			char separator = ';';
+            char separator = ';';
 
             bool newForm = false;
-			if (startupTasks.find("\n") != std::string::npos || startupTasks.find(')') == startupTasks.length() - 1)
+            if (startupTasks.find("\n") != std::string::npos || startupTasks.find(')') == startupTasks.length() - 1)
             {
                 newForm = true;
-				separator = '\n';
+                separator = '\n';
             }
 
-			auto react = strtok_str(startupTasks, separator);
-			while (!react.empty())
+            auto react = strtok_str(startupTasks, separator);
+            while (!react.empty())
             {
                 Ogre::String taskStr = Ogre::String(react);
 
@@ -503,7 +503,7 @@ private:
                     mEventMgr->addTask(r);
                 }
 
-				react = strtok_str(startupTasks, separator);
+                react = strtok_str(startupTasks, separator);
             }
         }
     }
@@ -694,7 +694,7 @@ private:
     void loadZipLinePart(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, WorldMaterials* wMaterials, OgreNewt::World* mWorld)
     {
         String typeName = getElementValue(element, "BodyType");
-		auto top = StringConverter::parseBool(getElementValue(element, "Top"));
+        auto top = StringConverter::parseBool(getElementValue(element, "Top"));
 
         OgreNewt::Body* body = nullptr;
 
@@ -718,10 +718,10 @@ private:
         //if (!physicsOnly)
         body->attachNode(node);
 
-		if (top)
-			body->setType(TopZipLinePart);
-		else
-			body->setType(ZipLinePart);
+        if (top)
+            body->setType(TopZipLinePart);
+        else
+            body->setType(ZipLinePart);
 
         body->setMaterialGroupID(wMaterials->playerIgnore_mat);
 
@@ -740,43 +740,43 @@ private:
     {
         std::vector<Ogre::Vector3> points;
 
-		auto loop = Ogre::StringConverter::parseBool(getElementValue(element, "Loop"));
-		auto speed = Ogre::StringConverter::parseReal(getElementValue(element, "Speed"));
-		auto animTrack = getElementValue(element, "Animation");
+        auto loop = Ogre::StringConverter::parseBool(getElementValue(element, "Loop"));
+        auto speed = Ogre::StringConverter::parseReal(getElementValue(element, "Speed"));
+        auto animTrack = getElementValue(element, "Animation");
 
-		ZipLine* line;
+        ZipLine* line;
 
-		if (animTrack.empty())
-		{
-			line = new ZipLine(points, node->getName(), loop, speed);
+        if (animTrack.empty())
+        {
+            auto m = ent->getMesh().get()->getSubMesh(0);
+            const Ogre::VertexElement* posElem = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_POSITION);
+            Ogre::HardwareVertexBufferSharedPtr vbuf = m->vertexData->vertexBufferBinding->getBuffer(posElem->getSource());
+            unsigned char* vertex = static_cast<unsigned char*>(vbuf->lock(Ogre::HardwareBuffer::HBL_READ_ONLY));
+            Ogre::Real* pReal;
 
-			auto m = ent->getMesh().get()->getSubMesh(0);
-			const Ogre::VertexElement* posElem = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_POSITION);
-			Ogre::HardwareVertexBufferSharedPtr vbuf = m->vertexData->vertexBufferBinding->getBuffer(posElem->getSource());
-			unsigned char* vertex = static_cast<unsigned char*>(vbuf->lock(Ogre::HardwareBuffer::HBL_READ_ONLY));
-			Ogre::Real* pReal;
+            for (size_t j = 0; j < m->vertexData->vertexCount; ++j, vertex += vbuf->getVertexSize())
+            {
+                posElem->baseVertexPointerToElement(vertex, &pReal);
 
-			for (size_t j = 0; j < m->vertexData->vertexCount; ++j, vertex += vbuf->getVertexSize())
-			{
-				posElem->baseVertexPointerToElement(vertex, &pReal);
+                Vector3 pt;
 
-				Vector3 pt;
+                pt.x = (*pReal++);
+                pt.y = (*pReal++);
+                pt.z = (*pReal++);
 
-				pt.x = (*pReal++);
-				pt.y = (*pReal++);
-				pt.z = (*pReal++);
+                pt *= node->getScale();
+                pt += node->getPosition();
+                pt = node->getOrientation()*pt;
 
-				pt *= node->getScale();
-				pt += node->getPosition();
-				pt = node->getOrientation()*pt;
+                if (j == 0 || j % 2 == 1)
+                    points.push_back(pt);
+            }
+            vbuf->unlock();
 
-				if (j == 0 || j % 2 == 1)
-					points.push_back(pt);
-			}
-			vbuf->unlock();
-		}
-		else
-			line = new ZipLine(node, animTrack, loop, speed);
+            line = new ZipLine(points, node->getName(), loop, speed);
+        }
+        else
+            line = new ZipLine(node, animTrack, loop, speed);
 
         (*Global::globalData)["ZipLine" + node->getName()] = line;
     }
@@ -1065,26 +1065,26 @@ private:
 
         return body;
     }
- 
+
     void loadJoint(const TiXmlElement* element, SceneNode* node, Ogre::SceneManager *mSceneMgr)
     {
         const TiXmlElement* pElement = element->NextSiblingElement();
 
         auto children = getElementText(element);
-		auto parents = getElementText(pElement);
+        auto parents = getElementText(pElement);
 
-		auto child = strtok_str(children,';');
+        auto child = strtok_str(children,';');
         element = element->NextSiblingElement();
-		auto parent = strtok_str(parents, ';');
+        auto parent = strtok_str(parents, ';');
 
-		const TiXmlElement* typeElement = pElement->NextSiblingElement();
+        const TiXmlElement* typeElement = pElement->NextSiblingElement();
         char type = 0;
         if (typeElement != 0)
         {
             type = Ogre::StringConverter::parseInt(typeElement->GetText());
         }
 
-		while (!child.empty() && !parent.empty())
+        while (!child.empty() && !parent.empty())
         {
             LoadedJointInfo info;
 
@@ -1097,8 +1097,8 @@ private:
             loadedJoints.push_back(info);
 
             //next
-			child = strtok_str(children, ';');
-			parent = strtok_str(parents, ';');
+            child = strtok_str(children, ';');
+            parent = strtok_str(parents, ';');
 
             Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Joint - child:" + info.body0 + " and parent:" + info.body1, LML_NORMAL);
         }
@@ -1116,9 +1116,9 @@ private:
         auto posText = getElementText(element);
         auto val = strtok_str(posText, ',');
         target.x = Ogre::StringConverter::parseReal(val);
-		val = strtok_str(posText, ',');
+        val = strtok_str(posText, ',');
         target.z = -Ogre::StringConverter::parseReal(val);
-		val = strtok_str(posText, ',');
+        val = strtok_str(posText, ',');
         target.y = Ogre::StringConverter::parseReal(val);
         element = element->NextSiblingElement();
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Making BM", LML_NORMAL);
@@ -1236,19 +1236,19 @@ private:
 
         TriggerAndIDs trig;
 
-		std::string actions = getElementText(element);
+        std::string actions = getElementText(element);
 
-		if (!actions.empty())
+        if (!actions.empty())
         {
             int i = 0;
-			auto aID = strtok_str(actions, ';');
+            auto aID = strtok_str(actions, ';');
             while (!aID.empty() && i < 4)
             {
                 //add action
                 myLog->logMessage("Trigger ID " + Ogre::String(aID), LML_NORMAL);
                 trig.ids.push_back(stoi(aID));
                 i++;
-				aID = strtok_str(actions, ';');
+                aID = strtok_str(actions, ';');
             }
         }
 
@@ -1290,14 +1290,14 @@ private:
 
         const TiXmlElement* fElement = element->NextSiblingElement();
 
-		std::string tasks = getElementText(element);
-		std::string functions = getElementText(fElement);
+        std::string tasks = getElementText(element);
+        std::string functions = getElementText(fElement);
 
         if (functions.empty())
             return;
 
-		std::string aID;
-		std::string fID;
+        std::string aID;
+        std::string fID;
 
         bool newForm = false;
         if (tasks.empty())
@@ -1307,11 +1307,11 @@ private:
         }
         else
         {
-			aID = strtok_str(tasks, ';');
-			fID = strtok_str(functions, ';');
+            aID = strtok_str(tasks, ';');
+            fID = strtok_str(functions, ';');
         }
 
-		while (!fID.empty() && (!aID.empty() || newForm))
+        while (!fID.empty() && (!aID.empty() || newForm))
         {
             Ogre::String rName(fID);
             Ogre::String action(rName);
@@ -1353,12 +1353,12 @@ private:
             //next
             if (newForm)
             {
-				fID = strtok_str(functions, '\n');
+                fID = strtok_str(functions, '\n');
             }
             else
             {
-				aID = strtok_str(tasks, ';');
-				fID = strtok_str(functions, ';');
+                aID = strtok_str(tasks, ';');
+                fID = strtok_str(functions, ';');
             }
 
         }
