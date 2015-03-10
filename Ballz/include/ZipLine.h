@@ -32,10 +32,18 @@ protected:
         float timer;
     };
 
-	struct HeadState
+	struct HeadControlState
 	{
 		float yaw;
 		float pitch;
+	};
+
+	struct HeadYawState
+	{
+		bool firstYaw = true;
+		Quaternion lastOr;
+		float torque;
+		float headRoll;
 	};
 
 private:
@@ -56,9 +64,7 @@ private:
     void attach();
     void release();
 
-    bool firstYaw = true;
-    Quaternion lastOr;
-    float headRoll;
+	HeadYawState headYaw;
 
     float currentSpeed;
     float avgSpeed = 5;
@@ -72,7 +78,7 @@ private:
     float unavailableTimer = 0;
 
     HeadTransitionState headArrival;
-	HeadState headState;
+	HeadControlState headState;
 
     bool enablePlayerControl = false;
 };

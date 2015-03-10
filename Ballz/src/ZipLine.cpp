@@ -193,7 +193,7 @@ bool ZipLine::start()
     {
         attach();
 
-        firstYaw = true;
+		headYaw.firstYaw = true;
         mTrackerState->setEnabled(true);
         mTrackerState->setLoop(true);
 
@@ -256,32 +256,43 @@ void ZipLine::release()
 
 void ZipLine::updateTurningYaw(float time)
 {
+	const float turnForce = 20;
+	const float stabilityForce = 5.0f;
+	const float rollLimit = 1.0f;
+
 	auto q = tracker->getOrientation();
 
-	if (firstYaw)
+	if (headYaw.firstYaw)
 	{
-		firstYaw = false;
-		lastOr = q;
+		headYaw.firstYaw = false;
+		headYaw.lastOr = q;
+		headYaw.headRoll = 0;
+		headYaw.torque = 0;
 	}
 
-    //force to side
-	auto r = MathUtils::getYawBetween(q, lastOr);
+    //force to side, faster speed means more turn
+	auto force = MathUtils::getYawBetween(q, headYaw.lastOr);
+	force *= time*currentSpeed*turnForce;
+   
+	auto& headRoll = headYaw.headRoll;
 
-	lastOr = q;
+	headYaw.torque -= headRoll*time*stabilityForce;
 
-    r *= time*currentSpeed * 45;
-    headRoll += r;
-    headRoll = Math::Clamp(headRoll, -1.0f, 1.0f);
+	headRoll += force + headYaw.torque;
 
+	/*
     //force to center
-    float centerForce = time*0.75f;
+	float centerForce = time*stabilityForce;
     if (headRoll > 0)
         headRoll = std::max(0.0f, headRoll - centerForce);
     else
         headRoll = std::min(0.0f, headRoll + centerForce);
+	*/
 
+	headRoll = Math::Clamp(headRoll, -rollLimit, rollLimit);
     base->setOrientation(Quaternion(Radian(headRoll), Vector3(0, 0, 1)));
 
+	headYaw.lastOr = q;
     Global::debug = headRoll;
 }
 
