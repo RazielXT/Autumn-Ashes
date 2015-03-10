@@ -46,8 +46,6 @@ private:
 
     bool placePointOnLine(Vector3& point);
 
-    inline LineProjState getProjectedState(Ogre::Vector3& point, Ogre::Vector3& start, Ogre::Vector3& end);
-
     void updateSlidingState(float time);
     void updateHeadArrival(float time);
     inline void updateSlidingCamera(float time);

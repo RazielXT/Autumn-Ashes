@@ -24,7 +24,46 @@ void ZipLine::pressedKey(const OIS::KeyEvent &arg)
 
 void ZipLine::movedMouse(const OIS::MouseEvent &e)
 {
-	if (e.state.X.)
+	float mouseX = (-1 * e.state.X.rel*Global::timestep) / 10.0f;
+	float mouseY = (-1 * e.state.Y.rel*Global::timestep) / 10.0f;
+
+	float maxAngle = 70;
+
+	headState.pitch += mouseY;
+	if (headState.pitch > -maxAngle && headState.pitch < maxAngle)
+		head->pitch(Degree(mouseY), Node::TS_LOCAL);
+	else
+	{
+		headState.pitch = headState.pitch - mouseY;
+		if (headState.pitch < 0)
+		{
+			head->pitch(Degree(-maxAngle - headState.pitch), Node::TS_LOCAL);
+			headState.pitch = -maxAngle;
+		}
+		if (headState.pitch > 0)
+		{
+			head->pitch(Degree(maxAngle - headState.pitch), Node::TS_LOCAL);
+			headState.pitch = maxAngle;
+		}
+	}
+
+	headState.yaw += mouseX;
+	if (headState.yaw > -maxAngle && headState.yaw < maxAngle)
+		head->yaw(Degree(mouseX), Node::TS_LOCAL);
+	else
+	{
+		headState.yaw = headState.yaw - mouseX;
+		if (headState.yaw < 0)
+		{
+			head->yaw(Degree(-maxAngle - headState.yaw), Node::TS_LOCAL);
+			headState.yaw = -maxAngle;
+		}
+		if (headState.yaw > 0)
+		{
+			head->yaw(Degree(maxAngle - headState.yaw), Node::TS_LOCAL);
+			headState.yaw = maxAngle;
+		}
+	}
 }
 
 ZipLine::ZipLine(const std::vector<Ogre::Vector3>& points)
@@ -183,6 +222,9 @@ void ZipLine::attach()
     headArrival.timer = 0.5f;
     headArrival.pos = cam->getDerivedPosition();
     headArrival.dir = cam->getDerivedOrientation();
+
+	headState.pitch = 0;
+	headState.yaw = 0;
 
     registerInputListening();
 
