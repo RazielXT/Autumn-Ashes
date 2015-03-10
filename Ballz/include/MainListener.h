@@ -1,11 +1,10 @@
 #include "stdafx.h"
 #include "OgreGpuCommandBufferFlush.h"
 #include "InputListener.h"
-#include <Tasks.h>
+#include "Tasks.h"
 #include "EventsManager.h"
 #include "PagingManager.h"
-#include <SceneParser.h>
-#include <bird.h>
+#include "SceneParser.h""
 #include "DefaultObjectContactCallback.h"
 #include "TriggerObjectContactCallback.h"
 #include "TriggerPlayerContactCallback.h"

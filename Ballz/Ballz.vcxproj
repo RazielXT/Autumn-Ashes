@@ -125,20 +125,16 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\ZipLine.cpp" />
     <ClCompile Include="src\AAmain.cpp" />
     <ClCompile Include="src\AudioLibrary.cpp" />
-    <ClCompile Include="src\baloon.cpp" />
-    <ClCompile Include="src\bird.cpp" />
     <ClCompile Include="src\BridgeMaker.cpp" />
     <ClCompile Include="src\CameraShaker.cpp" />
     <ClCompile Include="src\ChainsSoundReaction.cpp" />
     <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="src\DefaultObjectContactCallback.cpp" />
-    <ClCompile Include="src\defSM.cpp" />
+    <ClCompile Include="src\DefShadowCamera.cpp" />
     <ClCompile Include="src\EffectsTasks.cpp" />
     <ClCompile Include="src\EntityMovementReaction.cpp" />
-    <ClCompile Include="src\EnvironmentSound.cpp" />
     <ClCompile Include="src\EventsManager.cpp" />
     <ClCompile Include="src\EventTask.cpp" />
     <ClCompile Include="src\GameStateManager.cpp" />
@@ -149,15 +145,14 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\lvl_update.cpp" />
     <ClCompile Include="src\GuiOverlay.cpp" />
     <ClCompile Include="src\PagingManager.cpp" />
-    <ClCompile Include="src\player_core.cpp" />
+    <ClCompile Include="src\Player_core.cpp" />
     <ClCompile Include="src\PostProcessMgr.cpp" />
     <ClCompile Include="src\Tasks.cpp" />
     <ClCompile Include="src\TransformationTaskTemplate.cpp" />
-    <ClCompile Include="src\mShC.cpp" />
+    <ClCompile Include="src\PSSMCamera.cpp" />
     <ClCompile Include="src\OgreGpuCommandBufferFlush.cpp" />
-    <ClCompile Include="src\player.cpp" />
+    <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\globals.cpp" />
-    <ClCompile Include="src\rope.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -166,40 +161,37 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\tinyxmlerror.cpp" />
     <ClCompile Include="src\tinyxmlparser.cpp" />
     <ClCompile Include="src\TriggerObjectContactCallback.cpp" />
-    <ClCompile Include="include\TriggerPlayerContactCallback.cpp" />
     <ClCompile Include="src\HandFromGroundReaction.cpp" />
     <ClCompile Include="src\TestReaction.cpp" />
     <ClCompile Include="src\CommonTasks.cpp" />
     <ClCompile Include="src\ReflectionTask.cpp" />
+    <ClCompile Include="src\TriggerPlayerContactCallback.cpp" />
     <ClCompile Include="src\WaterArea.cpp" />
     <ClCompile Include="src\WorldMaterials.cpp" />
+    <ClCompile Include="src\ZipLine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AudioLibrary.h" />
-    <ClInclude Include="include\baloon.h" />
     <ClInclude Include="include\BasicPPListener.h" />
-    <ClInclude Include="include\bird.h" />
     <ClInclude Include="include\BridgeMaker.h" />
     <ClInclude Include="include\CameraShaker.h" />
     <ClInclude Include="include\ChainsSoundTask.h" />
     <ClInclude Include="include\Console.h" />
     <ClInclude Include="include\DebugKeys.h" />
     <ClInclude Include="include\DefaultObjectContactCallback.h" />
-    <ClInclude Include="include\defSM.h" />
+    <ClInclude Include="include\DefShadowCamera.h" />
     <ClInclude Include="include\EffectsTasks.h" />
     <ClInclude Include="include\EntityMovementTask.h" />
-    <ClInclude Include="include\EnvironmentSound.h" />
     <ClInclude Include="include\EventsManager.h" />
-    <ClInclude Include="include\flistener.h" />
+    <ClInclude Include="include\MainListener.h" />
     <ClInclude Include="include\GameStateManager.h" />
     <ClInclude Include="include\globals.h" />
-    <ClInclude Include="include\godraylistener.h" />
+    <ClInclude Include="include\GodrayListener.h" />
     <ClInclude Include="include\Gorilla.h" />
     <ClInclude Include="include\GrassHeightFunction.h" />
-    <ClInclude Include="include\HandBasic.h" />
     <ClInclude Include="include\HandGripTask.h" />
     <ClInclude Include="include\InputListener.h" />
-    <ClInclude Include="include\levels.h" />
+    <ClInclude Include="include\levelsInit.h" />
     <ClInclude Include="include\ListLoop.h" />
     <ClInclude Include="include\LoadNextPart.h" />
     <ClInclude Include="include\lvl1Tasks.h" />
@@ -210,9 +202,9 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\SceneParser.h" />
     <ClInclude Include="include\ScaryPPListener.h" />
     <ClInclude Include="include\ITransformationTask.h" />
-    <ClInclude Include="include\mShC.h" />
+    <ClInclude Include="include\PSSMCamera.h" />
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h" />
-    <ClInclude Include="include\player.h" />
+    <ClInclude Include="include\Player.h" />
     <ClInclude Include="include\PostProcessMgr.h" />
     <ClInclude Include="include\premenne.h" />
     <ClInclude Include="include\CommonTasks.h" />
@@ -222,13 +214,12 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\ZipLine.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource1.h" />
-    <ClInclude Include="include\rope.h" />
     <ClInclude Include="include\start.h" />
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\tinyxml.h" />
     <ClInclude Include="include\TriggerObjectContactCallback.h" />
     <ClInclude Include="include\TriggerPlayerContactCallback.h" />
-    <ClInclude Include="include\bodyUserData.h" />
+    <ClInclude Include="include\BodyUserData.h" />
     <ClInclude Include="include\EventTask.h" />
     <ClInclude Include="include\HandFromGroundTask.h" />
     <ClInclude Include="include\Tasks.h" />

@@ -3,7 +3,7 @@
 #include "OgreCommon.h"
 #include "OgreSceneManager.h"
 #include "OgreLight.h"
-#include "defSM.h"
+#include "DefShadowCamera.h"
 #include "OgreCamera.h"
 #include "OgreViewport.h"
 

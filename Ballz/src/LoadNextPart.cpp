@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "LoadNextPart.h"
-#include "player.h"
+#include "Player.h"
 #include "PostProcessMgr.h"
 
 using namespace Ogre;

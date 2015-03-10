@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "WaterArea.h"
-#include "player.h"
+#include "Player.h"
 
 using namespace Ogre;
 

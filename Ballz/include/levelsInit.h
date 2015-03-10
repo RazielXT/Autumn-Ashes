@@ -1,7 +1,6 @@
 #pragma once
 
 #include "stdafx.h"
-#include "rope.h"
 #include "BridgeMaker.h"
 #include "PagingManager.h"
 #include "PostProcessMgr.h"

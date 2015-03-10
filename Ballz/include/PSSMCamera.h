@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "stdafx.h"
 #include "OgrePrerequisites.h"
 #include "OgreShadowCameraSetup.h"
-#include "defSM.h"
+#include "DefShadowCamera.h"
 
 namespace Ogre
 {

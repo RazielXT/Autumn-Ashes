@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "HandGripTask.h"
 #include "EventsManager.h"
-#include "player.h"
+#include "Player.h"
 
 HandGripReaction::HandGripReaction()
 {

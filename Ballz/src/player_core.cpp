@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "player.h"
+#include "Player.h"
 #include "PostProcessMgr.h"
 #include "ZipLine.h"
 

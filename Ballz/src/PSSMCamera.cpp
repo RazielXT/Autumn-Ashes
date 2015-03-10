@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "OgreStableHeaders.h"
-#include "mShC.h"
+#include "PSSMCamera.h"
 #include "OgreSceneManager.h"
 #include "OgreCamera.h"
 

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "DefaultObjectContactCallback.h"
-#include "bodyUserData.h"
+#include "BodyUserData.h"
 
 DefaultObjectContactCallback::DefaultObjectContactCallback( irrklang::ISoundEngine* soundEngine  ) : OgreNewt::ContactCallback()
 {

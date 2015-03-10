@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "GameStateManager.h"
-#include "player.h"
-#include "levels.h"
+#include "Player.h"
+#include "levelsInit.h"
 
 SceneParser SceneParser::instance;
 

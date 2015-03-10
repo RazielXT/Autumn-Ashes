@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "mShC.h"
+#include "PSSMCamera.h"
 
 struct shadowListener: public Ogre::SceneManager::Listener
 {

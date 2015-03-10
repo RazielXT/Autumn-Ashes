@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CommonTasks.h"
-#include "bodyUserData.h"
-#include "player.h"
+#include "BodyUserData.h"
+#include "Player.h"
 
 #define BITS_20_TO_31 4290772992
 #define BITS_0_TO_19 1048575

@@ -24,37 +24,16 @@
     <ClCompile Include="src\AAmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\baloon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bird.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\DefaultObjectContactCallback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\defSM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\EnvironmentSound.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Gorilla.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mShC.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\OgreGpuCommandBufferFlush.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\rope.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\stdafx.cpp">
@@ -70,9 +49,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\TriggerObjectContactCallback.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\TriggerPlayerContactCallback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\HandFromGroundReaction.cpp">
@@ -141,13 +117,7 @@
     <ClCompile Include="src\WaterArea.cpp">
       <Filter>Source Files\tasks</Filter>
     </ClCompile>
-    <ClCompile Include="include\ZipLine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\CameraShaker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\player_core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\EffectsTasks.cpp">
@@ -156,57 +126,42 @@
     <ClCompile Include="src\CommonTasks.cpp">
       <Filter>Source Files\tasks</Filter>
     </ClCompile>
+    <ClCompile Include="src\PSSMCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DefShadowCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Player_core.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TriggerPlayerContactCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ZipLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\baloon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\bird.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\DefaultObjectContactCallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\defSM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\EnvironmentSound.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\flistener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Gorilla.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\levels.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mShC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\premenne.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\rope.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\start.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\stdafx.h">
@@ -221,14 +176,8 @@
     <ClInclude Include="include\TriggerPlayerContactCallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\bodyUserData.h">
-      <Filter>Header Files\tasks</Filter>
-    </ClInclude>
     <ClInclude Include="include\TriggerInfo.h">
       <Filter>Header Files\tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\globals.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\PagingManager.h">
       <Filter>Header Files</Filter>
@@ -293,12 +242,6 @@
     <ClInclude Include="include\GameStateManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\godraylistener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\HandBasic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\NewtonListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -333,6 +276,36 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CameraShaker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BodyUserData.h">
+      <Filter>Header Files\tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DefShadowCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MainListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GodrayListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PSSMCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\start.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\levelsInit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\premenne.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
