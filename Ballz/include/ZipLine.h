@@ -18,12 +18,6 @@ public:
 
 protected:
 
-    struct LineProjState
-    {
-        Vector3 projPos;
-        float sqMinDistance;
-    };
-
     struct ZipLinePoint
     {
         Vector3 pos;
@@ -37,6 +31,12 @@ protected:
         Quaternion dir;
         float timer;
     };
+
+	struct HeadState
+	{
+		float yaw;
+		float pitch;
+	};
 
 private:
 
@@ -59,7 +59,7 @@ private:
     void release();
 
     bool firstYaw = true;
-    float lastYaw;
+    Quaternion lastOr;
     float headRoll;
 
     float currentSpeed;
@@ -74,6 +74,7 @@ private:
     float unavailableTimer = 0;
 
     HeadTransitionState headArrival;
+	HeadState headState;
 
     bool enablePlayerControl = false;
 };

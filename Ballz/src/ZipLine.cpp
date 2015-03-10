@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ZipLine.h"
 #include "Player.h"
+#include "MathUtils.h"
 
 using namespace Ogre;
 
@@ -23,7 +24,7 @@ void ZipLine::pressedKey(const OIS::KeyEvent &arg)
 
 void ZipLine::movedMouse(const OIS::MouseEvent &e)
 {
-
+	if (e.state.X.)
 }
 
 ZipLine::ZipLine(const std::vector<Ogre::Vector3>& points)
@@ -112,24 +113,6 @@ void ZipLine::initZipLine(const std::vector<Ogre::Vector3>& points)
     }
 }
 
-ZipLine::LineProjState ZipLine::getProjectedState(Ogre::Vector3& point, Ogre::Vector3& start, Ogre::Vector3& end)
-{
-    Vector3 dir = end - start;
-    Vector3 pDir = point - start;
-    dir.normalise();
-    auto dp = pDir.dotProduct(dir);
-    dir *= dp;
-
-    //auto lToP = dir.length();
-    // auto lleft = (end - dir).length();
-
-    LineProjState state;
-    state.projPos = dir + start;
-    state.sqMinDistance = std::min(point.squaredDistance(end), std::min(point.squaredDistance(start), point.squaredDistance(state.projPos)));
-
-    return state;
-}
-
 #define MAX_PLAYER_DISTANCE_SQ 5*5
 
 bool ZipLine::placePointOnLine(Vector3& point)
@@ -139,7 +122,7 @@ bool ZipLine::placePointOnLine(Vector3& point)
 
     for (size_t id = 1; id < zipLine.size(); id++)
     {
-        auto state = getProjectedState(point, zipLine[id - 1].pos, zipLine[id].pos);
+        auto state = MathUtils::getProjectedState(point, zipLine[id - 1].pos, zipLine[id].pos);
 
         if (state.sqMinDistance < minDist)
         {
@@ -231,20 +214,18 @@ void ZipLine::release()
 
 void ZipLine::updateTurningYaw(float time)
 {
+	auto q = tracker->getOrientation();
+
+	if (firstYaw)
+	{
+		firstYaw = false;
+		lastOr = q;
+	}
+
     //force to side
-    auto yaw = tracker->getOrientation().getYaw().valueRadians();
+	auto r = MathUtils::getYawBetween(q, lastOr);
 
-    if (firstYaw)
-    {
-        firstYaw = false;
-        lastYaw = yaw;
-    }
-
-    auto r = yaw - lastYaw;
-    if (r > Math::PI)
-        r -= Math::TWO_PI;
-    if (r < -Math::PI)
-        r += Math::TWO_PI;
+	lastOr = q;
 
     r *= time*currentSpeed * 45;
     headRoll += r;
@@ -260,8 +241,6 @@ void ZipLine::updateTurningYaw(float time)
     base->setOrientation(Quaternion(Radian(headRoll), Vector3(0, 0, 1)));
 
     Global::debug = headRoll;
-
-    lastYaw = yaw;
 }
 
 void ZipLine::updateHeadArrival(float time)
