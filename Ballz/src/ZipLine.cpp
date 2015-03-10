@@ -66,7 +66,15 @@ void ZipLine::movedMouse(const OIS::MouseEvent &e)
 	}
 }
 
-ZipLine::ZipLine(const std::vector<Ogre::Vector3>& points)
+ZipLine::ZipLine(SceneNode* node, const std::string& zipAnimName, bool looped, float speed) : name(zipAnimName), loop(looped), avgSpeed(speed)
+{
+	tracker = node;
+	base = tracker->createChildSceneNode();
+	head = base->createChildSceneNode();
+	head->setPosition(0, 2.5f, 0);
+}
+
+ZipLine::ZipLine(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, float speed) : name(zipName), loop(looped), avgSpeed(speed)
 {
     tracker = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
     base = tracker->createChildSceneNode();
@@ -74,6 +82,41 @@ ZipLine::ZipLine(const std::vector<Ogre::Vector3>& points)
     head->setPosition(0, -1.5f, 0);
 
     initZipLine(points);
+}
+
+void ZipLine::initZipLine()
+{
+	Animation* anim = Global::mSceneMgr->getAnimation(name);
+	auto track = anim->getNodeTrack(0);
+
+	zipLine.clear();
+	zipLine.resize(track->getNumKeyFrames());
+
+	Quaternion previous;
+
+	for (size_t i = 0; i < track->getNumKeyFrames(); i++)
+	{
+		ZipLinePoint& point = zipLine[i];
+		auto keyFrame = track->getNodeKeyFrame(i);
+		point.pos = keyFrame->getTranslate();
+		
+		//TODO if needed
+		//point.dir = keyFrame->get ??
+
+		point.startOffset = keyFrame->getTime();
+
+		//slerp hotfix
+		auto rotation = keyFrame->getRotation();
+		if (i > 0)
+		{
+			float fCos = previous.Dot(rotation);
+			if (fCos < 0.0f)
+				rotation = -rotation;
+
+			keyFrame->setRotation(rotation);
+		}
+		previous = rotation;
+	}
 }
 
 void ZipLine::initZipLine(const std::vector<Ogre::Vector3>& points)
@@ -193,7 +236,7 @@ bool ZipLine::start()
     {
         attach();
 
-		headYaw.firstYaw = true;
+		turnRollState.first = true;
         mTrackerState->setEnabled(true);
         mTrackerState->setLoop(true);
 
@@ -254,7 +297,7 @@ void ZipLine::release()
     active = false;
 }
 
-void ZipLine::updateTurningYaw(float time)
+void ZipLine::updateTurningRoll(float time)
 {
 	const float turnForce = 20;
 	const float stabilityForce = 5.0f;
@@ -262,23 +305,23 @@ void ZipLine::updateTurningYaw(float time)
 
 	auto q = tracker->getOrientation();
 
-	if (headYaw.firstYaw)
+	if (turnRollState.first)
 	{
-		headYaw.firstYaw = false;
-		headYaw.lastOr = q;
-		headYaw.headRoll = 0;
-		headYaw.torque = 0;
+		turnRollState.first = false;
+		turnRollState.lastOr = q;
+		turnRollState.headRoll = 0;
+		turnRollState.torque = 0;
 	}
 
     //force to side, faster speed means more turn
-	auto force = MathUtils::getYawBetween(q, headYaw.lastOr);
+	auto force = MathUtils::getYawBetween(q, turnRollState.lastOr);
 	force *= time*currentSpeed*turnForce;
    
-	auto& headRoll = headYaw.headRoll;
+	auto& headRoll = turnRollState.headRoll;
 
-	headYaw.torque -= headRoll*time*stabilityForce;
+	turnRollState.torque -= time*headRoll*stabilityForce;
 
-	headRoll += force + headYaw.torque;
+	headRoll += force + turnRollState.torque;
 
 	/*
     //force to center
@@ -292,7 +335,7 @@ void ZipLine::updateTurningYaw(float time)
 	headRoll = Math::Clamp(headRoll, -rollLimit, rollLimit);
     base->setOrientation(Quaternion(Radian(headRoll), Vector3(0, 0, 1)));
 
-	headYaw.lastOr = q;
+	turnRollState.lastOr = q;
     Global::debug = headRoll;
 }
 
@@ -324,7 +367,7 @@ void ZipLine::updateSlidingCamera(float time)
     if (headArrival.timer > 0)
         updateHeadArrival(time);
     else
-        updateTurningYaw(time);
+        updateTurningRoll(time);
 }
 
 void ZipLine::updateSlidingState(float time)

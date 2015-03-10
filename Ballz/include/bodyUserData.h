@@ -17,7 +17,7 @@ enum BodyType
     Default = 0,
     Pullup_old = 2,
     Grabbable = 3,
-    //BaloonT = 4,
+	TopZipLinePart = 4,
     Climb = 5,
     Climb_Pullup = 6,
     ZipLinePart = 7,

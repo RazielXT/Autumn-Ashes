@@ -197,11 +197,11 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\lvl1Tasks.h" />
     <ClInclude Include="include\lvl_update.h" />
     <ClInclude Include="include\GuiOverlay.h" />
+    <ClInclude Include="include\MathUtils.h" />
     <ClInclude Include="include\NewtonListener.h" />
     <ClInclude Include="include\PagingManager.h" />
     <ClInclude Include="include\SceneParser.h" />
     <ClInclude Include="include\ScaryPPListener.h" />
-    <ClInclude Include="include\ITransformationTask.h" />
     <ClInclude Include="include\PSSMCamera.h" />
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h" />
     <ClInclude Include="include\Player.h" />
@@ -209,6 +209,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\premenne.h" />
     <ClInclude Include="include\CommonTasks.h" />
     <ClInclude Include="include\ReflectionTask.h" />
+    <ClInclude Include="include\TransformationTaskTemplate.h" />
     <ClInclude Include="include\WaterArea.h" />
     <ClInclude Include="include\WorldMaterials.h" />
     <ClInclude Include="include\ZipLine.h" />

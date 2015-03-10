@@ -8,7 +8,8 @@ class ZipLine : public EventTask, public InputListener
 {
 public:
 
-    ZipLine(const std::vector<Ogre::Vector3>& points);
+	ZipLine(SceneNode* node, const std::string& zipAnimName, bool looped, float speed);
+	ZipLine(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, float speed);
 
     bool start();
     bool update(Ogre::Real tslf);
@@ -38,18 +39,17 @@ protected:
 		float pitch;
 	};
 
-	struct HeadYawState
+	struct TurnRollState
 	{
-		bool firstYaw = true;
+		bool first = true;
 		Quaternion lastOr;
 		float torque;
-		float headRoll;
+		float curHeadRoll;
 	};
-
-private:
 
     std::vector<ZipLinePoint> zipLine;
 
+	void initZipLine();
     void initZipLine(const std::vector<Ogre::Vector3>& points);
 
     bool placePointOnLine(Vector3& point);
@@ -57,28 +57,31 @@ private:
     void updateSlidingState(float time);
     void updateHeadArrival(float time);
     inline void updateSlidingCamera(float time);
-    inline void updateTurningYaw(float time);
+    inline void updateTurningRoll(float time);
 
     inline void updateSlidingSpeed(float time);
 
     void attach();
     void release();
 
-	HeadYawState headYaw;
 
     float currentSpeed;
     float avgSpeed = 5;
-    std::string name = "slide";
-    bool active = false;
+	bool loop = false;
+
+	bool enablePlayerControl = false;
+	bool active = false;
+	float unavailableTimer = 0;
+
+    std::string name;
+    
+	AnimationState * mTrackerState = 0;
     SceneNode* tracker;
     SceneNode* head;
     SceneNode* base;
-    AnimationState * mTrackerState = 0;
-    bool loop = false;
-    float unavailableTimer = 0;
 
     HeadTransitionState headArrival;
 	HeadControlState headState;
-
-    bool enablePlayerControl = false;
+	TurnRollState turnRollState;
+   
 };

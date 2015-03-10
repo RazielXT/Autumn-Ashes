@@ -214,7 +214,8 @@
 </class>
 
 <class name="ZipLinePart" usage="object">
-	<data name="Track" displayName="Track" type="string"/>
+	<data name="Track" displayName="Track node" type="string"/>
+	<data name="Top" displayName="Top slide" type="bool" defaultValue="false"/>
 	<data name="BodyType" displayName="Body Type" type="ptype" groupName="Physics" defaultValue="conv"/>
 </class>
 

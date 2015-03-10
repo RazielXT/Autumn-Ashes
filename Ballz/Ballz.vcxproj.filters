@@ -251,9 +251,6 @@
     <ClInclude Include="include\lvl_update.h">
       <Filter>Header Files\tasks</Filter>
     </ClInclude>
-    <ClInclude Include="include\ITransformationTask.h">
-      <Filter>Header Files\tasks</Filter>
-    </ClInclude>
     <ClInclude Include="include\LoadNextPart.h">
       <Filter>Header Files\tasks</Filter>
     </ClInclude>
@@ -306,6 +303,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\premenne.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TransformationTaskTemplate.h">
+      <Filter>Header Files\tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

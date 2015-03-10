@@ -694,6 +694,8 @@ private:
     void loadZipLinePart(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, WorldMaterials* wMaterials, OgreNewt::World* mWorld)
     {
         String typeName = getElementValue(element, "BodyType");
+		auto top = StringConverter::parseBool(getElementValue(element, "Top"));
+
         OgreNewt::Body* body = nullptr;
 
         if (typeName == "tree")
@@ -716,7 +718,11 @@ private:
         //if (!physicsOnly)
         body->attachNode(node);
 
-        body->setType(ZipLinePart);
+		if (top)
+			body->setType(TopZipLinePart);
+		else
+			body->setType(ZipLinePart);
+
         body->setMaterialGroupID(wMaterials->playerIgnore_mat);
 
         bodyUserData* userD = new bodyUserData();
@@ -734,32 +740,44 @@ private:
     {
         std::vector<Ogre::Vector3> points;
 
-        auto m = ent->getMesh().get()->getSubMesh(0);
-        const Ogre::VertexElement* posElem = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_POSITION);
-        Ogre::HardwareVertexBufferSharedPtr vbuf = m->vertexData->vertexBufferBinding->getBuffer(posElem->getSource());
-        unsigned char* vertex = static_cast<unsigned char*>(vbuf->lock(Ogre::HardwareBuffer::HBL_READ_ONLY));
-        Ogre::Real* pReal;
+		auto loop = Ogre::StringConverter::parseBool(getElementValue(element, "Loop"));
+		auto speed = Ogre::StringConverter::parseReal(getElementValue(element, "Speed"));
+		auto animTrack = getElementValue(element, "Animation");
 
-        for (size_t j = 0; j < m->vertexData->vertexCount; ++j, vertex += vbuf->getVertexSize())
-        {
-            posElem->baseVertexPointerToElement(vertex, &pReal);
+		ZipLine* line;
 
-            Vector3 pt;
+		if (animTrack.empty())
+		{
+			line = new ZipLine(points, node->getName(), loop, speed);
 
-            pt.x = (*pReal++);
-            pt.y = (*pReal++);
-            pt.z = (*pReal++);
+			auto m = ent->getMesh().get()->getSubMesh(0);
+			const Ogre::VertexElement* posElem = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_POSITION);
+			Ogre::HardwareVertexBufferSharedPtr vbuf = m->vertexData->vertexBufferBinding->getBuffer(posElem->getSource());
+			unsigned char* vertex = static_cast<unsigned char*>(vbuf->lock(Ogre::HardwareBuffer::HBL_READ_ONLY));
+			Ogre::Real* pReal;
 
-            pt *= node->getScale();
-            pt += node->getPosition();
-            pt = node->getOrientation()*pt;
+			for (size_t j = 0; j < m->vertexData->vertexCount; ++j, vertex += vbuf->getVertexSize())
+			{
+				posElem->baseVertexPointerToElement(vertex, &pReal);
 
-            if (j == 0 || j % 2 == 1)
-                points.push_back(pt);
-        }
-        vbuf->unlock();
+				Vector3 pt;
 
-        ZipLine* line = new ZipLine(points);
+				pt.x = (*pReal++);
+				pt.y = (*pReal++);
+				pt.z = (*pReal++);
+
+				pt *= node->getScale();
+				pt += node->getPosition();
+				pt = node->getOrientation()*pt;
+
+				if (j == 0 || j % 2 == 1)
+					points.push_back(pt);
+			}
+			vbuf->unlock();
+		}
+		else
+			line = new ZipLine(node, animTrack, loop, speed);
+
         (*Global::globalData)["ZipLine" + node->getName()] = line;
     }
 
@@ -1066,7 +1084,7 @@ private:
             type = Ogre::StringConverter::parseInt(typeElement->GetText());
         }
 
-        while (child != NULL && parent != NULL)
+		while (!child.empty() && !parent.empty())
         {
             LoadedJointInfo info;
 
