@@ -2,7 +2,6 @@
 
 #include "stdafx.h"
 #include <tinyxml.h>
-#include "EnvironmentSound.h"
 #include "GrassHeightFunction.h"
 #include "BridgeMaker.h"
 #include "Tasks.h"
@@ -12,48 +11,48 @@
 
 using namespace Ogre;
 
-struct TriggerAndIDs
-{
-    TriggerInfo* trigger;
-    std::vector<int> ids;
-};
-
-struct EventTaskAndID
-{
-    EventTask* task;
-    int id;
-};
-
-struct LoadedJointInfo
-{
-    Ogre::String body0, body1;
-    Ogre::Vector3 position;
-    char type;
-    Ogre::Vector3 pin;
-};
-
-struct CompoundBodyInfo
-{
-    Ogre::Entity* ent;
-    Ogre::SceneNode* node;
-    bool visual;
-    bool physical;
-};
-
-struct LoadedInstanceForests
-{
-    int gm;
-    int im;
-    int tr;
-    Forests::PagedGeometry * g;
-};
-
 class SceneParser
 {
 public:
     static SceneParser instance;
 
 private:
+
+	struct TriggerAndIDs
+	{
+		TriggerInfo* trigger;
+		std::vector<int> ids;
+	};
+
+	struct EventTaskAndID
+	{
+		EventTask* task;
+		int id;
+	};
+
+	struct LoadedJointInfo
+	{
+		Ogre::String body0, body1;
+		Ogre::Vector3 position;
+		char type;
+		Ogre::Vector3 pin;
+	};
+
+	struct CompoundBodyInfo
+	{
+		Ogre::Entity* ent;
+		Ogre::SceneNode* node;
+		bool visual;
+		bool physical;
+	};
+
+	struct LoadedInstanceForests
+	{
+		int gm;
+		int im;
+		int tr;
+		Forests::PagedGeometry * g;
+	};
 
     std::vector<TriggerAndIDs> loadedTriggers;
     std::vector<EventTaskAndID> loadedTasks;
@@ -183,6 +182,32 @@ private:
         else
             return StringUtil::BLANK;
     }
+
+	std::string getElementText(const TiXmlElement* xmlElement)
+	{
+		auto txt = xmlElement->GetText();
+
+		if (txt == NULL)
+			return "";
+		else
+			return txt;
+	}
+
+	std::string strtok_str(std::string& txt, char delim)
+	{
+		auto dPos = txt.find_first_of(delim);
+		std::string ret = txt;
+
+		if (dPos != std::string::npos)
+		{
+			ret.erase(dPos, std::string::npos);
+			txt.erase(0, dPos + 1);
+		}
+		else
+			txt.clear();
+
+		return ret;
+	}
 
     void LoadLightAttenuation(const TiXmlElement* objectElement, Light* light)
     {
@@ -415,43 +440,40 @@ private:
 
         userD->makeActions = Ogre::StringConverter::parseBool(getElementValue(rootElement, "Amaker"));
 
-        auto aStr = getElementValue(rootElement, "Actions");
-        const char* actions = aStr.c_str();
+        auto actionsStr = getElementValue(rootElement, "Actions");
 
-        if (actions != 0)
+		if (!actionsStr.empty())
         {
             int i = 0;
-            char* aID = strtok(const_cast<char *> (actions), ";");
-            while (aID != NULL && i < 4)
+			auto aID = strtok_str(actionsStr, ';');
+            while (!aID.empty() && i < 4)
             {
                 //add action
-                userD->actions[i] = atoi(aID);
+                userD->actions[i] = stoi(aID);
                 myLog->logMessage("loaded aID " + Ogre::String(aID), LML_NORMAL);
                 i++;
-                aID = strtok(NULL, ";");
+				aID = strtok_str(actionsStr, ';');
             }
             body->setMaterialGroupID(action_mat);
         }
 
-        auto rStr = getElementValue(rootElement, "Aonstart");
-        const char* startupTasks = rStr.c_str();
+		auto startupTasks = getElementValue(rootElement, "Aonstart");
 
-        if (startupTasks != 0)
+        if (!startupTasks.empty())
         {
             int i = 0;
 
-            Ogre::String reactString(startupTasks);
-            Ogre::String separator(";");
+			char separator = ';';
 
             bool newForm = false;
-            if (reactString.find("\n") != std::string::npos || reactString.find(')') == reactString.length() - 1)
+			if (startupTasks.find("\n") != std::string::npos || startupTasks.find(')') == startupTasks.length() - 1)
             {
                 newForm = true;
-                separator = "\n";
+				separator = '\n';
             }
 
-            char* react = strtok(const_cast<char *> (startupTasks), separator.c_str());
-            while (react != NULL)
+			auto react = strtok_str(startupTasks, separator);
+			while (!react.empty())
             {
                 Ogre::String taskStr = Ogre::String(react);
 
@@ -481,25 +503,9 @@ private:
                     mEventMgr->addTask(r);
                 }
 
-                react = strtok(NULL, separator.c_str());
+				react = strtok_str(startupTasks, separator);
             }
         }
-    }
-
-    std::string strtok_str(std::string& txt, char delim)
-    {
-        auto dPos = txt.find_first_of(delim);
-        std::string ret = txt;
-
-        if (dPos != std::string::npos)
-        {
-            ret.erase(dPos, std::string::npos);
-            txt.erase(0, dPos+1);
-        }
-        else
-            txt.clear();
-
-        return ret;
     }
 
     void loadGrassArea(const TiXmlElement* element, Entity* ent, SceneNode* node, Ogre::SceneManager *mSceneMgr, PagingManager* pagingMgr)
@@ -1041,43 +1047,19 @@ private:
 
         return body;
     }
-    /*
-    void loadEnvSound(const TiXmlElement* element, SceneNode* node, Ogre::SceneManager *mSceneMgr, EnvironmentSounds* env)
-    {
-        Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
-        const TiXmlElement* childElement;
-        childElement = element;
-        float volume = Ogre::StringConverter::parseReal(childElement->GetText());
-        childElement = childElement->NextSiblingElement();
-        bool cont = Ogre::StringConverter::parseBool(childElement->GetText());
-        childElement = childElement->NextSiblingElement();
-        float decay = Ogre::StringConverter::parseReal(childElement->GetText());
-        childElement = childElement->NextSiblingElement();
-        Ogre::String sound = "../../media/" + Ogre::String(childElement->GetText());
-        Vector3 scale = node->getScale();
-        node->setScale(1, 1, 1);
-        Ogre::Matrix4 trans = node->_getFullTransform().inverse();
-
-        env->addSound(trans, scale, decay, volume, sound, cont);
-
-        node->detachAllObjects();
-        mSceneMgr->destroySceneNode(node);
-        myLog->logMessage("EnvSound - " + sound, LML_NORMAL);
-    }
-    */
+ 
     void loadJoint(const TiXmlElement* element, SceneNode* node, Ogre::SceneManager *mSceneMgr)
     {
-        const TiXmlElement* fElement = element->NextSiblingElement();
+        const TiXmlElement* pElement = element->NextSiblingElement();
 
-        const char* children = element->GetText();
-        const char* parents = fElement->GetText();
+        auto children = getElementText(element);
+		auto parents = getElementText(pElement);
 
-        char *token, *token2;
-        char* child = strtok_s(const_cast<char *> (children), ";", &token);
+		auto child = strtok_str(children,';');
         element = element->NextSiblingElement();
-        char* parent = strtok_s(const_cast<char *> (parents), ";", &token2);
+		auto parent = strtok_str(parents, ';');
 
-        const TiXmlElement* typeElement = fElement->NextSiblingElement();
+		const TiXmlElement* typeElement = pElement->NextSiblingElement();
         char type = 0;
         if (typeElement != 0)
         {
@@ -1097,8 +1079,8 @@ private:
             loadedJoints.push_back(info);
 
             //next
-            child = strtok_s(NULL, ";", &token);
-            parent = strtok_s(NULL, ";", &token2);
+			child = strtok_str(children, ';');
+			parent = strtok_str(parents, ';');
 
             Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Joint - child:" + info.body0 + " and parent:" + info.body1, LML_NORMAL);
         }
@@ -1113,12 +1095,12 @@ private:
         Ogre::Vector3 pos = node->getPosition();
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Making BM", LML_NORMAL);
         Ogre::Vector3 target;
-        const char* posText = element->GetText();
-        char* val = strtok(const_cast<char *> (posText), ",");
+        auto posText = getElementText(element);
+        auto val = strtok_str(posText, ',');
         target.x = Ogre::StringConverter::parseReal(val);
-        val = strtok(NULL, ",");
+		val = strtok_str(posText, ',');
         target.z = -Ogre::StringConverter::parseReal(val);
-        val = strtok(NULL, ",");
+		val = strtok_str(posText, ',');
         target.y = Ogre::StringConverter::parseReal(val);
         element = element->NextSiblingElement();
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Making BM", LML_NORMAL);
@@ -1236,19 +1218,19 @@ private:
 
         TriggerAndIDs trig;
 
-        const char* actions = element->GetText();
+		std::string actions = getElementText(element);
 
-        if (actions != 0)
+		if (!actions.empty())
         {
             int i = 0;
-            char* aID = strtok(const_cast<char *> (actions), ";");
-            while (aID != NULL && i < 4)
+			auto aID = strtok_str(actions, ';');
+            while (!aID.empty() && i < 4)
             {
                 //add action
                 myLog->logMessage("Trigger ID " + Ogre::String(aID), LML_NORMAL);
-                trig.ids.push_back(atoi(aID));
+                trig.ids.push_back(stoi(aID));
                 i++;
-                aID = strtok(NULL, ";");
+				aID = strtok_str(actions, ';');
             }
         }
 
@@ -1286,35 +1268,32 @@ private:
 
     void loadActions(const TiXmlElement* element, void* data, int id = 0)
     {
-
         Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
 
         const TiXmlElement* fElement = element->NextSiblingElement();
 
-        const char* tasks = element->GetText();
-        const char* functions = fElement->GetText();
+		std::string tasks = getElementText(element);
+		std::string functions = getElementText(fElement);
 
-        if (functions == NULL)
+        if (functions.empty())
             return;
 
-        int i = 0;
-        char *token, *token2;
-        char* aID = NULL;
-        char* fID = NULL;
+		std::string aID;
+		std::string fID;
 
         bool newForm = false;
-        if (tasks == NULL)
+        if (tasks.empty())
         {
-            fID = strtok_s(const_cast<char *> (functions), "\n", &token2);
+            fID = strtok_str(functions, '\n');
             newForm = true;
         }
         else
         {
-            aID = strtok_s(const_cast<char *> (tasks), ";", &token);
-            fID = strtok_s(const_cast<char *> (functions), ";", &token2);
+			aID = strtok_str(tasks, ';');
+			fID = strtok_str(functions, ';');
         }
 
-        while (fID != NULL && (aID != NULL || newForm))
+		while (!fID.empty() && (!aID.empty() || newForm))
         {
             Ogre::String rName(fID);
             Ogre::String action(rName);
@@ -1351,17 +1330,17 @@ private:
                 loadedTasks.push_back(er);
             }
             else
-                myLog->logMessage("No such function available", LML_NORMAL);
+                myLog->logMessage("WARNING: No such function available", LML_NORMAL);
 
             //next
             if (newForm)
             {
-                fID = strtok_s(NULL, "\n", &token2);
+				fID = strtok_str(functions, '\n');
             }
             else
             {
-                aID = strtok_s(NULL, ";", &token);
-                fID = strtok_s(NULL, ";", &token2);
+				aID = strtok_str(tasks, ';');
+				fID = strtok_str(functions, ';');
             }
 
         }

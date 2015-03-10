@@ -661,8 +661,7 @@ void Player::updateClimbingPossibility()
 
 void Player::updateUseGui()
 {
-    auto pos = necknode->_getDerivedPosition() + Vector3(0, 0.25, 0);
-    pos -= Vector3(0, 0.25, 0);
+    auto pos = necknode->_getDerivedPosition();
     OgreNewt::BasicRaycast ray(m_World, pos, pos + mCamera->getDerivedOrientation()*Vector3(0, 0, -4), true);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
 
