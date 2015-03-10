@@ -82,9 +82,13 @@ void ZipLine::initZipLine(const std::vector<Ogre::Vector3>& points)
     track->setUseShortestRotationPath(true);
 
     Quaternion previous;
+	int loopEnd = loop ? 1 : 0;
 
-    for (size_t i = 0; i < points.size(); i++)
+	for (size_t i = 0; i < points.size() + loopEnd; i++)
     {
+		if (i == points.size())
+			i = 0;
+
         Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(zipLine[i].startOffset);
         kf->setTranslate(points[i]);
 
