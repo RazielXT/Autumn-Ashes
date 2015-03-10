@@ -98,6 +98,8 @@ public:
 
 protected:
 
+	void attachToZipline(OgreNewt::Body* zipLineBody);
+
     void updateStats();
     void updateMotionBlur();
     void updateClimbingStats();

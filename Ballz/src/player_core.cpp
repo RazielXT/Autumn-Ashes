@@ -649,12 +649,7 @@ void Player::updateClimbingPossibility()
         }
         else if (info.mBody->getType() == ZipLinePart)
         {
-            Ogre::Any any = info.mBody->getUserData();
-            auto lineName = (std::string*) any_cast<bodyUserData*>(any)->customData;
-            auto zipLine = (ZipLine*) (*Global::globalData)[*lineName];
-
-            if (zipLine->start())
-                Global::mEventsMgr->addCachedTask(zipLine);
+			attachToZipline(info.mBody);
         }
     }
 }
@@ -1003,6 +998,16 @@ void Player::updatePullup()
     }
 }
 
+void Player::attachToZipline(OgreNewt::Body* zipLineBody)
+{
+	Ogre::Any any = zipLineBody->getUserData();
+	auto lineName = (std::string*) any_cast<bodyUserData*>(any)->customData;
+	auto zipLine = (ZipLine*)(*Global::globalData)[*lineName];
+
+	if (zipLine->start())
+		Global::mEventsMgr->addCachedTask(zipLine);
+}
+
 void Player::updateGroundStats()
 {
     Vector3 pos = body->getPosition();
@@ -1010,8 +1015,18 @@ void Player::updateGroundStats()
     OgreNewt::BasicRaycast ray(m_World, (pos - Vector3(0, 1.6, 0)), (pos - Vector3(0, 2.6, 0)), true);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
 
-    if (info.mBody && info.mBody->getMaterialGroupID()!=wmaterials->playerIgnore_mat)
+    if (info.mBody)
     {
+		if (info.mBody->getMaterialGroupID() == wmaterials->playerIgnore_mat)
+		{
+			if (info.mBody->getType() == TopZipLinePart)
+			{
+				attachToZipline(info.mBody);
+			}
+
+			return;
+		}
+
         Ogre::Any any = info.mBody->getUserData();
 
         if (!any.isEmpty())
@@ -1019,10 +1034,10 @@ void Player::updateGroundStats()
         else
             groundID = 3;
 
-        if (!onGround) manageFall();
-        onGround = true;
-        gNormal = info.mNormal;
-        body->setLinearDamping(4);
+		if (!onGround) manageFall();
+		onGround = true;
+		gNormal = info.mNormal;
+		body->setLinearDamping(4);
     }
     else
     {
@@ -1030,6 +1045,16 @@ void Player::updateGroundStats()
         OgreNewt::BasicConvexcast::ConvexcastContactInfo infoc = rayc.getInfoAt(0);
         if (infoc.mBody && infoc.mBody->getMaterialGroupID() != wmaterials->playerIgnore_mat)
         {
+			if (infoc.mBody->getMaterialGroupID() == wmaterials->playerIgnore_mat)
+			{
+				if (infoc.mBody->getType() == TopZipLinePart)
+				{
+					attachToZipline(infoc.mBody);
+				}
+
+				return;
+			}
+
             Ogre::Any any = infoc.mBody->getUserData();
 
             if (!any.isEmpty())
@@ -1037,12 +1062,10 @@ void Player::updateGroundStats()
             else
                 groundID = 3;
 
-
-            if (!onGround) manageFall();
-            onGround = true;
-            gNormal = 1;
-            body->setLinearDamping(4);
-
+			if (!onGround) manageFall();
+			onGround = true;
+			gNormal = 1;
+			body->setLinearDamping(4);
         }
         else
         {
