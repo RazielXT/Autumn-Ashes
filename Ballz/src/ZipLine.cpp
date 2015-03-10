@@ -72,6 +72,7 @@ ZipLine::ZipLine(SceneNode* node, const std::string& zipAnimName, bool looped, f
     base = tracker->createChildSceneNode();
     head = base->createChildSceneNode();
     head->setPosition(0, 2.5f, 0);
+    avgSpeed *= 5;
 }
 
 ZipLine::ZipLine(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, float speed) : name(zipName), loop(looped), avgSpeed(speed)
@@ -80,6 +81,7 @@ ZipLine::ZipLine(const std::vector<Ogre::Vector3>& points, const std::string& zi
     base = tracker->createChildSceneNode();
     head = base->createChildSceneNode();
     head->setPosition(0, -1.5f, 0);
+    avgSpeed *= 5;
 
     initZipLine(points);
 }
@@ -262,7 +264,7 @@ void ZipLine::attach()
 {
     Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
 
-    headArrival.timer = 0.5f;
+    headArrival.timer = 1.0f;
     headArrival.pos = cam->getDerivedPosition();
     headArrival.dir = cam->getDerivedOrientation();
 
@@ -299,8 +301,8 @@ void ZipLine::release()
 
 void ZipLine::updateTurningRoll(float time)
 {
-    const float turnForce = 20;
-    const float stabilityForce = 5.0f;
+    const float turnForce = 50;
+    const float stabilityForce = 0.5f;
     const float rollLimit = 1.0f;
 
     auto q = tracker->getOrientation();
@@ -314,12 +316,18 @@ void ZipLine::updateTurningRoll(float time)
     }
 
     //force to side, faster speed means more turn
-    auto force = MathUtils::getYawBetween(q, turnRollState.lastOr);
-    force *= time*currentSpeed*turnForce;
+    auto yaw = MathUtils::getYawBetween(q, turnRollState.lastOr);
+    auto force = yaw*time*currentSpeed*turnForce;
 
     auto& headRoll = turnRollState.curHeadRoll;
 
-    turnRollState.torque -= time*headRoll*stabilityForce;
+    float torqDamp = 1;
+    if (headRoll*turnRollState.torque < 0)
+        torqDamp = 0.3f;
+    else if (abs(yaw)>0.025f)
+        torqDamp = 0.01f;
+
+    turnRollState.torque -= time*headRoll*stabilityForce*torqDamp;
 
     headRoll += force + turnRollState.torque;
 
@@ -352,7 +360,7 @@ void ZipLine::updateHeadArrival(float time)
     }
     else
     {
-        auto w = headArrival.timer / 0.5f;
+        auto w = headArrival.timer;
         Quaternion q = w*headArrival.dir + (1-w)*tracker->getOrientation();
         Vector3 p = w*headArrival.pos + (1 - w)*tracker->getPosition();
 
