@@ -6,7 +6,9 @@
 #include "BridgeMaker.h"
 #include "Tasks.h"
 #include "ReflectionTask.h"
-#include "ZipLine.h"
+#include "Slide.h"
+#include "TopSlide.h"
+#include "ZipLineSlide.h"
 
 
 using namespace Ogre;
@@ -691,7 +693,7 @@ private:
 
     }
 
-    void loadZipLinePart(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, WorldMaterials* wMaterials, OgreNewt::World* mWorld)
+    void loadSlidePart(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, WorldMaterials* wMaterials, OgreNewt::World* mWorld)
     {
         String typeName = getElementValue(element, "BodyType");
         auto top = StringConverter::parseBool(getElementValue(element, "Top"));
@@ -719,7 +721,7 @@ private:
         body->attachNode(node);
 
         if (top)
-            body->setType(TopZipLinePart);
+            body->setType(TopSlidePart);
         else
             body->setType(ZipLinePart);
 
@@ -728,15 +730,15 @@ private:
         bodyUserData* userD = new bodyUserData();
         userD->material = 0;
 
-        String zipLineTrackName = getElementValue(element, "Track");
-        userD->customData = new std::string("ZipLine"+zipLineTrackName);
+        String slideTrackName = getElementValue(element, "Track");
+		userD->customData = new std::string("Slide" + slideTrackName);
 
         body->setUserData(Ogre::Any(userD));
 
         loadedBodies[ent->getName()] = body;
     }
 
-    void loadZipLineTrack(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
+    void loadSlideTrack(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
     {
         std::vector<Ogre::Vector3> points;
 
@@ -744,7 +746,7 @@ private:
         auto speed = Ogre::StringConverter::parseReal(getElementValue(element, "Speed"));
         auto animTrack = getElementValue(element, "Animation");
 
-        ZipLine* line;
+        Slide* line;
 
         if (animTrack.empty())
         {
@@ -773,12 +775,12 @@ private:
             }
             vbuf->unlock();
 
-            line = new ZipLine(points, node->getName(), loop, speed);
+            line = new ZipLineSlide(points, node->getName(), loop, speed);
         }
         else
-            line = new ZipLine(node, animTrack, loop, speed);
+            line = new TopSlide(node, animTrack, loop, speed);
 
-        (*Global::globalData)["ZipLine" + node->getName()] = line;
+        (*Global::globalData)["Slide" + node->getName()] = line;
     }
 
     void loadBillboard(const TiXmlElement* element, Ogre::Entity* ent, Ogre::SceneManager* mSceneMgr)
@@ -1526,13 +1528,13 @@ private:
                     {
                         loadReflection(element, ent, node, mSceneMgr);
                     }
-                    else if (rootTag == "ZipLineTrack")
+                    else if (rootTag == "SlideTrack")
                     {
-                        loadZipLineTrack(root, ent, node, mSceneMgr);
+                        loadSlideTrack(root, ent, node, mSceneMgr);
                     }
-                    else if (rootTag == "ZipLinePart")
+                    else if (rootTag == "SlideBodyPart")
                     {
-                        loadZipLinePart(root, ent, node, wMaterials, mWorld);
+                        loadSlidePart(root, ent, node, wMaterials, mWorld);
                     }
                     else if (rootTag == "PhysicalBodyTrigger")
                     {

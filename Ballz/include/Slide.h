@@ -4,22 +4,24 @@
 
 using namespace Ogre;
 
-class ZipLine : public EventTask, public InputListener
+class Slide : public EventTask, public InputListener
 {
+
 public:
 
-    ZipLine(SceneNode* node, const std::string& zipAnimName, bool looped, float speed);
-    ZipLine(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, float speed);
+	virtual ~Slide() {}
 
-    bool start();
-    bool update(Ogre::Real tslf);
+	virtual bool start();
+	virtual bool update(Ogre::Real tslf);
 
     virtual void pressedKey(const OIS::KeyEvent &arg);
     virtual void movedMouse(const OIS::MouseEvent &e);
 
 protected:
 
-    struct ZipLinePoint
+	Slide(const std::string& zipName, bool looped, float speed) : name(zipName), loop(looped), avgSpeed(speed) {};
+
+    struct SlidePoint
     {
         Vector3 pos;
         Vector3 dir;
@@ -39,31 +41,21 @@ protected:
         float pitch;
     };
 
-    struct TurnRollState
-    {
-        bool first = true;
-        Quaternion lastOr;
-        float torque;
-        float curHeadRoll;
-    };
+    std::vector<SlidePoint> slidePoints;
 
-    std::vector<ZipLinePoint> zipLine;
-
-    void initZipLine();
-    void initZipLine(const std::vector<Ogre::Vector3>& points);
+    void initSlide();
+    void initSlide(const std::vector<Ogre::Vector3>& points);
 
     bool placePointOnLine(Vector3& point);
 
     void updateSlidingState(float time);
     void updateHeadArrival(float time);
-    inline void updateSlidingCamera(float time);
-    inline void updateTurningRoll(float time);
+	inline void updateSlidingSpeed(float time);
 
-    inline void updateSlidingSpeed(float time);
+	virtual void updateSlidingCamera(float time);
 
     void attach();
     void release();
-
 
     float currentSpeed;
     float avgSpeed = 5;
@@ -82,6 +74,5 @@ protected:
 
     HeadTransitionState headArrival;
     HeadControlState headState;
-    TurnRollState turnRollState;
 
 };

@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "ZipLine.h"
+#include "Slide.h"
 #include "Player.h"
 #include "MathUtils.h"
 
 using namespace Ogre;
 
-void ZipLine::pressedKey(const OIS::KeyEvent &arg)
+void Slide::pressedKey(const OIS::KeyEvent &arg)
 {
     if (arg.key == OIS::KC_SPACE)
     {
@@ -22,7 +22,7 @@ void ZipLine::pressedKey(const OIS::KeyEvent &arg)
     }
 }
 
-void ZipLine::movedMouse(const OIS::MouseEvent &e)
+void Slide::movedMouse(const OIS::MouseEvent &e)
 {
     float mouseX = (-1 * e.state.X.rel*Global::timestep) / 10.0f;
     float mouseY = (-1 * e.state.Y.rel*Global::timestep) / 10.0f;
@@ -66,39 +66,19 @@ void ZipLine::movedMouse(const OIS::MouseEvent &e)
     }
 }
 
-ZipLine::ZipLine(SceneNode* node, const std::string& zipAnimName, bool looped, float speed) : name(zipAnimName), loop(looped), avgSpeed(speed)
-{
-    tracker = node;
-    base = tracker->createChildSceneNode();
-    head = base->createChildSceneNode();
-    head->setPosition(0, 2.5f, 0);
-    avgSpeed *= 5;
-}
-
-ZipLine::ZipLine(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, float speed) : name(zipName), loop(looped), avgSpeed(speed)
-{
-    tracker = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    base = tracker->createChildSceneNode();
-    head = base->createChildSceneNode();
-    head->setPosition(0, -1.5f, 0);
-    avgSpeed *= 5;
-
-    initZipLine(points);
-}
-
-void ZipLine::initZipLine()
+void Slide::initSlide()
 {
     Animation* anim = Global::mSceneMgr->getAnimation(name);
     auto track = anim->getNodeTrack(0);
 
-    zipLine.clear();
-    zipLine.resize(track->getNumKeyFrames());
+    slidePoints.clear();
+    slidePoints.resize(track->getNumKeyFrames());
 
     Quaternion previous;
 
     for (size_t i = 0; i < track->getNumKeyFrames(); i++)
     {
-        ZipLinePoint& point = zipLine[i];
+        SlidePoint& point = slidePoints[i];
         auto keyFrame = track->getNodeKeyFrame(i);
         point.pos = keyFrame->getTranslate();
 
@@ -121,14 +101,14 @@ void ZipLine::initZipLine()
     }
 }
 
-void ZipLine::initZipLine(const std::vector<Ogre::Vector3>& points)
+void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
 {
-    zipLine.clear();
-    zipLine.resize(points.size());
+    slidePoints.clear();
+    slidePoints.resize(points.size());
 
     for (size_t i = 0; i < points.size(); i++)
     {
-        ZipLinePoint& point = zipLine[i];
+        SlidePoint& point = slidePoints[i];
         point.pos = points[i];
 
         //first 2
@@ -151,12 +131,12 @@ void ZipLine::initZipLine(const std::vector<Ogre::Vector3>& points)
         point.dir.normalise();
     }
 
-    zipLine[0].startOffset=0;
+    slidePoints[0].startOffset=0;
     float timer = 0;
     for (size_t i = 1; i < points.size(); i++)
     {
         timer += points[i - 1].distance(points[i]) / avgSpeed;
-        zipLine[i].startOffset = timer;
+        slidePoints[i].startOffset = timer;
     }
 
     Animation* anim = Global::mSceneMgr->createAnimation(name, timer);
@@ -174,10 +154,10 @@ void ZipLine::initZipLine(const std::vector<Ogre::Vector3>& points)
         if (i == points.size())
             i = 0;
 
-        Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(zipLine[i].startOffset);
+        Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(slidePoints[i].startOffset);
         kf->setTranslate(points[i]);
 
-        auto dir = zipLine[i].dir;
+        auto dir = slidePoints[i].dir;
         auto q = Vector3(0, 0, -1).getRotationTo(Vector3(dir.x, 0, dir.z));
         auto q2 = Vector3(0, 0, -1).getRotationTo(Vector3(0, dir.y, -1));
 
@@ -199,19 +179,19 @@ void ZipLine::initZipLine(const std::vector<Ogre::Vector3>& points)
 
 #define MAX_PLAYER_DISTANCE_SQ 5*5
 
-bool ZipLine::placePointOnLine(Vector3& point)
+bool Slide::placePointOnLine(Vector3& point)
 {
-    auto zipPos = zipLine[0];
+    auto zipPos = slidePoints[0];
     float minDist = MAX_PLAYER_DISTANCE_SQ;
 
-    for (size_t id = 1; id < zipLine.size(); id++)
+    for (size_t id = 1; id < slidePoints.size(); id++)
     {
-        auto state = MathUtils::getProjectedState(point, zipLine[id - 1].pos, zipLine[id].pos);
+        auto state = MathUtils::getProjectedState(point, slidePoints[id - 1].pos, slidePoints[id].pos);
 
         if (state.sqMinDistance < minDist)
         {
-            auto timePos = zipLine[id - 1].startOffset;
-            timePos += state.projPos.distance(zipLine[id-1].pos)/avgSpeed;
+            auto timePos = slidePoints[id - 1].startOffset;
+            timePos += state.projPos.distance(slidePoints[id-1].pos)/avgSpeed;
 
             mTrackerState->setTimePosition(timePos);
 
@@ -222,7 +202,7 @@ bool ZipLine::placePointOnLine(Vector3& point)
     return (minDist != MAX_PLAYER_DISTANCE_SQ);
 }
 
-bool ZipLine::start()
+bool Slide::start()
 {
     if (active || unavailableTimer>0)
         return false;
@@ -238,7 +218,6 @@ bool ZipLine::start()
     {
         attach();
 
-        turnRollState.first = true;
         mTrackerState->setEnabled(true);
         mTrackerState->setLoop(true);
 
@@ -252,7 +231,7 @@ bool ZipLine::start()
     return false;
 }
 
-void ZipLine::updateSlidingSpeed(float time)
+void Slide::updateSlidingSpeed(float time)
 {
     //auto verticalDir = tracker->getOrientation().getPitch().valueRadians();
     auto dir = tracker->getOrientation()*Vector3(0, 0, -1);
@@ -260,7 +239,7 @@ void ZipLine::updateSlidingSpeed(float time)
     currentSpeed = Math::Clamp(currentSpeed + -dir.y*0.5f*time, 1.0f, 2.5f);
 }
 
-void ZipLine::attach()
+void Slide::attach()
 {
     Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
 
@@ -284,7 +263,7 @@ void ZipLine::attach()
     Global::player->body->freeze();
 }
 
-void ZipLine::release()
+void Slide::release()
 {
     Global::player->attachCamera();
 
@@ -299,55 +278,7 @@ void ZipLine::release()
     active = false;
 }
 
-void ZipLine::updateTurningRoll(float time)
-{
-    const float turnForce = 50;
-    const float stabilityForce = 0.5f;
-    const float rollLimit = 1.0f;
-
-    auto q = tracker->getOrientation();
-
-    if (turnRollState.first)
-    {
-        turnRollState.first = false;
-        turnRollState.lastOr = q;
-        turnRollState.curHeadRoll = 0;
-        turnRollState.torque = 0;
-    }
-
-    //force to side, faster speed means more turn
-    auto yaw = MathUtils::getYawBetween(q, turnRollState.lastOr);
-    auto force = yaw*time*currentSpeed*turnForce;
-
-    auto& headRoll = turnRollState.curHeadRoll;
-
-    float torqDamp = 1;
-    if (headRoll*turnRollState.torque < 0)
-        torqDamp = 0.3f;
-    else if (abs(yaw)>0.025f)
-        torqDamp = 0.01f;
-
-    turnRollState.torque -= time*headRoll*stabilityForce*torqDamp;
-
-    headRoll += force + turnRollState.torque;
-
-    /*
-    //force to center
-    float centerForce = time*stabilityForce;
-    if (headRoll > 0)
-        headRoll = std::max(0.0f, headRoll - centerForce);
-    else
-        headRoll = std::min(0.0f, headRoll + centerForce);
-    */
-
-    headRoll = Math::Clamp(headRoll, -rollLimit, rollLimit);
-    base->setOrientation(Quaternion(Radian(headRoll), Vector3(0, 0, 1)));
-
-    turnRollState.lastOr = q;
-    Global::debug = headRoll;
-}
-
-void ZipLine::updateHeadArrival(float time)
+void Slide::updateHeadArrival(float time)
 {
     headArrival.timer -= time;
 
@@ -370,15 +301,13 @@ void ZipLine::updateHeadArrival(float time)
 
 }
 
-void ZipLine::updateSlidingCamera(float time)
+void Slide::updateSlidingCamera(float time)
 {
     if (headArrival.timer > 0)
         updateHeadArrival(time);
-    else
-        updateTurningRoll(time);
 }
 
-void ZipLine::updateSlidingState(float time)
+void Slide::updateSlidingState(float time)
 {
     updateSlidingSpeed(time);
 
@@ -392,7 +321,7 @@ void ZipLine::updateSlidingState(float time)
 }
 
 
-bool ZipLine::update(Ogre::Real tslf)
+bool Slide::update(Ogre::Real tslf)
 {
     tslf *= Global::timestep;
 

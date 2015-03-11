@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "PostProcessMgr.h"
-#include "ZipLine.h"
+#include "Slide.h"
 
 using namespace Ogre;
 
@@ -649,7 +649,7 @@ void Player::updateClimbingPossibility()
         }
         else if (info.mBody->getType() == ZipLinePart)
         {
-            attachToZipline(info.mBody);
+            attachToSlide(info.mBody);
         }
     }
 }
@@ -998,14 +998,14 @@ void Player::updatePullup()
     }
 }
 
-void Player::attachToZipline(OgreNewt::Body* zipLineBody)
+void Player::attachToSlide(OgreNewt::Body* slideBody)
 {
-    Ogre::Any any = zipLineBody->getUserData();
+	Ogre::Any any = slideBody->getUserData();
     auto lineName = (std::string*) any_cast<bodyUserData*>(any)->customData;
-    auto zipLine = (ZipLine*)(*Global::globalData)[*lineName];
+    auto slide = (Slide*)(*Global::globalData)[*lineName];
 
-    if (zipLine->start())
-        Global::mEventsMgr->addCachedTask(zipLine);
+	if (slide->start())
+		Global::mEventsMgr->addCachedTask(slide);
 }
 
 void Player::updateGroundStats()
@@ -1019,9 +1019,9 @@ void Player::updateGroundStats()
     {
         if (info.mBody->getMaterialGroupID() == wmaterials->playerIgnore_mat)
         {
-            if (info.mBody->getType() == TopZipLinePart)
+            if (info.mBody->getType() == TopSlidePart)
             {
-                attachToZipline(info.mBody);
+                attachToSlide(info.mBody);
             }
 
             return;
@@ -1047,9 +1047,9 @@ void Player::updateGroundStats()
         {
             if (infoc.mBody->getMaterialGroupID() == wmaterials->playerIgnore_mat)
             {
-                if (infoc.mBody->getType() == TopZipLinePart)
+                if (infoc.mBody->getType() == TopSlidePart)
                 {
-                    attachToZipline(infoc.mBody);
+                    attachToSlide(infoc.mBody);
                 }
 
                 return;

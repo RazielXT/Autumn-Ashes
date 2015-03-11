@@ -141,7 +141,13 @@
     <ClCompile Include="src\TriggerPlayerContactCallback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ZipLine.cpp">
+    <ClCompile Include="src\TopZipLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Slide.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ZipLineSlide.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -269,9 +275,6 @@
     <ClInclude Include="include\ListLoop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ZipLine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\CameraShaker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -309,6 +312,15 @@
       <Filter>Header Files\tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\MathUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ZipLineSlide.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TopSlide.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Slide.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

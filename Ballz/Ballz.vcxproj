@@ -148,6 +148,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\Player_core.cpp" />
     <ClCompile Include="src\PostProcessMgr.cpp" />
     <ClCompile Include="src\Tasks.cpp" />
+    <ClCompile Include="src\TopZipLine.cpp" />
     <ClCompile Include="src\TransformationTaskTemplate.cpp" />
     <ClCompile Include="src\PSSMCamera.cpp" />
     <ClCompile Include="src\OgreGpuCommandBufferFlush.cpp" />
@@ -168,7 +169,8 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\TriggerPlayerContactCallback.cpp" />
     <ClCompile Include="src\WaterArea.cpp" />
     <ClCompile Include="src\WorldMaterials.cpp" />
-    <ClCompile Include="src\ZipLine.cpp" />
+    <ClCompile Include="src\Slide.cpp" />
+    <ClCompile Include="src\ZipLineSlide.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AudioLibrary.h" />
@@ -209,10 +211,12 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\premenne.h" />
     <ClInclude Include="include\CommonTasks.h" />
     <ClInclude Include="include\ReflectionTask.h" />
+    <ClInclude Include="include\TopSlide.h" />
     <ClInclude Include="include\TransformationTaskTemplate.h" />
     <ClInclude Include="include\WaterArea.h" />
     <ClInclude Include="include\WorldMaterials.h" />
-    <ClInclude Include="include\ZipLine.h" />
+    <ClInclude Include="include\Slide.h" />
+    <ClInclude Include="include\ZipLineSlide.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="include\start.h" />

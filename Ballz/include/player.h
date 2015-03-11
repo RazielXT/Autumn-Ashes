@@ -98,7 +98,7 @@ public:
 
 protected:
 
-    void attachToZipline(OgreNewt::Body* zipLineBody);
+    void attachToSlide(OgreNewt::Body* slideBody);
 
     void updateStats();
     void updateMotionBlur();
