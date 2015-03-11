@@ -357,19 +357,19 @@ void Player::attachCamera()
 
 void Player::attachCameraWithTransition()
 {
-	cameraArrival.timer = 1;
-	cameraArrival.tempNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    cameraArrival.timer = 1;
+    cameraArrival.tempNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 
-	cameraArrival.pos = mCamera->getDerivedPosition();
-	cameraArrival.dir = mCamera->getDerivedOrientation();
+    cameraArrival.pos = mCamera->getDerivedPosition();
+    cameraArrival.dir = mCamera->getDerivedOrientation();
 
-	cameraArrival.tempNode->setPosition(cameraArrival.pos);
-	cameraArrival.tempNode->setOrientation(cameraArrival.dir);
+    cameraArrival.tempNode->setPosition(cameraArrival.pos);
+    cameraArrival.tempNode->setOrientation(cameraArrival.dir);
 
-	attachCamera();
+    attachCamera();
 
-	mCamera->detachFromParent();
-	cameraArrival.tempNode->attachObject(mCamera);
+    mCamera->detachFromParent();
+    cameraArrival.tempNode->attachObject(mCamera);
 }
 
 void Player::rotateCamera(Real hybX,Real hybY)

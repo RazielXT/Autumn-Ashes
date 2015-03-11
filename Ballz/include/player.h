@@ -90,7 +90,7 @@ public:
     };
 
     void attachCamera();
-	void attachCameraWithTransition();
+    void attachCameraWithTransition();
 
     Ogre::Vector3 getFacingDirection();
     void rotateCamera(Ogre::Real hybX, Ogre::Real hybY);
@@ -133,16 +133,17 @@ protected:
 
     void initBody();
 
-	inline void updateHeadArrival();
+    inline void updateHeadArrival();
 
 private:
 
-	struct {
-		SceneNode* tempNode;
-		Vector3 pos;
-		Quaternion dir;
-		float timer;
-	} cameraArrival;
+    struct
+    {
+        Ogre::SceneNode* tempNode;
+        Ogre::Vector3 pos;
+        Ogre::Quaternion dir;
+        float timer;
+    } cameraArrival;
 
     Shaker* shaker;
     OgreNewt::World* m_World;

@@ -9,19 +9,19 @@ class Slide : public EventTask, public InputListener
 
 public:
 
-	virtual ~Slide() {}
+    virtual ~Slide() {}
 
-	virtual bool start();
-	virtual bool update(Ogre::Real tslf);
+    virtual bool start();
+    virtual bool update(Ogre::Real tslf);
 
     virtual void pressedKey(const OIS::KeyEvent &arg);
     virtual void movedMouse(const OIS::MouseEvent &e);
 
 protected:
 
-	Slide(const std::string& zipName, bool looped, float speed) : name(zipName), loop(looped), avgSpeed(speed*5) {};
+    Slide(const std::string& zipName, bool looped, float speed) : name(zipName), loop(looped), avgSpeed(speed*5) {};
 
-	virtual void resetHead() {};
+    virtual void resetHead() {};
 
     struct SlidePoint
     {
@@ -52,9 +52,9 @@ protected:
 
     void updateSlidingState(float time);
     void updateHeadArrival(float time);
-	inline void updateSlidingSpeed(float time);
+    inline void updateSlidingSpeed(float time);
 
-	virtual void updateSlidingCamera(float time);
+    virtual void updateSlidingCamera(float time);
 
     void attach();
     void release();

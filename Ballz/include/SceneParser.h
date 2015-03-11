@@ -731,7 +731,7 @@ private:
         userD->material = 0;
 
         String slideTrackName = getElementValue(element, "Track");
-		userD->customData = new std::string("Slide" + slideTrackName);
+        userD->customData = new std::string("Slide" + slideTrackName);
 
         body->setUserData(Ogre::Any(userD));
 

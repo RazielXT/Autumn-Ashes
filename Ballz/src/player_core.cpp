@@ -310,31 +310,31 @@ void Player::updateHead(Real time)
         mouseX = 0;
     }
 
-	updateHeadArrival();
+    updateHeadArrival();
 }
 
 void Player::updateHeadArrival()
 {
-	if (cameraArrival.timer > 0)
-	{
-		cameraArrival.timer += tslf*2;
+    if (cameraArrival.timer > 0)
+    {
+        cameraArrival.timer += tslf*2;
 
-		if (cameraArrival.timer <= 0)
-		{
-			mCamera->detachFromParent();
-			camnode->attachObject(mCamera);
-			mSceneMgr->destroySceneNode(cameraArrival.tempNode);
-		}
-		else
-		{
-			auto w = cameraArrival.timer;
-			auto pos = cameraArrival.pos*w + camnode->_getDerivedPosition()*(1 - w);
-			auto or = cameraArrival.dir*w + camnode->_getDerivedOrientation()*(1 - w);
+        if (cameraArrival.timer <= 0)
+        {
+            mCamera->detachFromParent();
+            camnode->attachObject(mCamera);
+            mSceneMgr->destroySceneNode(cameraArrival.tempNode);
+        }
+        else
+        {
+            auto w = cameraArrival.timer;
+            auto pos = cameraArrival.pos*w + camnode->_getDerivedPosition()*(1 - w);
+            auto or = cameraArrival.dir*w + camnode->_getDerivedOrientation()*(1 - w);
 
-			cameraArrival.tempNode->setPosition(pos);
-			cameraArrival.tempNode->setOrientation(or);
-		}
-	}
+            cameraArrival.tempNode->setPosition(pos);
+            cameraArrival.tempNode->setOrientation(or);
+        }
+    }
 }
 
 void Player::updateClimbMovement()
@@ -1025,12 +1025,12 @@ void Player::updatePullup()
 
 void Player::attachToSlide(OgreNewt::Body* slideBody)
 {
-	Ogre::Any any = slideBody->getUserData();
+    Ogre::Any any = slideBody->getUserData();
     auto lineName = (std::string*) any_cast<bodyUserData*>(any)->customData;
     auto slide = (Slide*)(*Global::globalData)[*lineName];
 
-	if (slide->start())
-		Global::mEventsMgr->addCachedTask(slide);
+    if (slide->start())
+        Global::mEventsMgr->addCachedTask(slide);
 }
 
 void Player::updateGroundStats()
