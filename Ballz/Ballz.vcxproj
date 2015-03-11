@@ -148,7 +148,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\Player_core.cpp" />
     <ClCompile Include="src\PostProcessMgr.cpp" />
     <ClCompile Include="src\Tasks.cpp" />
-    <ClCompile Include="src\TopZipLine.cpp" />
+    <ClCompile Include="src\TopSlide.cpp" />
     <ClCompile Include="src\TransformationTaskTemplate.cpp" />
     <ClCompile Include="src\PSSMCamera.cpp" />
     <ClCompile Include="src\OgreGpuCommandBufferFlush.cpp" />

@@ -141,13 +141,13 @@
     <ClCompile Include="src\TriggerPlayerContactCallback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TopZipLine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Slide.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ZipLineSlide.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TopSlide.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

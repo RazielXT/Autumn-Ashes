@@ -6,8 +6,19 @@ TopSlide::TopSlide(SceneNode* node, const std::string& zipAnimName, bool looped,
 	tracker = node;
 	base = tracker->createChildSceneNode();
 	head = base->createChildSceneNode();
-	head->setPosition(0, 2.5f, 0);
-	avgSpeed *= 5;
+	
+	resetHead();
 
 	initSlide();
+}
+
+TopSlide::TopSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, float speed) : Slide(zipName, looped, speed)
+{
+	tracker = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	base = tracker->createChildSceneNode();
+	head = base->createChildSceneNode();
+
+	resetHead();
+
+	initSlide(points);
 }

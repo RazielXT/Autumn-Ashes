@@ -19,7 +19,9 @@ public:
 
 protected:
 
-	Slide(const std::string& zipName, bool looped, float speed) : name(zipName), loop(looped), avgSpeed(speed) {};
+	Slide(const std::string& zipName, bool looped, float speed) : name(zipName), loop(looped), avgSpeed(speed*5) {};
+
+	virtual void resetHead() {};
 
     struct SlidePoint
     {

@@ -355,6 +355,23 @@ void Player::attachCamera()
     rotateCamera(Ogre::Degree(q.getYaw()).valueDegrees(),Ogre::Degree(q.getPitch()).valueDegrees());
 }
 
+void Player::attachCameraWithTransition()
+{
+	cameraArrival.timer = 1;
+	cameraArrival.tempNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+
+	cameraArrival.pos = mCamera->getDerivedPosition();
+	cameraArrival.dir = mCamera->getDerivedOrientation();
+
+	cameraArrival.tempNode->setPosition(cameraArrival.pos);
+	cameraArrival.tempNode->setOrientation(cameraArrival.dir);
+
+	attachCamera();
+
+	mCamera->detachFromParent();
+	cameraArrival.tempNode->attachObject(mCamera);
+}
+
 void Player::rotateCamera(Real hybX,Real hybY)
 {
     camPitch+=(hybY);

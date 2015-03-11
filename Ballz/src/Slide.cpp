@@ -241,10 +241,12 @@ void Slide::updateSlidingSpeed(float time)
 
 void Slide::attach()
 {
+	resetHead();
+
     Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
 
     headArrival.timer = 1.0f;
-    headArrival.pos = cam->getDerivedPosition();
+	headArrival.pos = cam->getDerivedPosition() + head->getPosition();
     headArrival.dir = cam->getDerivedOrientation();
 
     headState.pitch = 0;
@@ -257,7 +259,10 @@ void Slide::attach()
     Global::player->enableControl(false);
 
     tracker->removeAllChildren();
+
     Global::mSceneMgr->getRootSceneNode()->addChild(base);
+	base->setPosition(headArrival.pos);
+	base->setOrientation(headArrival.dir);
     head->attachObject(cam);
 
     Global::player->body->freeze();
@@ -265,7 +270,7 @@ void Slide::attach()
 
 void Slide::release()
 {
-    Global::player->attachCamera();
+    Global::player->attachCameraWithTransition();
 
     unregisterInputListening();
 

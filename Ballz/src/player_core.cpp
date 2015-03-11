@@ -309,8 +309,33 @@ void Player::updateHead(Real time)
 
         mouseX = 0;
     }
+
+	updateHeadArrival();
 }
 
+void Player::updateHeadArrival()
+{
+	if (cameraArrival.timer > 0)
+	{
+		cameraArrival.timer += tslf*2;
+
+		if (cameraArrival.timer <= 0)
+		{
+			mCamera->detachFromParent();
+			camnode->attachObject(mCamera);
+			mSceneMgr->destroySceneNode(cameraArrival.tempNode);
+		}
+		else
+		{
+			auto w = cameraArrival.timer;
+			auto pos = cameraArrival.pos*w + camnode->_getDerivedPosition()*(1 - w);
+			auto or = cameraArrival.dir*w + camnode->_getDerivedOrientation()*(1 - w);
+
+			cameraArrival.tempNode->setPosition(pos);
+			cameraArrival.tempNode->setOrientation(or);
+		}
+	}
+}
 
 void Player::updateClimbMovement()
 {

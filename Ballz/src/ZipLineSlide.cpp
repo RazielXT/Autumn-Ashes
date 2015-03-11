@@ -7,8 +7,8 @@ ZipLineSlide::ZipLineSlide(const std::vector<Ogre::Vector3>& points, const std::
 	tracker = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
 	base = tracker->createChildSceneNode();
 	head = base->createChildSceneNode();
-	head->setPosition(0, -1.5f, 0);
-	avgSpeed *= 5;
+	
+	resetHead();
 
 	initSlide(points);
 }
@@ -16,8 +16,8 @@ ZipLineSlide::ZipLineSlide(const std::vector<Ogre::Vector3>& points, const std::
 bool ZipLineSlide::start()
 {
 	auto ret = Slide::start();
-
 	turnRollState.first = ret;
+
 	return ret;
 }
 

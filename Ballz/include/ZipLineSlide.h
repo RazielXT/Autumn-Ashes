@@ -14,6 +14,12 @@ public:
 
 protected:
 
+	virtual void resetHead()
+	{
+		head->setPosition(0, -1.5f, 0);
+		head->resetOrientation();
+	}
+
 	struct TurnRollState
 	{
 		bool first = true;
