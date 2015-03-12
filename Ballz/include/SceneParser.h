@@ -782,7 +782,7 @@ private:
                 line = new ZipLineSlide(points, node->getName(), loop, speed);
         }
         else
-            line = new TopSlide(node, animTrack, loop, speed);
+            line = new TopSlide(node, node->getName(), animTrack, loop, speed);
 
         (*Global::globalData)["Slide" + node->getName()] = line;
     }

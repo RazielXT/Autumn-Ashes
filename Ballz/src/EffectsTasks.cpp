@@ -90,7 +90,7 @@ SwitchColorSchemeFx::SwitchColorSchemeFx(Ogre::String info)
     temp = strtok_s(NULL, ",", &token);
 
     auto fulltime = Ogre::StringConverter::parseReal(temp);
-	timeW = 1/fulltime;
+    timeW = 1/fulltime;
 }
 
 bool SwitchColorSchemeFx::start()
@@ -100,31 +100,31 @@ bool SwitchColorSchemeFx::start()
     colorBase.y = Global::mPPMgr->ColouringShift.y;
     colorBase.z = Global::mPPMgr->ColouringShift.z;
 
-	bloomStrBase = Global::mPPMgr->bloomStrDep.x;
-	fovBase = Global::mPPMgr->camera->getFOVy().valueDegrees();
+    bloomStrBase = Global::mPPMgr->bloomStrDep.x;
+    fovBase = Global::mPPMgr->camera->getFOVy().valueDegrees();
 
     return true;
 }
 
 bool SwitchColorSchemeFx::update(float tslf)
 {
-	timer = std::min(1.0f, timer + tslf*timeW);
+    timer = std::min(1.0f, timer + tslf*timeW);
 
-	const auto wHalfPoint = 0.25f;
+    const auto wHalfPoint = 0.25f;
 
-	auto halfTopW = std::min(timer*1/wHalfPoint,1-(timer-wHalfPoint)/(1-wHalfPoint));
-	auto fromHalfW = std::max(0.0f, (timer - wHalfPoint) / (1 - wHalfPoint));
+    auto halfTopW = std::min(timer*1/wHalfPoint,1-(timer-wHalfPoint)/(1-wHalfPoint));
+    auto fromHalfW = std::max(0.0f, (timer - wHalfPoint) / (1 - wHalfPoint));
 
-	Global::mPPMgr->ColouringShift = colorBase*fromHalfW + colorTarget*(1 - fromHalfW);
+    Global::mPPMgr->ColouringShift = colorBase*fromHalfW + colorTarget*(1 - fromHalfW);
 
-	const auto stepMin = 0.5f;
-	Global::timestep = 1 - halfTopW*(1-stepMin);
+    const auto stepMin = 0.5f;
+    Global::timestep = 1 - halfTopW*(1-stepMin);
 
-	const auto blAdd = 10.0f;
-	Global::mPPMgr->bloomStrDep.x = bloomStrBase + blAdd*halfTopW;
+    const auto blAdd = 10.0f;
+    Global::mPPMgr->bloomStrDep.x = bloomStrBase + blAdd*halfTopW;
 
-	const auto fovAdd = 10.0f;
-	Global::mPPMgr->camera->setFOVy(Ogre::Degree(fovBase + fovAdd*halfTopW));
+    const auto fovAdd = 10.0f;
+    Global::mPPMgr->camera->setFOVy(Ogre::Degree(fovBase + fovAdd*halfTopW));
 
     if (timer == 1)
         return false;

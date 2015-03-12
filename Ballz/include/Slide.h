@@ -19,7 +19,7 @@ public:
 
 protected:
 
-    Slide(const std::string& zipName, bool looped, float speed) : name(zipName), loop(looped), avgSpeed(speed*5) {};
+    Slide(const std::string& zipName, bool looped, float speed) : animName(zipName), loop(looped), avgSpeed(speed*5) {};
 
     virtual void resetHead() {};
 
@@ -46,7 +46,7 @@ protected:
 
     std::vector<SlidePoint> slidePoints;
 
-    void initSlide();
+    void initSlide(const std::string& zipAnimName);
     void initSlide(const std::vector<Ogre::Vector3>& points);
 
     bool placePointOnLine(Vector3& point);
@@ -68,7 +68,7 @@ protected:
     bool active = false;
     float unavailableTimer = 0;
 
-    std::string name;
+    std::string animName;
 
     AnimationState * mTrackerState = 0;
     SceneNode* tracker;

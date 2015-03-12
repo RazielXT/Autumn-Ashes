@@ -41,16 +41,16 @@ public:
 private:
 
     OgreNewt::Body* mBody;
-	float bloomStrBase;
-	float fovBase;
+    float bloomStrBase;
+    float fovBase;
     Ogre::Vector3 colorTarget;
     Ogre::Vector3 colorBase;
     float timeW;
     float timer;
 
-	static int lastID;
-	static int idCounter;
-	int myID;
+    static int lastID;
+    static int idCounter;
+    int myID;
 };
 
 #endif
