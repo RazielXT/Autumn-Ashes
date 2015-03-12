@@ -100,7 +100,7 @@ bool SwitchColorSchemeFx::start()
     colorBase.y = Global::mPPMgr->ColouringShift.y;
     colorBase.z = Global::mPPMgr->ColouringShift.z;
 
-    bloomStrBase = Global::mPPMgr->bloomStrDep.x;
+    bloomStrBase = Global::mPPMgr->bloomStrDep.y;
     fovBase = Global::mPPMgr->camera->getFOVy().valueDegrees();
 
     return true;
@@ -115,15 +115,22 @@ bool SwitchColorSchemeFx::update(float tslf)
     auto halfTopW = std::min(timer*1/wHalfPoint,1-(timer-wHalfPoint)/(1-wHalfPoint));
     auto fromHalfW = std::max(0.0f, (timer - wHalfPoint) / (1 - wHalfPoint));
 
-    Global::mPPMgr->ColouringShift = colorBase*fromHalfW + colorTarget*(1 - fromHalfW);
+    auto shift = colorTarget*fromHalfW + colorBase*(1 - fromHalfW);
+    Global::mPPMgr->ColouringShift.x = shift.x;
+    Global::mPPMgr->ColouringShift.y = shift.y;
+    Global::mPPMgr->ColouringShift.z = shift.z;
 
     const auto stepMin = 0.5f;
-    Global::timestep = 1 - halfTopW*(1-stepMin);
+    Global::timestep = pow(1 - halfTopW*(1-stepMin),1.5f);
 
-    const auto blAdd = 10.0f;
-    Global::mPPMgr->bloomStrDep.x = bloomStrBase + blAdd*halfTopW;
+    const auto blAdd = 3.0f;
+    Global::mPPMgr->bloomStrDep.y = bloomStrBase + blAdd*halfTopW;
 
-    const auto fovAdd = 10.0f;
+    Global::mPPMgr->ColouringShift.w = halfTopW;
+    Global::mPPMgr->radialHorizBlurVignette.x = halfTopW;
+    Global::mPPMgr->ContSatuSharpNoise.x = halfTopW;
+
+    const auto fovAdd = 20.0f;
     Global::mPPMgr->camera->setFOVy(Ogre::Degree(fovBase + fovAdd*halfTopW));
 
     if (timer == 1)

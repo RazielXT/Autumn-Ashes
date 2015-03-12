@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "InputListener.h"
 #include "PostProcessMgr.h"
+#include "EffectsTasks.h"
 
 class DebugKeys : public InputListener
 {
@@ -28,6 +29,20 @@ public:
         }
         break;
 
+        case OIS::KC_B:
+        {
+            auto task = new SwitchColorSchemeFx("0.8,0.95,1.05,2");
+            if (task->start())
+                Global::mEventsMgr->addTask(task);
+            break;
+        }
+        case OIS::KC_N:
+        {
+            auto task = new SwitchColorSchemeFx("1.0,0.95,0.85,2");
+            if (task->start())
+                Global::mEventsMgr->addTask(task);
+            break;
+        }
         case OIS::KC_Y:
             postProcMgr->ColouringShift.x += 0.02;
             break;
