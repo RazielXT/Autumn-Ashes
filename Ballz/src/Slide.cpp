@@ -279,6 +279,7 @@ void Slide::release()
 
     Global::player->body->setPositionOrientation(tracker->getPosition(), Ogre::Quaternion::IDENTITY);
     Global::player->body->unFreeze();
+	Global::player->body->setVelocity(tracker->getOrientation()*Vector3(0, 0, -1 * avgSpeed*currentSpeed));
 
     unavailableTimer = 0.5f;
     active = false;
