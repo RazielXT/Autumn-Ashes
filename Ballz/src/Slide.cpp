@@ -7,7 +7,7 @@ using namespace Ogre;
 
 void Slide::pressedKey(const OIS::KeyEvent &arg)
 {
-    if (arg.key == OIS::KC_SPACE)
+    if (arg.key == OIS::KC_SPACE && unavailableTimer<=0)
     {
         auto jumpSpeed = Global::player->getFacingDirection() * 12;
         jumpSpeed.y = std::max(jumpSpeed.y, 5.0f);
@@ -149,11 +149,8 @@ void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
     Quaternion previous;
     int loopEnd = loop ? 1 : 0;
 
-    for (size_t i = 0; i < points.size() + loopEnd; i++)
+    for (size_t i = 0; i < points.size(); i++)
     {
-        if (i == points.size())
-            i = 0;
-
         Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(slidePoints[i].startOffset);
         kf->setTranslate(points[i]);
 
@@ -219,7 +216,7 @@ bool Slide::start()
         attach();
 
         mTrackerState->setEnabled(true);
-        mTrackerState->setLoop(true);
+        mTrackerState->setLoop(loop);
 
         //TODO figure out start speed, based on body speed
         currentSpeed = 0.5f;
@@ -246,7 +243,7 @@ void Slide::attach()
     Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
 
     headArrival.timer = 1.0f;
-    headArrival.pos = cam->getDerivedPosition() + head->getPosition();
+    headArrival.pos = cam->getDerivedPosition();
     headArrival.dir = cam->getDerivedOrientation();
 
     headState.pitch = 0;
@@ -254,18 +251,17 @@ void Slide::attach()
 
     registerInputListening();
 
-    cam->detachFromParent();
-
     Global::player->enableControl(false);
 
-    tracker->removeAllChildren();
+    headArrival.tempNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    headArrival.tempNode->setPosition(headArrival.pos);
+    headArrival.tempNode->setOrientation(headArrival.dir);
 
-    Global::mSceneMgr->getRootSceneNode()->addChild(base);
-    base->setPosition(headArrival.pos);
-    base->setOrientation(headArrival.dir);
-    head->attachObject(cam);
+    cam->detachFromParent();
+    headArrival.tempNode->attachObject(cam);
 
     Global::player->body->freeze();
+    unavailableTimer = 1;
 }
 
 void Slide::release()
@@ -285,23 +281,24 @@ void Slide::release()
 
 void Slide::updateHeadArrival(float time)
 {
-    headArrival.timer -= time;
+    headArrival.timer -= time*2;
 
     if (headArrival.timer <= 0)
     {
-        base->resetToInitialState();
+        Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
+        cam->detachFromParent();
+        head->attachObject(cam);
 
-        base->getParentSceneNode()->removeChild(base);
-        tracker->addChild(base);
+        Global::mSceneMgr->destroySceneNode(headArrival.tempNode);
     }
     else
     {
         auto w = headArrival.timer;
-        Quaternion q = w*headArrival.dir + (1-w)*tracker->getOrientation();
-        Vector3 p = w*headArrival.pos + (1 - w)*tracker->getPosition();
+        Quaternion q = w*headArrival.dir + (1-w)*head->_getDerivedOrientation();
+        Vector3 p = w*headArrival.pos + (1 - w)*head->_getDerivedPosition();
 
-        base->setPosition(p);
-        base->setOrientation(q);
+        headArrival.tempNode->setPosition(p);
+        headArrival.tempNode->setOrientation(q);
     }
 
 }
@@ -336,9 +333,10 @@ bool Slide::update(Ogre::Real tslf)
         enablePlayerControl = false;
     }
 
-    if (unavailableTimer <= 0)
+    if (active)
         updateSlidingState(tslf);
-    else
+
+    if (unavailableTimer>0)
         unavailableTimer -= tslf;
 
     return active || unavailableTimer>0;

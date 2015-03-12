@@ -24,7 +24,7 @@ bool ZipLineSlide::start()
 void ZipLineSlide::updateTurningRoll(float time)
 {
     const float turnForce = 50;
-    const float stabilityForce = 0.5f;
+    const float stabilityForce = 0.35f;
     const float rollLimit = 1.0f;
 
     auto q = tracker->getOrientation();
@@ -66,13 +66,12 @@ void ZipLineSlide::updateTurningRoll(float time)
     base->setOrientation(Quaternion(Radian(headRoll), Vector3(0, 0, 1)));
 
     turnRollState.lastOr = q;
-    Global::debug = headRoll;
+    //Global::debug = headRoll;
 }
 
 void ZipLineSlide::updateSlidingCamera(float time)
 {
-    if (headArrival.timer > 0)
-        updateHeadArrival(time);
-    else
-        updateTurningRoll(time);
+    updateTurningRoll(time);
+
+    Slide::updateSlidingCamera(time);
 }

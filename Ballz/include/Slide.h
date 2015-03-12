@@ -32,6 +32,7 @@ protected:
 
     struct HeadTransitionState
     {
+        SceneNode* tempNode;
         Vector3 pos;
         Quaternion dir;
         float timer;

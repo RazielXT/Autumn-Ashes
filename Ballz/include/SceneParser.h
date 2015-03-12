@@ -744,6 +744,7 @@ private:
 
         auto loop = Ogre::StringConverter::parseBool(getElementValue(element, "Loop"));
         auto speed = Ogre::StringConverter::parseReal(getElementValue(element, "Speed"));
+        auto top = Ogre::StringConverter::parseBool(getElementValue(element, "Top"));
         auto animTrack = getElementValue(element, "Animation");
 
         Slide* line;
@@ -775,7 +776,10 @@ private:
             }
             vbuf->unlock();
 
-            line = new ZipLineSlide(points, node->getName(), loop, speed);
+            if (top)
+                line = new TopSlide(points, node->getName(), loop, speed);
+            else
+                line = new ZipLineSlide(points, node->getName(), loop, speed);
         }
         else
             line = new TopSlide(node, animTrack, loop, speed);

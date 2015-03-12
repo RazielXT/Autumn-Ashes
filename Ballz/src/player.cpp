@@ -429,6 +429,8 @@ void Player::rotateCamera(Real hybX,Real hybY)
 
 void Player::update(Real time)
 {
+    Global::debug = camPitch;
+
     bodyVelocity = body->getVelocity().length();
     time*=Global::timestep;
     tslf=time;

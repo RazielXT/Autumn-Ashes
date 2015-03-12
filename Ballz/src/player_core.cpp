@@ -317,7 +317,7 @@ void Player::updateHeadArrival()
 {
     if (cameraArrival.timer > 0)
     {
-        cameraArrival.timer += tslf*2;
+        cameraArrival.timer -= tslf*2;
 
         if (cameraArrival.timer <= 0)
         {
