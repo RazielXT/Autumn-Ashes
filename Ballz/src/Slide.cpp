@@ -24,10 +24,11 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
 
 void Slide::movedMouse(const OIS::MouseEvent &e)
 {
-    float mouseX = (-1 * e.state.X.rel*Global::timestep) / 10.0f;
-    float mouseY = (-1 * e.state.Y.rel*Global::timestep) / 10.0f;
+	float mod = Global::timestep / -10.0f;
+	float mouseX = e.state.X.rel*mod;
+	float mouseY = e.state.Y.rel*mod;
 
-    float maxAngle = 70;
+    const float maxAngle = 70;
 
     headState.pitch += mouseY;
     if (headState.pitch > -maxAngle && headState.pitch < maxAngle)
