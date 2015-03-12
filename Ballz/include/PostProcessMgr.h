@@ -35,13 +35,15 @@ public:
     Ogre::Vector4 ContSatuSharpNoise,ColouringShift, bloomStrDep;
     Ogre::Real mbAmount;
 
+	Ogre::Camera* camera;
+
 private:
 
     bool skipFadeFrame = false;
     bool dirty;
     float totalBlacktime,currentBlacktime;
     bool basicPP,scaryPP,advancedPP,ssaoEnabled;
-    Ogre::Camera* cam;
+    
     BasicPostProcessListener* basicList;
     AaPostProcessListener* scaryList;
     Ogre::Vector4 colourOverlaying;

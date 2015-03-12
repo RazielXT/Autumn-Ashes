@@ -6,7 +6,7 @@ using namespace Ogre;
 #include "BasicPPListener.h"
 #include "ScaryPPListener.h"
 
-PostProcessMgr::PostProcessMgr(Ogre::Camera* camera)
+PostProcessMgr::PostProcessMgr(Ogre::Camera* cam)
 {
     basicPP = true;
     scaryPP = false;
@@ -26,7 +26,7 @@ PostProcessMgr::PostProcessMgr(Ogre::Camera* camera)
     mbAmount=1;
     ColouringShift=Ogre::Vector4(1,1,1,0);
 
-    cam = camera;
+    camera = cam;
 
     basicList = new BasicPostProcessListener(&SunScreenSpacePosition,&ivp,&pvp,&hurtEffect,&godrayEdge,&colourOverlaying);
     scaryList = new AaPostProcessListener(&SunScreenSpacePosition,&ivp,&pvp,&hurtEffect,&godrayEdge,&colourOverlaying,&ContSatuSharpNoise,&radialHorizBlurVignette, &ColouringShift, &bloomStrDep);
@@ -90,11 +90,11 @@ void PostProcessMgr::update(float tslf)
 
     dirty = false;
 
-    Vector3 worldViewPosition = cam->getViewMatrix() * sunPosition;
-    Vector3 hcsPosition = cam->getProjectionMatrix() * worldViewPosition;
+    Vector3 worldViewPosition = camera->getViewMatrix() * sunPosition;
+    Vector3 hcsPosition = camera->getProjectionMatrix() * worldViewPosition;
     Vector2 sunScreenSpacePosition = Vector2(0.5f + (0.5f * hcsPosition.x), 0.5f + (0.5f * -hcsPosition.y));
     SunScreenSpacePosition = Vector4(sunScreenSpacePosition.x, sunScreenSpacePosition.y, 0, 1);
-    Ogre::Real par=(cam->getDerivedPosition() - sunPosition).dotProduct(cam->getDerivedDirection())/sunDistance;
+    Ogre::Real par=(camera->getDerivedPosition() - sunPosition).dotProduct(camera->getDerivedDirection())/sunDistance;
     par-=0.15f;
 
     godrayEdge = Ogre::Math::Clamp(par/0.65f-0.25f,0.0f,0.75f);
@@ -139,11 +139,11 @@ void PostProcessMgr::setToBasicBloom()
         ssaoName = "NoSSAO";
     }
 
-    Ogre::CompositorManager::getSingleton().removeCompositor(cam->getViewport(), currentCompositor+ssaoName);
+    Ogre::CompositorManager::getSingleton().removeCompositor(camera->getViewport(), currentCompositor+ssaoName);
     currentCompositor = "BasicBloom";
-    Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(cam->getViewport(), currentCompositor+ssaoName);
+    Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor+ssaoName);
     bloomCompositor->addListener(basicList);
-    Ogre::CompositorManager::getSingleton().setCompositorEnabled(cam->getViewport(), currentCompositor+ssaoName, true);
+    Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor+ssaoName, true);
 }
 
 void PostProcessMgr::setToScaryBloom()
@@ -158,11 +158,11 @@ void PostProcessMgr::setToScaryBloom()
         ssaoName = "NoSSAO";
     }
 
-    Ogre::CompositorManager::getSingleton().removeCompositor(cam->getViewport(), currentCompositor+ssaoName);
+    Ogre::CompositorManager::getSingleton().removeCompositor(camera->getViewport(), currentCompositor+ssaoName);
     currentCompositor = "ScaryBloom";
-    Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(cam->getViewport(), currentCompositor+ssaoName);
+    Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor+ssaoName);
     bloomCompositor->addListener(scaryList);
-    Ogre::CompositorManager::getSingleton().setCompositorEnabled(cam->getViewport(), currentCompositor+ssaoName, true);
+    Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor+ssaoName, true);
 }
 
 void PostProcessMgr::setToAdvancedBloom()
@@ -175,23 +175,23 @@ void PostProcessMgr::setSSAO(bool enabled)
 
     if(enabled)
     {
-        Ogre::CompositorManager::getSingleton().removeCompositor(cam->getViewport(), currentCompositor + "NoSSAO");
-        Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(cam->getViewport(), currentCompositor);
+        Ogre::CompositorManager::getSingleton().removeCompositor(camera->getViewport(), currentCompositor + "NoSSAO");
+        Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor);
         if(basicPP)
             bloomCompositor->addListener(basicList);
         if(scaryPP)
             bloomCompositor->addListener(scaryList);
-        Ogre::CompositorManager::getSingleton().setCompositorEnabled(cam->getViewport(), currentCompositor, true);
+        Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor, true);
     }
     else
     {
-        Ogre::CompositorManager::getSingleton().removeCompositor(cam->getViewport(), currentCompositor);
-        Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(cam->getViewport(), currentCompositor+"NoSSAO");
+        Ogre::CompositorManager::getSingleton().removeCompositor(camera->getViewport(), currentCompositor);
+        Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor+"NoSSAO");
         if(basicPP)
             bloomCompositor->addListener(basicList);
         if(scaryPP)
             bloomCompositor->addListener(scaryList);
-        Ogre::CompositorManager::getSingleton().setCompositorEnabled(cam->getViewport(), currentCompositor+"NoSSAO", true);
+        Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor+"NoSSAO", true);
     }
 }
 
