@@ -80,7 +80,5 @@ void TriggerPlayerContactCallback::contactsProcess( OgreNewt::ContactJoint &cont
         processPlayerTrigger(a1, body1, mEventMgr, contactJoint);
     }
 
-
-
 }
 

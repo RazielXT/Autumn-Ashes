@@ -150,6 +150,9 @@
     <ClCompile Include="src\TopSlide.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\SlideContactCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Console.h">
@@ -321,6 +324,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Slide.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SlideContactCallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

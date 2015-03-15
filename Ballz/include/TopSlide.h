@@ -12,7 +12,11 @@ public:
 
     TopSlide(Ogre::SceneNode* node, const std::string& zipName, const std::string& zipAnimName, bool looped, float speed);
 
+    virtual bool start();
+
 protected:
+
+    virtual void updateSlidingSpeed(float time);
 
     virtual void resetHead()
     {

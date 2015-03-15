@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "TopSlide.h"
+#include "Player.h"
+#include "OgreMath.h"
 
-TopSlide::TopSlide(SceneNode* node, const std::string& zipName, const std::string& zipAnimName, bool looped, float speed) : Slide(zipAnimName, looped, speed)
+TopSlide::TopSlide(SceneNode* node, const std::string& zipName, const std::string& zipAnimName, bool looped, float speed) : Slide(zipAnimName, looped, speed/5.0f)
 {
     tracker = node;
     base = tracker->createChildSceneNode();
@@ -21,4 +23,19 @@ TopSlide::TopSlide(const std::vector<Ogre::Vector3>& points, const std::string& 
     resetHead();
 
     initSlide(points);
+}
+
+bool TopSlide::start()
+{
+    auto pos = Global::player->bodyPosition;
+    pos.y -= 1.5f;
+
+    return Slide::start(pos);
+}
+
+void TopSlide::updateSlidingSpeed(float time)
+{
+    //currentSpeed = Math::Clamp(currentSpeed + 0.5f*time, 0.5f, 1.5f)*avgSpeed;
+
+    Slide::updateSlidingSpeed(time);
 }

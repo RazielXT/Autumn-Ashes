@@ -268,9 +268,7 @@ void Player::walkingSound(Ogre::Real time)
 
     if(walkSoundTimer>0.4)
     {
-        Vector3 ppos=body->getPosition();
-
-        Global::audioLib->playWalkingSound(ppos.x, ppos.y - 2, ppos.z, groundID);
+        Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID);
 
         walkSoundTimer=0;
     }
@@ -429,9 +427,9 @@ void Player::rotateCamera(Real hybX,Real hybY)
 
 void Player::update(Real time)
 {
-    Global::debug = camPitch;
-
     bodyVelocity = body->getVelocity().length();
+    bodyPosition = body->getPosition();
+
     time*=Global::timestep;
     tslf=time;
 

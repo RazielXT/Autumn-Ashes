@@ -2,6 +2,7 @@
 #include "TriggerPlayerContactCallback.h"
 #include "TriggerObjectContactCallback.h"
 #include "DefaultObjectContactCallback.h"
+#include "SlideContactCallback.h"
 
 void WorldMaterials::init(OgreNewt::World* mWorld)
 {
@@ -12,6 +13,7 @@ void WorldMaterials::init(OgreNewt::World* mWorld)
     trig_mat = new OgreNewt::MaterialID(mWorld);
     action_mat = new OgreNewt::MaterialID(mWorld);
     selfIgnore_mat = new OgreNewt::MaterialID(mWorld);
+    slide_mat = new OgreNewt::MaterialID(mWorld);
 
     initCollisions(mWorld);
 }
@@ -55,6 +57,19 @@ void WorldMaterials::initCollisions(OgreNewt::World* mWorld)
     material_pair = new OgreNewt::MaterialPair(mWorld, stoji_mat, playerIgnore_mat);
     material_pair->setDefaultCollidable(0);
 
+    //SLIDE
+    SlideContactCallback* callback_s = new SlideContactCallback(Global::mEventsMgr);
+
+    material_pair = new OgreNewt::MaterialPair(mWorld, ide_mat, slide_mat);
+    material_pair->setDefaultFriction(0.0, 0.0f);
+    material_pair->setDefaultElasticity(0);
+    material_pair->setDefaultSurfaceThickness(0.01);
+    material_pair->setContactCallback(callback_s);
+
+    material_pair = new OgreNewt::MaterialPair(mWorld, stoji_mat, slide_mat);
+    material_pair->setDefaultFriction(4.0, 4.0f);
+    material_pair->setDefaultElasticity(0);
+    material_pair->setContactCallback(callback_s);
 
     //TRIGGER ********************************************************
     //WITH PLAYER

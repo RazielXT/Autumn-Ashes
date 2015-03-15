@@ -12,6 +12,7 @@ public:
     virtual ~Slide() {}
 
     virtual bool start();
+    virtual bool start(Vector3& point);
     virtual bool update(Ogre::Real tslf);
 
     virtual void pressedKey(const OIS::KeyEvent &arg);
@@ -53,7 +54,7 @@ protected:
 
     void updateSlidingState(float time);
     void updateHeadArrival(float time);
-    inline void updateSlidingSpeed(float time);
+    virtual void updateSlidingSpeed(float time);
 
     virtual void updateSlidingCamera(float time);
 
@@ -78,4 +79,6 @@ protected:
     HeadTransitionState headArrival;
     HeadControlState headState;
 
+    float realSpeed;
+    Vector3 lastPos;
 };

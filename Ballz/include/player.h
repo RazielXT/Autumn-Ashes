@@ -98,6 +98,9 @@ public:
     Ogre::SceneNode* detachHead();
     void attachHead(Ogre::SceneNode* headNode = nullptr);
 
+    Ogre::Vector3 bodyPosition;
+    float bodyVelocity;
+
 protected:
 
     void attachToSlide(OgreNewt::Body* slideBody);
@@ -161,7 +164,7 @@ private:
     //state
     bool alive, immortal, stoji, vpravo, vlavo, vzad, vpred;
     bool onGround, visi, grabbed, inControl, inMoveControl;
-    Ogre::Real camPitch,fallVelocity,bodyVelocity,bodySpeedAccum,startMoveBoost,crouch_am,noClimbTimer,movespeed,walkSoundTimer;
+    Ogre::Real camPitch,fallVelocity,bodySpeedAccum,startMoveBoost,crouch_am,noClimbTimer,movespeed,walkSoundTimer;
     float climb_yaw, climb_move_side, climb_move_vert, climb_pullup;
     char fallPitch,crouch,cameraWalkFinisher,is_climbing;
     Ogre::Real fallPitchSize,fallPitchTimer,cam_walking,head_turning,pullupPos,rolling;

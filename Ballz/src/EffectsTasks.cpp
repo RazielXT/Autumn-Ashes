@@ -120,7 +120,7 @@ bool SwitchColorSchemeFx::update(float tslf)
     Global::mPPMgr->ColouringShift.y = shift.y;
     Global::mPPMgr->ColouringShift.z = shift.z;
 
-    const auto stepMin = 0.5f;
+    const auto stepMin = 0.15f;
     Global::timestep = pow(1 - halfTopW*(1-stepMin),1.5f);
 
     const auto blAdd = 3.0f;

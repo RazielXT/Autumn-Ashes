@@ -14,6 +14,7 @@ struct WorldMaterials
     OgreNewt::MaterialID* trig_mat;
     OgreNewt::MaterialID* action_mat;
     OgreNewt::MaterialID* selfIgnore_mat;
+    OgreNewt::MaterialID* slide_mat;
 
     void initCollisions(OgreNewt::World* mWorld);
 };

@@ -7,12 +7,16 @@ using namespace Ogre;
 
 void Slide::pressedKey(const OIS::KeyEvent &arg)
 {
-    if (arg.key == OIS::KC_SPACE && unavailableTimer<=0)
+    if (!active)
+        return;
+
+    if (arg.key == OIS::KC_SPACE)
     {
-        auto jumpSpeed = Global::player->getFacingDirection() * 12;
-        jumpSpeed.y = std::max(jumpSpeed.y, 5.0f);
+        auto jumpSpeed = Global::player->getFacingDirection() * std::max(25.0f, realSpeed);
+        //jumpSpeed.y = std::max(jumpSpeed.y, 5.0f);
 
         release();
+
         Global::player->body->setVelocity(jumpSpeed);
     }
 
@@ -24,58 +28,47 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
 
 void Slide::movedMouse(const OIS::MouseEvent &e)
 {
+    if (!active)
+        return;
+
     float mod = Global::timestep / -10.0f;
     float mouseX = e.state.X.rel*mod;
     float mouseY = e.state.Y.rel*mod;
 
     const float maxAngle = 70;
 
-    headState.pitch += mouseY;
-    if (headState.pitch > -maxAngle && headState.pitch < maxAngle)
-        head->pitch(Degree(mouseY), Node::TS_LOCAL);
-    else
-    {
-        headState.pitch = headState.pitch - mouseY;
-        if (headState.pitch < 0)
-        {
-            head->pitch(Degree(-maxAngle - headState.pitch), Node::TS_LOCAL);
-            headState.pitch = -maxAngle;
-        }
-        if (headState.pitch > 0)
-        {
-            head->pitch(Degree(maxAngle - headState.pitch), Node::TS_LOCAL);
-            headState.pitch = maxAngle;
-        }
-    }
+    headState.pitch = Math::Clamp(headState.pitch + mouseX, -maxAngle, maxAngle);
+    headState.yaw = Math::Clamp(headState.yaw + mouseY, -maxAngle, maxAngle);
 
-    headState.yaw += mouseX;
-    if (headState.yaw > -maxAngle && headState.yaw < maxAngle)
-        head->yaw(Degree(mouseX), Node::TS_LOCAL);
-    else
-    {
-        headState.yaw = headState.yaw - mouseX;
-        if (headState.yaw < 0)
-        {
-            head->yaw(Degree(-maxAngle - headState.yaw), Node::TS_LOCAL);
-            headState.yaw = -maxAngle;
-        }
-        if (headState.yaw > 0)
-        {
-            head->yaw(Degree(maxAngle - headState.yaw), Node::TS_LOCAL);
-            headState.yaw = maxAngle;
-        }
-    }
+    Quaternion qpitch = Quaternion(Degree(headState.pitch), Vector3(0,1,0));
+    Quaternion qyaw = Quaternion(Degree(headState.yaw), Vector3(1, 0, 0));
+    head->setOrientation(qpitch*qyaw);
 }
 
 void Slide::initSlide(const std::string& zipAnimName)
 {
     Animation* anim = Global::mSceneMgr->getAnimation(zipAnimName);
-
     auto track = anim->getNodeTrack(0);
-    track->setAssociatedNode(tracker);
+    float realLength = 0;
+
+    for (size_t i = 1; i < track->getNumKeyFrames(); i++)
+    {
+        auto pKeyFrame = track->getNodeKeyFrame(i-1);
+        auto keyFrame = track->getNodeKeyFrame(i);
+        realLength += pKeyFrame->getTranslate().distance(keyFrame->getTranslate());
+    }
+
+    auto mod = realLength / anim->getLength();
 
     slidePoints.clear();
     slidePoints.resize(track->getNumKeyFrames());
+
+    animName = zipAnimName + "new";
+    Animation* newAnim = Global::mSceneMgr->createAnimation(animName, realLength);
+    newAnim->setInterpolationMode(Animation::IM_SPLINE);
+
+    NodeAnimationTrack* newTrack = newAnim->createNodeTrack(0, tracker);
+    newTrack->setUseShortestRotationPath(true);
 
     Quaternion previous;
 
@@ -83,12 +76,12 @@ void Slide::initSlide(const std::string& zipAnimName)
     {
         SlidePoint& point = slidePoints[i];
         auto keyFrame = track->getNodeKeyFrame(i);
-        point.pos = keyFrame->getTranslate();
 
-        //TODO if needed
-        //point.dir = keyFrame->get ??
+        Ogre::TransformKeyFrame* kf = newTrack->createNodeKeyFrame(keyFrame->getTime()*mod);
+        kf->setTranslate(keyFrame->getTranslate());
 
-        point.startOffset = keyFrame->getTime();
+        point.pos = kf->getTranslate();
+        point.startOffset = kf->getTime();
 
         //slerp hotfix
         auto rotation = keyFrame->getRotation();
@@ -100,8 +93,12 @@ void Slide::initSlide(const std::string& zipAnimName)
 
             keyFrame->setRotation(rotation);
         }
+
+        kf->setRotation(keyFrame->getRotation());
+
         previous = rotation;
     }
+
 }
 
 void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
@@ -138,7 +135,7 @@ void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
     float timer = 0;
     for (size_t i = 1; i < points.size(); i++)
     {
-        timer += points[i - 1].distance(points[i]) / avgSpeed;
+        timer += points[i - 1].distance(points[i]);
         slidePoints[i].startOffset = timer;
     }
 
@@ -177,19 +174,28 @@ void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
     }
 }
 
-#define MAX_PLAYER_DISTANCE_SQ 5*5
+#define MAX_PLAYER_DISTANCE_SQ 4*4
 
 bool Slide::placePointOnLine(Vector3& point)
 {
+    auto log = Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log");
+
     auto zipPos = slidePoints[0];
     float minDist = MAX_PLAYER_DISTANCE_SQ;
+
+    log->logMessage("START------TRY TO PLACE POINT ON LINE", Ogre::LML_NORMAL);
 
     for (size_t id = 1; id < slidePoints.size(); id++)
     {
         auto state = MathUtils::getProjectedState(point, slidePoints[id - 1].pos, slidePoints[id].pos);
 
+        log->logMessage(std::to_string(id) + ". state: " + Ogre::StringConverter::toString(state.projPos) + " distance " + Ogre::StringConverter::toString(state.sqMinDistance), Ogre::LML_NORMAL);
+        log->logMessage(std::to_string(id) + ". line: " + Ogre::StringConverter::toString(slidePoints[id - 1].pos) + " to " + Ogre::StringConverter::toString(slidePoints[id].pos), Ogre::LML_NORMAL);
+
         if (state.sqMinDistance < minDist)
         {
+            log->logMessage("ACCEPTED");
+
             auto timePos = slidePoints[id - 1].startOffset;
             timePos += state.projPos.distance(slidePoints[id-1].pos)/avgSpeed;
 
@@ -199,30 +205,38 @@ bool Slide::placePointOnLine(Vector3& point)
         }
     }
 
+    log->logMessage("END------TRY TO PLACE POINT ON LINE", Ogre::LML_NORMAL);
+
     return (minDist != MAX_PLAYER_DISTANCE_SQ);
 }
 
 bool Slide::start()
 {
+    auto pos = Global::player->bodyPosition;
+    pos.y += 1.5f;
+
+    return start(pos);
+}
+
+bool Slide::start(Vector3& pos)
+{
     if (active || unavailableTimer>0)
         return false;
 
     //auto pos = Global::mSceneMgr->getSceneNode("Test")->getPosition();// zipLine[0].pos;//
-    auto pos = Global::player->body->getPosition();
-    pos.y += 1.5f;
 
     if (mTrackerState == nullptr)
         mTrackerState = Global::mSceneMgr->createAnimationState(animName);
 
     if (placePointOnLine(pos))
     {
+        currentSpeed = Global::player->bodyVelocity/avgSpeed;
+
         attach();
 
         mTrackerState->setEnabled(true);
         mTrackerState->setLoop(loop);
 
-        //TODO figure out start speed, based on body speed
-        currentSpeed = 0.5f;
         active = true;
 
         return true;
@@ -234,9 +248,11 @@ bool Slide::start()
 void Slide::updateSlidingSpeed(float time)
 {
     //auto verticalDir = tracker->getOrientation().getPitch().valueRadians();
-    auto dir = tracker->getOrientation()*Vector3(0, 0, -1);
+    //auto dir = tracker->getOrientation()*Vector3(0, 0, -1);
+    //currentSpeed = Math::Clamp(currentSpeed + -dir.y*0.5f*time, 1.0f, 2.5f);
 
-    currentSpeed = Math::Clamp(currentSpeed + -dir.y*0.5f*time, 1.0f, 2.5f);
+    auto diff = time*-5.0f;
+    currentSpeed = std::max(1.0f, currentSpeed + diff);
 }
 
 void Slide::attach()
@@ -263,24 +279,25 @@ void Slide::attach()
     cam->detachFromParent();
     headArrival.tempNode->attachObject(cam);
 
+    Global::player->body->setPositionOrientation(Vector3(0,1000,0), Quaternion::IDENTITY);
     Global::player->body->freeze();
+
     unavailableTimer = 1;
 }
 
 void Slide::release()
 {
     Global::player->attachCameraWithTransition();
-
-    unregisterInputListening();
-
-    enablePlayerControl = true;
-
     Global::player->body->setPositionOrientation(tracker->getPosition(), Ogre::Quaternion::IDENTITY);
     Global::player->body->unFreeze();
-    Global::player->body->setVelocity(tracker->getOrientation()*Vector3(0, 0, -1 * avgSpeed*currentSpeed));
+    Global::player->body->setVelocity(tracker->getOrientation()*Vector3(0, 0, -1 * realSpeed));
+
+    unregisterInputListening();
+    mTrackerState->setEnabled(false);
 
     unavailableTimer = 0.5f;
     active = false;
+    enablePlayerControl = true;
 }
 
 void Slide::updateHeadArrival(float time)
@@ -298,7 +315,7 @@ void Slide::updateHeadArrival(float time)
     else
     {
         auto w = headArrival.timer;
-        Quaternion q = w*headArrival.dir + (1-w)*head->_getDerivedOrientation();
+        Quaternion q = Quaternion::Slerp(1-w, headArrival.dir, head->_getDerivedOrientation(), true);
         Vector3 p = w*headArrival.pos + (1 - w)*head->_getDerivedPosition();
 
         headArrival.tempNode->setPosition(p);
@@ -315,15 +332,22 @@ void Slide::updateSlidingCamera(float time)
 
 void Slide::updateSlidingState(float time)
 {
+    auto thisPos = tracker->getPosition();
+    realSpeed = lastPos.distance(thisPos) / time;
+
     updateSlidingSpeed(time);
 
-    mTrackerState->addTime(time*currentSpeed);
+    mTrackerState->addTime(time*currentSpeed*avgSpeed);
 
     updateSlidingCamera(time);
 
     //past/near end
     if (!loop && mTrackerState->hasEnded())
+    {
         release();
+    }
+
+    lastPos = tracker->getPosition();
 }
 
 

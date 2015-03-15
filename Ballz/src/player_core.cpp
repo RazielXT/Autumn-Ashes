@@ -66,11 +66,11 @@ void Player::jump()
 
         OgreNewt::CollisionPtr col = body->getCollision();//OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(GlobalPointer->mWorld,Ogre::Vector3(0.1,0.1,0.1),0));
         OgreNewt::Body* mHelpBody = new OgreNewt::Body(m_World, col);
-        mHelpBody->setPositionOrientation(body->getPosition(), Ogre::Quaternion::IDENTITY);
+        mHelpBody->setPositionOrientation(bodyPosition, Ogre::Quaternion::IDENTITY);
         mHelpBody->setMassMatrix(0.5, Ogre::Vector3(20, 20, 20));
         mHelpBody->setCustomForceAndTorqueCallback<Player>(&Player::default_callback, this);
         mHelpBody->setMaterialGroupID((OgreNewt::MaterialID*)Global::globalData->find("MatFlag")->second);
-        climbJoint = new OgreNewt::BallAndSocket(mHelpBody, Gbody, body->getPosition(), 0);
+        climbJoint = new OgreNewt::BallAndSocket(mHelpBody, Gbody, bodyPosition, 0);
 
         climb_normal.normalise();
         float climb_yaw_change = climb_yaw - Gbody->getOrientation().getYaw().valueRadians();
@@ -86,8 +86,7 @@ void Player::jump()
     }
     else if (is_climbing == 2 || is_climbing == 6)
     {
-        Vector3 pos = body->getPosition();
-        Global::audioLib->play3D("pullup.wav", pos, 5, 0.7f);
+        Global::audioLib->play3D("pullup.wav", bodyPosition, 5, 0.7f);
 
         climb_pullup = 0.05;
     }
@@ -121,7 +120,6 @@ void Player::jump()
 void Player::manageFall()
 {
     fallVelocity = abs(lastSpeed.length()) * 2;
-    Vector3 ppos = body->getPosition();
 
     if (fallVelocity > 25)
     {
@@ -156,7 +154,7 @@ void Player::manageFall()
 
             slowingDown = 0;
 
-            Global::audioLib->play3D("pad.wav", ppos, 10);
+            Global::audioLib->play3D("pad.wav", bodyPosition, 10);
         }
     }
 
@@ -166,7 +164,7 @@ void Player::manageFall()
         fallPitchTimer = 0;
     }
 
-    Global::audioLib->playFallSound(ppos.x, ppos.y - 2, ppos.z, groundID);
+    Global::audioLib->playFallSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID);
 }
 
 
@@ -329,7 +327,7 @@ void Player::updateHeadArrival()
         {
             auto w = cameraArrival.timer;
             auto pos = cameraArrival.pos*w + camnode->_getDerivedPosition()*(1 - w);
-            auto or = cameraArrival.dir*w + camnode->_getDerivedOrientation()*(1 - w);
+            auto or = Quaternion::Slerp(1-w, cameraArrival.dir, camnode->_getDerivedOrientation(), true);
 
             cameraArrival.tempNode->setPosition(pos);
             cameraArrival.tempNode->setOrientation(or);
@@ -637,7 +635,7 @@ void Player::updateClimbingPossibility()
     {
         if (info.mBody->getType() == Dynamic_Pullup)
         {
-            climbJoint = new OgreNewt::BallAndSocket(body, info.mBody, body->getPosition() + Vector3(0, 2, 0), 0);
+            climbJoint = new OgreNewt::BallAndSocket(body, info.mBody, bodyPosition + Vector3(0, 2, 0), 0);
             visi = true;
             Gbody = info.mBody;
             climb_normal = info.mNormal;
@@ -662,19 +660,19 @@ void Player::updateClimbingPossibility()
             if (info.mBody->getType() == Pullup_old)
             {
                 pullupPos = info.getBody()->getPosition().y - 0.15f;
-                Vector3 pos = body->getPosition();
+                Vector3 pos = bodyPosition;
                 pos.y = pullupPos - 1.25f;
                 body->setPositionOrientation(pos, body->getOrientation());
                 climbDir = Vector3::ZERO;
 
-                climb_pullup = body->getPosition().y + 0.25f - pullupPos;
+                climb_pullup = bodyPosition.y + 0.25f - pullupPos;
                 if (climb_pullup > 0) climb_pullup = 0;
             }
 
         }
         else if (info.mBody->getType() == ZipLinePart)
         {
-            attachToSlide(info.mBody);
+            //attachToSlide(info.mBody);
         }
     }
 }
@@ -718,6 +716,7 @@ void Player::updateClimbingStats()
 {
     auto pos = necknode->_getDerivedPosition() + Vector3(0, 0.25, 0);
     auto ray = OgreNewt::BasicRaycast(m_World, pos, pos + climb_normal*-3, true);
+
     auto info = ray.getInfoAt(0);
     if (info.mBody)
     {
@@ -882,9 +881,9 @@ void Player::startClimbing(char type)
     body->attachNode(node);
     body->setMaterialGroupID(wmaterials->flag_mat);
     body->setCustomForceAndTorqueCallback<Player>(&Player::climb_callback, this);
-    body->setPositionOrientation(body->getPosition() + Vector3(0, 5, 0), Ogre::Quaternion::IDENTITY);
+    body->setPositionOrientation(bodyPosition + Vector3(0, 5, 0), Ogre::Quaternion::IDENTITY);
     body->setCustomForceAndTorqueCallback<Player>(&Player::move_callback_nothing, this);
-    climbJoint = new OgreNewt::BallAndSocket(body, body, body->getPosition() + Vector3(0, 5, 0), 0);
+    climbJoint = new OgreNewt::BallAndSocket(body, body, bodyPosition + Vector3(0, 5, 0), 0);
     body->setMaterialGroupID(wmaterials->stoji_mat);
 
     is_climbing = type;
@@ -972,7 +971,7 @@ void Player::updateMovement()
     }
     //midair
     else
-        forceDirection *= 3 / (1 + bodyVelocity);
+        forceDirection *= 5;// 3 / (1 + bodyVelocity);
 }
 
 void Player::updatePullup()
@@ -1016,7 +1015,7 @@ void Player::updatePullup()
         climb_pullup += 2 * tslf;
         if (climb_pullup >= 0) climb_pullup = 0;
 
-        Vector3 pos = body->getPosition();
+        Vector3 pos = bodyPosition;
         pos.y = pullupPos - 1.25f;
         body->setPositionOrientation(pos, body->getOrientation());
 
@@ -1035,18 +1034,17 @@ void Player::attachToSlide(OgreNewt::Body* slideBody)
 
 void Player::updateGroundStats()
 {
-    Vector3 pos = body->getPosition();
-
-    OgreNewt::BasicRaycast ray(m_World, (pos - Vector3(0, 1.6, 0)), (pos - Vector3(0, 2.6, 0)), true);
+    OgreNewt::BasicRaycast ray(m_World, (bodyPosition - Vector3(0, 1.6, 0)), (bodyPosition - Vector3(0, 2.6, 0)), true);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
 
     if (info.mBody)
     {
-        if (info.mBody->getMaterialGroupID() == wmaterials->playerIgnore_mat)
+        auto id = info.mBody->getMaterialGroupID();
+        if (id == wmaterials->playerIgnore_mat || id == wmaterials->slide_mat)
         {
             if (info.mBody->getType() == TopSlidePart)
             {
-                attachToSlide(info.mBody);
+                //attachToSlide(info.mBody);
             }
 
             return;
@@ -1066,15 +1064,16 @@ void Player::updateGroundStats()
     }
     else
     {
-        OgreNewt::BasicConvexcast rayc(m_World, col_p, (pos - Vector3(0, 2, 0)), Ogre::Quaternion::IDENTITY, (pos - Vector3(0, 2.5, 0)), 1, 1);
+        OgreNewt::BasicConvexcast rayc(m_World, col_p, (bodyPosition - Vector3(0, 2, 0)), Ogre::Quaternion::IDENTITY, (bodyPosition - Vector3(0, 2.5, 0)), 1, 1);
         OgreNewt::BasicConvexcast::ConvexcastContactInfo infoc = rayc.getInfoAt(0);
-        if (infoc.mBody && infoc.mBody->getMaterialGroupID() != wmaterials->playerIgnore_mat)
+        if (infoc.mBody)
         {
-            if (infoc.mBody->getMaterialGroupID() == wmaterials->playerIgnore_mat)
+            auto id = infoc.mBody->getMaterialGroupID();
+            if (id == wmaterials->playerIgnore_mat || id == wmaterials->slide_mat)
             {
                 if (infoc.mBody->getType() == TopSlidePart)
                 {
-                    attachToSlide(infoc.mBody);
+                    // attachToSlide(infoc.mBody);
                 }
 
                 return;

@@ -725,7 +725,7 @@ private:
         else
             body->setType(ZipLinePart);
 
-        body->setMaterialGroupID(wMaterials->playerIgnore_mat);
+        body->setMaterialGroupID(wMaterials->slide_mat);
 
         bodyUserData* userD = new bodyUserData();
         userD->material = 0;
@@ -785,6 +785,10 @@ private:
             line = new TopSlide(node, node->getName(), animTrack, loop, speed);
 
         (*Global::globalData)["Slide" + node->getName()] = line;
+
+        //node->detachAllObjects();
+        //mSceneMgr->destroyEntity(ent);
+        //mSceneMgr->destroySceneNode(node);
     }
 
     void loadBillboard(const TiXmlElement* element, Ogre::Entity* ent, Ogre::SceneManager* mSceneMgr)

@@ -31,15 +31,24 @@ inline LineProjState getProjectedState(Ogre::Vector3& point, Ogre::Vector3& star
     Vector3 dir = end - start;
     Vector3 pDir = point - start;
     dir.normalise();
+
     auto dp = pDir.dotProduct(dir);
     dir *= dp;
+
+    bool behindS = dp < 0;
+    Vector3 eDir = point - end;
+    bool behindE = eDir.dotProduct(-dir) < 0;
 
     //auto lToP = dir.length();
     //auto lleft = (end - dir).length();
 
     LineProjState state;
     state.projPos = dir + start;
-    state.sqMinDistance = std::min(point.squaredDistance(end), std::min(point.squaredDistance(start), point.squaredDistance(state.projPos)));
+
+    if (behindE || behindS)
+        state.sqMinDistance = std::min(point.squaredDistance(end), point.squaredDistance(start));
+    else
+        state.sqMinDistance = point.squaredDistance(state.projPos);
 
     return state;
 }
