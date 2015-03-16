@@ -175,6 +175,17 @@ void EventsManager::removeInputListener(InputListener* l)
         keyListeners.erase(d);
 }
 
+void EventsManager::listenersKeyReleased(const OIS::KeyEvent &arg)
+{
+	auto state = Global::gameMgr->gameState;
+
+	for (auto l : keyListeners)
+	{
+		if (l->executionState == state || l->executionState == UNDEFINED)
+			l->releasedKey(arg);
+	}
+}
+
 void EventsManager::listenersKeyPressed(const OIS::KeyEvent &arg)
 {
     auto state = Global::gameMgr->gameState;

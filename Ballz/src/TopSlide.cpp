@@ -25,12 +25,49 @@ TopSlide::TopSlide(const std::vector<Ogre::Vector3>& points, const std::string& 
     initSlide(points);
 }
 
+void TopSlide::pressedKey(const OIS::KeyEvent &arg)
+{
+	if (!active)
+		return;
+
+	if (arg.key == OIS::KC_A)
+	{
+		manualRoll = -1;
+	}
+	else
+	if (arg.key == OIS::KC_D)
+	{
+		manualRoll = 1;
+	}
+	else
+		Slide::pressedKey(arg);
+}
+
+void TopSlide::releasedKey(const OIS::KeyEvent &arg)
+{
+	if (arg.key == OIS::KC_A)
+	{
+		manualRoll = 0;
+	}
+	else if (arg.key == OIS::KC_D)
+	{
+		manualRoll = 0;
+	}
+}
+
 bool TopSlide::start()
 {
     auto pos = Global::player->bodyPosition;
     pos.y -= 1.5f;
 
     return Slide::start(pos);
+}
+
+void TopSlide::updateSlidingCamera(float time)
+{
+	base->roll(Degree(time*manualRoll*5));
+
+	Slide::updateSlidingCamera(time);
 }
 
 void TopSlide::updateSlidingSpeed(float time)

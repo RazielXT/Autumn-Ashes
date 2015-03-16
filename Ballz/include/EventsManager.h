@@ -48,6 +48,8 @@ public:
 
     void listenersKeyPressed(const OIS::KeyEvent &arg);
 
+	void listenersKeyReleased(const OIS::KeyEvent &arg);
+
     void listenersMouseMoved(const OIS::MouseEvent &e);
 };
 

@@ -187,6 +187,8 @@ public:
 
     virtual bool keyReleased(const OIS::KeyEvent &arg)
     {
+		Global::mEventsMgr->listenersKeyReleased(arg);
+
         if(gameMgr->gameState==GAME)
             Global::player->releasedKey(arg);
 
