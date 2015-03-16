@@ -45,11 +45,11 @@ void TopSlide::pressedKey(const OIS::KeyEvent &arg)
 
 void TopSlide::releasedKey(const OIS::KeyEvent &arg)
 {
-	if (arg.key == OIS::KC_A)
+	if (arg.key == OIS::KC_A && rolling == -1)
 	{
 		rolling = 0;
 	}
-	else if (arg.key == OIS::KC_D)
+	else if (arg.key == OIS::KC_D  && rolling == 1)
 	{
 		rolling = 0;
 	}
