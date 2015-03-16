@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SlideContactCallback.h"
 #include "Slide.h"
+#include "Player.h"
 
 SlideContactCallback::SlideContactCallback(EventsManager* eventMgr) : OgreNewt::ContactCallback()
 {
@@ -26,7 +27,12 @@ inline void processPlayerTouch(bodyUserData* a0, OgreNewt::Body* body0, EventsMa
     auto lineName = (std::string*) a0->customData;
     auto slide = (Slide*)(*Global::globalData)[*lineName];
 
-    if (slide->start(pos))
+	bool posOk = true;
+
+	if (body0->getType()==ZipLinePart)
+		posOk = Global::player->bodyPosition.y > pos.y;
+
+	if (posOk && slide->start(pos))
     {
         mEventMgr->addCachedTask(slide);
     }

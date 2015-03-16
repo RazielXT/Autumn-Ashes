@@ -178,23 +178,23 @@ void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
 
 bool Slide::placePointOnLine(Vector3& point)
 {
-    auto log = Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log");
+    //auto log = Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log");
 
     auto zipPos = slidePoints[0];
     float minDist = MAX_PLAYER_DISTANCE_SQ;
 
-    log->logMessage("START------TRY TO PLACE POINT ON LINE", Ogre::LML_NORMAL);
+    //log->logMessage("START------TRY TO PLACE POINT ON LINE", Ogre::LML_NORMAL);
 
     for (size_t id = 1; id < slidePoints.size(); id++)
     {
         auto state = MathUtils::getProjectedState(point, slidePoints[id - 1].pos, slidePoints[id].pos);
 
-        log->logMessage(std::to_string(id) + ". state: " + Ogre::StringConverter::toString(state.projPos) + " distance " + Ogre::StringConverter::toString(state.sqMinDistance), Ogre::LML_NORMAL);
-        log->logMessage(std::to_string(id) + ". line: " + Ogre::StringConverter::toString(slidePoints[id - 1].pos) + " to " + Ogre::StringConverter::toString(slidePoints[id].pos), Ogre::LML_NORMAL);
+        //log->logMessage(std::to_string(id) + ". state: " + Ogre::StringConverter::toString(state.projPos) + " distance " + Ogre::StringConverter::toString(state.sqMinDistance), Ogre::LML_NORMAL);
+        //log->logMessage(std::to_string(id) + ". line: " + Ogre::StringConverter::toString(slidePoints[id - 1].pos) + " to " + Ogre::StringConverter::toString(slidePoints[id].pos), Ogre::LML_NORMAL);
 
         if (state.sqMinDistance < minDist)
         {
-            log->logMessage("ACCEPTED");
+            //log->logMessage("ACCEPTED");
 
             auto timePos = slidePoints[id - 1].startOffset;
             timePos += state.projPos.distance(slidePoints[id-1].pos)/avgSpeed;
@@ -205,7 +205,7 @@ bool Slide::placePointOnLine(Vector3& point)
         }
     }
 
-    log->logMessage("END------TRY TO PLACE POINT ON LINE", Ogre::LML_NORMAL);
+    //log->logMessage("END------TRY TO PLACE POINT ON LINE", Ogre::LML_NORMAL);
 
     return (minDist != MAX_PLAYER_DISTANCE_SQ);
 }
@@ -223,8 +223,6 @@ bool Slide::start(Vector3& pos)
     if (active || unavailableTimer>0)
         return false;
 
-    //auto pos = Global::mSceneMgr->getSceneNode("Test")->getPosition();// zipLine[0].pos;//
-
     if (mTrackerState == nullptr)
         mTrackerState = Global::mSceneMgr->createAnimationState(animName);
 
@@ -236,8 +234,7 @@ bool Slide::start(Vector3& pos)
 
         mTrackerState->setEnabled(true);
         mTrackerState->setLoop(loop);
-
-        active = true;
+		active = true;
 
         return true;
     }
@@ -264,6 +261,7 @@ void Slide::attach()
     headArrival.timer = 1.0f;
     headArrival.pos = cam->getDerivedPosition();
     headArrival.dir = cam->getDerivedOrientation();
+	headArrival.pitch = Math::Clamp(Global::player->bodyVelocity/10,-1.0f,1.0f);
 
     headState.pitch = 0;
     headState.yaw = 0;
@@ -318,8 +316,12 @@ void Slide::updateHeadArrival(float time)
         Quaternion q = Quaternion::Slerp(1-w, headArrival.dir, head->_getDerivedOrientation(), true);
         Vector3 p = w*headArrival.pos + (1 - w)*head->_getDerivedPosition();
 
+		auto pitchW = std::min(headArrival.timer, 1 - headArrival.timer);
+		auto mPitch = headArrival.pitch * pitchW * 50;
+		Quaternion pq(Degree(mPitch), Vector3(1, 0, 0));
+
         headArrival.tempNode->setPosition(p);
-        headArrival.tempNode->setOrientation(q);
+        headArrival.tempNode->setOrientation(q*pq);
     }
 
 }
