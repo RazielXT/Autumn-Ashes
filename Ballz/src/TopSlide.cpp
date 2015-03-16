@@ -32,12 +32,12 @@ void TopSlide::pressedKey(const OIS::KeyEvent &arg)
 
 	if (arg.key == OIS::KC_A)
 	{
-		manualRoll = -1;
+		rolling = -1;
 	}
 	else
 	if (arg.key == OIS::KC_D)
 	{
-		manualRoll = 1;
+		rolling = 1;
 	}
 	else
 		Slide::pressedKey(arg);
@@ -47,11 +47,11 @@ void TopSlide::releasedKey(const OIS::KeyEvent &arg)
 {
 	if (arg.key == OIS::KC_A)
 	{
-		manualRoll = 0;
+		rolling = 0;
 	}
 	else if (arg.key == OIS::KC_D)
 	{
-		manualRoll = 0;
+		rolling = 0;
 	}
 }
 
@@ -65,7 +65,12 @@ bool TopSlide::start()
 
 void TopSlide::updateSlidingCamera(float time)
 {
-	base->roll(Degree(time*manualRoll*5));
+	auto dirRoll = tracker->getOrientation().getRoll().valueDegrees();
+	Global::debug = dirRoll;
+
+	manualRoll += time*rolling * 5;
+	Quaternion baseQ(Degree(manualRoll - dirRoll), Vector3(0, 0, 1));
+	base->setOrientation(baseQ);
 
 	Slide::updateSlidingCamera(time);
 }

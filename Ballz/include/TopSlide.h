@@ -31,7 +31,9 @@ protected:
 
 		base->resetOrientation();
 		manualRoll = 0;
+		rolling = 0;
     }
 
 	float manualRoll = 0;
+	float rolling;
 };
