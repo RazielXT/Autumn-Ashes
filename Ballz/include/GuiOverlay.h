@@ -19,7 +19,8 @@ enum UiInfo
 {
     Ui_Pickup,
     Ui_Use,
-    Ui_Climb
+    Ui_Climb,
+    Ui_Target
 };
 
 struct lvlButton

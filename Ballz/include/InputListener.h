@@ -11,7 +11,7 @@ public:
     GameState executionState = GAME;
 
     virtual void pressedKey(const OIS::KeyEvent &arg) {};
-	virtual void releasedKey(const OIS::KeyEvent &arg) {};
+    virtual void releasedKey(const OIS::KeyEvent &arg) {};
     virtual void movedMouse(const OIS::MouseEvent &e) {};
 
     inline void registerInputListening()

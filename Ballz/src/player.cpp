@@ -368,6 +368,9 @@ void Player::attachCameraWithTransition()
 
     mCamera->detachFromParent();
     cameraArrival.tempNode->attachObject(mCamera);
+
+    fallPitch = 1;
+    fallPitchTimer = 0;
 }
 
 void Player::rotateCamera(Real hybX,Real hybY)

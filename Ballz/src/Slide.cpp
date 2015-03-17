@@ -12,8 +12,8 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
 
     if (arg.key == OIS::KC_SPACE)
     {
-        auto jumpSpeed = Global::player->getFacingDirection() * std::max(25.0f, realSpeed);
-        //jumpSpeed.y = std::max(jumpSpeed.y, 5.0f);
+        auto jumpSpeed = Global::player->getFacingDirection() * std::max(15.0f, realSpeed);
+        jumpSpeed.y += 5.0f;//std::max(jumpSpeed.y, 5.0f);
 
         release();
 
@@ -234,7 +234,7 @@ bool Slide::start(Vector3& pos)
 
         mTrackerState->setEnabled(true);
         mTrackerState->setLoop(loop);
-		active = true;
+        active = true;
 
         return true;
     }
@@ -248,8 +248,8 @@ void Slide::updateSlidingSpeed(float time)
     //auto dir = tracker->getOrientation()*Vector3(0, 0, -1);
     //currentSpeed = Math::Clamp(currentSpeed + -dir.y*0.5f*time, 1.0f, 2.5f);
 
-    auto diff = time*-5.0f;
-    currentSpeed = std::max(1.0f, currentSpeed + diff);
+    auto diff = time*1.0f;
+    currentSpeed = std::min(1.0f, currentSpeed + diff);
 }
 
 void Slide::attach()
@@ -261,7 +261,7 @@ void Slide::attach()
     headArrival.timer = 1.0f;
     headArrival.pos = cam->getDerivedPosition();
     headArrival.dir = cam->getDerivedOrientation();
-	headArrival.pitch = Math::Clamp(Global::player->bodyVelocity/10,-1.0f,1.0f);
+    headArrival.pitch = Math::Clamp(Global::player->bodyVelocity/10,-1.0f,1.0f);
 
     headState.pitch = 0;
     headState.yaw = 0;
@@ -300,7 +300,7 @@ void Slide::release()
 
 void Slide::updateHeadArrival(float time)
 {
-    headArrival.timer -= time*2;
+    headArrival.timer -= time*2*currentSpeed;
 
     if (headArrival.timer <= 0)
     {
@@ -316,9 +316,9 @@ void Slide::updateHeadArrival(float time)
         Quaternion q = Quaternion::Slerp(1-w, headArrival.dir, head->_getDerivedOrientation(), true);
         Vector3 p = w*headArrival.pos + (1 - w)*head->_getDerivedPosition();
 
-		auto pitchW = std::min(headArrival.timer, 1 - headArrival.timer);
-		auto mPitch = headArrival.pitch * pitchW * 50;
-		Quaternion pq(Degree(mPitch), Vector3(1, 0, 0));
+        auto pitchW = 1-pow(1-std::min(headArrival.timer, 1 - headArrival.timer),1.5f);
+        auto mPitch = -headArrival.pitch * pitchW * 50;
+        Quaternion pq(Degree(mPitch), Vector3(1, 0, 0));
 
         headArrival.tempNode->setPosition(p);
         headArrival.tempNode->setOrientation(q*pq);
@@ -332,6 +332,33 @@ void Slide::updateSlidingCamera(float time)
         updateHeadArrival(time);
 }
 
+Vector3 Slide::updateTargetSlide()
+{
+    float rayDist = 35;
+    auto pos = head->_getDerivedPosition();
+    auto dir = Global::player->getFacingDirection();
+    auto target = pos + dir*rayDist;
+    auto ray = OgreNewt::BasicRaycast(Global::mWorld, pos, target, false);
+    auto info = ray.getFirstHit();
+
+    if (info.mBody && (info.mBody->getType() == TopSlidePart || info.mBody->getType() == ZipLinePart))
+    {
+        auto a = any_cast<bodyUserData*>(info.mBody->getUserData());
+
+        auto tSlide = (Slide*)a->customData;
+
+        if (tSlide != this)
+        {
+            targetSlide = tSlide;
+            Global::gameMgr->myMenu->showUseGui(Ui_Target);
+            return pos + dir*(info.mDistance*rayDist);
+        }
+    }
+
+    targetSlide = nullptr;
+    return Vector3::ZERO;
+}
+
 void Slide::updateSlidingState(float time)
 {
     auto thisPos = tracker->getPosition();
@@ -342,6 +369,7 @@ void Slide::updateSlidingState(float time)
     mTrackerState->addTime(time*currentSpeed*avgSpeed);
 
     updateSlidingCamera(time);
+    updateTargetSlide();
 
     //past/near end
     if (!loop && mTrackerState->hasEnded())

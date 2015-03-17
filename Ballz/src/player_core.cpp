@@ -315,7 +315,7 @@ void Player::updateHeadArrival()
 {
     if (cameraArrival.timer > 0)
     {
-        cameraArrival.timer -= tslf*2;
+        cameraArrival.timer -= tslf;
 
         if (cameraArrival.timer <= 0)
         {
@@ -688,12 +688,12 @@ void Player::updateUseGui()
         //grabbable
         if (info.mBody->getType() == Grabbable)
         {
-            ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(Ui_Pickup);
+            Global::gameMgr->myMenu->showUseGui(Ui_Pickup);
         }
         //climbable
         else if (info.mBody->getType() == Pullup_old)
         {
-            ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(Ui_Climb);
+            Global::gameMgr->myMenu->showUseGui(Ui_Climb);
         }
         //trigger
         else if (info.mBody->getType() == Trigger)
@@ -705,7 +705,7 @@ void Player::updateUseGui()
                 bodyUserData* a0 = Ogre::any_cast<bodyUserData*>(any);
                 if (a0->enabledTrigger)
                 {
-                    ((GuiOverlay*)Global::globalData->find("Gui")->second)->showUseGui(Ui_Use);
+                    Global::gameMgr->myMenu->showUseGui(Ui_Use);
                 }
             }
         }
@@ -1025,8 +1025,7 @@ void Player::updatePullup()
 void Player::attachToSlide(OgreNewt::Body* slideBody)
 {
     Ogre::Any any = slideBody->getUserData();
-    auto lineName = (std::string*) any_cast<bodyUserData*>(any)->customData;
-    auto slide = (Slide*)(*Global::globalData)[*lineName];
+    auto slide = (Slide*)any_cast<bodyUserData*>(any)->customData;
 
     if (slide->start())
         Global::mEventsMgr->addCachedTask(slide);

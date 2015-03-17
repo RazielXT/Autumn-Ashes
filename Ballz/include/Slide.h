@@ -33,7 +33,7 @@ protected:
 
     struct HeadTransitionState
     {
-		float pitch;
+        float pitch;
         SceneNode* tempNode;
         Vector3 pos;
         Quaternion dir;
@@ -55,6 +55,8 @@ protected:
 
     void updateSlidingState(float time);
     void updateHeadArrival(float time);
+    Vector3 updateTargetSlide();
+
     virtual void updateSlidingSpeed(float time);
 
     virtual void updateSlidingCamera(float time);
@@ -71,6 +73,7 @@ protected:
     float unavailableTimer = 0;
 
     std::string animName;
+    Slide* targetSlide = nullptr;
 
     AnimationState * mTrackerState = 0;
     SceneNode* tracker;

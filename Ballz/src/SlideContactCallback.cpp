@@ -24,15 +24,14 @@ inline void processPlayerTouch(bodyUserData* a0, OgreNewt::Body* body0, EventsMa
     Vector3 pos, nor;
     c.getPositionAndNormal(pos, nor);
 
-    auto lineName = (std::string*) a0->customData;
-    auto slide = (Slide*)(*Global::globalData)[*lineName];
+    auto slide = (Slide*)a0->customData;
 
-	bool posOk = true;
+    bool posOk = true;
 
-	if (body0->getType()==ZipLinePart)
-		posOk = Global::player->bodyPosition.y > pos.y;
+    if (body0->getType()==ZipLinePart)
+        posOk = Global::player->bodyPosition.y > pos.y;
 
-	if (posOk && slide->start(pos))
+    if (posOk && slide->start(pos))
     {
         mEventMgr->addCachedTask(slide);
     }

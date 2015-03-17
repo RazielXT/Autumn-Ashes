@@ -27,32 +27,31 @@ TopSlide::TopSlide(const std::vector<Ogre::Vector3>& points, const std::string& 
 
 void TopSlide::pressedKey(const OIS::KeyEvent &arg)
 {
-	if (!active)
-		return;
+    if (!active)
+        return;
 
-	if (arg.key == OIS::KC_A)
-	{
-		rolling = -1;
-	}
-	else
-	if (arg.key == OIS::KC_D)
-	{
-		rolling = 1;
-	}
-	else
-		Slide::pressedKey(arg);
+    if (arg.key == OIS::KC_A)
+    {
+        rolling = -1;
+    }
+    else if (arg.key == OIS::KC_D)
+    {
+        rolling = 1;
+    }
+    else
+        Slide::pressedKey(arg);
 }
 
 void TopSlide::releasedKey(const OIS::KeyEvent &arg)
 {
-	if (arg.key == OIS::KC_A && rolling == -1)
-	{
-		rolling = 0;
-	}
-	else if (arg.key == OIS::KC_D  && rolling == 1)
-	{
-		rolling = 0;
-	}
+    if (arg.key == OIS::KC_A && rolling == -1)
+    {
+        rolling = 0;
+    }
+    else if (arg.key == OIS::KC_D  && rolling == 1)
+    {
+        rolling = 0;
+    }
 }
 
 bool TopSlide::start()
@@ -65,14 +64,13 @@ bool TopSlide::start()
 
 void TopSlide::updateSlidingCamera(float time)
 {
-	auto dirRoll = tracker->getOrientation().getRoll().valueDegrees();
-	Global::debug = dirRoll;
+    auto dirRoll = tracker->getOrientation().getRoll().valueDegrees();
 
-	manualRoll += time*rolling * 5;
-	Quaternion baseQ(Degree(manualRoll - dirRoll), Vector3(0, 0, 1));
-	base->setOrientation(baseQ);
+    manualRoll += time*rolling * 5;
+    Quaternion baseQ(Degree(manualRoll - dirRoll), Vector3(0, 0, 1));
+    //base->setOrientation(baseQ);
 
-	Slide::updateSlidingCamera(time);
+    Slide::updateSlidingCamera(time);
 }
 
 void TopSlide::updateSlidingSpeed(float time)

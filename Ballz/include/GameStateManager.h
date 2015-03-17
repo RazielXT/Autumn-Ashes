@@ -30,6 +30,7 @@ public:
     void escapePressed();
 
     GameState gameState;
+    GuiOverlay* myMenu;
 
 private:
 
@@ -40,6 +41,6 @@ private:
     float switchStateTimer;
 
     int lastLVL;
-    GuiOverlay* myMenu;
+
     WorldMaterials* wMaterials;
 };

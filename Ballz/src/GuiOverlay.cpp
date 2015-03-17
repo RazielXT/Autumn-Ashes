@@ -1000,6 +1000,9 @@ void GuiOverlay::showUseGui(UiInfo id)
         case Ui_Climb:
             useTextCaption->text("climb");
             break;
+        case Ui_Target:
+            useTextCaption->text("(   )");
+            break;
         default:
             useTextCaption->text("??");
         }

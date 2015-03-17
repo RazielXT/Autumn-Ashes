@@ -9,27 +9,27 @@ class PagingManager;
 class PostProcessMgr;
 class AudioLibrary;
 
-struct Global
+namespace Global
 {
-    static Ogre::SceneManager* mSceneMgr;
-    static OgreNewt::World* mWorld;
-    static irrklang::ISoundEngine* soundEngine;
-    static Ogre::RenderWindow* mWindow;
+extern Ogre::SceneManager* mSceneMgr;
+extern OgreNewt::World* mWorld;
+extern irrklang::ISoundEngine* soundEngine;
+extern Ogre::RenderWindow* mWindow;
 
-    static EventsManager* mEventsMgr;
-    static GameStateManager* gameMgr;
-    static PagingManager* mPagingMgr;
-    static PostProcessMgr* mPPMgr;
+extern EventsManager* mEventsMgr;
+extern GameStateManager* gameMgr;
+extern PagingManager* mPagingMgr;
+extern PostProcessMgr* mPPMgr;
 
-    static Player* player;
-    static float timestep;
-    static AudioLibrary* audioLib;
-    static float fallSoundOffsetH;
-    static float fallSoundOffsetL;
+extern Player* player;
+extern float timestep;
+extern AudioLibrary* audioLib;
+extern float fallSoundOffsetH;
+extern float fallSoundOffsetL;
 
-    static std::map<std::string,void*>* globalData;
+extern std::map<std::string, void*>* globalData;
 
-    static float debug;
+extern float debug;
 };
 
 #endif GLOBALVALUES

@@ -12,16 +12,16 @@ public:
 
     TopSlide(Ogre::SceneNode* node, const std::string& zipName, const std::string& zipAnimName, bool looped, float speed);
 
-	virtual void pressedKey(const OIS::KeyEvent &arg);
+    virtual void pressedKey(const OIS::KeyEvent &arg);
 
-	virtual void releasedKey(const OIS::KeyEvent &arg);
+    virtual void releasedKey(const OIS::KeyEvent &arg);
 
     virtual bool start();
 
 protected:
 
-	virtual void updateSlidingCamera(float time);
-	
+    virtual void updateSlidingCamera(float time);
+
     virtual void updateSlidingSpeed(float time);
 
     virtual void resetHead()
@@ -29,11 +29,11 @@ protected:
         head->setPosition(0, 2.5f, 0);
         head->resetOrientation();
 
-		base->resetOrientation();
-		manualRoll = 0;
-		rolling = 0;
+        base->resetOrientation();
+        manualRoll = 0;
+        rolling = 0;
     }
 
-	float manualRoll = 0;
-	float rolling;
+    float manualRoll = 0;
+    float rolling;
 };

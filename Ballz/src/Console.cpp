@@ -178,7 +178,7 @@ bool OgreConsole::frameStarted(const Ogre::FrameEvent &evt)
 
         int lcount=0;
         start=lines.begin();
-        for(int c=0; c<start_line; c++)
+        for(size_t c=0; c<start_line; c++)
             start++;
         end=start;
         for(int c=0; c<CONSOLE_LINE_COUNT; c++)

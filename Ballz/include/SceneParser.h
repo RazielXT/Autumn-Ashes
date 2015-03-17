@@ -60,10 +60,30 @@ private:
     std::vector<EventTaskAndID> loadedTasks;
     std::vector<LoadedJointInfo> loadedJoints;
     std::map<Ogre::String, OgreNewt::Body*> loadedBodies;
+    std::map<Ogre::String, Slide*> loadedSlides;
+    std::map<Ogre::String, std::vector<bodyUserData*>> loadedSlideParts;
     std::map<int, Ogre::BillboardSet*> loadedBillboardSets;
     std::map<Ogre::String, std::vector<CompoundBodyInfo>> compoundBodiesParts;
     std::vector<LoadedInstanceForests> loadedForests;
 
+    void connectSlideParts()
+    {
+        for (auto it : loadedSlideParts)
+        {
+            auto slideName = it.first;
+            auto slideParts = it.second;
+
+            Slide* s = loadedSlides[slideName];
+
+            for (auto p : slideParts)
+            {
+                p->customData = s;
+            }
+        }
+
+        loadedSlides.clear();
+        loadedSlideParts.clear();
+    }
 
     String getElementValue(const TiXmlElement* rootElement, String elementName, String defaultValue = "")
     {
@@ -731,7 +751,11 @@ private:
         userD->material = 0;
 
         String slideTrackName = getElementValue(element, "Track");
-        userD->customData = new std::string("Slide" + slideTrackName);
+
+        if (loadedSlideParts.find(slideTrackName) == loadedSlideParts.end())
+            loadedSlideParts[slideTrackName] = std::vector<bodyUserData*>();
+
+        loadedSlideParts[slideTrackName].push_back(userD);
 
         body->setUserData(Ogre::Any(userD));
 
@@ -784,10 +808,10 @@ private:
         else
             line = new TopSlide(node, node->getName(), animTrack, loop, speed);
 
-        (*Global::globalData)["Slide" + node->getName()] = line;
+        loadedSlides[node->getName()] = line;
 
-        //node->detachAllObjects();
-        //mSceneMgr->destroyEntity(ent);
+        node->detachAllObjects();
+        mSceneMgr->destroyEntity(ent);
         //mSceneMgr->destroySceneNode(node);
     }
 
@@ -2032,6 +2056,8 @@ public:
         loadedBodies.clear();
         loadedBillboardSets.clear();
         loadedForests.clear();
+        loadedSlides.clear();
+        loadedSlideParts.clear();
 
         (*Global::globalData)["loadedBodies"] = &loadedBodies;
 
@@ -2066,6 +2092,8 @@ public:
         summarizeLevelEvents();
         compoundBodiesParts.clear();
         loadedForests.clear();
+
+        connectSlideParts();
 
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("LOADING COMPLETED :: filename \"" + filename + "\"", LML_NORMAL);
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("-----------------------------------------------------------", LML_NORMAL);
