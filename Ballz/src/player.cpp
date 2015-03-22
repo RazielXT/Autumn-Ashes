@@ -59,6 +59,8 @@ Player::Player(WorldMaterials* wMaterials)
     mCamera->setPosition(0,0,0);
     mCamera->lookAt(Vector3(0,0,-1));
 
+    cameraArrival.tempNode = nullptr;
+
     initBody();
 
     /*  Ogre::SceneNode* panode = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0,0,0));

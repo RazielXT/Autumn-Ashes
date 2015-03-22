@@ -5,19 +5,34 @@
 
 using namespace Ogre;
 
+Slide::~Slide()
+{
+    if (targetResult.valid())
+        targetResult.get();
+}
+
 void Slide::pressedKey(const OIS::KeyEvent &arg)
 {
     if (!active)
         return;
 
-    if (arg.key == OIS::KC_SPACE)
+    if (arg.key == OIS::KC_SPACE && unavailableTimer<0)
     {
-        auto jumpSpeed = Global::player->getFacingDirection() * std::max(15.0f, realSpeed);
-        jumpSpeed.y += 5.0f;//std::max(jumpSpeed.y, 5.0f);
+        if (targetInfo.targetSlide)
+        {
+            if (targetInfo.targetSlide->start(targetInfo.targetSlidePos))
+                release(false);
+        }
+        else
+        {
+            auto jumpSpeed = Global::player->getFacingDirection() * std::max(15.0f, realSpeed);
+            jumpSpeed.y += 5.0f;//std::max(jumpSpeed.y, 5.0f);
 
-        release();
+            release();
 
-        Global::player->body->setVelocity(jumpSpeed);
+            Global::player->body->setVelocity(jumpSpeed);
+        }
+
     }
 
     if (arg.key == OIS::KC_C)
@@ -47,6 +62,17 @@ void Slide::movedMouse(const OIS::MouseEvent &e)
 
 void Slide::initSlide(const std::string& zipAnimName)
 {
+    if (conv_col==nullptr)
+    {
+        Entity* ent;
+        if (Global::mSceneMgr->hasEntity("targetSphere"))
+            ent = Global::mSceneMgr->getEntity("targetSphere");
+        else
+            ent = Global::mSceneMgr->createEntity("targetSphere", "sphere_r6.mesh");
+
+        conv_col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::mWorld, ent, 10));
+    }
+
     Animation* anim = Global::mSceneMgr->getAnimation(zipAnimName);
     auto track = anim->getNodeTrack(0);
     float realLength = 0;
@@ -103,6 +129,18 @@ void Slide::initSlide(const std::string& zipAnimName)
 
 void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
 {
+    if (conv_col == nullptr)
+    {
+        Entity* ent;
+        if (Global::mSceneMgr->hasEntity("targetSphere"))
+            ent = Global::mSceneMgr->getEntity("targetSphere");
+        else
+            ent = Global::mSceneMgr->createEntity("targetSphere", "sphere_r6.mesh");
+
+        conv_col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::mWorld, ent, 10));
+    }
+
+
     slidePoints.clear();
     slidePoints.resize(points.size());
 
@@ -236,6 +274,8 @@ bool Slide::start(Vector3& pos)
         mTrackerState->setLoop(loop);
         active = true;
 
+        Global::mEventsMgr->addCachedTask(this);
+
         return true;
     }
 
@@ -283,19 +323,24 @@ void Slide::attach()
     unavailableTimer = 1;
 }
 
-void Slide::release()
+void Slide::release(bool returnControl)
 {
-    Global::player->attachCameraWithTransition();
-    Global::player->body->setPositionOrientation(tracker->getPosition(), Ogre::Quaternion::IDENTITY);
-    Global::player->body->unFreeze();
-    Global::player->body->setVelocity(tracker->getOrientation()*Vector3(0, 0, -1 * realSpeed));
+    if (returnControl)
+    {
+        Global::player->attachCameraWithTransition();
+        Global::player->body->setPositionOrientation(tracker->getPosition(), Ogre::Quaternion::IDENTITY);
+        Global::player->body->unFreeze();
+        Global::player->body->setVelocity(tracker->getOrientation()*Vector3(0, 0, -1 * realSpeed));
+
+        enablePlayerControl = true;
+    }
 
     unregisterInputListening();
     mTrackerState->setEnabled(false);
 
-    unavailableTimer = 0.5f;
+    unavailableTimer = 1.5f;
     active = false;
-    enablePlayerControl = true;
+
 }
 
 void Slide::updateHeadArrival(float time)
@@ -332,31 +377,70 @@ void Slide::updateSlidingCamera(float time)
         updateHeadArrival(time);
 }
 
-Vector3 Slide::updateTargetSlide()
+//OgreNewt::ConvexCollisionPtr Slide::conv_col;
+
+bool Slide::getTargetSlideFunc(float time)
 {
     float rayDist = 35;
-    auto pos = head->_getDerivedPosition();
+
     auto dir = Global::player->getFacingDirection();
+
+    auto pos = head->_getDerivedPosition() + dir * 2;
     auto target = pos + dir*rayDist;
-    auto ray = OgreNewt::BasicRaycast(Global::mWorld, pos, target, false);
-    auto info = ray.getFirstHit();
 
-    if (info.mBody && (info.mBody->getType() == TopSlidePart || info.mBody->getType() == ZipLinePart))
+    OgreNewt::BasicConvexcast rayc(Global::mWorld, conv_col, pos, Ogre::Quaternion::IDENTITY, target, 10, 1);
+
+    Global::debug = rayc.getContactsCount();
+
+    for (int i = 0; i < rayc.getContactsCount(); i++)
     {
-        auto a = any_cast<bodyUserData*>(info.mBody->getUserData());
+        OgreNewt::BasicConvexcast::ConvexcastContactInfo info = rayc.getInfoAt(i);
+        //auto id = info.mBody->getMaterialGroupID();
 
-        auto tSlide = (Slide*)a->customData;
-
-        if (tSlide != this)
+        if (info.mBody && (info.mBody->getType() == TopSlidePart || info.mBody->getType() == ZipLinePart))
         {
-            targetSlide = tSlide;
-            Global::gameMgr->myMenu->showUseGui(Ui_Target);
-            return pos + dir*(info.mDistance*rayDist);
+            auto a = any_cast<bodyUserData*>(info.mBody->getUserData());
+
+            auto tSlide = (Slide*)a->customData;
+
+            if (tSlide != this)
+            {
+                targetInfo.targetSlide = tSlide;
+                targetInfo.targetSlidePos = info.mContactPoint;
+                targetInfo.timer = 0.25f;
+
+                return true;
+            }
         }
     }
 
-    targetSlide = nullptr;
-    return Vector3::ZERO;
+    return false;
+}
+
+void Slide::updateTargetSlide(float time)
+{
+    auto found = targetResult.valid() ? targetResult.get() : false;
+
+    auto ent = Global::mSceneMgr->getEntity("Test");
+
+    if (found)
+    {
+        Global::gameMgr->myMenu->showUseGui(Ui_Target);
+        ent->setVisible(true);
+        ent->getParentSceneNode()->setPosition(targetInfo.targetSlidePos);
+    }
+    else
+    {
+        targetInfo.timer -= time;
+
+        if (targetInfo.timer < 0)
+        {
+            ent->setVisible(false);
+            targetInfo.targetSlide = nullptr;
+        }
+    }
+
+    targetResult = std::async(std::launch::async, &Slide::getTargetSlideFunc, this, time);
 }
 
 void Slide::updateSlidingState(float time)
@@ -369,7 +453,7 @@ void Slide::updateSlidingState(float time)
     mTrackerState->addTime(time*currentSpeed*avgSpeed);
 
     updateSlidingCamera(time);
-    updateTargetSlide();
+    updateTargetSlide(time);
 
     //past/near end
     if (!loop && mTrackerState->hasEnded())

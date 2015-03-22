@@ -11,7 +11,7 @@ PostProcessMgr::PostProcessMgr(Ogre::Camera* cam)
     basicPP = true;
     scaryPP = false;
     advancedPP = false;
-    ssaoEnabled = true;
+    ssaoEnabled = false;
     dirty = false;
 
     ivp=Ogre::Matrix4::IDENTITY;

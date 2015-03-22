@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "InputListener.h"
+#include <future>
 
 using namespace Ogre;
 
@@ -9,7 +10,7 @@ class Slide : public EventTask, public InputListener
 
 public:
 
-    virtual ~Slide() {}
+    virtual ~Slide();
 
     virtual bool start();
     virtual bool start(Vector3& point);
@@ -29,6 +30,13 @@ protected:
         Vector3 pos;
         Vector3 dir;
         float startOffset;
+    };
+
+    struct TargetSlideInfo
+    {
+        Slide* targetSlide = nullptr;
+        Vector3 targetSlidePos;
+        float timer;
     };
 
     struct HeadTransitionState
@@ -55,14 +63,16 @@ protected:
 
     void updateSlidingState(float time);
     void updateHeadArrival(float time);
-    Vector3 updateTargetSlide();
+    void updateTargetSlide(float time);
+
+
 
     virtual void updateSlidingSpeed(float time);
 
     virtual void updateSlidingCamera(float time);
 
     void attach();
-    void release();
+    void release(bool returnControl = true);
 
     float currentSpeed;
     float avgSpeed = 5;
@@ -73,7 +83,11 @@ protected:
     float unavailableTimer = 0;
 
     std::string animName;
-    Slide* targetSlide = nullptr;
+
+    std::future<bool> targetResult;
+    bool getTargetSlideFunc(float time);
+    TargetSlideInfo targetInfo;
+    OgreNewt::ConvexCollisionPtr conv_col;
 
     AnimationState * mTrackerState = 0;
     SceneNode* tracker;

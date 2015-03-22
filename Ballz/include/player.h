@@ -142,10 +142,10 @@ private:
 
     struct
     {
-        Ogre::SceneNode* tempNode;
+        Ogre::SceneNode* tempNode = nullptr;
         Ogre::Vector3 pos;
         Ogre::Quaternion dir;
-        float timer;
+        float timer = 0;
     } cameraArrival;
 
     Shaker* shaker;

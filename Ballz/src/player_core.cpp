@@ -313,7 +313,7 @@ void Player::updateHead(Real time)
 
 void Player::updateHeadArrival()
 {
-    if (cameraArrival.timer > 0)
+    if (cameraArrival.tempNode)
     {
         cameraArrival.timer -= tslf;
 
@@ -322,6 +322,7 @@ void Player::updateHeadArrival()
             mCamera->detachFromParent();
             camnode->attachObject(mCamera);
             mSceneMgr->destroySceneNode(cameraArrival.tempNode);
+            cameraArrival.tempNode = nullptr;
         }
         else
         {
@@ -1027,8 +1028,7 @@ void Player::attachToSlide(OgreNewt::Body* slideBody)
     Ogre::Any any = slideBody->getUserData();
     auto slide = (Slide*)any_cast<bodyUserData*>(any)->customData;
 
-    if (slide->start())
-        Global::mEventsMgr->addCachedTask(slide);
+    slide->start();
 }
 
 void Player::updateGroundStats()

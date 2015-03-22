@@ -33,7 +33,6 @@ inline void processPlayerTouch(bodyUserData* a0, OgreNewt::Body* body0, EventsMa
 
     if (posOk && slide->start(pos))
     {
-        mEventMgr->addCachedTask(slide);
     }
     else
     {
