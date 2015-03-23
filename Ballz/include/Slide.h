@@ -5,6 +5,8 @@
 
 using namespace Ogre;
 
+struct TargetSlideInfo;
+
 class Slide : public EventTask, public InputListener
 {
 
@@ -32,13 +34,6 @@ protected:
         float startOffset;
     };
 
-    struct TargetSlideInfo
-    {
-        Slide* targetSlide = nullptr;
-        Vector3 targetSlidePos;
-        float timer;
-    };
-
     struct HeadTransitionState
     {
         float pitch;
@@ -63,9 +58,9 @@ protected:
 
     void updateSlidingState(float time);
     void updateHeadArrival(float time);
-    void updateTargetSlide(float time);
 
-
+	SlidesAutoTargetAsync* slidesAutoTarget;
+	inline void updateTargetSlide(float time);
 
     virtual void updateSlidingSpeed(float time);
 
@@ -83,11 +78,6 @@ protected:
     float unavailableTimer = 0;
 
     std::string animName;
-
-    std::future<bool> targetResult;
-    bool getTargetSlideFunc(float time);
-    TargetSlideInfo targetInfo;
-    OgreNewt::ConvexCollisionPtr conv_col;
 
     AnimationState * mTrackerState = 0;
     SceneNode* tracker;

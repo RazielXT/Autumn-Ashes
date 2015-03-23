@@ -5,6 +5,7 @@
 #include <irrKlang.h>
 #include "EventTask.h"
 #include "EventsManager.h"
+#include "SlidesAutoTarget.h"
 
 class Shaker
 {
@@ -100,6 +101,8 @@ public:
 
     Ogre::Vector3 bodyPosition;
     float bodyVelocity;
+
+	SlidesAutoTargetAsync* slidesAutoTarget;
 
 protected:
 

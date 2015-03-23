@@ -61,6 +61,8 @@ Player::Player(WorldMaterials* wMaterials)
 
     cameraArrival.tempNode = nullptr;
 
+	slidesAutoTarget = new SlidesAutoTargetAsync();
+
     initBody();
 
     /*  Ogre::SceneNode* panode = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0,0,0));
@@ -441,6 +443,9 @@ void Player::update(Real time)
     updateStats();
 
     if(!alive) return;
+
+	if (inControl)
+		slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf);
 
     forceDirection=Vector3::ZERO;
 
