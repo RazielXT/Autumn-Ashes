@@ -17,10 +17,10 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
 
     if (arg.key == OIS::KC_SPACE && unavailableTimer<0)
     {
-		
-		if (slidesAutoTarget->targetInfo.targetSlide)
+
+        if (slidesAutoTarget->targetInfo.targetSlide)
         {
-			if (slidesAutoTarget->targetInfo.targetSlide->start(slidesAutoTarget->targetInfo.targetSlidePos))
+            if (slidesAutoTarget->targetInfo.targetSlide->start(slidesAutoTarget->targetInfo.targetSlidePos))
                 release(false);
         }
         else
@@ -253,7 +253,7 @@ bool Slide::start(Vector3& pos)
 
         Global::mEventsMgr->addCachedTask(this);
 
-		slidesAutoTarget = Global::player->slidesAutoTarget;
+        slidesAutoTarget = Global::player->slidesAutoTarget;
 
         return true;
     }
@@ -358,7 +358,7 @@ void Slide::updateSlidingCamera(float time)
 
 void Slide::updateTargetSlide(float time)
 {
-	slidesAutoTarget->updateAutoTarget(head->_getDerivedPosition(), Global::player->getFacingDirection(), time, this);
+    slidesAutoTarget->updateAutoTarget(head->_getDerivedPosition(), Global::player->getFacingDirection(), time, this);
 }
 
 void Slide::updateSlidingState(float time)
@@ -371,8 +371,8 @@ void Slide::updateSlidingState(float time)
     mTrackerState->addTime(time*currentSpeed*avgSpeed);
 
     updateSlidingCamera(time);
-    
-	updateTargetSlide(time);
+
+    updateTargetSlide(time);
 
     //past/near end
     if (!loop && mTrackerState->hasEnded())

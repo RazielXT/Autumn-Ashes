@@ -102,7 +102,7 @@ public:
     Ogre::Vector3 bodyPosition;
     float bodyVelocity;
 
-	SlidesAutoTargetAsync* slidesAutoTarget;
+    SlidesAutoTargetAsync* slidesAutoTarget;
 
 protected:
 

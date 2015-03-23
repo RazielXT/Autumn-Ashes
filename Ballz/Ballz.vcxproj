@@ -148,6 +148,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\Player_core.cpp" />
     <ClCompile Include="src\PostProcessMgr.cpp" />
     <ClCompile Include="src\SlideContactCallback.cpp" />
+    <ClCompile Include="src\SlidesAutoTarget.cpp" />
     <ClCompile Include="src\Tasks.cpp" />
     <ClCompile Include="src\TopSlide.cpp" />
     <ClCompile Include="src\TransformationTaskTemplate.cpp" />
@@ -213,6 +214,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\CommonTasks.h" />
     <ClInclude Include="include\ReflectionTask.h" />
     <ClInclude Include="include\SlideContactCallback.h" />
+    <ClInclude Include="include\SlidesAutoTarget.h" />
     <ClInclude Include="include\TopSlide.h" />
     <ClInclude Include="include\TransformationTaskTemplate.h" />
     <ClInclude Include="include\WaterArea.h" />

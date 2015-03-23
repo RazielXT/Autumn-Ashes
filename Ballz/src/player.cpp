@@ -61,7 +61,7 @@ Player::Player(WorldMaterials* wMaterials)
 
     cameraArrival.tempNode = nullptr;
 
-	slidesAutoTarget = new SlidesAutoTargetAsync();
+    slidesAutoTarget = new SlidesAutoTargetAsync();
 
     initBody();
 
@@ -73,6 +73,7 @@ Player::Player(WorldMaterials* wMaterials)
 
 Player::~Player ()
 {
+    delete slidesAutoTarget;
     delete shaker;
 }
 
@@ -444,8 +445,8 @@ void Player::update(Real time)
 
     if(!alive) return;
 
-	if (inControl)
-		slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf);
+    if (inControl)
+        slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf);
 
     forceDirection=Vector3::ZERO;
 
