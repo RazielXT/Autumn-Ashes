@@ -810,7 +810,7 @@ private:
 
         loadedSlides[node->getName()] = line;
 
-		Global::player->slidesAutoTarget->loadedSlides.push_back(line);
+        Global::player->slidesAutoTarget->loadedSlides.push_back(line);
 
         node->detachAllObjects();
         mSceneMgr->destroyEntity(ent);

@@ -43,10 +43,10 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
 
 Vector3 Slide::getTrackPosition(float timeOffset)
 {
-	Ogre::TransformKeyFrame key(0, 0);
-	track->getInterpolatedKeyFrame(timeOffset, &key);
+    Ogre::TransformKeyFrame key(0, 0);
+    track->getInterpolatedKeyFrame(timeOffset, &key);
 
-	return key.getTranslate();
+    return key.getTranslate();
 }
 
 void Slide::movedMouse(const OIS::MouseEvent &e)
@@ -71,36 +71,36 @@ void Slide::movedMouse(const OIS::MouseEvent &e)
 void Slide::initSlide(const std::string& zipAnimName)
 {
     Animation* anim = Global::mSceneMgr->getAnimation(zipAnimName);
-    auto track = anim->getNodeTrack(0);
+    auto o_track = anim->getNodeTrack(0);
     float realLength = 0;
 
-    for (size_t i = 1; i < track->getNumKeyFrames(); i++)
+    for (size_t i = 1; i < o_track->getNumKeyFrames(); i++)
     {
-        auto pKeyFrame = track->getNodeKeyFrame(i-1);
-        auto keyFrame = track->getNodeKeyFrame(i);
+        auto pKeyFrame = o_track->getNodeKeyFrame(i - 1);
+        auto keyFrame = o_track->getNodeKeyFrame(i);
         realLength += pKeyFrame->getTranslate().distance(keyFrame->getTranslate());
     }
 
     auto mod = realLength / anim->getLength();
 
     slidePoints.clear();
-    slidePoints.resize(track->getNumKeyFrames());
+    slidePoints.resize(o_track->getNumKeyFrames());
 
     animName = zipAnimName + "new";
     Animation* newAnim = Global::mSceneMgr->createAnimation(animName, realLength);
     newAnim->setInterpolationMode(Animation::IM_SPLINE);
 
-	track = newAnim->createNodeTrack(0, tracker);
-	track->setUseShortestRotationPath(true);
+    track = newAnim->createNodeTrack(0, tracker);
+    track->setUseShortestRotationPath(true);
 
     Quaternion previous;
 
-    for (size_t i = 0; i < track->getNumKeyFrames(); i++)
+    for (size_t i = 0; i < o_track->getNumKeyFrames(); i++)
     {
         SlidePoint& point = slidePoints[i];
-        auto keyFrame = track->getNodeKeyFrame(i);
+        auto keyFrame = o_track->getNodeKeyFrame(i);
 
-		Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(keyFrame->getTime()*mod);
+        Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(keyFrame->getTime()*mod);
         kf->setTranslate(keyFrame->getTranslate());
 
         point.pos = kf->getTranslate();
@@ -129,21 +129,21 @@ void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
     slidePoints.clear();
     slidePoints.resize(points.size());
 
-	std::vector<Vector3> pointsDir;
+    std::vector<Vector3> pointsDir;
 
     for (size_t i = 0; i < points.size(); i++)
     {
         SlidePoint& point = slidePoints[i];
         point.pos = points[i];
 
-		Vector3 dir;
+        Vector3 dir;
 
         //first 2
         if (i == 0 || i == 1)
-			dir = (points[1] - points[0]);
+            dir = (points[1] - points[0]);
         //last 2
         else if (i >= points.size() - 2)
-			dir = (points[points.size() - 1] - points[points.size() - 2]);
+            dir = (points[points.size() - 1] - points[points.size() - 2]);
         //else inside
         else
         {
@@ -152,12 +152,12 @@ void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
             auto dirF = (points[i + 1] - points[i]);
             dirF.normalise();
 
-			dir = (dirB + dirF);
+            dir = (dirB + dirF);
         }
 
-		dir.normalise();
+        dir.normalise();
 
-		pointsDir.push_back(dir);
+        pointsDir.push_back(dir);
     }
 
     slidePoints[0].startOffset=0;
@@ -183,7 +183,7 @@ void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
         Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(slidePoints[i].startOffset);
         kf->setTranslate(points[i]);
 
-		auto& dir = pointsDir[i];
+        auto& dir = pointsDir[i];
         auto q = Vector3(0, 0, -1).getRotationTo(Vector3(dir.x, 0, dir.z));
         auto q2 = Vector3(0, 0, -1).getRotationTo(Vector3(0, dir.y, -1));
 

@@ -21,19 +21,19 @@ public:
     virtual void pressedKey(const OIS::KeyEvent &arg);
     virtual void movedMouse(const OIS::MouseEvent &e);
 
-	Vector3 getTrackPosition(float timeOffset);
+    Vector3 getTrackPosition(float timeOffset);
 
-	struct SlidePoint
-	{
-		Vector3 pos;
-		float startOffset;
-	};
+    struct SlidePoint
+    {
+        Vector3 pos;
+        float startOffset;
+    };
 
-	std::vector<SlidePoint> slidePoints;
+    std::vector<SlidePoint> slidePoints;
 
 protected:
 
-	NodeAnimationTrack* track;
+    NodeAnimationTrack* track;
 
     Slide(const std::string& zipName, bool looped, float speed) : animName(zipName), loop(looped), avgSpeed(speed*5) {};
 

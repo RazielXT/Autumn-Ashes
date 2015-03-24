@@ -8,7 +8,7 @@
 struct TargetSlideInfo
 {
     Slide* targetSlide = nullptr;
-	float targetSlidePosOffset;
+    float targetSlidePosOffset;
     Ogre::Vector3 targetSlidePos;
 };
 
@@ -23,7 +23,7 @@ public:
 
     TargetSlideInfo targetInfo;
 
-	std::vector<Slide*> loadedSlides;
+    std::vector<Slide*> loadedSlides;
 
 private:
 
