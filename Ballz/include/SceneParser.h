@@ -56,6 +56,13 @@ private:
         Forests::PagedGeometry * g;
     };
 
+    struct LoadedFilteredGrassArea
+    {
+        Ogre::String targetBody;
+        TerrainHeightQueryData* data;
+    };
+
+    std::vector<LoadedFilteredGrassArea> loadedGrassAreas;
     std::vector<TriggerAndIDs> loadedTriggers;
     std::vector<EventTaskAndID> loadedTasks;
     std::vector<LoadedJointInfo> loadedJoints;
@@ -568,7 +575,6 @@ private:
         std::string  densityMaps = element->GetText()==NULL ? "" : element->GetText();
         element = element->NextSiblingElement();
         std::string  colorMaps = element->GetText() == NULL ? "" : element->GetText();
-        element = element->NextSiblingElement();
 
         bool usesDensityMap = (!densityMaps.empty());
         bool usesColorMap = (!colorMaps.empty());
@@ -583,7 +589,20 @@ private:
         offsets->world = Global::mWorld;
 
         Forests::GrassLoader *grassLoader = new Forests::GrassLoader(grass);
-        grassLoader->setHeightFunction(&HeightFunction::getTerrainHeight, offsets);
+
+        element = element->NextSiblingElement("BodyFilter");
+        if (element && element->GetText())
+        {
+            LoadedFilteredGrassArea g;
+            g.data = offsets;
+            g.targetBody = element->GetText();
+
+            loadedGrassAreas.push_back(g);
+            grassLoader->setHeightFunction(&HeightFunction::getTerrainHeightFiltered, offsets);
+        }
+        else
+            grassLoader->setHeightFunction(&HeightFunction::getTerrainHeight, offsets);
+
         grass->setPageLoader(grassLoader);
         char delim = ';';
 
@@ -1998,6 +2017,14 @@ private:
 
         loadedTasks.clear();
         loadedTriggers.clear();
+
+        for (auto g : loadedGrassAreas)
+        {
+            auto b = loadedBodies[g.targetBody];
+            g.data->bodyTarget = b;
+        }
+
+        loadedGrassAreas.clear();
     }
 
     bool isCompoundBody(const TiXmlElement* nodeElement)

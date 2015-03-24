@@ -62,10 +62,13 @@ bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, Slide* 
     pos = pos + dir * 4;
     auto target = pos + dir*rayDist;
 
-    float closest = 2;
+    float closest = rayRadiusSq;
 
     for (auto s : loadedSlides)
     {
+        if (s == ignoredSlide)
+            continue;
+
         int foundSegmentId = -1;
         float foundSegmentPos = 1;
 
@@ -76,9 +79,9 @@ bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, Slide* 
 
             auto r = MathUtils::getSegmentsDistanceInfo(pos, target, s0, s1);
 
-            if (r.sqMinDistance<rayRadiusSq && r.s1Pos < closest)
+            if (r.sqMinDistance<closest)
             {
-                closest = r.s1Pos;
+                closest = r.sqMinDistance;
 
                 foundSegmentPos = r.s2Pos;
                 foundSegmentId = i;
@@ -97,7 +100,7 @@ bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, Slide* 
 
     }
 
-    return closest<2;
+    return closest<rayRadiusSq;
 }
 
 void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, Slide* ignoredSlide)

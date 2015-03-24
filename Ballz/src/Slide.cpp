@@ -94,6 +94,7 @@ void Slide::initSlide(const std::string& zipAnimName)
     track->setUseShortestRotationPath(true);
 
     Quaternion previous;
+    Quaternion yawMe(Degree(-90), Vector3(0, 1, 0));
 
     for (size_t i = 0; i < o_track->getNumKeyFrames(); i++)
     {
@@ -108,6 +109,8 @@ void Slide::initSlide(const std::string& zipAnimName)
 
         //slerp hotfix
         auto rotation = keyFrame->getRotation();
+        rotation = rotation*yawMe;
+
         if (i > 0)
         {
             float fCos = previous.Dot(rotation);
