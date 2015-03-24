@@ -26,8 +26,6 @@ public:
 	struct SlidePoint
 	{
 		Vector3 pos;
-		//TODO remove dir
-		Vector3 dir;
 		float startOffset;
 	};
 

@@ -129,17 +129,21 @@ void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
     slidePoints.clear();
     slidePoints.resize(points.size());
 
+	std::vector<Vector3> pointsDir;
+
     for (size_t i = 0; i < points.size(); i++)
     {
         SlidePoint& point = slidePoints[i];
         point.pos = points[i];
 
+		Vector3 dir;
+
         //first 2
         if (i == 0 || i == 1)
-            point.dir = (points[1] - points[0]);
+			dir = (points[1] - points[0]);
         //last 2
         else if (i >= points.size() - 2)
-            point.dir = (points[points.size() - 1] - points[points.size() - 2]);
+			dir = (points[points.size() - 1] - points[points.size() - 2]);
         //else inside
         else
         {
@@ -148,10 +152,12 @@ void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
             auto dirF = (points[i + 1] - points[i]);
             dirF.normalise();
 
-            point.dir = (dirB + dirF);
+			dir = (dirB + dirF);
         }
 
-        point.dir.normalise();
+		dir.normalise();
+
+		pointsDir.push_back(dir);
     }
 
     slidePoints[0].startOffset=0;
@@ -177,7 +183,7 @@ void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
         Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(slidePoints[i].startOffset);
         kf->setTranslate(points[i]);
 
-        auto dir = slidePoints[i].dir;
+		auto& dir = pointsDir[i];
         auto q = Vector3(0, 0, -1).getRotationTo(Vector3(dir.x, 0, dir.z));
         auto q2 = Vector3(0, 0, -1).getRotationTo(Vector3(0, dir.y, -1));
 
