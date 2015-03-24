@@ -21,18 +21,25 @@ public:
     virtual void pressedKey(const OIS::KeyEvent &arg);
     virtual void movedMouse(const OIS::MouseEvent &e);
 
+	Vector3 getTrackPosition(float timeOffset);
+
+	struct SlidePoint
+	{
+		Vector3 pos;
+		//TODO remove dir
+		Vector3 dir;
+		float startOffset;
+	};
+
+	std::vector<SlidePoint> slidePoints;
+
 protected:
+
+	NodeAnimationTrack* track;
 
     Slide(const std::string& zipName, bool looped, float speed) : animName(zipName), loop(looped), avgSpeed(speed*5) {};
 
     virtual void resetHead() {};
-
-    struct SlidePoint
-    {
-        Vector3 pos;
-        Vector3 dir;
-        float startOffset;
-    };
 
     struct HeadTransitionState
     {
@@ -48,8 +55,6 @@ protected:
         float yaw;
         float pitch;
     };
-
-    std::vector<SlidePoint> slidePoints;
 
     void initSlide(const std::string& zipAnimName);
     void initSlide(const std::vector<Ogre::Vector3>& points);

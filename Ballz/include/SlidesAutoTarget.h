@@ -3,10 +3,12 @@
 #include "stdafx.h"
 #include "Slide.h"
 #include <future>
+#include <vector>
 
 struct TargetSlideInfo
 {
     Slide* targetSlide = nullptr;
+	float targetSlidePosOffset;
     Ogre::Vector3 targetSlidePos;
 };
 
@@ -20,6 +22,8 @@ public:
     void updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, Slide* ignoredSlide = nullptr);
 
     TargetSlideInfo targetInfo;
+
+	std::vector<Slide*> loadedSlides;
 
 private:
 

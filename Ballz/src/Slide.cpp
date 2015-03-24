@@ -41,6 +41,14 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
     }
 }
 
+Vector3 Slide::getTrackPosition(float timeOffset)
+{
+	Ogre::TransformKeyFrame key(0, 0);
+	track->getInterpolatedKeyFrame(timeOffset, &key);
+
+	return key.getTranslate();
+}
+
 void Slide::movedMouse(const OIS::MouseEvent &e)
 {
     if (!active)
@@ -82,8 +90,8 @@ void Slide::initSlide(const std::string& zipAnimName)
     Animation* newAnim = Global::mSceneMgr->createAnimation(animName, realLength);
     newAnim->setInterpolationMode(Animation::IM_SPLINE);
 
-    NodeAnimationTrack* newTrack = newAnim->createNodeTrack(0, tracker);
-    newTrack->setUseShortestRotationPath(true);
+	track = newAnim->createNodeTrack(0, tracker);
+	track->setUseShortestRotationPath(true);
 
     Quaternion previous;
 
@@ -92,7 +100,7 @@ void Slide::initSlide(const std::string& zipAnimName)
         SlidePoint& point = slidePoints[i];
         auto keyFrame = track->getNodeKeyFrame(i);
 
-        Ogre::TransformKeyFrame* kf = newTrack->createNodeKeyFrame(keyFrame->getTime()*mod);
+		Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(keyFrame->getTime()*mod);
         kf->setTranslate(keyFrame->getTranslate());
 
         point.pos = kf->getTranslate();
@@ -157,7 +165,7 @@ void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
     Animation* anim = Global::mSceneMgr->createAnimation(animName, timer);
     anim->setInterpolationMode(Animation::IM_SPLINE);
 
-    NodeAnimationTrack* track = anim->createNodeTrack(0, tracker);
+    track = anim->createNodeTrack(0, tracker);
 
     track->setUseShortestRotationPath(true);
 
