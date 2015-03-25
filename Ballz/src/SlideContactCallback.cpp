@@ -29,7 +29,9 @@ inline void processPlayerTouch(bodyUserData* a0, OgreNewt::Body* body0, EventsMa
     bool posOk = true;
 
     if (body0->getType()==ZipLinePart)
-        posOk = Global::player->bodyPosition.y > pos.y;
+        posOk = Global::player->bodyPosition.y < pos.y;
+    else
+        posOk = Global::player->bodyPosition.y - 1 > pos.y;
 
     if (posOk && slide->start(pos))
     {

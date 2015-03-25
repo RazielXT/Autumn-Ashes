@@ -27,7 +27,7 @@ TopSlide::TopSlide(const std::vector<Ogre::Vector3>& points, const std::string& 
 
 void TopSlide::pressedKey(const OIS::KeyEvent &arg)
 {
-    if (!active)
+    if (!sliding)
         return;
 
     if (arg.key == OIS::KC_A)

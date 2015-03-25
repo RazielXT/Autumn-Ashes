@@ -360,7 +360,7 @@ void Player::attachCamera()
 
 void Player::attachCameraWithTransition()
 {
-    cameraArrival.timer = 1;
+    cameraArrival.timer = 0.2f;
     cameraArrival.tempNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 
     cameraArrival.pos = mCamera->getDerivedPosition();

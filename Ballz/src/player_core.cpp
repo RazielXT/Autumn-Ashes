@@ -326,7 +326,7 @@ void Player::updateHeadArrival()
         }
         else
         {
-            auto w = cameraArrival.timer;
+            auto w = cameraArrival.timer/0.2f;
             auto pos = cameraArrival.pos*w + camnode->_getDerivedPosition()*(1 - w);
             auto or = Quaternion::Slerp(1-w, cameraArrival.dir, camnode->_getDerivedOrientation(), true);
 

@@ -38,7 +38,7 @@ inline float getTerrainHeightFiltered(const float x, const float z, void *userDa
 
     OgreNewt::BasicRaycast ray(queryData->world, Vector3(x, queryData->offset_maxY, z), Vector3(x, queryData->offset_minY, z), true);
 
-    for (size_t i = 0; i < ray.getHitCount(); i++)
+    for (int i = 0; i < ray.getHitCount(); i++)
     {
         OgreNewt::BasicRaycast::BasicRaycastInfo& info = ray.getInfoAt(i);
 

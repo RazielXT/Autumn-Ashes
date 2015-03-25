@@ -118,7 +118,7 @@
 copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>call "D:\AA\AAsvn\Ballz\runAstyle.bat"</Command>
+      <Command>call "D:\AA\AAsvn\runAstyle.bat"</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Formatting code with Astyle...</Message>

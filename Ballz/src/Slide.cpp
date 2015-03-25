@@ -12,7 +12,7 @@ Slide::~Slide()
 
 void Slide::pressedKey(const OIS::KeyEvent &arg)
 {
-    if (!active)
+    if (!sliding)
         return;
 
     if (arg.key == OIS::KC_SPACE && unavailableTimer<0)
@@ -20,7 +20,7 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
 
         if (slidesAutoTarget->targetInfo.targetSlide)
         {
-            if (slidesAutoTarget->targetInfo.targetSlide->start(slidesAutoTarget->targetInfo.targetSlidePos))
+            if (slidesAutoTarget->targetInfo.targetSlide->start(slidesAutoTarget->targetInfo.targetSlidePos, true))
                 release(false);
         }
         else
@@ -51,7 +51,7 @@ Vector3 Slide::getTrackPosition(float timeOffset)
 
 void Slide::movedMouse(const OIS::MouseEvent &e)
 {
-    if (!active)
+    if (!sliding)
         return;
 
     float mod = Global::timestep / -10.0f;
@@ -70,6 +70,7 @@ void Slide::movedMouse(const OIS::MouseEvent &e)
 
 void Slide::initSlide(const std::string& zipAnimName)
 {
+    headArrival.tempNode = nullptr;
     Animation* anim = Global::mSceneMgr->getAnimation(zipAnimName);
     auto o_track = anim->getNodeTrack(0);
     float realLength = 0;
@@ -129,6 +130,8 @@ void Slide::initSlide(const std::string& zipAnimName)
 
 void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
 {
+    headArrival.tempNode = nullptr;
+
     slidePoints.clear();
     slidePoints.resize(points.size());
 
@@ -242,17 +245,86 @@ bool Slide::placePointOnLine(Vector3& point)
     return (minDist != MAX_PLAYER_DISTANCE_SQ);
 }
 
-bool Slide::start()
+AnimationState * Slide::mJumpState = nullptr;
+NodeAnimationTrack* Slide::jumpTrack = nullptr;
+Animation* Slide::mJumpAnim = nullptr;
+
+void Slide::startJumpToSlide()
+{
+    auto target = getTrackPosition(mTrackerState->getTimePosition());
+
+    const Ogre::String jumpAnimName = "jumpState";
+
+    if (mJumpAnim == nullptr)
+    {
+
+        mJumpAnim = Global::mSceneMgr->createAnimation(jumpAnimName, 5);
+        mJumpAnim->setInterpolationMode(Animation::IM_SPLINE);
+        mJumpAnim->setRotationInterpolationMode(Animation::RIM_SPHERICAL);
+
+        jumpTrack = mJumpAnim->createNodeTrack(0);
+    }
+
+    if (mJumpState)
+        Global::mSceneMgr->destroyAnimationState(jumpAnimName);
+
+    Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
+
+    auto pos = cam->getDerivedPosition();
+    auto or = cam->getDerivedOrientation();
+
+    cam->detachFromParent();
+    headArrival.tempNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    headArrival.tempNode->attachObject(cam);
+
+    float l = pos.distance(target) / 15.0f;
+    mJumpAnim->setLength(l);
+
+    jumpTrack->removeAllKeyFrames();
+    jumpTrack->setAssociatedNode(headArrival.tempNode);
+
+    auto key = jumpTrack->createNodeKeyFrame(0);
+    key->setRotation(or);
+    key->setTranslate(pos);
+
+    key = jumpTrack->createNodeKeyFrame(l);
+    key->setRotation(or);
+    key->setTranslate(target);
+
+    mJumpState = Global::mSceneMgr->createAnimationState(jumpAnimName);
+    mJumpState->setEnabled(true);
+    mJumpState->setLoop(false);
+
+    headArrival.tempNode->setPosition(pos);
+    headArrival.tempNode->setOrientation(or);
+
+    jumpingToSlide = true;
+}
+
+void Slide::updateJumpToSlide(float time)
+{
+    mJumpState->addTime(time);
+
+    if (mJumpState->hasEnded())
+    {
+        mJumpState->setEnabled(false);
+        jumpingToSlide = false;
+
+        attach();
+    }
+}
+
+bool Slide::start(bool withJump)
 {
     auto pos = Global::player->bodyPosition;
     pos.y += 1.5f;
 
-    return start(pos);
+    return start(pos, withJump);
 }
 
-bool Slide::start(Vector3& pos)
+bool Slide::start(Vector3& pos, bool withJump)
 {
-    if (active || unavailableTimer>0)
+    if (sliding || unavailableTimer>0)
         return false;
 
     if (mTrackerState == nullptr)
@@ -262,11 +334,12 @@ bool Slide::start(Vector3& pos)
     {
         currentSpeed = Global::player->bodyVelocity/avgSpeed;
 
-        attach();
+        removeControlFromPlayer();
 
-        mTrackerState->setEnabled(true);
-        mTrackerState->setLoop(loop);
-        active = true;
+        if (withJump)
+            startJumpToSlide();
+        else
+            attach();
 
         Global::mEventsMgr->addCachedTask(this);
 
@@ -288,9 +361,16 @@ void Slide::updateSlidingSpeed(float time)
     currentSpeed = std::min(1.0f, currentSpeed + diff);
 }
 
+void Slide::removeControlFromPlayer()
+{
+    Global::player->enableControl(false);
+}
+
 void Slide::attach()
 {
     resetHead();
+
+    registerInputListening();
 
     Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
 
@@ -302,21 +382,24 @@ void Slide::attach()
     headState.pitch = 0;
     headState.yaw = 0;
 
-    registerInputListening();
+    if (headArrival.tempNode == nullptr)
+    {
+        cam->detachFromParent();
+        headArrival.tempNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+        headArrival.tempNode->attachObject(cam);
+    }
 
-    Global::player->enableControl(false);
-
-    headArrival.tempNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
     headArrival.tempNode->setPosition(headArrival.pos);
     headArrival.tempNode->setOrientation(headArrival.dir);
-
-    cam->detachFromParent();
-    headArrival.tempNode->attachObject(cam);
 
     Global::player->body->setPositionOrientation(Vector3(0,1000,0), Quaternion::IDENTITY);
     Global::player->body->freeze();
 
     unavailableTimer = 1;
+
+    mTrackerState->setEnabled(true);
+    mTrackerState->setLoop(loop);
+    sliding = true;
 }
 
 void Slide::release(bool returnControl)
@@ -335,7 +418,7 @@ void Slide::release(bool returnControl)
     mTrackerState->setEnabled(false);
 
     unavailableTimer = 1.5f;
-    active = false;
+    sliding = false;
 
 }
 
@@ -350,6 +433,7 @@ void Slide::updateHeadArrival(float time)
         head->attachObject(cam);
 
         Global::mSceneMgr->destroySceneNode(headArrival.tempNode);
+        headArrival.tempNode = nullptr;
     }
     else
     {
@@ -411,11 +495,13 @@ bool Slide::update(Ogre::Real tslf)
         enablePlayerControl = false;
     }
 
-    if (active)
+    if (sliding)
         updateSlidingState(tslf);
+    else if (jumpingToSlide)
+        updateJumpToSlide(tslf);
 
     if (unavailableTimer>0)
         unavailableTimer -= tslf;
 
-    return active || unavailableTimer>0;
+    return jumpingToSlide || sliding || unavailableTimer>0;
 }

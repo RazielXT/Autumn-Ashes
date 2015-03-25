@@ -14,8 +14,8 @@ public:
 
     virtual ~Slide();
 
-    virtual bool start();
-    virtual bool start(Vector3& point);
+    virtual bool start(bool withJump = false);
+    virtual bool start(Vector3& point, bool withJump = false);
     virtual bool update(Ogre::Real tslf);
 
     virtual void pressedKey(const OIS::KeyEvent &arg);
@@ -38,6 +38,17 @@ protected:
     Slide(const std::string& zipName, bool looped, float speed) : animName(zipName), loop(looped), avgSpeed(speed*5) {};
 
     virtual void resetHead() {};
+
+    void removeControlFromPlayer();
+
+    static AnimationState * mJumpState;
+    static NodeAnimationTrack* jumpTrack;
+    static Animation* mJumpAnim;
+
+    bool jumpingToSlide = false;
+
+    void startJumpToSlide();
+    void updateJumpToSlide(float time);
 
     struct HeadTransitionState
     {
@@ -77,7 +88,7 @@ protected:
     bool loop = false;
 
     bool enablePlayerControl = false;
-    bool active = false;
+    bool sliding = false;
     float unavailableTimer = 0;
 
     std::string animName;
