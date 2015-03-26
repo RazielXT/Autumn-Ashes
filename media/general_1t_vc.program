@@ -1,8 +1,8 @@
-vertex_program diffuse_vs_2nbop cg
+vertex_program general_1t_vc_vs cg
 {
-    source general_2n_bop.cg
+    source general_1t_vc.cg
    profiles vs_3_0 arbvp1
-    entry_point diffuse_vs_bop
+    entry_point diffuse_vs
  
     default_params
     {
@@ -15,18 +15,19 @@ vertex_program diffuse_vs_2nbop cg
         param_named_auto wMat world_matrix
         param_named_auto wvpMat worldviewproj_matrix
         param_named_auto spotlightDir light_direction_object_space 0
+		param_named_auto camPos camera_position_object_space
     }
 }
   
-fragment_program diffuse_ps_2nbop cg
+fragment_program general_1t_vc_ps cg
 {
-    source general_2n_bop.cg
+    source general_1t_vc.cg
     profiles ps_3_0 arbfp1
-    entry_point diffuse_ps_bop
+    entry_point diffuse_ps
  
     default_params
     {
-     param_named_auto lightDiffuse derived_light_diffuse_colour 0
+		param_named_auto lightDiffuse derived_light_diffuse_colour 0
         param_named_auto lightDif0 light_diffuse_colour 0
         param_named_auto matSpec0 surface_specular_colour 0
         param_named_auto camPos camera_position
