@@ -2,7 +2,7 @@ vertex_program diffuse_vs_vc2tex cg
 {
     source terrain_vc2tex.cg
    profiles vs_3_0 arbvp1
-    entry_point diffuse_vs_bop
+    entry_point diffuse_vs
  
     default_params
     {
@@ -23,7 +23,7 @@ fragment_program diffuse_ps_vc2tex cg
 {
     source terrain_vc2tex.cg
     profiles ps_3_0 arbfp1
-    entry_point diffuse_ps_bop
+    entry_point diffuse_ps
  
     default_params
     {

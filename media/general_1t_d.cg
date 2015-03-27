@@ -50,7 +50,7 @@ VOut diffuse_vs(VIn IN,
 	)
 {
 	VOut OUT;
-	OUT.wp.xyz = mul(wMat, IN.p);
+	OUT.wp.xyz = mul(wMat, IN.p).xyz;
 	OUT.p = mul(wvpMat, IN.p);
 
 	OUT.uv.xy = IN.uv.xy;
@@ -91,7 +91,7 @@ float shadowSmooth(sampler2D shadowMap, float4 shadowMapPos, float blur, float t
 			float2 vOffset = 0;
 			vOffset = float2(x, y);
 			vOffset /= texRes;
-			float2 vSamplePoint = vTexCoord + vOffset;
+			float2 vSamplePoint = vTexCoord.xy + vOffset;
 			float fDepth = tex2Dlod(shadowMap, float4(vSamplePoint, 1, 1)).x + blur;
 			float fSample = (fLightDepth <= fDepth);
 
@@ -135,6 +135,11 @@ float4 color_blend(float3 normalTex, float3 normalTex2)
 	return r;
 }
 
+float3 whiteout_blend(float3 n1, float3 n2)
+{
+	return normalize(float3(n1.xy + n2.xy, n1.z*n2.z));
+}
+
 void diffuse_ps(
 	PIn IN,
 	uniform float4 lightDif0,
@@ -170,14 +175,14 @@ void diffuse_ps(
 	half lightDist = length(lightPos0.xyz - IN.wp.xyz) / lightAtt0.r;
 
 	//pm offset
-	float height = tex2D(dispMap, IN.uv.xy * uvScale).x;
+	float height = tex2D(dispMap, IN.uv.xy).x;
 	float3 vVec = float3(IN.t.w, IN.b.w, IN.n.w);
 	float2 texCoordDisp = IN.uv.xy + (0.05 * height - 0.025) * normalize(vVec).xy;
 	
 	//base normal+detail
-	float4 normalTex = tex2D(normalMap, texCoordDisp*uvScale);
-	float4 normalTex2 = tex2D(normalDetailMap, texCoordDisp*uvDetailScale);
-	normalTex = color_blend(normalTex,normalTex2);
+	float3 normalTex = tex2D(normalMap, texCoordDisp).xyz;
+	float3 normalTex2 = tex2D(normalDetailMap, texCoordDisp*uvDetailScale).xyz;
+	normalTex = whiteout_blend(normalTex,normalTex2);
 
 	//lighting
 	float3x3 tbn = float3x3(IN.t.xyz, IN.b.xyz, IN.n.xyz);
@@ -189,7 +194,7 @@ void diffuse_ps(
 	eyeDir = normalize(eyeDir);
 
 	float4 diffuseTex = tex2D(diffuseMap, texCoordDisp);
-	float3 diffuseLight = dot(lightDir, normal);
+	float diffuseLight = dot(lightDir, normal);
 	float vertexLight = 0.5;
 
 	float3 camDir = normalize(camPos - IN.wp.xyz);

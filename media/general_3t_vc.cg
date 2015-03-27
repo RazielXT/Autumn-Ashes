@@ -53,7 +53,7 @@ VOut diffuse_vs(VIn IN,
 	)
 {
 	VOut OUT;
-	OUT.wp.xyz = mul(wMat, IN.p);
+	OUT.wp.xyz = mul(wMat, IN.p).xyz;
 	OUT.p = mul(wvpMat, IN.p);
 	
 	OUT.n.w = saturate(IN.c.r);
@@ -95,7 +95,7 @@ float shadowSmooth(sampler2D shadowMap, float4 shadowMapPos, float blur, float t
 			float2 vOffset = 0;
 			vOffset = float2(x, y);
 			vOffset /= texRes;
-			float2 vSamplePoint = vTexCoord + vOffset;
+			float2 vSamplePoint = vTexCoord.xy + vOffset;
 			float fDepth = tex2Dlod(shadowMap, float4(vSamplePoint, 1, 1)).x + blur;
 			float fSample = (fLightDepth <= fDepth);
 
@@ -139,7 +139,7 @@ float4 color_blend(float3 normalTex, float3 normalTex2)
 	return r;
 }
 
-float3 normal_blend(float3 n1, float3 n2, blend)
+float3 normal_blend(float3 n1, float3 n2, float blend)
 {
 	float2 pd = lerp(n1.xy/n1.z, n2.xy/n2.z, blend);
 	return normalize(float3(pd, 1));
@@ -198,9 +198,9 @@ void diffuse_ps(
 
 	
 	//base normals
-	float4 normalTex = tex2D(normalMap, texCoordDisp*uvScale);
-	float4 normalTex2 = tex2D(normalMap2, texCoordDisp*uv2Scale);
-	float4 normalTex3 = tex2D(normalMap3, texCoordDisp*uv3Scale);
+	float3 normalTex = tex2D(normalMap, texCoordDisp*uvScale).rgb;
+	float3 normalTex2 = tex2D(normalMap2, texCoordDisp*uv2Scale).rgb;
+	float3 normalTex3 = tex2D(normalMap3, texCoordDisp*uv3Scale).rgb;
 	
 	//lerp normals
 	normalTex.rgb = normal_blend(normal_blend(normalTex, normalTex2, spread.x), normalTex3, spread.y);
@@ -220,7 +220,7 @@ void diffuse_ps(
 	float distance = length(eyeDir);
 	eyeDir = normalize(eyeDir);
 
-	float3 diffuseLight = dot(lightDir, normal);
+	float diffuseLight = dot(lightDir, normal);
 	float vertexLight = saturate(IN.wp.w);
 
 	float3 camDir = normalize(camPos - IN.wp.xyz);
@@ -290,7 +290,7 @@ void diffuse_ps(
 	float3 ambient = float3(0.25,0.25,0.3);
 	
 	float3 diffuseContrib = saturate(diffuseLight* lightDif0.rgb +vertexLight+ambient) * diffuseTex.rgb;
-	float specWeight = lerp(specular2Weight, 1, inter);
+	float specWeight = lerp(specular2Weight, 1, spread.x);
 	float3 specularContrib = ((specular + specular2*3) * matSpec0.rgb*specWeight );
 	float3 rawColor = (diffuseContrib + specularContrib);
 	
