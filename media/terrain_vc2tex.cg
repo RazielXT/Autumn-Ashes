@@ -19,7 +19,7 @@ struct VOut
 	float4 n : TEXCOORD2;
 	float4 t : TEXCOORD3;
 	float4 b : TEXCOORD4;
-	float4 sdir : TEXCOORD5;
+	float4 vc : TEXCOORD5;
 	float4 oLightPosition0 : TEXCOORD6;
 	float4 oLightPosition1 : TEXCOORD7;
 	float4 oLightPosition2 : TEXCOORD8;
@@ -33,7 +33,7 @@ struct PIn
 	float4 n : TEXCOORD2;
 	float4 t : TEXCOORD3;
 	float4 b : TEXCOORD4;
-	float4 sdir : TEXCOORD5;
+	float4 vc : TEXCOORD5;
 	float4 LightPosition0 : TEXCOORD6;
 	float4 LightPosition1 : TEXCOORD7;
 	float4 LightPosition2 : TEXCOORD8;
@@ -45,7 +45,6 @@ VOut diffuse_vs_bop(VIn IN,
 	uniform float4x4 wMat,
 	uniform float4x4 wvpMat,
 	uniform float3 camPos,
-	uniform float4 spotlightDir,
 	uniform float4x4 texWorldViewProjMatrix0,
 	uniform float4x4 texWorldViewProjMatrix1,
 	uniform float4x4 texWorldViewProjMatrix2,
@@ -56,8 +55,7 @@ VOut diffuse_vs_bop(VIn IN,
 	VOut OUT;
 	OUT.wp.xyz = mul(wMat, IN.p);
 	OUT.p = mul(wvpMat, IN.p);
-	OUT.sdir.w = IN.c.a;
-	OUT.wp.w = saturate(IN.c.b);
+	OUT.vc = IN.c;
 
 	OUT.uv.xy = IN.uv.xy;
 	OUT.uv.zw = OUT.p.zw;
@@ -70,8 +68,6 @@ VOut diffuse_vs_bop(VIn IN,
 	OUT.t.w = dot(viewVec, OUT.t.xyz);
 	OUT.b.w = dot(viewVec, OUT.b.xyz);
 	OUT.n.w = dot(viewVec, OUT.n.xyz);
-
-	OUT.sdir.xyz = mul(wMat, spotlightDir).xyz; // spotlight dir in world space
 
 	OUT.oLightPosition0 = mul(texWorldViewProjMatrix0, IN.p);
 	OUT.oLightPosition1 = mul(texWorldViewProjMatrix1, IN.p);
@@ -134,6 +130,11 @@ float shadowSmooth(sampler2D shadowMap, float4 shadowMapPos, float blur, float t
 	return fShadowTerm;
 }
 
+float3 whiteout_blend(float3 n1, float3 n2)
+{
+	return normalize(float3(n1.xy + n2.xy, n1.z*n2.z));
+}
+
 float4 color_blend(float3 normalTex, float3 normalTex2)
 {
 	float4 r;
@@ -194,7 +195,7 @@ void diffuse_ps_bop(
 	
 	//spread
 	//////////////////////////////////////////////////
-	float spreadVC = IN.sdir.w;
+	float spreadVC = IN.vc.w;
 	float inside=smoothstep(0.25,1,spreadVC);
 	//inside+=smoothstep(0.381385,1,spreadVC);
 
@@ -219,7 +220,7 @@ void diffuse_ps_bop(
 	//base normal+detail
 	float4 normalTex = tex2D(normalMap, texCoordDisp*uvScale);
 	float4 normalTex2 = tex2D(normalDetailMap, texCoordDisp*uvDetailScale);
-	normalTex = color_blend(normalTex,normalTex2);
+	normalTex.rgb = whiteout_blend(normalTex,normalTex2);
 	
 	//lerp with 2. normal
 	normalTex2 = tex2D(normalMap2, texCoordDisp * uv2Scale);
@@ -227,7 +228,7 @@ void diffuse_ps_bop(
 
 	//blend with max detail normal
 	normalTex2 = tex2D(normalDetailMap, texCoordDisp*uvMaxScale);
-	normalTex = color_blend(normalTex,normalTex2);
+	normalTex.reg = whiteout_blend(normalTex,normalTex2);
 	
 	//lighting
 	float3x3 tbn = float3x3(IN.t.xyz, IN.b.xyz, IN.n.xyz);
@@ -240,7 +241,7 @@ void diffuse_ps_bop(
 
 	float4 diffuseTex = lerp(tex2D(diffuseMap2, texCoordDisp * uv2Scale), tex2D(diffuseMap, texCoordDisp * uvScale), inter);
 	float3 diffuseLight = dot(lightDir, normal);
-	float vertexLight = saturate(IN.wp.w);
+	float3 vertexLight = saturate(IN.c.rgb);
 
 	float3 camDir = normalize(camPos - IN.wp.xyz);
 	float3 halfVec = normalize(lightDir + camDir);

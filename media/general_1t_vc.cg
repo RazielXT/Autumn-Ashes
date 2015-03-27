@@ -15,10 +15,11 @@ struct VOut
 {
 	float4 p : POSITION;
 	float4 uv : TEXCOORD0;
-	float4 wp : TEXCOORD1;
+	float3 wp : TEXCOORD1;
 	float4 n : TEXCOORD2;
 	float4 t : TEXCOORD3;
 	float4 b : TEXCOORD4;
+	float3 vc : TEXCOORD5;
 	float4 oLightPosition0 : TEXCOORD6;
 	float4 oLightPosition1 : TEXCOORD7;
 	float4 oLightPosition2 : TEXCOORD8;
@@ -28,10 +29,11 @@ struct VOut
 struct PIn
 {
 	float4 uv : TEXCOORD0;
-	float4 wp : TEXCOORD1;
+	float3 wp : TEXCOORD1;
 	float4 n : TEXCOORD2;
 	float4 t : TEXCOORD3;
 	float4 b : TEXCOORD4;
+	float3 vc : TEXCOORD5;
 	float4 LightPosition0 : TEXCOORD6;
 	float4 LightPosition1 : TEXCOORD7;
 	float4 LightPosition2 : TEXCOORD8;
@@ -43,7 +45,6 @@ VOut diffuse_vs(VIn IN,
 	uniform float4x4 wMat,
 	uniform float4x4 wvpMat,
 	uniform float3 camPos,
-	uniform float4 spotlightDir,
 	uniform float4x4 texWorldViewProjMatrix0,
 	uniform float4x4 texWorldViewProjMatrix1,
 	uniform float4x4 texWorldViewProjMatrix2,
@@ -54,7 +55,7 @@ VOut diffuse_vs(VIn IN,
 	VOut OUT;
 	OUT.wp.xyz = mul(wMat, IN.p);
 	OUT.p = mul(wvpMat, IN.p);
-	OUT.wp.w = saturate(IN.c.b);
+	OUT.vc.xyz = saturate(IN.c.xyz);
 
 	OUT.uv.xy = IN.uv.xy;
 	OUT.uv.zw = OUT.p.zw;
@@ -189,7 +190,7 @@ void diffuse_ps(
 
 	float4 diffuseTex = tex2D(diffuseMap, texCoordDisp);
 	float3 diffuseLight = dot(lightDir, normal);
-	float vertexLight = saturate(IN.wp.w);
+	float3 vertexLight = IN.vc.rgb;
 
 	float3 camDir = normalize(camPos - IN.wp.xyz);
 	float3 halfVec = normalize(lightDir + camDir);
