@@ -249,9 +249,17 @@ AnimationState * Slide::mJumpState = nullptr;
 NodeAnimationTrack* Slide::jumpTrack = nullptr;
 Animation* Slide::mJumpAnim = nullptr;
 
+inline void fixSpline(Quaternion& rotation, Quaternion previous)
+{
+    float fCos = previous.Dot(rotation);
+    if (fCos < 0.0f)
+        rotation = -rotation;
+}
+
 void Slide::startJumpToSlide()
 {
-    auto target = getTrackPosition(mTrackerState->getTimePosition());
+    auto target = slidesAutoTarget->targetInfo.targetSlidePos;// getTrackPosition(mTrackerState->getTimePosition());
+    target.y += 2;
 
     const Ogre::String jumpAnimName = "jumpState";
 
@@ -277,26 +285,65 @@ void Slide::startJumpToSlide()
     headArrival.tempNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
     headArrival.tempNode->attachObject(cam);
 
-    float l = pos.distance(target) / 15.0f;
+    float l = pos.distance(target)/15.0f;
     mJumpAnim->setLength(l);
 
     jumpTrack->removeAllKeyFrames();
+    jumpTrack->setUseShortestRotationPath(true);
     jumpTrack->setAssociatedNode(headArrival.tempNode);
+    headArrival.tempNode->setPosition(pos);
+    headArrival.tempNode->setOrientation(or);
 
     auto key = jumpTrack->createNodeKeyFrame(0);
     key->setRotation(or);
     key->setTranslate(pos);
 
+    /////////////////
+
+    auto stQ = or*Quaternion(Degree(-30), Vector3(1, 0, 0));
+    key = jumpTrack->createNodeKeyFrame(l*0.1f);
+    auto crPos = MathUtils::lerp(pos, target, 0.1f);
+    crPos.y -= 1;
+    key->setRotation(stQ);
+    key->setTranslate(crPos);
+
+    //////////////
+
+    Vector3 midPoint = MathUtils::lerp(pos, target, 0.75f);
+    midPoint.y += 4.5;
+    auto qToTarget = (or*Quaternion(Degree(10), Vector3(1, 0, 0))*Vector3(0, 0, -1)).getRotationTo(target - midPoint);
+
+    key = jumpTrack->createNodeKeyFrame(l*0.7f);
+    key->setRotation(qToTarget*or);
+    key->setTranslate(midPoint);
+
+    ////////////////////
+
+    midPoint = MathUtils::lerp(pos, target, 0.85f);
+    midPoint.y += 3;
+
+    key = jumpTrack->createNodeKeyFrame(l*0.85f);
+    key->setRotation(qToTarget*or);
+    key->setTranslate(midPoint);
+
+    ////////////////////
+
+    midPoint = MathUtils::lerp(pos, target, 0.95f);
+    midPoint.y += 1.5;
+
+    key = jumpTrack->createNodeKeyFrame(l*0.95f);
+    key->setRotation(qToTarget*or);
+    key->setTranslate(midPoint);
+
+    ///////////////////
+
     key = jumpTrack->createNodeKeyFrame(l);
-    key->setRotation(or);
+    key->setRotation(qToTarget*or);
     key->setTranslate(target);
 
     mJumpState = Global::mSceneMgr->createAnimationState(jumpAnimName);
     mJumpState->setEnabled(true);
     mJumpState->setLoop(false);
-
-    headArrival.tempNode->setPosition(pos);
-    headArrival.tempNode->setOrientation(or);
 
     jumpingToSlide = true;
 }
@@ -304,6 +351,7 @@ void Slide::startJumpToSlide()
 void Slide::updateJumpToSlide(float time)
 {
     mJumpState->addTime(time);
+    Global::debug = time;
 
     if (mJumpState->hasEnded())
     {
@@ -343,8 +391,6 @@ bool Slide::start(Vector3& pos, bool withJump)
 
         Global::mEventsMgr->addCachedTask(this);
 
-        slidesAutoTarget = Global::player->slidesAutoTarget;
-
         return true;
     }
 
@@ -364,6 +410,7 @@ void Slide::updateSlidingSpeed(float time)
 void Slide::removeControlFromPlayer()
 {
     Global::player->enableControl(false);
+    slidesAutoTarget = Global::player->slidesAutoTarget;
 }
 
 Ogre::TransformKeyFrame Slide::getCurrentState()
@@ -496,8 +543,6 @@ void Slide::updateSlidingState(float time)
     auto thisPos = tracker->getPosition();
     realSpeed = lastPos.distance(thisPos) / time;
 
-    Global::debug = realSpeed;
-
     auto log = Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log");
     log->logMessage("LINE SPEED " + std::to_string(realSpeed), Ogre::LML_NORMAL);
 
@@ -521,7 +566,7 @@ void Slide::updateSlidingState(float time)
 
 bool Slide::update(Ogre::Real tslf)
 {
-    tslf *= Global::timestep;
+    tslf *= Global::timestep*0.2f;
 
     if (enablePlayerControl)
     {

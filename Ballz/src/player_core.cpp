@@ -111,11 +111,11 @@ void Player::jump()
     }
     else //if(onGround)
     {
-		if (!slidesAutoTarget->pressedAction())
-		{
-			Vector3 vel = body->getVelocity();
-			body->setVelocity(vel + Vector3(0, 9, 0));
-		}
+        if (!slidesAutoTarget->pressedAction())
+        {
+            Vector3 vel = body->getVelocity();
+            body->setVelocity(vel + Vector3(0, 9, 0));
+        }
     }
 }
 
