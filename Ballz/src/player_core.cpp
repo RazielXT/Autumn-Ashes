@@ -109,11 +109,13 @@ void Player::jump()
             body->setVelocity(camDir * 10 + Vector3(0, 1, 0));
         }
     }
-    else
-        //if(nazemi)
+    else //if(onGround)
     {
-        Vector3 vel = body->getVelocity();
-        body->setVelocity(vel + Vector3(0, 9, 0));
+		if (!slidesAutoTarget->pressedAction())
+		{
+			Vector3 vel = body->getVelocity();
+			body->setVelocity(vel + Vector3(0, 9, 0));
+		}
     }
 }
 

@@ -132,15 +132,27 @@ float shadowSmooth(sampler2D shadowMap, float4 shadowMapPos, float blur, float t
 
 float3 whiteout_blend(float3 n1, float3 n2)
 {
-	return normalize(float3(n1.xy + n2.xy, n1.z*n2.z));
+    float3 t = n1.xyz*float3( 2,  2, 2) + float3(-1, -1,  0);
+    float3 u = n2.xyz*float3(-2, -2, 2) + float3( 1,  1, -1);
+    float3 r = t*dot(t, u) - u*t.z;
+    return normalize(r);
 }
 
-float4 color_blend(float3 normalTex, float3 normalTex2)
+float3 color_blend2(float3 n1, float3 n2)
 {
-	float4 r;
-	r.r = (normalTex.r < 0.5 ? (2.0 * normalTex.r * normalTex2.r) : (1.0 - 2.0 * (1.0 - normalTex.r) * (1.0 - normalTex2.r)));
-	r.g = (normalTex.g < 0.5 ? (2.0 * normalTex.g * normalTex2.g) : (1.0 - 2.0 * (1.0 - normalTex.g) * (1.0 - normalTex2.g)));
-	r.b = (normalTex.b < 0.5 ? (2.0 * normalTex.b * normalTex2.b) : (1.0 - 2.0 * (1.0 - normalTex.b) * (1.0 - normalTex2.b)));
+    n1 = n1;
+    float3 a = n1 < 0.5 ? 1 : -1;
+    float3 b = n1 < 0.5 ?  0 : 1;
+    n1 =  2*a + n1;
+    n2 = n2*a + b;
+    float3 r = n1*n2 - a;
+    return r;
+}
+
+float3 color_blend(float3 normalTex, float3 normalTex2)
+{
+	float3 r;
+	r = (normalTex < 0.5 ? (2.0 * normalTex * normalTex2) : (1.0 - 2.0 * (1.0 - normalTex) * (1.0 - normalTex2)));
 	return r;
 }
 
@@ -220,7 +232,7 @@ void diffuse_ps(
 	//base normal+detail
 	float3 normalTex = tex2D(normalMap, texCoordDisp*uvScale).rgb;
 	float3 normalTex2 = tex2D(normalDetailMap, texCoordDisp*uvDetailScale).rgb;
-	normalTex = whiteout_blend(normalTex,normalTex2);
+	normalTex = color_blend(normalTex,normalTex2).rgb;
 	
 	//lerp with 2. normal
 	normalTex2 = tex2D(normalMap2, texCoordDisp * uv2Scale).rgb;
@@ -228,11 +240,11 @@ void diffuse_ps(
 
 	//blend with max detail normal
 	normalTex2 = tex2D(normalDetailMap, texCoordDisp*uvMaxScale).rgb;
-	normalTex.rgb = whiteout_blend(normalTex,normalTex2);
+	normalTex.rgb = color_blend(normalTex,normalTex2).rgb;
 	
 	//lighting
 	float3x3 tbn = float3x3(IN.t.xyz, IN.b.xyz, IN.n.xyz);
-	float3 normal = mul(transpose(tbn), normalTex.xyz * 2 - 1); // to object space
+	float3 normal = mul(transpose(tbn), normalTex.xyz*2 - 1); // to object space
 	normal = normalize(mul((float3x3)iTWMat, normal));
 
 	float3 eyeDir = IN.wp.xyz - camPos.xyz;
@@ -241,7 +253,6 @@ void diffuse_ps(
 
 	float4 diffuseTex = lerp(tex2D(diffuseMap2, texCoordDisp * uv2Scale), tex2D(diffuseMap, texCoordDisp * uvScale), inter);
 	float diffuseLight = dot(lightDir, normal);
-	float3 vertexLight = saturate(IN.vc.rgb);
 
 	float3 camDir = normalize(camPos - IN.wp.xyz);
 	float3 halfVec = normalize(lightDir + camDir);
@@ -304,6 +315,8 @@ void diffuse_ps(
 
 	}
 
+	float3 vertexLight = saturate(IN.vc.rgb);
+	
 	//slight gi normal mapping
 	diffuseLight = abs(max(diffuseLight,diffuseLight/2));
 

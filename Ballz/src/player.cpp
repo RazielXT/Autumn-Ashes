@@ -169,7 +169,6 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
         break;
 
     case OIS::KC_SPACE:
-    case OIS::KC_Q:
         jump();
         break;
 
@@ -190,6 +189,7 @@ void Player::releasedKey(const OIS::KeyEvent &arg)
 
     switch (arg.key)
     {
+
     case OIS::KC_D:
         vpravo=false;
         break;
@@ -446,7 +446,7 @@ void Player::update(Real time)
     if(!alive) return;
 
     if (inControl)
-        slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf);
+        slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, 9);
 
     forceDirection=Vector3::ZERO;
 

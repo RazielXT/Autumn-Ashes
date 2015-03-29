@@ -332,7 +332,7 @@ bool Slide::start(Vector3& pos, bool withJump)
 
     if (placePointOnLine(pos))
     {
-        currentSpeed = Global::player->bodyVelocity/avgSpeed;
+        currentSpeed = 1;// Global::player->bodyVelocity / avgSpeed;
 
         removeControlFromPlayer();
 
@@ -366,6 +366,14 @@ void Slide::removeControlFromPlayer()
     Global::player->enableControl(false);
 }
 
+Ogre::TransformKeyFrame Slide::getCurrentState()
+{
+    Ogre::TransformKeyFrame key(0, 0);
+    track->getInterpolatedKeyFrame(mTrackerState->getTimePosition(), &key);
+
+    return key;
+}
+
 void Slide::attach()
 {
     resetHead();
@@ -374,13 +382,32 @@ void Slide::attach()
 
     Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
 
+    auto state = getCurrentState();
+
     headArrival.timer = 1.0f;
+    headArrival.posTarget = state.getTranslate();
     headArrival.pos = cam->getDerivedPosition();
     headArrival.dir = cam->getDerivedOrientation();
-    headArrival.pitch = Math::Clamp(Global::player->bodyVelocity/10,-1.0f,1.0f);
+    headArrival.pitch = 0;// Math::Clamp(Global::player->bodyVelocity / 10, -1.0f, 1.0f);
 
     headState.pitch = 0;
     headState.yaw = 0;
+
+    auto e = Global::mSceneMgr->createEntity("Teapot01.mesh");
+    auto sn = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 20, 0));
+    sn->attachObject(e);
+
+    e = Global::mSceneMgr->createEntity("Teapot01.mesh");
+    sn = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(10, 20, 0), headArrival.dir);
+    sn->attachObject(e);
+
+    e = Global::mSceneMgr->createEntity("Teapot01.mesh");
+    sn = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(20, 20, 0), state.getRotation());
+    sn->attachObject(e);
+
+    e = Global::mSceneMgr->createEntity("Teapot01.mesh");
+    sn = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(30, 20, 0), cam->getDerivedOrientation());
+    sn->attachObject(e);
 
     if (headArrival.tempNode == nullptr)
     {
@@ -438,14 +465,16 @@ void Slide::updateHeadArrival(float time)
     else
     {
         auto w = headArrival.timer;
-        Quaternion q = Quaternion::Slerp(1-w, headArrival.dir, head->_getDerivedOrientation(), true);
-        Vector3 p = w*headArrival.pos + (1 - w)*head->_getDerivedPosition();
+        Quaternion q = Quaternion::nlerp(1-w, headArrival.dir, head->_getDerivedOrientation(), true);
+
+        Vector3 moveOffset = head->_getDerivedPosition() - headArrival.posTarget;
+        Vector3 p = w*headArrival.pos + (1 - w)*headArrival.posTarget;
 
         auto pitchW = 1-pow(1-std::min(headArrival.timer, 1 - headArrival.timer),1.5f);
         auto mPitch = -headArrival.pitch * pitchW * 50;
         Quaternion pq(Degree(mPitch), Vector3(1, 0, 0));
 
-        headArrival.tempNode->setPosition(p);
+        headArrival.tempNode->setPosition(p + moveOffset);
         headArrival.tempNode->setOrientation(q*pq);
     }
 
@@ -459,13 +488,18 @@ void Slide::updateSlidingCamera(float time)
 
 void Slide::updateTargetSlide(float time)
 {
-    slidesAutoTarget->updateAutoTarget(head->_getDerivedPosition(), Global::player->getFacingDirection(), time, this);
+    slidesAutoTarget->updateAutoTarget(head->_getDerivedPosition(), Global::player->getFacingDirection(), time, 30, this);
 }
 
 void Slide::updateSlidingState(float time)
 {
     auto thisPos = tracker->getPosition();
     realSpeed = lastPos.distance(thisPos) / time;
+
+    Global::debug = realSpeed;
+
+    auto log = Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log");
+    log->logMessage("LINE SPEED " + std::to_string(realSpeed), Ogre::LML_NORMAL);
 
     updateSlidingSpeed(time);
 

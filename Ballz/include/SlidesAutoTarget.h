@@ -19,7 +19,9 @@ public:
     SlidesAutoTargetAsync();
     ~SlidesAutoTargetAsync();
 
-    void updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, Slide* ignoredSlide = nullptr);
+    void updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance = 30, Slide* ignoredSlide = nullptr);
+
+    bool pressedAction();
 
     TargetSlideInfo targetInfo;
 
@@ -27,9 +29,11 @@ public:
 
 private:
 
+    Ogre::BillboardSet* targetBillboardSet;
+    Ogre::SceneNode* billboardNode;
+
     float targetTimer;
-    OgreNewt::ConvexCollisionPtr conv_col;
 
     std::future<bool> targetResult;
-    bool getTargetSlideFunc(Vector3 pos, Vector3 dir, Slide* ignoredSlide);
+    bool getTargetSlideFunc(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide);
 };

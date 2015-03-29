@@ -23,6 +23,8 @@ public:
 
     Vector3 getTrackPosition(float timeOffset);
 
+    Ogre::TransformKeyFrame getCurrentState();
+
     struct SlidePoint
     {
         Vector3 pos;
@@ -54,6 +56,7 @@ protected:
     {
         float pitch;
         SceneNode* tempNode;
+        Vector3 posTarget;
         Vector3 pos;
         Quaternion dir;
         float timer;

@@ -5,11 +5,30 @@
 
 SlidesAutoTargetAsync::SlidesAutoTargetAsync()
 {
-    Entity* ent = Global::mSceneMgr->createEntity("targetSphere", "sphere_r6.mesh");
 
-    //conv_col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Ellipsoid(Global::mWorld, Vector3(6, 6, 6), 10));
-    conv_col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::mWorld, ent, 10));
+    targetBillboardSet = Global::mSceneMgr->createBillboardSet("autoTargetBillSet");
+    targetBillboardSet->setMaterialName("chimneySmoke");
+    auto targetBillboard = targetBillboardSet->createBillboard(Vector3(0, 0, 0));
+    targetBillboard->setDimensions(5, 5);
+
+    billboardNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    billboardNode->attachObject(targetBillboardSet);
+
+    targetBillboardSet->setVisible(false);
+    targetBillboardSet->setCastShadows(false);
+    targetBillboardSet->setRenderQueueGroup(RENDER_QUEUE_OVERLAY);
+
     targetTimer = 0;
+}
+
+bool SlidesAutoTargetAsync::pressedAction()
+{
+    if (targetInfo.targetSlide)
+    {
+        return targetInfo.targetSlide->start(targetInfo.targetSlidePos, true);
+    }
+
+    return false;
 }
 
 SlidesAutoTargetAsync::~SlidesAutoTargetAsync()
@@ -54,13 +73,15 @@ SlidesAutoTargetAsync::~SlidesAutoTargetAsync()
 //     return false;
 // }
 
-bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, Slide* ignoredSlide)
+bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide)
 {
-    const float rayRadiusSq = 6 * 6;
-    const float rayDist = 35;
+    const float rayRadiusSq = 6*6;
 
-    pos = pos + dir * 4;
-    auto target = pos + dir*rayDist;
+    //radius 6 at distance 30 (3 at 15 etc)
+    const float minRayRadiusW = rayRadiusSq * rayDistance / 30.0f;
+
+    pos = pos + dir * 2;
+    auto target = pos + dir*rayDistance;
 
     float closest = rayRadiusSq;
 
@@ -78,8 +99,9 @@ bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, Slide* 
             auto s1 = s->slidePoints[i].pos;
 
             auto r = MathUtils::getSegmentsDistanceInfo(pos, target, s0, s1);
+            float minCompDist = minRayRadiusW*r.s1Pos;
 
-            if (r.sqMinDistance<closest)
+            if (r.sqMinDistance<minCompDist && r.sqMinDistance<closest)
             {
                 closest = r.sqMinDistance;
 
@@ -103,19 +125,17 @@ bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, Slide* 
     return closest<rayRadiusSq;
 }
 
-void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, Slide* ignoredSlide)
+void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance, Slide* ignoredSlide)
 {
     auto found = targetResult.valid() ? targetResult.get() : false;
-
-    auto ent = Global::mSceneMgr->getEntity("Test");
 
     if (found)
     {
         targetInfo.targetSlidePos = targetInfo.targetSlide->getTrackPosition(targetInfo.targetSlidePosOffset);
 
-        Global::gameMgr->myMenu->showUseGui(Ui_Target);
-        ent->setVisible(true);
-        ent->getParentSceneNode()->setPosition(targetInfo.targetSlidePos);
+        //Global::gameMgr->myMenu->showUseGui(Ui_Target);
+        targetBillboardSet->setVisible(true);
+        billboardNode->setPosition(targetInfo.targetSlidePos);
     }
     else
     {
@@ -123,10 +143,10 @@ void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tsl
 
         if (targetTimer < 0)
         {
-            ent->setVisible(false);
+            targetBillboardSet->setVisible(false);
             targetInfo.targetSlide = nullptr;
         }
     }
 
-    targetResult = std::async(std::launch::async, &SlidesAutoTargetAsync::getTargetSlideFunc, this, pos, dir, ignoredSlide);
+    targetResult = std::async(std::launch::async, &SlidesAutoTargetAsync::getTargetSlideFunc, this, pos, dir, rayDistance, ignoredSlide);
 }

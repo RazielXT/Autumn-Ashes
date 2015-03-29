@@ -64,12 +64,14 @@ void WorldMaterials::initCollisions(OgreNewt::World* mWorld)
     material_pair->setDefaultFriction(0.0, 0.0f);
     material_pair->setDefaultElasticity(0);
     material_pair->setDefaultSurfaceThickness(0.01);
-    material_pair->setContactCallback(callback_s);
+    material_pair->setDefaultCollidable(0);
+    //material_pair->setContactCallback(callback_s);
 
     material_pair = new OgreNewt::MaterialPair(mWorld, stoji_mat, slide_mat);
     material_pair->setDefaultFriction(4.0, 4.0f);
     material_pair->setDefaultElasticity(0);
-    material_pair->setContactCallback(callback_s);
+    material_pair->setDefaultCollidable(0);
+    //material_pair->setContactCallback(callback_s);
 
     //TRIGGER ********************************************************
     //WITH PLAYER

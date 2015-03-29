@@ -93,7 +93,7 @@ public:
     void attachCamera();
     void attachCameraWithTransition();
 
-    Ogre::Vector3 getFacingDirection();
+    inline Ogre::Vector3 getFacingDirection();
     void rotateCamera(Ogre::Real hybX, Ogre::Real hybY);
 
     Ogre::SceneNode* detachHead();
