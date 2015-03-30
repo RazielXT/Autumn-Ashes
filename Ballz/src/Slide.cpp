@@ -293,12 +293,16 @@ void Slide::startJumpToSlide()
     jumpTrack->setAssociatedNode(headArrival.tempNode);
     headArrival.tempNode->setPosition(pos);
     headArrival.tempNode->setOrientation(or);
+	
+	auto jumpAddHeight = std::max(4.5f, target.y - pos.y);
+
+	/////////////////0
 
     auto key = jumpTrack->createNodeKeyFrame(0);
     key->setRotation(or);
     key->setTranslate(pos);
 
-    /////////////////
+    /////////////////1
 
     auto stQ = or*Quaternion(Degree(-30), Vector3(1, 0, 0));
     key = jumpTrack->createNodeKeyFrame(l*0.1f);
@@ -307,39 +311,61 @@ void Slide::startJumpToSlide()
     key->setRotation(stQ);
     key->setTranslate(crPos);
 
-    //////////////
+    //////////////2
 
-    Vector3 midPoint = MathUtils::lerp(pos, target, 0.75f);
-    midPoint.y += 4.5;
+    Vector3 midPoint = MathUtils::lerp(pos, target, 0.45f);
+	midPoint.y += jumpAddHeight;
     auto qToTarget = (or*Quaternion(Degree(10), Vector3(1, 0, 0))*Vector3(0, 0, -1)).getRotationTo(target - midPoint);
+	qToTarget = qToTarget*or;
 
-    key = jumpTrack->createNodeKeyFrame(l*0.7f);
-    key->setRotation(qToTarget*or);
+    key = jumpTrack->createNodeKeyFrame(l*0.3f);
+    key->setRotation(qToTarget);
     key->setTranslate(midPoint);
 
-    ////////////////////
+    ////////////////////3
 
-    midPoint = MathUtils::lerp(pos, target, 0.85f);
-    midPoint.y += 3;
+	midPoint = MathUtils::lerp(pos, target, 0.55f);
+	midPoint.y += jumpAddHeight*0.4f;
 
-    key = jumpTrack->createNodeKeyFrame(l*0.85f);
-    key->setRotation(qToTarget*or);
-    key->setTranslate(midPoint);
+	key = jumpTrack->createNodeKeyFrame(l*0.4f);
+	key->setRotation(qToTarget);
+	key->setTranslate(midPoint);
 
-    ////////////////////
+	////////////////////4
 
-    midPoint = MathUtils::lerp(pos, target, 0.95f);
-    midPoint.y += 1.5;
+	midPoint = MathUtils::lerp(pos, target, 0.75f);
+	midPoint.y += jumpAddHeight*0.35f;
 
-    key = jumpTrack->createNodeKeyFrame(l*0.95f);
-    key->setRotation(qToTarget*or);
-    key->setTranslate(midPoint);
+	key = jumpTrack->createNodeKeyFrame(l*0.65f);
+	key->setRotation(qToTarget);
+	key->setTranslate(midPoint);
 
-    ///////////////////
+	////////////////////5
+
+	midPoint = MathUtils::lerp(pos, target, 0.85f);
+	midPoint.y += jumpAddHeight*0.25f;
+
+	key = jumpTrack->createNodeKeyFrame(l*0.8f);
+	key->setRotation(qToTarget);
+	key->setTranslate(midPoint);
+
+	////////////////////6
+
+	midPoint = MathUtils::lerp(pos, target, 0.95f);
+	midPoint.y += jumpAddHeight*0.1f;
+
+	key = jumpTrack->createNodeKeyFrame(l*0.9f);
+	key->setRotation(qToTarget);
+	key->setTranslate(midPoint);
+
+    ////////////////////7
+
 
     key = jumpTrack->createNodeKeyFrame(l);
-    key->setRotation(qToTarget*or);
+    key->setRotation(qToTarget);
     key->setTranslate(target);
+
+	/////////////////////
 
     mJumpState = Global::mSceneMgr->createAnimationState(jumpAnimName);
     mJumpState->setEnabled(true);
