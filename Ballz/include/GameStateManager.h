@@ -30,6 +30,7 @@ public:
     void insideMenuMoved(int x, int y);
     void escapePressed();
 
+	GameConfig gameConfig;
     GameState gameState;
     GuiOverlay* myMenu;
 	WorldMaterials* wMaterials;

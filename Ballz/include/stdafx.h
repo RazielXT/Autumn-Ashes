@@ -21,6 +21,7 @@
 #include "GrassLoader.h"
 #include "EventsManager.h"
 #include "globals.h"
+#include "GameConfig.h"
 #include "GuiOverlay.h"
 #include "WorldMaterials.h"
 #include "AudioLibrary.h"

@@ -1241,7 +1241,7 @@ bool ShowText::start()
     if(delay)
         return true;
 
-    ((GuiOverlay*)Global::globalData->find("Gui")->second)->showIngameText(text);
+	Global::gameMgr->myMenu->showIngameText(text);
     return false;
 }
 
@@ -1251,7 +1251,7 @@ bool ShowText::update(float tslf)
 
     if(timer>=delay)
     {
-        ((GuiOverlay*)Global::globalData->find("Gui")->second)->showIngameText(text);
+		Global::gameMgr->myMenu->showIngameText(text);
         return false;
     }
 

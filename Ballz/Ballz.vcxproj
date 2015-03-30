@@ -150,6 +150,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\SlideContactCallback.cpp" />
     <ClCompile Include="src\SlidesAutoTarget.cpp" />
     <ClCompile Include="src\Tasks.cpp" />
+    <ClCompile Include="src\tinyxml2.cpp" />
     <ClCompile Include="src\TopSlide.cpp" />
     <ClCompile Include="src\TransformationTaskTemplate.cpp" />
     <ClCompile Include="src\PSSMCamera.cpp" />
@@ -187,6 +188,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\EffectsTasks.h" />
     <ClInclude Include="include\EntityMovementTask.h" />
     <ClInclude Include="include\EventsManager.h" />
+    <ClInclude Include="include\GameConfig.h" />
     <ClInclude Include="include\MainListener.h" />
     <ClInclude Include="include\GameStateManager.h" />
     <ClInclude Include="include\globals.h" />
@@ -210,11 +212,12 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h" />
     <ClInclude Include="include\Player.h" />
     <ClInclude Include="include\PostProcessMgr.h" />
-    <ClInclude Include="include\premenne.h" />
     <ClInclude Include="include\CommonTasks.h" />
     <ClInclude Include="include\ReflectionTask.h" />
+    <ClInclude Include="include\SceneParser2.h" />
     <ClInclude Include="include\SlideContactCallback.h" />
     <ClInclude Include="include\SlidesAutoTarget.h" />
+    <ClInclude Include="include\tinyxml2.h" />
     <ClInclude Include="include\TopSlide.h" />
     <ClInclude Include="include\TransformationTaskTemplate.h" />
     <ClInclude Include="include\WaterArea.h" />

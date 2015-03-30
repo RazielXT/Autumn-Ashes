@@ -39,22 +39,11 @@ struct lvlButton
     bool unlocked;
 };
 
-struct GameConfig
-{
-    int width;
-    int height;
-    int shadow;
-    bool ssao;
-    bool fs;
-};
-
-
-
 class GuiOverlay
 {
 public:
 
-    GuiOverlay(Ogre::SceneManager * sceneMgr, Ogre::Camera* mCam,Ogre::RenderWindow* mWin,Ogre::RenderSystem* rs,irrklang::ISoundEngine* eng);
+	GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs, irrklang::ISoundEngine* eng);
     ~GuiOverlay()
     {
         clear();
@@ -78,9 +67,10 @@ public:
 
 private:
 
+	GameConfig* gConfig;
+
     void updateOptionsMove(Ogre::Real time);
     void updateLevelsMove(Ogre::Real time);
-    void saveCfg();
     void showLevels();
     void closeLevels();
     void showOptions();
@@ -121,7 +111,7 @@ private:
     Gorilla::Caption*       useTextCaption;
     Gorilla::Caption*       debugCaption;
     Gorilla::Rectangle*     mousePointer;
-    GameConfig gConfig;
+    
     bool ingamemenu;
     float infoTextTimer;
     bool shownInfoText;

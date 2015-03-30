@@ -7,7 +7,9 @@ SceneParser SceneParser::instance;
 
 GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, WorldMaterials* wMaterials)
 {
-    myMenu = new GuiOverlay(Global::mSceneMgr, cam, Global::mWindow, rs, Global::soundEngine);
+	gameConfig.loadCfg();
+
+	myMenu = new GuiOverlay(&gameConfig, cam, Global::mWindow, rs, Global::soundEngine);
     this->wMaterials = wMaterials;
 }
 

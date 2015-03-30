@@ -156,6 +156,9 @@
     <ClCompile Include="src\SlidesAutoTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tinyxml2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Console.h">
@@ -311,9 +314,6 @@
     <ClInclude Include="include\globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\premenne.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\TransformationTaskTemplate.h">
       <Filter>Header Files\tasks</Filter>
     </ClInclude>
@@ -333,6 +333,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SlidesAutoTarget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tinyxml2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneParser2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

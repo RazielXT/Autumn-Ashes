@@ -90,23 +90,16 @@ private:
         {
             Ogre::String lWindowTitle = "Ballz";
 
-            Ogre::ConfigFile cfgFile;
-            cfgFile.loadDirect("config.ini");
-            std::string wString = cfgFile.getSetting("width", "renderer");
-            std::string hString = cfgFile.getSetting("height", "renderer");
-            std::string fsString = cfgFile.getSetting("fullscreen", "renderer");
-            int lSizeX = Ogre::StringConverter::parseInt(wString);
-            int lSizeY = Ogre::StringConverter::parseInt(hString);
-            bool lFullscreen = Ogre::StringConverter::parseBool(fsString);
+			GameConfig cfg;
+			cfg.loadCfg();
 
             Ogre::NameValuePairList lParams;
             // we use our own FXAA
             lParams["FSAA"] = "0";
             lParams["vsync"] = "false";
+            lParams["useNVPerfHUD"] = "false";
 
-            lParams["useNVPerfHUD"] = "true";
-
-            mWindow = mRoot->createRenderWindow(lWindowTitle, lSizeX, lSizeY, lFullscreen, &lParams);
+			mWindow = mRoot->createRenderWindow(lWindowTitle, cfg.width, cfg.height, cfg.fs, &lParams);
         }
     }
 

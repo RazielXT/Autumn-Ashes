@@ -56,17 +56,6 @@ void GuiOverlay::showLevels()
     }
 }
 
-void GuiOverlay::saveCfg()
-{
-    std::ofstream cfgFile("config.ini");
-    cfgFile << "[renderer]\n";
-    cfgFile << "width = " << std::string(Ogre::StringConverter::toString(gConfig.width) + "\n");
-    cfgFile << "height = " << std::string(Ogre::StringConverter::toString(gConfig.height) + "\n");
-    cfgFile << "shadow = " << std::string(Ogre::StringConverter::toString(gConfig.shadow) + "\n");
-    cfgFile << "ssao = " << std::string(Ogre::StringConverter::toString(gConfig.ssao) + "\n");
-    cfgFile << "fullscreen = " << std::string(Ogre::StringConverter::toString(gConfig.fs) + "\n");
-}
-
 void GuiOverlay::closeOptions()
 {
     engine->play2D(CLOSE_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
@@ -81,9 +70,9 @@ void GuiOverlay::closeOptions()
         c->colour(Ogre::ColourValue(1,1,1,0.3));
     }
 
-    saveCfg();
+	gConfig->saveCfg();
 
-    Global::mWindow->setFullscreen(gConfig.fs, gConfig.width, gConfig.height);
+    Global::mWindow->setFullscreen(gConfig->fs, gConfig->width, gConfig->height);
 }
 
 void GuiOverlay::closeLevels()
@@ -137,7 +126,7 @@ int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
         case OIS::KC_RETURN:
             if (mMenuState->value == QUIT)
             {
-                saveCfg();
+				gConfig->saveCfg();
                 return 1;
             }
             if (mMenuState->value == OPTIONS)
@@ -169,22 +158,11 @@ std::string strtok_str(std::string& txt, char delim)
     return ret;
 }
 
-GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::RenderWindow* mWin,Ogre::RenderSystem* rs,irrklang::ISoundEngine* eng)
+GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs, irrklang::ISoundEngine* eng)
 {
     engine=eng;
 
-    Ogre::ConfigFile cfgFile;
-    cfgFile.loadDirect("config.ini");
-    std::string wString = cfgFile.getSetting("width", "renderer");
-    std::string hString = cfgFile.getSetting("height", "renderer");
-    std::string shdString = cfgFile.getSetting("shadow", "renderer");
-    std::string ssaoString = cfgFile.getSetting("ssao", "renderer");
-    std::string fsString = cfgFile.getSetting("fullscreen", "renderer");
-    gConfig.width=Ogre::StringConverter::parseInt(wString);
-    gConfig.height=Ogre::StringConverter::parseInt(hString);
-    gConfig.shadow=Ogre::StringConverter::parseInt(shdString);
-    gConfig.ssao=Ogre::StringConverter::parseBool(ssaoString);
-    gConfig.fs=Ogre::StringConverter::parseBool(fsString);
+	gConfig = gameConfig;
 
     Ogre::ConfigOptionMap& CurrentRendererOptions = rs->getConfigOptions();
     Ogre::ConfigOptionMap::iterator configItr = CurrentRendererOptions.begin();
@@ -200,7 +178,7 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
     }
 
     int i=mFoundResolutions.size();
-    std::string currentR=Ogre::StringConverter::toString(gConfig.width)+"x"+Ogre::StringConverter::toString(gConfig.height);
+    std::string currentR=Ogre::StringConverter::toString(gConfig->width)+"x"+Ogre::StringConverter::toString(gConfig->height);
 
     resolutionsLoop= new ListLoop<resolution>();
     std::string s=mFoundResolutions.at(0);
@@ -301,8 +279,6 @@ GuiOverlay::GuiOverlay(Ogre::SceneManager *mSceneM, Ogre::Camera* mCam,Ogre::Ren
     useTextCaption->size(1580,50);
     useTextCaption->align(Gorilla::TextAlign_Centre);
     useTextCaption->vertical_align(Gorilla::VerticalAlign_Middle);
-
-    (*Global::globalData)["Gui"] = this;
 }
 
 
@@ -340,7 +316,7 @@ void GuiOverlay::createOptionMenuButtons()
 
     cOptionButtonA = firstOptionButtonA = new ListLoop<Gorilla::Caption*>();
 
-    std::string resolutionStr=Ogre::StringConverter::toString(gConfig.width)+"x"+Ogre::StringConverter::toString(gConfig.height);
+    std::string resolutionStr=Ogre::StringConverter::toString(gConfig->width)+"x"+Ogre::StringConverter::toString(gConfig->height);
     caption = mLayer->createCaption(48, 1000, 1060 , resolutionStr);
     caption->size(350,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
@@ -348,21 +324,21 @@ void GuiOverlay::createOptionMenuButtons()
     oMenuButtons.push_back(caption);
     cOptionButtonA->value=caption;
 
-    caption = mLayer->createCaption(48, 1000, 1150, gConfig.fs ? "On" : "Off");
+    caption = mLayer->createCaption(48, 1000, 1150, gConfig->fs ? "On" : "Off");
     caption->size(351,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
     cOptionButtonA->addToEnd(caption);
 
-    caption = mLayer->createCaption(48, 1000, 1240, gConfig.shadow == 0 ? "Low" : (gConfig.shadow == 1 ? "Medium" : "High"));
+    caption = mLayer->createCaption(48, 1000, 1240, gConfig->shadow == 0 ? "Low" : (gConfig->shadow == 1 ? "Medium" : "High"));
     caption->size(352,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
     oMenuButtons.push_back(caption);
     cOptionButtonA->addToEnd(caption);
 
-    caption = mLayer->createCaption(48, 1000, 1330, gConfig.ssao ? "On" : "Off");
+    caption = mLayer->createCaption(48, 1000, 1330, gConfig->ssao ? "On" : "Off");
     caption->size(353,50);
     caption->colour(Ogre::ColourValue(1,1,1,0.3));
     caption->align(Gorilla::TextAlign_Left);
@@ -701,26 +677,26 @@ int GuiOverlay::mainMenuPressed()
                 {
                     resolutionsLoop=resolutionsLoop->next;
                     cOptionButtonA->value->text(resolutionsLoop->value.res);
-                    gConfig.height = resolutionsLoop->value.h;
-                    gConfig.width = resolutionsLoop->value.w;
+                    gConfig->height = resolutionsLoop->value.h;
+                    gConfig->width = resolutionsLoop->value.w;
 
                     engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                 }
                 if(c->width()==601 || c->width()==351)
                 {
-                    if(gConfig.fs)
+                    if(gConfig->fs)
                     {
                         cOptionButtonA->value->text("Off");
-                        gConfig.fs = false;
+                        gConfig->fs = false;
                     }
                     else
                     {
                         cOptionButtonA->value->text("On");
-                        gConfig.fs = true;
+                        gConfig->fs = true;
                     }
 
                     engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
-                    /*if(gConfig.fshadowR)
+                    /*if(gConfig->fshadowR)
                     {cOptionButtonA->mButton->text("Low"); mSceneMgr->setShadowTextureSettings(512,4, PF_FLOAT32_R);}
                     else
                     {cOptionButtonA->mButton->text("High"); mSceneMgr->setShadowTextureSettings(1024,4, PF_FLOAT32_R);}
@@ -732,37 +708,37 @@ int GuiOverlay::mainMenuPressed()
                 }
                 if(c->width()==602 || c->width()==352)
                 {
-                    if(gConfig.shadow == 0)
+                    if(gConfig->shadow == 0)
                     {
                         cOptionButtonA->value->text("Medium");
-                        gConfig.shadow = 1;
+                        gConfig->shadow = 1;
                     }
-                    else if(gConfig.shadow == 1)
+                    else if(gConfig->shadow == 1)
                     {
                         cOptionButtonA->value->text("High");
-                        gConfig.shadow = 2;
+                        gConfig->shadow = 2;
                     }
-                    else if(gConfig.shadow == 2)
+                    else if(gConfig->shadow == 2)
                     {
                         cOptionButtonA->value->text("Low");
-                        gConfig.shadow = 0;
+                        gConfig->shadow = 0;
                     }
 
                     engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                 }
                 if(c->width()==603 || c->width()==353)
                 {
-                    if(gConfig.ssao)
+                    if(gConfig->ssao)
                     {
                         cOptionButtonA->value->text("Off");
                         (Global::mPPMgr)->setSSAO(false);
-                        gConfig.ssao = false;
+                        gConfig->ssao = false;
                     }
                     else
                     {
                         cOptionButtonA->value->text("On");
                         (Global::mPPMgr)->setSSAO(true);
-                        gConfig.ssao = true;
+                        gConfig->ssao = true;
                     }
 
                     engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
