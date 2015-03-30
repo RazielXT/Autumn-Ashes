@@ -1,7 +1,4 @@
 #include "stdafx.h"
-
-static bool continueExecution = true;
-
 #include "player.h"
 #include "MainListener.h"
 

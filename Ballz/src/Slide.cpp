@@ -259,7 +259,7 @@ inline void fixSpline(Quaternion& rotation, Quaternion previous)
 void Slide::startJumpToSlide()
 {
     auto target = getCurrentState().getTranslate();
-    target.y += 2;
+    target.y += head->getPosition().y;
 
     const Ogre::String jumpAnimName = "jumpState";
 
@@ -305,9 +305,10 @@ void Slide::startJumpToSlide()
     /////////////////1
 
     auto stQ = or*Quaternion(Degree(-30), Vector3(1, 0, 0));
-    key = jumpTrack->createNodeKeyFrame(l*0.1f);
     auto crPos = MathUtils::lerp(pos, target, 0.1f);
     crPos.y -= 1;
+
+	key = jumpTrack->createNodeKeyFrame(l*0.1f);
     key->setRotation(stQ);
     key->setTranslate(crPos);
 

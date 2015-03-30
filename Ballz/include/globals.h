@@ -1,5 +1,4 @@
-#ifndef GLOBALVALUES
-#define GLOBALVALUES
+#pragma once
 
 class EventsManager;
 class InputListener;
@@ -32,4 +31,4 @@ extern std::map<std::string, void*>* globalData;
 extern float debug;
 };
 
-#endif GLOBALVALUES
+extern bool continueExecution;
