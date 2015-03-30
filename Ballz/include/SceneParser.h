@@ -537,7 +537,7 @@ private:
         }
     }
 
-    void loadGrassArea(const TiXmlElement* element, Entity* ent, SceneNode* node, Ogre::SceneManager *mSceneMgr, PagingManager* pagingMgr)
+    void loadGrassArea(const TiXmlElement* element, Entity* ent, SceneNode* node, Ogre::SceneManager *mSceneMgr)
     {
         Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
 
@@ -666,7 +666,7 @@ private:
         mSceneMgr->destroyEntity(ent);
         mSceneMgr->destroySceneNode(node);
 
-        pagingMgr->addPagedGeometry(grass);
+        Global::gameMgr->pagingMgr->addPagedGeometry(grass);
         myLog->logMessage("Grass Area Loaded", LML_NORMAL);
     }
 
@@ -682,7 +682,7 @@ private:
         Global::mEventsMgr->addTask(refl);
     }
 
-    void loadInstance(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, PagingManager* pagingMgr, Ogre::SceneManager* mSceneMgr)
+    void loadInstance(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
     {
         Ogre::Vector3 pos = node->getPosition();
         Ogre::Degree yaw = node->getOrientation().getYaw();
@@ -714,7 +714,7 @@ private:
             trees->addDetailLevel<Forests::ImpostorPage>((float)iMax, (float)tran);	//Use impostors up to 400 units, and for for 50 more units
             Forests::TreeLoader3D *treeLoader = new Forests::TreeLoader3D(trees, Forests::TBounds(-1500, -1500, 1500, 1500));
             trees->setPageLoader(treeLoader);	//Assign the "treeLoader" to be used to load geometry for the PagedGeometry instance
-            pagingMgr->addPagedGeometry(trees);
+            Global::gameMgr->pagingMgr->addPagedGeometry(trees);
             LoadedInstanceForests lf;
             lf.gm = gMax;
             lf.im = iMax;
@@ -1466,7 +1466,7 @@ private:
     }
 
     void loadEntity(const TiXmlElement* entityElement, SceneNode* node, bool visible, Ogre::SceneManager *mSceneMgr, OgreNewt::World* mWorld,
-                    EventsManager* mEventMgr, PagingManager* pagingMgr, WorldMaterials* wMaterials)
+                    EventsManager* mEventMgr, WorldMaterials* wMaterials)
     {
 
         Entity* ent = mSceneMgr->createEntity(entityElement->Attribute("name"), entityElement->Attribute("meshFile"));
@@ -1553,7 +1553,7 @@ private:
                     }
                     else if (rootTag == "GrassArea")
                     {
-                        loadGrassArea(element, ent, node, mSceneMgr, pagingMgr);
+                        loadGrassArea(element, ent, node, mSceneMgr);
                     }
                     else if (rootTag == "Billboard")
                     {
@@ -1561,7 +1561,7 @@ private:
                     }
                     else if (rootTag == "Instanced")
                     {
-                        loadInstance(element, ent, node, pagingMgr, mSceneMgr);
+                        loadInstance(element, ent, node, mSceneMgr);
                     }
                     else if (rootTag == "Reflection")
                     {
@@ -1822,7 +1822,7 @@ private:
 
     }
 
-    void loadNode(const TiXmlElement* nodeElement, PagingManager* pagingMgr, WorldMaterials* wMaterials)
+    void loadNode(const TiXmlElement* nodeElement)
     {
 
         SceneNode* node;
@@ -1839,6 +1839,7 @@ private:
             Ogre::SceneManager *mSceneMgr = Global::mSceneMgr;
             OgreNewt::World* mWorld = Global::mWorld;
             EventsManager* mEventMgr = Global::mEventsMgr;
+			WorldMaterials* wMaterials = Global::gameMgr->wMaterials;
 
             node = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
 
@@ -1878,7 +1879,7 @@ private:
                 elementName = childElement->Value();
 
                 if (elementName == "entity")
-                    loadEntity(childElement, node, visible, mSceneMgr, mWorld, mEventMgr, pagingMgr, wMaterials);
+                    loadEntity(childElement, node, visible, mSceneMgr, mWorld, mEventMgr, wMaterials);
                 else if (elementName == "light")
                     loadLight(childElement, node, mSceneMgr);
                 else if (elementName == "plane")
@@ -2055,7 +2056,7 @@ private:
 
 public:
 
-    void loadScene(Ogre::String filename, PagingManager* pagingMgr, WorldMaterials* wMaterials)
+    void loadScene(Ogre::String filename)
     {
 
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("LOADING SCENE :: filename \"" + filename + "\"", LML_NORMAL);
@@ -2089,7 +2090,7 @@ public:
             if (elementName == "node")
             {
                 if (!isCompoundBody(childElement))
-                    loadNode(childElement, pagingMgr, wMaterials);
+                    loadNode(childElement);
                 else
                     compBodies.push_back(childElement);
             }
@@ -2099,7 +2100,7 @@ public:
 
         for (uint i = 0; i < compBodies.size(); i++)
         {
-            loadNode(compBodies.at(i), pagingMgr, wMaterials);
+            loadNode(compBodies.at(i));
         }
         compBodies.clear();
 

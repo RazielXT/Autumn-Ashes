@@ -10,9 +10,8 @@
 using namespace Ogre;
 
 
-void createMenuLevel(WorldMaterials* wMaterials)
+void createMenuLevel()
 {
-    PagingManager* pagingMgr = Global::mPagingMgr;
     PostProcessMgr* postProcMgr = Global::mPPMgr;
     postProcMgr->ColouringShift = Ogre::Vector4(1.08, 1.12, 1.16, postProcMgr->ColouringShift.w);
     postProcMgr->fadeIn(Vector3(1, 1, 1), 2);
@@ -22,7 +21,7 @@ void createMenuLevel(WorldMaterials* wMaterials)
     postProcMgr->bloomStrDep.x = 0.35;
     postProcMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 
-    SceneParser::instance.loadScene("../../media/menu/menu.scene", pagingMgr, wMaterials);
+    SceneParser::instance.loadScene("../../media/menu/menu.scene");
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
     Camera* mCamera=Global::mSceneMgr->getCamera("Camera");
     SceneNode* camRotator=Global::mSceneMgr->getRootSceneNode()->createChildSceneNode("camRotator");
@@ -64,14 +63,13 @@ void createMenuLevel(WorldMaterials* wMaterials)
     Global::mEventsMgr->addTask(lvlUp);
 }
 
-void createLevelTuto(WorldMaterials* wMaterials)
+void createLevelTuto()
 {
-
     //Rope* rr=new Rope(mSceneMgr,mWorld,Vector3(13,11,6),10,0.5);
 
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBoxToDark");
     Global::mWorld->setWorldSize(Vector3(-2000,-500,-2000),Vector3(2000,500,2000));
-    SceneParser::instance.loadScene("../../media/park/park.scene", Global::mPagingMgr, wMaterials);
+    SceneParser::instance.loadScene("../../media/park/park.scene");
 
     irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("tokyostreetatnight.ogg").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
     //music->setMinDistance(20);
@@ -279,14 +277,14 @@ void createLevelTuto(WorldMaterials* wMaterials)
 }
 
 
-void createLevel1_1(WorldMaterials* wMaterials)
+void createLevel1_1()
 {
 
     //Rope* rr=new Rope(mSceneMgr,mWorld,Vector3(13,11,6),10,0.5);
 
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
     Global::mWorld->setWorldSize(Vector3(-2000,-500,-2000),Vector3(2000,500,2000));
-    SceneParser::instance.loadScene("../../media/caves.scene", Global::mPagingMgr, wMaterials);
+    SceneParser::instance.loadScene("../../media/caves.scene");
 
     irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
     //music->setMinDistance(20);
@@ -309,12 +307,12 @@ void createLevel1_1(WorldMaterials* wMaterials)
     ppMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 }
 
-void createLevel2(WorldMaterials* wMaterials)
+void createLevel2()
 {
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
     Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
 
-    SceneParser::instance.loadScene("../../media/valley/valley.scene", Global::mPagingMgr, wMaterials);
+    SceneParser::instance.loadScene("../../media/valley/valley.scene");
 
     irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(), true, false, true, irrklang::ESM_AUTO_DETECT, true);
     //music->setMinDistance(20);

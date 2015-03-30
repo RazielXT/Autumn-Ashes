@@ -20,15 +20,15 @@ void GameStateManager::switchToMainMenu()
     }
 
     Global::mWorld->destroyAllBodies();
-    Global::mPagingMgr->clear();
     Global::mSceneMgr->clearScene();
     Global::mEventsMgr->clear();
     Global::soundEngine->removeAllSoundSources();
     Global::mPPMgr->resetValues();
     myMenu->setMainMenu();
+	pagingMgr->clear();
 
     gameState = MENU;
-    createMenuLevel(wMaterials);
+    createMenuLevel();
 }
 
 void GameStateManager::switchToLevel(int lvl)
@@ -48,8 +48,9 @@ void GameStateManager::switchToLevel(int lvl)
         myMenu->clearMenu();
 
     gameState = GAME;
-    Global::mWorld->destroyAllBodies();
-    Global::mPagingMgr->clear();
+	pagingMgr->clear();
+
+    Global::mWorld->destroyAllBodies(); 
     Global::mSceneMgr->clearScene();
     Global::mEventsMgr->clear();
     Global::soundEngine->removeAllSoundSources();
@@ -63,13 +64,13 @@ void GameStateManager::switchToLevel(int lvl)
     switch (lvl)
     {
     case 1:
-        createLevelTuto(wMaterials);
+        createLevelTuto();
         break;
     case 2:
-        createLevel1_1(wMaterials);
+        createLevel1_1();
         break;
     case 3:
-        createLevel2(wMaterials);
+        createLevel2();
         break;
     default:
         switchToMainMenu();

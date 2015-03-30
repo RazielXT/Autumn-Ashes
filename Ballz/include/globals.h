@@ -17,7 +17,6 @@ extern Ogre::RenderWindow* mWindow;
 
 extern EventsManager* mEventsMgr;
 extern GameStateManager* gameMgr;
-extern PagingManager* mPagingMgr;
 extern PostProcessMgr* mPPMgr;
 
 extern Player* player;

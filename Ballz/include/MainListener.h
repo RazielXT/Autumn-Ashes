@@ -85,12 +85,12 @@ public:
         Global::mEventsMgr = mEventMgr;
         Global::soundEngine = engine;
         Global::mPPMgr = postProcMgr;
-        Global::mPagingMgr = pagingMgr;
 
         Global::audioLib = new AudioLibrary(engine);
 
         gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem(), wMaterials);
         Global::gameMgr = gameMgr;
+		Global::gameMgr->pagingMgr = pagingMgr;
 
         mKeyboard=keyboard;
         mMouse=mouse;
