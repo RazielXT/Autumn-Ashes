@@ -701,7 +701,7 @@ CustomOtherBodyForce::CustomOtherBodyForce(Ogre::String info)
     char* temp = strtok_s(const_cast<char *> (text),"/",&token);
     Ogre::String name = Ogre::String(temp);
 
-    auto bodies = (std::map<Ogre::String,OgreNewt::Body*>*) Global::globalData->find("loadedBodies")->second;
+	auto bodies = Global::gameMgr->loadedBodies;
     auto it = bodies->find(name);
     if(it!=bodies->end())
         mBody = it->second;
@@ -1529,7 +1529,7 @@ PushObject::PushObject(Ogre::String pushInfo)
 
     char* temp = strtok_s(const_cast<char *> (text),"/",&token);
 
-    auto bodies = (std::map<Ogre::String,OgreNewt::Body*>*) Global::globalData->find("loadedBodies")->second;
+	auto bodies = Global::gameMgr->loadedBodies;
     auto it = bodies->find(Ogre::String(temp));
     if(it!=bodies->end())
     {

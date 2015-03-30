@@ -90,7 +90,7 @@ bool ReflectionTask::start()
     mPlaneNode->attachObject(mPlane);
     // mPlaneNode->translate(0, -81, 0);
 
-    (*Global::globalData)[mEntity->getName() + "_reflection"] = this;
+    //(*Global::globalData)[mEntity->getName() + "_reflection"] = this;
 
     return 1;
 }

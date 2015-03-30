@@ -69,7 +69,7 @@ void Player::jump()
         mHelpBody->setPositionOrientation(bodyPosition, Ogre::Quaternion::IDENTITY);
         mHelpBody->setMassMatrix(0.5, Ogre::Vector3(20, 20, 20));
         mHelpBody->setCustomForceAndTorqueCallback<Player>(&Player::default_callback, this);
-        mHelpBody->setMaterialGroupID((OgreNewt::MaterialID*)Global::globalData->find("MatFlag")->second);
+        mHelpBody->setMaterialGroupID(Global::gameMgr->wMaterials->flag_mat);
         climbJoint = new OgreNewt::BallAndSocket(mHelpBody, Gbody, bodyPosition, 0);
 
         climb_normal.normalise();

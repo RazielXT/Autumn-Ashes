@@ -262,7 +262,7 @@ void OutOfCave::setUserData(void* data)
 
 bool OutOfCave::start()
 {
-    auto bodies = (std::map<Ogre::String,OgreNewt::Body*>*) Global::globalData->find("loadedBodies")->second;
+	auto bodies = Global::gameMgr->loadedBodies;
     auto it = bodies->find("FCave");
     delete it->second;
     bodies->erase(it);

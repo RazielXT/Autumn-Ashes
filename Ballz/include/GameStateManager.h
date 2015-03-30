@@ -31,6 +31,9 @@ public:
 
     GameState gameState;
     GuiOverlay* myMenu;
+	WorldMaterials* wMaterials;
+
+	std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
 
 private:
 
@@ -41,6 +44,5 @@ private:
     float switchStateTimer;
 
     int lastLVL;
-
-    WorldMaterials* wMaterials;
+    
 };

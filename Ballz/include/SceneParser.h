@@ -1184,7 +1184,6 @@ private:
         element = element->NextSiblingElement();
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Making BM", LML_NORMAL);
 
-
         Ogre::String mat;
         if (element->GetText() != NULL)
             mat = Ogre::String(element->GetText());
@@ -1193,25 +1192,12 @@ private:
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Making BM", LML_NORMAL);
         int matType = Ogre::StringConverter::parseInt(element->GetText());
 
-        BridgeMaker* bm;
-        auto it = Global::globalData->find("BridgeMaker");
-        if (it == Global::globalData->end())
-        {
-            bm = new BridgeMaker(mSceneMgr, Global::mWorld);
-            (*Global::globalData)[Ogre::String("BridgeMaker")] = bm;
-            Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Making BM", LML_NORMAL);
-
-        }
-        else
-        {
-            Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Loaded BM", LML_NORMAL);
-            bm = (BridgeMaker*)it->second;
-        }
+		static BridgeMaker bm(mSceneMgr, Global::mWorld);
 
         if (mat.empty())
-            bm->makeBridge(pos, target, scale, loose, matType, visibilityFlag);
+            bm.makeBridge(pos, target, scale, loose, matType, visibilityFlag);
         else
-            bm->makeBridge(pos, target, scale, loose, matType, visibilityFlag, mat);
+            bm.makeBridge(pos, target, scale, loose, matType, visibilityFlag, mat);
 
         node->detachAllObjects();
         mSceneMgr->destroySceneNode(node);
@@ -2088,7 +2074,7 @@ public:
         loadedSlides.clear();
         loadedSlideParts.clear();
 
-        (*Global::globalData)["loadedBodies"] = &loadedBodies;
+		Global::gameMgr->loadedBodies = &loadedBodies;
 
         if (Global::player != NULL)
             loadedBodies["Player"] = Global::player->body;

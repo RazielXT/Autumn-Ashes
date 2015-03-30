@@ -102,8 +102,6 @@ public:
         wMaterials->init(mWorld);
         gameMgr->switchToMainMenu();
 
-        (*Global::globalData)["MatFlag"] = wMaterials->flag_mat;
-
         dbg.registerInputListening();
     }
 
