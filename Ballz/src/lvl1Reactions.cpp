@@ -262,7 +262,7 @@ void OutOfCave::setUserData(void* data)
 
 bool OutOfCave::start()
 {
-	auto bodies = Global::gameMgr->loadedBodies;
+    auto bodies = Global::gameMgr->loadedBodies;
     auto it = bodies->find("FCave");
     delete it->second;
     bodies->erase(it);

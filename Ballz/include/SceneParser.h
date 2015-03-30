@@ -1,7 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
-#include <tinyxml.h>
+#include <tinyxml2.h>
 #include "GrassHeightFunction.h"
 #include "BridgeMaker.h"
 #include "Tasks.h"
@@ -9,9 +9,11 @@
 #include "Slide.h"
 #include "TopSlide.h"
 #include "ZipLineSlide.h"
+#include "player.h"
 
 
 using namespace Ogre;
+using namespace tinyxml2;
 
 class SceneParser
 {
@@ -92,7 +94,7 @@ private:
         loadedSlideParts.clear();
     }
 
-    String getElementValue(const TiXmlElement* rootElement, String elementName, String defaultValue = "")
+    String getElementValue(const XMLElement* rootElement, String elementName, String defaultValue = "")
     {
         auto e = rootElement->FirstChildElement(elementName.c_str());
 
@@ -102,7 +104,7 @@ private:
             return e->GetText();
     }
 
-    int getElementIntValue(const TiXmlElement* rootElement, String elementName, int defaultValue = 0)
+    int getElementIntValue(const XMLElement* rootElement, String elementName, int defaultValue = 0)
     {
         auto e = rootElement->FirstChildElement(elementName.c_str());
 
@@ -112,7 +114,7 @@ private:
             return Ogre::StringConverter::parseInt(String(e->GetText()), defaultValue);
     }
 
-    const TiXmlElement* IterateChildElements(const TiXmlElement* xmlElement, const TiXmlElement* childElement)
+    const XMLElement* IterateChildElements(const XMLElement* xmlElement, const XMLElement* childElement)
     {
         if (xmlElement != 0)
         {
@@ -137,19 +139,19 @@ private:
             return true;
     }
 
-    Real GetRealAttribute(const TiXmlElement* xmlElement, const char* name, Real defaultValue = 0)
+    Real GetRealAttribute(const XMLElement* xmlElement, const char* name, Real defaultValue = 0)
     {
         String value = xmlElement->Attribute(name);
         return value.empty() ? defaultValue : StringConverter::parseReal(value);
     }
 
-    int GetIntAttribute(const TiXmlElement* xmlElement, const char* name, int defaultValue = 0)
+    int GetIntAttribute(const XMLElement* xmlElement, const char* name, int defaultValue = 0)
     {
         String value = xmlElement->Attribute(name);
         return value.empty() ? defaultValue : StringConverter::parseInt(value);
     }
 
-    Vector3 LoadXYZ(const TiXmlElement* objectElement)
+    Vector3 LoadXYZ(const XMLElement* objectElement)
     {
         Vector3 xyz;
         xyz.x = GetRealAttribute(objectElement, "x");
@@ -181,7 +183,7 @@ private:
         );
     }
 
-    Quaternion LoadRotation(const TiXmlElement* objectElement)
+    Quaternion LoadRotation(const XMLElement* objectElement)
     {
         Quaternion rotation = Quaternion::IDENTITY;
 
@@ -193,7 +195,7 @@ private:
         return rotation;
     }
 
-    ColourValue LoadColor(const TiXmlElement* objectElement)
+    ColourValue LoadColor(const XMLElement* objectElement)
     {
         ColourValue color;
         color.r = GetRealAttribute(objectElement, "r", 0);
@@ -203,7 +205,7 @@ private:
         return color;
     }
 
-    String GetStringAttribute(const TiXmlElement* xmlElement, const char* name)
+    String GetStringAttribute(const XMLElement* xmlElement, const char* name)
     {
         const char* value = xmlElement->Attribute(name);
         if (value != 0)
@@ -212,7 +214,7 @@ private:
             return StringUtil::BLANK;
     }
 
-    std::string getElementText(const TiXmlElement* xmlElement)
+    std::string getElementText(const XMLElement* xmlElement)
     {
         auto txt = xmlElement->GetText();
 
@@ -238,7 +240,7 @@ private:
         return ret;
     }
 
-    void LoadLightAttenuation(const TiXmlElement* objectElement, Light* light)
+    void LoadLightAttenuation(const XMLElement* objectElement, Light* light)
     {
 
         String value;
@@ -258,7 +260,7 @@ private:
         light->setAttenuation(range, constant, linear, quadric);
     }
 
-    void LoadLightRange(const TiXmlElement* objectElement, Light* light)
+    void LoadLightRange(const XMLElement* objectElement, Light* light)
     {
 
         if (light->getType() == Light::LT_SPOTLIGHT)
@@ -363,15 +365,15 @@ private:
         }
     }
 
-    void GetChildText(const TiXmlElement* xmlElement, String& text)
+    void GetChildText(const XMLElement* xmlElement, String& text)
     {
         //Get the first element
-        const TiXmlNode* childNode = xmlElement->FirstChild();
+        const XMLNode* childNode = xmlElement->FirstChild();
         while (childNode != 0)
         {
-            if (childNode->Type() == TiXmlNode::TEXT)
+            //if (childNode->Type() == XMLNode::TEXT)
             {
-                const TiXmlText* textNode = childNode->ToText();
+                const XMLText* textNode = childNode->ToText();
                 if (textNode != 0)
                 {
                     text = textNode->Value();
@@ -382,14 +384,14 @@ private:
         }
     }
 
-    void loadPlane(const TiXmlElement* planeElement, SceneNode* node, Ogre::SceneManager *mSceneMgr)
+    void loadPlane(const XMLElement* planeElement, SceneNode* node, Ogre::SceneManager *mSceneMgr)
     {
 
 
         Ogre::Vector3 normal;
         Ogre::Vector3 upVector;
 
-        const TiXmlElement* childElement = 0;
+        const XMLElement* childElement = 0;
         while (childElement = IterateChildElements(planeElement, childElement))
         {
 
@@ -428,7 +430,7 @@ private:
         ent->setRenderQueueGroup(renderQueue);
     }
 
-    void loadLight(const TiXmlElement* lightElement, SceneNode* node, Ogre::SceneManager *mSceneMgr)
+    void loadLight(const XMLElement* lightElement, SceneNode* node, Ogre::SceneManager *mSceneMgr)
     {
 
 
@@ -439,7 +441,7 @@ private:
         light->setPowerScale(GetRealAttribute(lightElement, "power"));
         node->attachObject(light);
 
-        const TiXmlElement* childElement = 0;
+        const XMLElement* childElement = 0;
         while (childElement = IterateChildElements(lightElement, childElement))
         {
 
@@ -463,7 +465,7 @@ private:
         }
     }
 
-    void loadActions(const TiXmlElement* rootElement, EventsManager* mEventMgr, OgreNewt::Body* body, bodyUserData* userD, OgreNewt::MaterialID* action_mat)
+    void loadActions(const XMLElement* rootElement, EventsManager* mEventMgr, OgreNewt::Body* body, bodyUserData* userD, OgreNewt::MaterialID* action_mat)
     {
         Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
 
@@ -537,7 +539,7 @@ private:
         }
     }
 
-    void loadGrassArea(const TiXmlElement* element, Entity* ent, SceneNode* node, Ogre::SceneManager *mSceneMgr)
+    void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre::SceneManager *mSceneMgr)
     {
         Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
 
@@ -670,7 +672,7 @@ private:
         myLog->logMessage("Grass Area Loaded", LML_NORMAL);
     }
 
-    void loadReflection(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
+    void loadReflection(const XMLElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
     {
         Ogre::Vector3 pos = node->getPosition();
         Ogre::Degree yaw = node->getOrientation().getYaw();
@@ -682,7 +684,7 @@ private:
         Global::mEventsMgr->addTask(refl);
     }
 
-    void loadInstance(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
+    void loadInstance(const XMLElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
     {
         Ogre::Vector3 pos = node->getPosition();
         Ogre::Degree yaw = node->getOrientation().getYaw();
@@ -732,7 +734,7 @@ private:
 
     }
 
-    void loadSlidePart(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, WorldMaterials* wMaterials, OgreNewt::World* mWorld)
+    void loadSlidePart(const XMLElement* element, Ogre::Entity* ent, SceneNode* node, WorldMaterials* wMaterials, OgreNewt::World* mWorld)
     {
         String typeName = getElementValue(element, "BodyType");
         auto top = StringConverter::parseBool(getElementValue(element, "Top"));
@@ -781,7 +783,7 @@ private:
         loadedBodies[ent->getName()] = body;
     }
 
-    void loadSlideTrack(const TiXmlElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
+    void loadSlideTrack(const XMLElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
     {
         std::vector<Ogre::Vector3> points;
 
@@ -836,7 +838,7 @@ private:
         //mSceneMgr->destroySceneNode(node);
     }
 
-    void loadBillboard(const TiXmlElement* element, Ogre::Entity* ent, Ogre::SceneManager* mSceneMgr)
+    void loadBillboard(const XMLElement* element, Ogre::Entity* ent, Ogre::SceneManager* mSceneMgr)
     {
         int billboardSet = Ogre::StringConverter::parseInt(element->GetText());
         element = element->NextSiblingElement();
@@ -922,7 +924,7 @@ private:
 
     }
 
-    OgreNewt::Body* loadPhysics(const TiXmlElement* rootElement, Entity* ent, SceneNode* node, OgreNewt::World* mWorld, EventsManager* mEventMgr, WorldMaterials* wMaterials)
+    OgreNewt::Body* loadPhysics(const XMLElement* rootElement, Entity* ent, SceneNode* node, OgreNewt::World* mWorld, EventsManager* mEventMgr, WorldMaterials* wMaterials)
     {
         Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
         auto eValue = getElementValue(rootElement, "ObjectModifier");
@@ -1121,9 +1123,9 @@ private:
         return body;
     }
 
-    void loadJoint(const TiXmlElement* element, SceneNode* node, Ogre::SceneManager *mSceneMgr)
+    void loadJoint(const XMLElement* element, SceneNode* node, Ogre::SceneManager *mSceneMgr)
     {
-        const TiXmlElement* pElement = element->NextSiblingElement();
+        const XMLElement* pElement = element->NextSiblingElement();
 
         auto children = getElementText(element);
         auto parents = getElementText(pElement);
@@ -1132,7 +1134,7 @@ private:
         element = element->NextSiblingElement();
         auto parent = strtok_str(parents, ';');
 
-        const TiXmlElement* typeElement = pElement->NextSiblingElement();
+        const XMLElement* typeElement = pElement->NextSiblingElement();
         char type = 0;
         if (typeElement != 0)
         {
@@ -1163,7 +1165,7 @@ private:
 
     }
 
-    void loadBridge(const TiXmlElement* element, SceneNode* node, Ogre::SceneManager *mSceneMgr, uint32 visibilityFlag)
+    void loadBridge(const XMLElement* element, SceneNode* node, Ogre::SceneManager *mSceneMgr, uint32 visibilityFlag)
     {
         Ogre::Vector3 pos = node->getPosition();
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Making BM", LML_NORMAL);
@@ -1192,7 +1194,7 @@ private:
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Making BM", LML_NORMAL);
         int matType = Ogre::StringConverter::parseInt(element->GetText());
 
-		static BridgeMaker bm(mSceneMgr, Global::mWorld);
+        static BridgeMaker bm(mSceneMgr, Global::mWorld);
 
         if (mat.empty())
             bm.makeBridge(pos, target, scale, loose, matType, visibilityFlag);
@@ -1205,10 +1207,10 @@ private:
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Bridge - to: " + Ogre::StringConverter::toString(target) + " and loose: " + Ogre::StringConverter::toString(loose) + " and scale: " + Ogre::StringConverter::toString(scale), LML_NORMAL);
     }
 
-    void loadSound(const TiXmlElement* element, SceneNode* node, Ogre::SceneManager *mSceneMgr)
+    void loadSound(const XMLElement* element, SceneNode* node, Ogre::SceneManager *mSceneMgr)
     {
         Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
-        const TiXmlElement* childElement = element;
+        const XMLElement* childElement = element;
 
         float volume = Ogre::StringConverter::parseReal(childElement->GetText());
         childElement = childElement->NextSiblingElement();
@@ -1232,7 +1234,7 @@ private:
         myLog->logMessage("Sound - " + soundName, LML_NORMAL);
     }
 
-    void loadCompoundBodyPart(const TiXmlElement* element, Entity* ent, SceneNode* node, OgreNewt::World* mWorld, Ogre::SceneManager *mSceneMgr)
+    void loadCompoundBodyPart(const XMLElement* element, Entity* ent, SceneNode* node, OgreNewt::World* mWorld, Ogre::SceneManager *mSceneMgr)
     {
         Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
         Ogre::String compBody = Ogre::String(element->GetText());
@@ -1270,7 +1272,7 @@ private:
 
     }
 
-    TriggerInfo* loadTrigger(const TiXmlElement* element, bool nonphysical = false)
+    TriggerInfo* loadTrigger(const XMLElement* element, bool nonphysical = false)
     {
 
         Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
@@ -1325,11 +1327,11 @@ private:
         return trigger;
     }
 
-    void loadActions(const TiXmlElement* element, void* data, int id = 0)
+    void loadActions(const XMLElement* element, void* data, int id = 0)
     {
         Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
 
-        const TiXmlElement* fElement = element->NextSiblingElement();
+        const XMLElement* fElement = element->NextSiblingElement();
 
         std::string tasks = getElementText(element);
         std::string functions = getElementText(fElement);
@@ -1406,7 +1408,7 @@ private:
 
     }
 
-    int setModifierStart(const TiXmlElement* rootElement, Entity** ent, SceneNode** node, Ogre::SceneManager *mSceneMgr)
+    int setModifierStart(const XMLElement* rootElement, Entity** ent, SceneNode** node, Ogre::SceneManager *mSceneMgr)
     {
         Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
 
@@ -1442,7 +1444,7 @@ private:
         return id;
     }
 
-    void setModifierEnd(const TiXmlElement* rootElement, Entity** ent, SceneNode** node, Ogre::SceneManager *mSceneMgr)
+    void setModifierEnd(const XMLElement* rootElement, Entity** ent, SceneNode** node, Ogre::SceneManager *mSceneMgr)
     {
         auto element = rootElement->FirstChildElement("ObjectModifier");
         if (element != NULL)
@@ -1465,7 +1467,7 @@ private:
         }
     }
 
-    void loadEntity(const TiXmlElement* entityElement, SceneNode* node, bool visible, Ogre::SceneManager *mSceneMgr, OgreNewt::World* mWorld,
+    void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, Ogre::SceneManager *mSceneMgr, OgreNewt::World* mWorld,
                     EventsManager* mEventMgr, WorldMaterials* wMaterials)
     {
 
@@ -1493,8 +1495,8 @@ private:
         Ogre::uint8 renderQueue = ParseRenderQueue(GetStringAttribute(entityElement, "renderQueue"));
         ent->setRenderQueueGroup(renderQueue);
 
-        const TiXmlElement* subentityElement = entityElement->FirstChildElement("subentities");
-        const TiXmlElement* childElement = 0;
+        const XMLElement* subentityElement = entityElement->FirstChildElement("subentities");
+        const XMLElement* childElement = 0;
         while (childElement = IterateChildElements(subentityElement, childElement))
         {
             int index = GetIntAttribute(childElement, "index", 0);
@@ -1502,7 +1504,7 @@ private:
         }
 
 
-        const TiXmlElement* userdataElement = entityElement->FirstChildElement("userData");
+        const XMLElement* userdataElement = entityElement->FirstChildElement("userData");
 
         if (userdataElement != NULL)
         {
@@ -1513,11 +1515,11 @@ private:
             Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
             myLog->logMessage(userData, LML_NORMAL);
 
-            TiXmlDocument document;
+            XMLDocument document;
             document.Parse(userData.c_str());
             if (!document.Error())
             {
-                TiXmlElement *root = document.RootElement();
+                XMLElement *root = document.RootElement();
 
                 if (root->Value() != NULL)
                 {
@@ -1635,7 +1637,7 @@ private:
                     }
                     else if (rootTag == "PhysicalBodyReaction")
                     {
-                        TiXmlElement* modifElement = element;
+                        XMLElement* modifElement = element;
                         int id = setModifierStart(root, &ent, &node, mSceneMgr);
 
                         OgreNewt::Body* body = loadPhysics(root, ent, node, mWorld, mEventMgr, wMaterials);
@@ -1723,10 +1725,10 @@ private:
     }
 
 
-    void loadPlayerInfo(const TiXmlElement* nodeElement, Player* pl)
+    void loadPlayerInfo(const XMLElement* nodeElement, Player* pl)
     {
         String elementName;
-        const TiXmlElement* childElement = 0;
+        const XMLElement* childElement = 0;
         while (childElement = IterateChildElements(nodeElement, childElement))
         {
             elementName = childElement->Value();
@@ -1740,7 +1742,7 @@ private:
             }
             else if (elementName == "entity")
             {
-                const TiXmlElement* userdataElement = childElement->FirstChildElement("userData");
+                const XMLElement* userdataElement = childElement->FirstChildElement("userData");
 
                 if (userdataElement != NULL)
                 {
@@ -1750,16 +1752,16 @@ private:
                     Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
                     myLog->logMessage(userData, LML_NORMAL);
 
-                    TiXmlDocument document;
+                    XMLDocument document;
                     document.Parse(userData.c_str());
                     if (!document.Error())
                     {
-                        TiXmlElement *root = document.RootElement();
+                        XMLElement *root = document.RootElement();
 
                         if (root->Value() != NULL)
                         {
                             Ogre::String rootTag(root->Value());
-                            TiXmlElement *element = root->FirstChildElement();
+                            XMLElement *element = root->FirstChildElement();
 
                             if (rootTag == "Player")
                             {
@@ -1773,12 +1775,12 @@ private:
         }
     }
 
-    void loadAnimations(const TiXmlElement* element, Ogre::SceneNode* node, Ogre::SceneManager* mSceneMgr)
+    void loadAnimations(const XMLElement* element, Ogre::SceneNode* node, Ogre::SceneManager* mSceneMgr)
     {
 
         node = mSceneMgr->getRootSceneNode()->createChildSceneNode(node->getName() + "Anim", node->_getDerivedPosition(), node->_getDerivedOrientation());
 
-        const TiXmlElement* childElement = 0;
+        const XMLElement* childElement = 0;
         while (childElement = IterateChildElements(element, childElement))
         {
 
@@ -1803,13 +1805,13 @@ private:
 
             NodeAnimationTrack* track = anim->createNodeTrack(0, node);
 
-            const TiXmlElement* keyElement = 0;
+            const XMLElement* keyElement = 0;
             while (keyElement = IterateChildElements(childElement, keyElement))
             {
                 float time = GetRealAttribute(keyElement, "time");
                 Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(time);
 
-                const TiXmlElement* keyInfoElement = keyElement->FirstChildElement();
+                const XMLElement* keyInfoElement = keyElement->FirstChildElement();
                 kf->setTranslate(LoadXYZ(keyInfoElement));
                 keyInfoElement = keyInfoElement->NextSiblingElement();
                 kf->setRotation(LoadRotation(keyInfoElement));
@@ -1822,7 +1824,7 @@ private:
 
     }
 
-    void loadNode(const TiXmlElement* nodeElement)
+    void loadNode(const XMLElement* nodeElement)
     {
 
         SceneNode* node;
@@ -1839,7 +1841,7 @@ private:
             Ogre::SceneManager *mSceneMgr = Global::mSceneMgr;
             OgreNewt::World* mWorld = Global::mWorld;
             EventsManager* mEventMgr = Global::mEventsMgr;
-			WorldMaterials* wMaterials = Global::gameMgr->wMaterials;
+            WorldMaterials* wMaterials = Global::gameMgr->wMaterials;
 
             node = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
 
@@ -1854,7 +1856,7 @@ private:
 
             //first properties, then content
             String elementName;
-            const TiXmlElement* childElement = 0;
+            const XMLElement* childElement = 0;
 
 
             while (childElement = IterateChildElements(nodeElement, childElement))
@@ -2014,23 +2016,23 @@ private:
         loadedGrassAreas.clear();
     }
 
-    bool isCompoundBody(const TiXmlElement* nodeElement)
+    bool isCompoundBody(const XMLElement* nodeElement)
     {
-        const TiXmlElement* childElement = nodeElement->FirstChildElement("entity");
+        const XMLElement* childElement = nodeElement->FirstChildElement("entity");
         if (childElement != NULL)
         {
-            const TiXmlElement* userdataElement = childElement->FirstChildElement("userData");
+            const XMLElement* userdataElement = childElement->FirstChildElement("userData");
 
             if (userdataElement != NULL)
             {
                 Ogre::String userData;
                 GetChildText(userdataElement, userData);
 
-                TiXmlDocument document;
+                XMLDocument document;
                 document.Parse(userData.c_str());
                 if (!document.Error())
                 {
-                    TiXmlElement *root = document.RootElement();
+                    XMLElement *root = document.RootElement();
 
                     if (root->Value() != NULL)
                     {
@@ -2040,7 +2042,7 @@ private:
 
                         if (rootTag == "PhysicalBody")
                         {
-                            TiXmlElement *element = root->FirstChildElement("BodyType");
+                            XMLElement *element = root->FirstChildElement("BodyType");
                             Ogre::String phTag(element->GetText());
 
                             if (phTag == "comp")
@@ -2061,10 +2063,10 @@ public:
 
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("LOADING SCENE :: filename \"" + filename + "\"", LML_NORMAL);
 
-        TiXmlDocument document;
+        XMLDocument document;
         document.LoadFile(filename.c_str());
-        const TiXmlElement* mainElement = document.RootElement();
-        const TiXmlElement* nodesElement = mainElement->FirstChildElement("nodes");
+        auto mainElement = document.RootElement();
+        auto nodesElement = mainElement->FirstChildElement("nodes");
 
         loadedTasks.clear();
         loadedTriggers.clear();
@@ -2075,14 +2077,14 @@ public:
         loadedSlides.clear();
         loadedSlideParts.clear();
 
-		Global::gameMgr->loadedBodies = &loadedBodies;
+        Global::gameMgr->loadedBodies = &loadedBodies;
 
         if (Global::player != NULL)
             loadedBodies["Player"] = Global::player->body;
 
-        std::vector<const TiXmlElement*> compBodies;
+        std::vector<const XMLElement*> compBodies;
         String elementName;
-        const TiXmlElement* childElement = 0;
+        const XMLElement* childElement = 0;
         while (childElement = IterateChildElements(nodesElement, childElement))
         {
             elementName = childElement->Value();

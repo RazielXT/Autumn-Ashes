@@ -90,8 +90,8 @@ private:
         {
             Ogre::String lWindowTitle = "Ballz";
 
-			GameConfig cfg;
-			cfg.loadCfg();
+            GameConfig cfg;
+            cfg.loadCfg();
 
             Ogre::NameValuePairList lParams;
             // we use our own FXAA
@@ -99,7 +99,7 @@ private:
             lParams["vsync"] = "false";
             lParams["useNVPerfHUD"] = "false";
 
-			mWindow = mRoot->createRenderWindow(lWindowTitle, cfg.width, cfg.height, cfg.fs, &lParams);
+            mWindow = mRoot->createRenderWindow(lWindowTitle, cfg.width, cfg.height, cfg.fs, &lParams);
         }
     }
 

@@ -7,9 +7,9 @@ SceneParser SceneParser::instance;
 
 GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, WorldMaterials* wMaterials)
 {
-	gameConfig.loadCfg();
+    gameConfig.loadCfg();
 
-	myMenu = new GuiOverlay(&gameConfig, cam, Global::mWindow, rs, Global::soundEngine);
+    myMenu = new GuiOverlay(&gameConfig, cam, Global::mWindow, rs, Global::soundEngine);
     this->wMaterials = wMaterials;
 }
 
@@ -27,7 +27,7 @@ void GameStateManager::switchToMainMenu()
     Global::soundEngine->removeAllSoundSources();
     Global::mPPMgr->resetValues();
     myMenu->setMainMenu();
-	pagingMgr->clear();
+    pagingMgr->clear();
 
     gameState = MENU;
     createMenuLevel();
@@ -50,9 +50,9 @@ void GameStateManager::switchToLevel(int lvl)
         myMenu->clearMenu();
 
     gameState = GAME;
-	pagingMgr->clear();
+    pagingMgr->clear();
 
-    Global::mWorld->destroyAllBodies(); 
+    Global::mWorld->destroyAllBodies();
     Global::mSceneMgr->clearScene();
     Global::mEventsMgr->clear();
     Global::soundEngine->removeAllSoundSources();

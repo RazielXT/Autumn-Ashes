@@ -70,7 +70,7 @@ void GuiOverlay::closeOptions()
         c->colour(Ogre::ColourValue(1,1,1,0.3));
     }
 
-	gConfig->saveCfg();
+    gConfig->saveCfg();
 
     Global::mWindow->setFullscreen(gConfig->fs, gConfig->width, gConfig->height);
 }
@@ -126,7 +126,7 @@ int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
         case OIS::KC_RETURN:
             if (mMenuState->value == QUIT)
             {
-				gConfig->saveCfg();
+                gConfig->saveCfg();
                 return 1;
             }
             if (mMenuState->value == OPTIONS)
@@ -162,7 +162,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
 {
     engine=eng;
 
-	gConfig = gameConfig;
+    gConfig = gameConfig;
 
     Ogre::ConfigOptionMap& CurrentRendererOptions = rs->getConfigOptions();
     Ogre::ConfigOptionMap::iterator configItr = CurrentRendererOptions.begin();
@@ -234,7 +234,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
     moving=false;
     atm=0;
     movingDir=1;
-    mSceneMgr=mSceneM;
+    mSceneMgr = Global::mSceneMgr;
     lvlMoving=false;
 
     mSilverback = new Gorilla::Silverback();

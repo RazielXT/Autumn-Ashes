@@ -701,7 +701,7 @@ CustomOtherBodyForce::CustomOtherBodyForce(Ogre::String info)
     char* temp = strtok_s(const_cast<char *> (text),"/",&token);
     Ogre::String name = Ogre::String(temp);
 
-	auto bodies = Global::gameMgr->loadedBodies;
+    auto bodies = Global::gameMgr->loadedBodies;
     auto it = bodies->find(name);
     if(it!=bodies->end())
         mBody = it->second;
@@ -1241,7 +1241,7 @@ bool ShowText::start()
     if(delay)
         return true;
 
-	Global::gameMgr->myMenu->showIngameText(text);
+    Global::gameMgr->myMenu->showIngameText(text);
     return false;
 }
 
@@ -1251,7 +1251,7 @@ bool ShowText::update(float tslf)
 
     if(timer>=delay)
     {
-		Global::gameMgr->myMenu->showIngameText(text);
+        Global::gameMgr->myMenu->showIngameText(text);
         return false;
     }
 
@@ -1529,7 +1529,7 @@ PushObject::PushObject(Ogre::String pushInfo)
 
     char* temp = strtok_s(const_cast<char *> (text),"/",&token);
 
-	auto bodies = Global::gameMgr->loadedBodies;
+    auto bodies = Global::gameMgr->loadedBodies;
     auto it = bodies->find(Ogre::String(temp));
     if(it!=bodies->end())
     {

@@ -76,21 +76,20 @@ public:
         mCamera=mSceneMgr->getCamera("Camera");
         wMaterials = new WorldMaterials();
 
-        postProcMgr = new PostProcessMgr(mCamera);
-        postProcMgr->setToScaryBloom();
-
         Global::mSceneMgr = mSceneMgr;
         Global::mWorld = mWorld;
         Global::mWindow = mWindow;
         Global::mEventsMgr = mEventMgr;
         Global::soundEngine = engine;
-        Global::mPPMgr = postProcMgr;
-
         Global::audioLib = new AudioLibrary(engine);
 
         gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem(), wMaterials);
         Global::gameMgr = gameMgr;
-		Global::gameMgr->pagingMgr = pagingMgr;
+        Global::gameMgr->pagingMgr = pagingMgr;
+
+        postProcMgr = new PostProcessMgr(mCamera);
+        postProcMgr->setToScaryBloom();
+        Global::mPPMgr = postProcMgr;
 
         mKeyboard=keyboard;
         mMouse=mouse;

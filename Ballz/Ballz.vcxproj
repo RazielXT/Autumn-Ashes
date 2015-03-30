@@ -161,9 +161,6 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\tinyxml.cpp" />
-    <ClCompile Include="src\tinyxmlerror.cpp" />
-    <ClCompile Include="src\tinyxmlparser.cpp" />
     <ClCompile Include="src\TriggerObjectContactCallback.cpp" />
     <ClCompile Include="src\HandFromGroundReaction.cpp" />
     <ClCompile Include="src\TestReaction.cpp" />
@@ -206,7 +203,6 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\MathUtils.h" />
     <ClInclude Include="include\NewtonListener.h" />
     <ClInclude Include="include\PagingManager.h" />
-    <ClInclude Include="include\SceneParser.h" />
     <ClInclude Include="include\ScaryPPListener.h" />
     <ClInclude Include="include\PSSMCamera.h" />
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h" />
@@ -214,7 +210,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\PostProcessMgr.h" />
     <ClInclude Include="include\CommonTasks.h" />
     <ClInclude Include="include\ReflectionTask.h" />
-    <ClInclude Include="include\SceneParser2.h" />
+    <ClInclude Include="include\SceneParser.h" />
     <ClInclude Include="include\SlideContactCallback.h" />
     <ClInclude Include="include\SlidesAutoTarget.h" />
     <ClInclude Include="include\tinyxml2.h" />

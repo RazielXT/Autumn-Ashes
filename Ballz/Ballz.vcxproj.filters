@@ -39,15 +39,6 @@
     <ClCompile Include="src\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\tinyxml.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\tinyxmlerror.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\tinyxmlparser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\TriggerObjectContactCallback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -269,9 +260,6 @@
     <ClInclude Include="include\LoadNextPart.h">
       <Filter>Header Files\tasks</Filter>
     </ClInclude>
-    <ClInclude Include="include\SceneParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\AudioLibrary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -338,10 +326,10 @@
     <ClInclude Include="include\tinyxml2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\SceneParser2.h">
+    <ClInclude Include="include\GameConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GameConfig.h">
+    <ClInclude Include="include\SceneParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

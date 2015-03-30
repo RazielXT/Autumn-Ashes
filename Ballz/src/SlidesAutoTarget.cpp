@@ -25,7 +25,7 @@ bool SlidesAutoTargetAsync::pressedAction()
 {
     if (targetInfo.targetSlide)
     {
-		return targetInfo.targetSlide->start(targetInfo.targetSlidePosOffset, true);
+        return targetInfo.targetSlide->start(targetInfo.targetSlidePosOffset, true);
     }
 
     return false;
@@ -77,7 +77,7 @@ bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, float r
         //if new was found
         if (foundSegmentId > 0)
         {
-			preparedSlide = s;
+            preparedSlide = s;
 
             auto s0 = s->slidePoints[foundSegmentId - 1].startOffset;
             auto s1 = s->slidePoints[foundSegmentId].startOffset;
@@ -95,8 +95,8 @@ void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tsl
 
     if (found)
     {
-		targetInfo.targetSlide = preparedSlide;
-		targetInfo.targetSlidePosOffset = preparedSlideOffset;
+        targetInfo.targetSlide = preparedSlide;
+        targetInfo.targetSlidePosOffset = preparedSlideOffset;
         targetInfo.targetSlidePos = targetInfo.targetSlide->getTrackPosition(targetInfo.targetSlidePosOffset);
 
         //Global::gameMgr->myMenu->showUseGui(Ui_Target);
@@ -114,6 +114,6 @@ void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tsl
         }
     }
 
-	preparedSlide = nullptr;
+    preparedSlide = nullptr;
     targetResult = std::async(std::launch::async, &SlidesAutoTargetAsync::getTargetSlideFunc, this, pos, dir, rayDistance, ignoredSlide);
 }

@@ -43,7 +43,7 @@ class GuiOverlay
 {
 public:
 
-	GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs, irrklang::ISoundEngine* eng);
+    GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs, irrklang::ISoundEngine* eng);
     ~GuiOverlay()
     {
         clear();
@@ -67,7 +67,7 @@ public:
 
 private:
 
-	GameConfig* gConfig;
+    GameConfig* gConfig;
 
     void updateOptionsMove(Ogre::Real time);
     void updateLevelsMove(Ogre::Real time);
@@ -111,7 +111,7 @@ private:
     Gorilla::Caption*       useTextCaption;
     Gorilla::Caption*       debugCaption;
     Gorilla::Rectangle*     mousePointer;
-    
+
     bool ingamemenu;
     float infoTextTimer;
     bool shownInfoText;

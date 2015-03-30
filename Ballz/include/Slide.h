@@ -17,7 +17,7 @@ public:
     virtual bool start(bool withJump = false);
     virtual bool start(Vector3& point, bool withJump = false);
 
-	virtual bool start(float startOffset, bool withJump = false);
+    virtual bool start(float startOffset, bool withJump = false);
 
     virtual bool update(Ogre::Real tslf);
 

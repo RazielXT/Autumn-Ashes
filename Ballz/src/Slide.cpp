@@ -285,7 +285,7 @@ void Slide::startJumpToSlide()
     headArrival.tempNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
     headArrival.tempNode->attachObject(cam);
 
-    float l = pos.distance(target)/15.0f;
+    float l = pos.distance(target)/20.0f;
     mJumpAnim->setLength(l);
 
     jumpTrack->removeAllKeyFrames();
@@ -293,10 +293,10 @@ void Slide::startJumpToSlide()
     jumpTrack->setAssociatedNode(headArrival.tempNode);
     headArrival.tempNode->setPosition(pos);
     headArrival.tempNode->setOrientation(or);
-	
-	auto jumpAddHeight = std::max(4.5f, target.y - pos.y);
 
-	/////////////////0
+    auto jumpAddHeight = std::max(4.0f, target.y - pos.y);
+
+    /////////////////0
 
     auto key = jumpTrack->createNodeKeyFrame(0);
     key->setRotation(or);
@@ -308,65 +308,58 @@ void Slide::startJumpToSlide()
     auto crPos = MathUtils::lerp(pos, target, 0.1f);
     crPos.y -= 1;
 
-	key = jumpTrack->createNodeKeyFrame(l*0.1f);
+    key = jumpTrack->createNodeKeyFrame(l*0.15f);
     key->setRotation(stQ);
     key->setTranslate(crPos);
 
     //////////////2
 
-    Vector3 midPoint = MathUtils::lerp(pos, target, 0.45f);
-	midPoint.y += jumpAddHeight;
+    Vector3 midPoint = MathUtils::lerp(pos, target, 0.7f);
+    midPoint.y += jumpAddHeight;
     auto qToTarget = (or*Quaternion(Degree(10), Vector3(1, 0, 0))*Vector3(0, 0, -1)).getRotationTo(target - midPoint);
-	qToTarget = qToTarget*or;
+    qToTarget = qToTarget*or;
 
-    key = jumpTrack->createNodeKeyFrame(l*0.3f);
+    key = jumpTrack->createNodeKeyFrame(l*0.75f);
     key->setRotation(qToTarget);
     key->setTranslate(midPoint);
 
     ////////////////////3
 
-	midPoint = MathUtils::lerp(pos, target, 0.55f);
-	midPoint.y += jumpAddHeight*0.4f;
+    /*
+    midPoint = MathUtils::lerp(pos, target, 0.55f);
+    midPoint.y += jumpAddHeight;
 
-	key = jumpTrack->createNodeKeyFrame(l*0.4f);
-	key->setRotation(qToTarget);
-	key->setTranslate(midPoint);
+    key = jumpTrack->createNodeKeyFrame(l*0.45f);
+    key->setRotation(qToTarget);
+    key->setTranslate(midPoint);*/
 
-	////////////////////4
+    ////////////////////4
 
-	midPoint = MathUtils::lerp(pos, target, 0.75f);
-	midPoint.y += jumpAddHeight*0.35f;
 
-	key = jumpTrack->createNodeKeyFrame(l*0.65f);
-	key->setRotation(qToTarget);
-	key->setTranslate(midPoint);
+    /*midPoint = MathUtils::lerp(pos, target, 0.9f);
+    midPoint.y += jumpAddHeight*0.7f;
 
-	////////////////////5
+    key = jumpTrack->createNodeKeyFrame(l*0.9f);
+    key->setRotation(qToTarget);
+    key->setTranslate(midPoint);*/
 
-	midPoint = MathUtils::lerp(pos, target, 0.85f);
-	midPoint.y += jumpAddHeight*0.25f;
+    ////////////////////5
 
-	key = jumpTrack->createNodeKeyFrame(l*0.8f);
-	key->setRotation(qToTarget);
-	key->setTranslate(midPoint);
+    /* midPoint = MathUtils::lerp(pos, target, 0.95f);
+     midPoint.y += jumpAddHeight*0.6f;
 
-	////////////////////6
+     key = jumpTrack->createNodeKeyFrame(l*0.93f);
+     key->setRotation(qToTarget);
+     key->setTranslate(midPoint);*/
 
-	midPoint = MathUtils::lerp(pos, target, 0.95f);
-	midPoint.y += jumpAddHeight*0.1f;
-
-	key = jumpTrack->createNodeKeyFrame(l*0.9f);
-	key->setRotation(qToTarget);
-	key->setTranslate(midPoint);
-
-    ////////////////////7
+    ////////////////////6
 
 
     key = jumpTrack->createNodeKeyFrame(l);
     key->setRotation(qToTarget);
     key->setTranslate(target);
 
-	/////////////////////
+    /////////////////////
 
     mJumpState = Global::mSceneMgr->createAnimationState(jumpAnimName);
     mJumpState->setEnabled(true);
@@ -378,7 +371,8 @@ void Slide::startJumpToSlide()
 void Slide::updateJumpToSlide(float time)
 {
     mJumpState->addTime(time);
-    Global::debug = time;
+
+    Global::debug = mJumpState->getTimePosition() / mJumpState->getLength();
 
     if (mJumpState->hasEnded())
     {
@@ -424,31 +418,31 @@ bool Slide::start(Vector3& pos, bool withJump)
     return false;
 }
 
-bool Slide::start(float startOffset, bool withJump = false)
+bool Slide::start(float startOffset, bool withJump)
 {
-	if (sliding || unavailableTimer > 0)
-		return false;
+    if (sliding || unavailableTimer > 0)
+        return false;
 
-	if (mTrackerState == nullptr)
-		mTrackerState = Global::mSceneMgr->createAnimationState(animName);
+    if (mTrackerState == nullptr)
+        mTrackerState = Global::mSceneMgr->createAnimationState(animName);
 
-	if (mTrackerState->getLength() < startOffset)
-		return false;
+    if (mTrackerState->getLength() < startOffset)
+        return false;
 
-	mTrackerState->setTimePosition(startOffset);
+    mTrackerState->setTimePosition(startOffset);
 
-	currentSpeed = 1;
+    currentSpeed = 1;
 
-	removeControlFromPlayer();
+    removeControlFromPlayer();
 
-	if (withJump)
-		startJumpToSlide();
-	else
-		attach();
+    if (withJump)
+        startJumpToSlide();
+    else
+        attach();
 
-	Global::mEventsMgr->addCachedTask(this);
+    Global::mEventsMgr->addCachedTask(this);
 
-	return true;
+    return true;
 }
 
 void Slide::updateSlidingSpeed(float time)
@@ -620,7 +614,7 @@ void Slide::updateSlidingState(float time)
 
 bool Slide::update(Ogre::Real tslf)
 {
-    tslf *= Global::timestep*0.2f;
+    tslf *= Global::timestep;
 
     if (enablePlayerControl)
     {

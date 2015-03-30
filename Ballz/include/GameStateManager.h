@@ -30,13 +30,13 @@ public:
     void insideMenuMoved(int x, int y);
     void escapePressed();
 
-	GameConfig gameConfig;
+    GameConfig gameConfig;
     GameState gameState;
     GuiOverlay* myMenu;
-	WorldMaterials* wMaterials;
-	PagingManager* pagingMgr;
+    WorldMaterials* wMaterials;
+    PagingManager* pagingMgr;
 
-	std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
+    std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
 
 private:
 
@@ -47,5 +47,5 @@ private:
     float switchStateTimer;
 
     int lastLVL;
-    
+
 };
