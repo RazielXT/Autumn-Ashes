@@ -29,6 +29,9 @@ public:
 
 private:
 
+	Slide* preparedSlide;
+	float preparedSlideOffset;
+
     Ogre::BillboardSet* targetBillboardSet;
     Ogre::SceneNode* billboardNode;
 

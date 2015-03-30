@@ -20,7 +20,7 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
 
         if (slidesAutoTarget->targetInfo.targetSlide)
         {
-            if (slidesAutoTarget->targetInfo.targetSlide->start(slidesAutoTarget->targetInfo.targetSlidePos, true))
+            if (slidesAutoTarget->targetInfo.targetSlide->start(slidesAutoTarget->targetInfo.targetSlidePosOffset, true))
                 release(false);
         }
         else
@@ -258,7 +258,7 @@ inline void fixSpline(Quaternion& rotation, Quaternion previous)
 
 void Slide::startJumpToSlide()
 {
-    auto target = slidesAutoTarget->targetInfo.targetSlidePos;// getTrackPosition(mTrackerState->getTimePosition());
+    auto target = getCurrentState().getTranslate();
     target.y += 2;
 
     const Ogre::String jumpAnimName = "jumpState";
@@ -395,6 +395,33 @@ bool Slide::start(Vector3& pos, bool withJump)
     }
 
     return false;
+}
+
+bool Slide::start(float startOffset, bool withJump = false)
+{
+	if (sliding || unavailableTimer > 0)
+		return false;
+
+	if (mTrackerState == nullptr)
+		mTrackerState = Global::mSceneMgr->createAnimationState(animName);
+
+	if (mTrackerState->getLength() < startOffset)
+		return false;
+
+	mTrackerState->setTimePosition(startOffset);
+
+	currentSpeed = 1;
+
+	removeControlFromPlayer();
+
+	if (withJump)
+		startJumpToSlide();
+	else
+		attach();
+
+	Global::mEventsMgr->addCachedTask(this);
+
+	return true;
 }
 
 void Slide::updateSlidingSpeed(float time)
