@@ -18,8 +18,6 @@ Player::Player(WorldMaterials* wMaterials)
     fallPitch=0;
     groundID=-1;
     movespeed=10;
-    crouch=0;
-    crouch_am=0;
     cam_walking=0;
     head_turning=0;
     mouseX=0;
@@ -165,7 +163,7 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
         break;
 
     case OIS::KC_C:
-        setCrouch(1);
+        pressedC(1);
         break;
 
     case OIS::KC_SPACE:
@@ -201,10 +199,6 @@ void Player::releasedKey(const OIS::KeyEvent &arg)
         break;
     case OIS::KC_S:
         vzad=false;
-        break;
-
-    case OIS::KC_C:
-        if(getCrouch()==1) setCrouch(2);
         break;
     }
 }
@@ -250,7 +244,7 @@ void Player::movedMouse(const OIS::MouseEvent &e)
         rotateCamera(mouseX/10.0f,mouseY/10.0f);
 }
 
-void Player::setCrouch(char b)
+void Player::pressedC(char b)
 {
     if(visi)
     {
@@ -263,8 +257,6 @@ void Player::setCrouch(char b)
         stopClimbing();
         noClimbTimer=1;
     }
-    else if (rolling<=0)
-        crouch=b;
 }
 
 void Player::walkingSound(Ogre::Real time)
@@ -329,8 +321,6 @@ void Player::attachCamera()
 {
     camPitch = 0;
     fallPitch=0;
-    crouch=0;
-    crouch_am=0;
     cam_walking=0;
     head_turning=0;
     mouseX=0;
@@ -438,44 +428,19 @@ void Player::update(Real time)
     bodyVelocity = body->getVelocity().length();
     bodyPosition = body->getPosition();
 
-    time*=Global::timestep;
-    tslf=time;
+	tslf = time*Global::timestep;
+
+	updateMotionBlur();
 
     updateStats();
 
-    if(!alive) return;
+    if(!alive) 
+		return;
 
     if (inControl)
         slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, 9);
 
-    forceDirection=Vector3::ZERO;
-
-    if (!is_climbing && rolling<=0)
-    {
-        if (!vpravo && !vpred && !vzad && !vlavo)
-        {
-            body->setMaterialGroupID(wmaterials->stoji_mat);
-            stoji = true;
-            walkSoundTimer = 0.37;
-        }
-        else
-        {
-            updateMovement();
-        }
-    }
-    else if (rolling>0)
-    {
-        body->setMaterialGroupID(wmaterials->ide_mat);
-        stoji = false;
-        walkSoundTimer = 0.2f;
-
-        auto dirVec = necknode->_getDerivedOrientation()*Vector3(0, 0, -1);
-        dirVec.y = 0;
-        dirVec.normalise();
-        forceDirection += dirVec * 10 * rolling;
-
-        rolling -= tslf;
-    }
+	updateDirectionForce();
 
     //making pullup
     if(climb_pullup)
@@ -487,18 +452,50 @@ void Player::update(Real time)
         updateClimbMovement();
     }
 
-    if (!stoji && onGround)
-    {
-        if (movespeed < 17)
-            movespeed += time * 10;
-        else
-            movespeed = 17;
+	updateHead();
+}
 
-        walkingSound(time);
-    }
-    else movespeed = 7;
+void Player::updateDirectionForce()
+{
+	forceDirection = Vector3::ZERO;
 
-    updateHead(time);
+	if (!is_climbing && rolling <= 0)
+	{
+		if (!vpravo && !vpred && !vzad && !vlavo)
+		{
+			body->setMaterialGroupID(wmaterials->stoji_mat);
+			stoji = true;
+			walkSoundTimer = 0.37;
+		}
+		else
+		{
+			updateMovement();
+		}
+	}
+	else if (rolling > 0)
+	{
+		body->setMaterialGroupID(wmaterials->ide_mat);
+		stoji = false;
+		walkSoundTimer = 0.2f;
+
+		auto dirVec = necknode->_getDerivedOrientation()*Vector3(0, 0, -1);
+		dirVec.y = 0;
+		dirVec.normalise();
+		forceDirection += dirVec * 10 * rolling;
+
+		rolling -= tslf;
+	}
+
+	if (!stoji && onGround)
+	{
+		if (movespeed < 17)
+			movespeed += tslf * 10;
+		else
+			movespeed = 17;
+
+		walkingSound(tslf);
+	}
+	else movespeed = 7;
 }
 
 void Player::updateMotionBlur()
@@ -526,19 +523,6 @@ void Player::updateMotionBlur()
 
 void Player::updateStats()
 {
-    if (slowingDown < 1)
-    {
-        slowingDown += (tslf / 2);
-        if (slowingDown > 1) slowingDown = 1;
-    }
-
-    if (startMoveBoost)
-    {
-        startMoveBoost -= (tslf * 2);
-        if (startMoveBoost < 0) startMoveBoost = 0;
-    }
-
-    updateMotionBlur();
     updateGroundStats();
 
     if(!onGround && !visi && !is_climbing && noClimbTimer<=0)

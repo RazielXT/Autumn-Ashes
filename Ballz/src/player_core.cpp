@@ -143,7 +143,6 @@ void Player::manageFall()
             if (dirAngleDiff < 45 && vel.length()>0.25f)
             {
                 rolling = shaker->doRoll(1.2f, headnode, necknode);
-                crouch = 0;
             }
         }
 
@@ -170,8 +169,10 @@ void Player::manageFall()
 }
 
 
-void Player::updateHead(Real time)
+void Player::updateHead()
 {
+	float time = tslf;
+
     shaker->updateCameraShake(time);
 
     if (noClimbTimer > 0)
@@ -226,27 +227,6 @@ void Player::updateHead(Real time)
         }
     }
 
-    if (crouch > 0)
-    {
-        if (crouch == 1)
-        {
-            if (crouch_am > -1.5f) crouch_am -= time * 8;
-            if (crouch_am < -1.5f) crouch_am = -1.5f;
-            necknode->setPosition(0, 1 + crouch_am, 0);
-        }
-        if (crouch == 2)
-        {
-            crouch_am += time * 8;
-            if (crouch_am > 0)
-            {
-                crouch_am = 0;
-                crouch = 0;
-            }
-            necknode->setPosition(0, 1 + crouch_am, 0);
-        }
-    }
-    else
-        //not crouching
     {
         //walking camera
         if (!is_climbing && !stoji && onGround && (bodyVelocity > 2))
@@ -914,6 +894,18 @@ void Player::stopClimbing()
 
 void Player::updateMovement()
 {
+	if (slowingDown < 1)
+	{
+		slowingDown += (tslf / 2);
+		if (slowingDown > 1) slowingDown = 1;
+	}
+
+	if (startMoveBoost)
+	{
+		startMoveBoost -= (tslf * 2);
+		if (startMoveBoost < 0) startMoveBoost = 0;
+	}
+
     if (stoji)
         startMoveBoost = 1;
 
@@ -969,8 +961,6 @@ void Player::updateMovement()
         }
 
         forceDirection += forceDirection*startMoveBoost;
-
-        if (crouch > 0) forceDirection /= 3.0f;
     }
     //midair
     else

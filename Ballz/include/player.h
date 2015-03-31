@@ -114,19 +114,18 @@ protected:
     void updateUseGui();
     void updateClimbingPossibility();
     void updateGroundStats();
+	void updateDirectionForce();
 
-    void updateHead(Ogre::Real time);
+	void updateParkourPossibility();
+
+    void updateHead();
     void manageFall();
 
-    void setCrouch(char b);
+    void pressedC(char b);
     void startClimbing(char type);
     void stopClimbing();
 
     void walkingSound(Ogre::Real time);
-    char getCrouch()
-    {
-        return crouch;
-    }
 
     inline void updateVerticalClimb(bool leftPhase);
     void updateClimbMovement();
@@ -167,9 +166,9 @@ private:
     //state
     bool alive, immortal, stoji, vpravo, vlavo, vzad, vpred;
     bool onGround, visi, grabbed, inControl, inMoveControl;
-    Ogre::Real camPitch,fallVelocity,bodySpeedAccum,startMoveBoost,crouch_am,noClimbTimer,movespeed,walkSoundTimer;
+    Ogre::Real camPitch,fallVelocity,bodySpeedAccum,startMoveBoost,noClimbTimer,movespeed,walkSoundTimer;
     float climb_yaw, climb_move_side, climb_move_vert, climb_pullup;
-    char fallPitch,crouch,cameraWalkFinisher,is_climbing;
+    char fallPitch,cameraWalkFinisher,is_climbing;
     Ogre::Real fallPitchSize,fallPitchTimer,cam_walking,head_turning,pullupPos,rolling;
     int groundID, mouseX;
     Ogre::Real tslf, slowingDown;
