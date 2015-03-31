@@ -89,6 +89,12 @@ bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, float r
     return closest<rayRadiusSq;
 }
 
+void SlidesAutoTargetAsync::hideAutoTarget()
+{
+    targetBillboardSet->setVisible(false);
+    targetInfo.targetSlide = nullptr;
+}
+
 void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance, Slide* ignoredSlide)
 {
     auto found = targetResult.valid() ? targetResult.get() : false;

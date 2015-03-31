@@ -24,7 +24,7 @@ Player::Player(WorldMaterials* wMaterials)
     climb_pullup=0;
     climb_move_side=0;
     climb_move_vert=0;
-    bodyVelocity=0;
+    bodyVelocityL=0;
     pullupPos=0;
     gNormal=Vector3(0,1,0);
     climbDir=Vector3::ZERO;
@@ -49,7 +49,6 @@ Player::Player(WorldMaterials* wMaterials)
     alive=true;
     rolling = false;
     camPitch=0;
-    lastSpeed=0;
 
     wmaterials = wMaterials;
 
@@ -170,6 +169,10 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
         jump();
         break;
 
+    case OIS::KC_Q:
+        body->setVelocity(body->getVelocity() + Vector3(0, 9, 0));
+        break;
+
     case OIS::KC_G:
     {
         Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("Pbody: "+Ogre::StringConverter::toString(body->getPosition()),Ogre::LML_NORMAL);
@@ -261,7 +264,7 @@ void Player::pressedC(char b)
 
 void Player::walkingSound(Ogre::Real time)
 {
-    walkSoundTimer+=(time*bodyVelocity/6.6f);
+    walkSoundTimer+=(time*bodyVelocityL/6.6f);
 
     if(walkSoundTimer>0.4)
     {
@@ -325,7 +328,6 @@ void Player::attachCamera()
     head_turning=0;
     mouseX=0;
     camPitch=0;
-    lastSpeed=0;
     stoji=true;
 
     necknode->setOrientation(Ogre::Quaternion::IDENTITY);
@@ -391,8 +393,8 @@ void Player::rotateCamera(Real hybX,Real hybY)
     if(!is_climbing)
     {
         //damping of turning speed if moving quickly midair
-        if (!onGround && bodyVelocity>10)
-            hybX *= std::max(0.f, (100-bodyVelocity)/90.f);
+        if (!onGround && bodyVelocityL>10)
+            hybX *= std::max(0.f, (100-bodyVelocityL)/90.f);
 
         necknode->yaw(Degree(hybX), Node::TS_WORLD);
     }
@@ -425,22 +427,18 @@ void Player::rotateCamera(Real hybX,Real hybY)
 
 void Player::update(Real time)
 {
-    bodyVelocity = body->getVelocity().length();
-    bodyPosition = body->getPosition();
+    tslf = time*Global::timestep;
 
-	tslf = time*Global::timestep;
+    updateMotionBlur();
 
-	updateMotionBlur();
+    if(!alive)
+        return;
 
     updateStats();
 
-    if(!alive) 
-		return;
+    updateAutoTarget();
 
-    if (inControl)
-        slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, 9);
-
-	updateDirectionForce();
+    updateDirectionForce();
 
     //making pullup
     if(climb_pullup)
@@ -452,50 +450,50 @@ void Player::update(Real time)
         updateClimbMovement();
     }
 
-	updateHead();
+    updateHead();
 }
 
 void Player::updateDirectionForce()
 {
-	forceDirection = Vector3::ZERO;
+    forceDirection = Vector3::ZERO;
 
-	if (!is_climbing && rolling <= 0)
-	{
-		if (!vpravo && !vpred && !vzad && !vlavo)
-		{
-			body->setMaterialGroupID(wmaterials->stoji_mat);
-			stoji = true;
-			walkSoundTimer = 0.37;
-		}
-		else
-		{
-			updateMovement();
-		}
-	}
-	else if (rolling > 0)
-	{
-		body->setMaterialGroupID(wmaterials->ide_mat);
-		stoji = false;
-		walkSoundTimer = 0.2f;
+    if (!is_climbing && rolling <= 0)
+    {
+        if (!vpravo && !vpred && !vzad && !vlavo)
+        {
+            body->setMaterialGroupID(wmaterials->stoji_mat);
+            stoji = true;
+            walkSoundTimer = 0.37;
+        }
+        else
+        {
+            updateMovement();
+        }
+    }
+    else if (rolling > 0)
+    {
+        body->setMaterialGroupID(wmaterials->ide_mat);
+        stoji = false;
+        walkSoundTimer = 0.2f;
 
-		auto dirVec = necknode->_getDerivedOrientation()*Vector3(0, 0, -1);
-		dirVec.y = 0;
-		dirVec.normalise();
-		forceDirection += dirVec * 10 * rolling;
+        auto dirVec = necknode->_getDerivedOrientation()*Vector3(0, 0, -1);
+        dirVec.y = 0;
+        dirVec.normalise();
+        forceDirection += dirVec * 10 * rolling;
 
-		rolling -= tslf;
-	}
+        rolling -= tslf;
+    }
 
-	if (!stoji && onGround)
-	{
-		if (movespeed < 17)
-			movespeed += tslf * 10;
-		else
-			movespeed = 17;
+    if (!stoji && onGround)
+    {
+        if (movespeed < 17)
+            movespeed += tslf * 10;
+        else
+            movespeed = 17;
 
-		walkingSound(tslf);
-	}
-	else movespeed = 7;
+        walkingSound(tslf);
+    }
+    else movespeed = 7;
 }
 
 void Player::updateMotionBlur()
@@ -523,7 +521,11 @@ void Player::updateMotionBlur()
 
 void Player::updateStats()
 {
+    bodyPosition = body->getPosition();
+
     updateGroundStats();
+
+    bodyVelocityL = body->getVelocity().length();
 
     if(!onGround && !visi && !is_climbing && noClimbTimer<=0)
     {
@@ -582,6 +584,14 @@ void Player::tryToGrab()
             }
         }
     }
+}
+
+void Player::updateAutoTarget()
+{
+    if (inControl && onGround)
+        slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, 9);
+    else if (!onGround)
+        slidesAutoTarget->hideAutoTarget();
 }
 
 

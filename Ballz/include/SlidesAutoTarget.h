@@ -20,6 +20,7 @@ public:
     ~SlidesAutoTargetAsync();
 
     void updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance = 30, Slide* ignoredSlide = nullptr);
+    void hideAutoTarget();
 
     bool pressedAction();
 

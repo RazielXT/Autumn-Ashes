@@ -294,7 +294,7 @@ void Slide::startJumpToSlide()
     headArrival.tempNode->setPosition(pos);
     headArrival.tempNode->setOrientation(or);
 
-    auto jumpAddHeight = std::max(4.0f, target.y - pos.y);
+    auto jumpAddHeight = std::max(2.5f, target.y - pos.y);
 
     /////////////////0
 

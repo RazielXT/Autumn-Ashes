@@ -29,7 +29,7 @@ void Player::initBody()
     body->setCenterOfMass(offset);
     body->setContinuousCollisionMode(1);
     body->setPositionOrientation(Ogre::Vector3(0, 100, 0), Ogre::Quaternion::IDENTITY);
-    body->setLinearDamping(0.8);
+    body->setLinearDamping(4);
     body->attachNode(node);
     body->setAutoSleep(0);
     //body->setMaterialGroupID(pmat);
@@ -109,7 +109,7 @@ void Player::jump()
             body->setVelocity(camDir * 10 + Vector3(0, 1, 0));
         }
     }
-    else //if(onGround)
+    else if(onGround)
     {
         if (!slidesAutoTarget->pressedAction())
         {
@@ -121,7 +121,7 @@ void Player::jump()
 
 void Player::manageFall()
 {
-    fallVelocity = abs(lastSpeed.length()) * 2;
+    fallVelocity = abs(bodyVelocityL) * 2;
 
     if (fallVelocity > 25)
     {
@@ -171,29 +171,29 @@ void Player::manageFall()
 
 void Player::updateHead()
 {
-	float time = tslf;
+    float time = tslf;
 
     shaker->updateCameraShake(time);
 
     if (noClimbTimer > 0)
         noClimbTimer -= time;
 
-    if (bodyVelocity < 0.05)
-        bodyVelocity = 0;
-    if (bodySpeedAccum + 0.05 < bodyVelocity)
+    if (bodyVelocityL < 0.05)
+        bodyVelocityL = 0;
+    if (bodySpeedAccum + 0.05 < bodyVelocityL)
     {
         bodySpeedAccum += time*3.5f;
         if (bodySpeedAccum>10)
             bodySpeedAccum = 10;
     }
-    if (bodySpeedAccum > bodyVelocity)
+    if (bodySpeedAccum > bodyVelocityL)
     {
         bodySpeedAccum -= time*1.5f;
         if (bodySpeedAccum < 0)
             bodySpeedAccum = 0;
     }
 
-    mSceneMgr->setShadowColour(Ogre::ColourValue(bodySpeedAccum, bodyVelocity / 3.0f));
+    mSceneMgr->setShadowColour(Ogre::ColourValue(bodySpeedAccum, bodyVelocityL / 3.0f));
 
     if (fallPitch == 1)
     {
@@ -229,12 +229,12 @@ void Player::updateHead()
 
     {
         //walking camera
-        if (!is_climbing && !stoji && onGround && (bodyVelocity > 2))
+        if (!is_climbing && !stoji && onGround && (bodyVelocityL > 2))
         {
             cameraWalkFinisher = 1;
-            cam_walking += time*bodyVelocity;
+            cam_walking += time*bodyVelocityL;
             camnode->setPosition(0, -1 * abs(Ogre::Math::Sin(cam_walking)) / 7.0f, 0);
-            camnode->setOrientation(Quaternion(Degree(Ogre::Math::Sin(cam_walking))*time*(bodyVelocity + 1) * 4, Vector3(0, 0, 1)));
+            camnode->setOrientation(Quaternion(Degree(Ogre::Math::Sin(cam_walking))*time*(bodyVelocityL + 1) * 4, Vector3(0, 0, 1)));
             //camnode->roll(Degree(Ogre::Math::Sin(cam_walking+Ogre::Math::PI/2))*time*9);
         }
         else if (cameraWalkFinisher)
@@ -261,7 +261,7 @@ void Player::updateHead()
             else
             {
                 camnode->setPosition(0, -1 * abs(value) / 10, 0);
-                camnode->setOrientation(Quaternion(Degree(Ogre::Math::Sin(cam_walking))*time*(bodyVelocity + 1) * 4, Vector3(0, 0, 1)));
+                camnode->setOrientation(Quaternion(Degree(Ogre::Math::Sin(cam_walking))*time*(bodyVelocityL + 1) * 4, Vector3(0, 0, 1)));
                 //camnode->roll(Degree(Ogre::Math::Sin(cam_walking+Ogre::Math::PI/2))*time*9);
             }
         }
@@ -269,7 +269,7 @@ void Player::updateHead()
         //roll camera a bit while turning
         if (onGround && vpred && abs(mouseX) > 5)
         {
-            head_turning += (bodyVelocity / 9)*(mouseX - 5) / 250.0f;
+            head_turning += (bodyVelocityL / 9)*(mouseX - 5) / 250.0f;
             if (head_turning > 8)head_turning = 8;
             if (head_turning < -8)head_turning = -8;
             headnode->setOrientation(Quaternion(Ogre::Radian(head_turning / 60), Vector3(0, 0, 1)));
@@ -894,17 +894,17 @@ void Player::stopClimbing()
 
 void Player::updateMovement()
 {
-	if (slowingDown < 1)
-	{
-		slowingDown += (tslf / 2);
-		if (slowingDown > 1) slowingDown = 1;
-	}
+    if (slowingDown < 1)
+    {
+        slowingDown += (tslf / 2);
+        if (slowingDown > 1) slowingDown = 1;
+    }
 
-	if (startMoveBoost)
-	{
-		startMoveBoost -= (tslf * 2);
-		if (startMoveBoost < 0) startMoveBoost = 0;
-	}
+    if (startMoveBoost)
+    {
+        startMoveBoost -= (tslf * 2);
+        if (startMoveBoost < 0) startMoveBoost = 0;
+    }
 
     if (stoji)
         startMoveBoost = 1;
@@ -940,9 +940,9 @@ void Player::updateMovement()
         {
             Real ebd = 1.0f;
             //brzdi pri velkej rychlosti z kopca
-            if (bodyVelocity > 9)
+            if (bodyVelocityL > 9)
             {
-                ebd = 1 / (bodyVelocity - 8);
+                ebd = 1 / (bodyVelocityL - 8);
             }
 
             forceDirection *= movespeed*ebd*slowingDown;
@@ -1025,6 +1025,7 @@ void Player::attachToSlide(OgreNewt::Body* slideBody)
 
 void Player::updateGroundStats()
 {
+    OgreNewt::Body* groundBody = nullptr;
     OgreNewt::BasicRaycast ray(m_World, (bodyPosition - Vector3(0, 1.6, 0)), (bodyPosition - Vector3(0, 2.6, 0)), true);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
 
@@ -1041,17 +1042,8 @@ void Player::updateGroundStats()
             return;
         }
 
-        Ogre::Any any = info.mBody->getUserData();
-
-        if (!any.isEmpty())
-            groundID = any_cast<bodyUserData*>(any)->material;
-        else
-            groundID = 3;
-
-        if (!onGround) manageFall();
-        onGround = true;
+        groundBody = info.mBody;
         gNormal = info.mNormal;
-        body->setLinearDamping(4);
     }
     else
     {
@@ -1070,25 +1062,29 @@ void Player::updateGroundStats()
                 return;
             }
 
-            Ogre::Any any = infoc.mBody->getUserData();
-
-            if (!any.isEmpty())
-                groundID = any_cast<bodyUserData*>(any)->material;
-            else
-                groundID = 3;
-
-            if (!onGround) manageFall();
-            onGround = true;
+            groundBody = infoc.mBody;
             gNormal = 1;
-            body->setLinearDamping(4);
         }
+    }
+
+    if (groundBody)
+    {
+        Ogre::Any any = groundBody->getUserData();
+
+        if (!any.isEmpty())
+            groundID = any_cast<bodyUserData*>(any)->material;
         else
-        {
-            groundID = -1;
-            lastSpeed = body->getVelocity();
-            onGround = false;
-            body->setLinearDamping(0.0);
-            gNormal = 0;
-        }
+            groundID = 3;
+
+        if (!onGround) manageFall();
+        onGround = true;
+        body->setLinearDamping(4);
+    }
+    else if (onGround)
+    {
+        groundID = -1;
+        onGround = false;
+        body->setLinearDamping(0.0);
+        gNormal = 0;
     }
 }

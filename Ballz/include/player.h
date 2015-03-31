@@ -100,7 +100,7 @@ public:
     void attachHead(Ogre::SceneNode* headNode = nullptr);
 
     Ogre::Vector3 bodyPosition;
-    float bodyVelocity;
+    float bodyVelocityL;
 
     SlidesAutoTargetAsync* slidesAutoTarget;
 
@@ -114,9 +114,9 @@ protected:
     void updateUseGui();
     void updateClimbingPossibility();
     void updateGroundStats();
-	void updateDirectionForce();
+    void updateDirectionForce();
 
-	void updateParkourPossibility();
+    void updateParkourPossibility();
 
     void updateHead();
     void manageFall();
@@ -139,6 +139,7 @@ protected:
     void initBody();
 
     inline void updateHeadArrival();
+    void updateAutoTarget();
 
 private:
 
@@ -172,7 +173,7 @@ private:
     Ogre::Real fallPitchSize,fallPitchTimer,cam_walking,head_turning,pullupPos,rolling;
     int groundID, mouseX;
     Ogre::Real tslf, slowingDown;
-    Ogre::Vector3 forceDirection, gNormal, climbDir, lastSpeed;
+    Ogre::Vector3 forceDirection, gNormal, climbDir;
 
     //climb helpers
     Ogre::Vector3 climb_normal;
