@@ -4,6 +4,16 @@
 
 PlayerClimbing::PlayerClimbing(Player* player) : p(player), body(player->body)
 {
+    climb_pullup = 0;
+    climb_yaw = 0;
+    climb_move_side = 0;
+    climb_move_vert = 0;
+    climb_pullup = 0;
+    noClimbTimer = 0;
+    pullupPos = 0;
+
+    Gbody = nullptr;
+    climbJoint = nullptr;
 }
 
 void PlayerClimbing::update(float tslf)
