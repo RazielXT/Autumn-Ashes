@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "PostProcessMgr.h"
+#include "PlayerPostProcess.h"
 
 using namespace Ogre;
 
@@ -11,25 +12,15 @@ Player::Player(WorldMaterials* wMaterials)
     slowingDown=1;
     startMoveBoost=0;
     cameraWalkFinisher=0;
-    fallPitchSize=0;
-    Gbody=NULL;
     walkSoundTimer=0;
-    noClimbTimer=0;
     fallPitch=0;
     groundID=-1;
     movespeed=10;
     cam_walking=0;
     head_turning=0;
     mouseX=0;
-    climb_pullup=0;
-    climb_move_side=0;
-    climb_move_vert=0;
     bodyVelocityL=0;
-    pullupPos=0;
     gNormal=Vector3(0,1,0);
-    climbDir=Vector3::ZERO;
-    climb_normal=Vector3::ZERO;
-    climb_yaw=0;
     fallVelocity=0;
     forceDirection=Vector3::ZERO;
     mSceneMgr=Global::mSceneMgr;
@@ -41,7 +32,7 @@ Player::Player(WorldMaterials* wMaterials)
     vpred=false;
     vzad=false;
     stoji=true;
-    visi=false;
+    hanging=false;
     onGround=false;
     inControl=true;
     inMoveControl=true;
@@ -58,6 +49,10 @@ Player::Player(WorldMaterials* wMaterials)
 
     cameraArrival.tempNode = nullptr;
 
+	pPostProcess = new PlayerPostProcess(this);
+	pClimbing = new PlayerClimbing(this);
+	pGrabbing = new PlayerGrab(this);
+
     slidesAutoTarget = new SlidesAutoTargetAsync();
 
     initBody();
@@ -70,6 +65,7 @@ Player::Player(WorldMaterials* wMaterials)
 
 Player::~Player ()
 {
+	delete pPostProcess;
     delete slidesAutoTarget;
     delete shaker;
 }
@@ -96,10 +92,7 @@ void Player::move_callback(OgreNewt::Body* me, float timeStep, int threadIndex )
     me->addForce(Ogre::Vector3(0,-10.0f,0));
     me->addForce(forceDirection);
 }
-void Player::climb_callback(OgreNewt::Body* me, float timeStep, int threadIndex )
-{
-    me->setVelocity(climbDir-climb_normal);
-}
+
 void Player::move_callback_nothing(OgreNewt::Body* me, float timeStep, int threadIndex )
 {
     //me->addForce(Ogre::Vector3(0,0,0));
@@ -107,38 +100,6 @@ void Player::move_callback_nothing(OgreNewt::Body* me, float timeStep, int threa
 void Player::default_callback(OgreNewt::Body* me, float timeStep, int threadIndex )
 {
     me->addForce(Ogre::Vector3(0,-6,0));
-}
-void Player::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threadIndex )
-{
-    Vector3 p;
-    p=obj->getOgreNode()->_getDerivedPosition();
-    Vector3 p2;
-    p2=necknode->_getDerivedPosition()+mCamera->getDerivedOrientation()*Vector3(0,0,-3);
-
-    Vector3 s=(p2-p)*10;
-
-    Vector3 o=obj->getVelocity();
-    Real rad = s.angleBetween(o).valueDegrees();
-
-    if(rad>45)
-    {
-        obj->setVelocity(obj->getVelocity()/2);
-        s*=rad/40;
-    }
-    obj->setForce(s);
-    obj->setPositionOrientation(obj->getPosition(),necknode->getOrientation());
-
-    //release if too far away
-    if(s.squaredLength()>2025)
-    {
-        Gbody->setMaterialGroupID(m_World->getDefaultMaterialID());
-        //Gbody->setMassMatrix(Gbody->getMass(),Gbody->getInertia()*20);
-        Gbody->setCustomForceAndTorqueCallback<Player>(&Player::default_callback, this);
-        Gbody->setAngularDamping(gADT);
-        Gbody->setLinearDamping(gLDT);
-        body->setMassMatrix(body->getMass()-Gbody->getMass(),body->getInertia());
-        grabbed=false;
-    }
 }
 
 void Player::pressedKey(const OIS::KeyEvent &arg)
@@ -162,7 +123,7 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
         break;
 
     case OIS::KC_C:
-        pressedC(1);
+        pClimbing->pressedC();
         break;
 
     case OIS::KC_SPACE:
@@ -245,21 +206,6 @@ void Player::movedMouse(const OIS::MouseEvent &e)
 
     if (inControl)
         rotateCamera(mouseX/10.0f,mouseY/10.0f);
-}
-
-void Player::pressedC(char b)
-{
-    if(visi)
-    {
-        delete climbJoint;
-        visi=false;
-        noClimbTimer=1;
-    }
-    else if(is_climbing)
-    {
-        stopClimbing();
-        noClimbTimer=1;
-    }
 }
 
 void Player::walkingSound(Ogre::Real time)
@@ -390,7 +336,9 @@ void Player::rotateCamera(Real hybX,Real hybY)
         }
     }
 
-    if(!is_climbing)
+    if(is_climbing)
+		pClimbing->updateClimbCamera(hybX);
+	else
     {
         //damping of turning speed if moving quickly midair
         if (!onGround && bodyVelocityL>10)
@@ -398,38 +346,14 @@ void Player::rotateCamera(Real hybX,Real hybY)
 
         necknode->yaw(Degree(hybX), Node::TS_WORLD);
     }
-    else
-    {
-        Vector3 camDir = getFacingDirection();
-        camDir.y=0;
-        camDir.normalise();
-        Real angle=climb_normal.angleBetween(camDir).valueDegrees();
 
-        Real climbCam= climb_normal.getRotationTo(camDir).getYaw().valueDegrees();
-
-        if((climbCam>0 && hybX>0) || (climbCam<0 && hybX<0))
-        {
-            necknode->yaw(Degree(hybX), Node::TS_WORLD);
-        }
-        else
-        {
-            Real max_angle=90;
-            if(is_climbing) max_angle=120;
-
-            Real spomal;
-            angle-=(180-max_angle);
-            if(angle<0) spomal=0;
-            else spomal=angle/max_angle;
-            necknode->yaw(Degree(hybX* spomal), Node::TS_WORLD);
-        }
-    }
 }
 
 void Player::update(Real time)
 {
     tslf = time*Global::timestep;
 
-    updateMotionBlur();
+	pPostProcess->update(tslf);
 
     if(!alive)
         return;
@@ -440,15 +364,7 @@ void Player::update(Real time)
 
     updateDirectionForce();
 
-    //making pullup
-    if(climb_pullup)
-    {
-        updatePullup();
-    }
-    else if(is_climbing)
-    {
-        updateClimbMovement();
-    }
+	pClimbing->update(tslf);
 
     updateHead();
 }
@@ -496,29 +412,6 @@ void Player::updateDirectionForce()
     else movespeed = 7;
 }
 
-void Player::updateMotionBlur()
-{
-    //visual fall dmg
-    if (*ppFall > 0 && alive)
-    {
-        *ppFall -= tslf*2.5f;
-        if (*ppFall < 0) *ppFall = 0;
-    }
-
-    float interpolationFactor = mPreviousFPS*0.03f*(*ppMotionBlur);
-
-    Ogre::Quaternion estimatedOrientation = Ogre::Quaternion::nlerp(interpolationFactor, mCamera->getDerivedOrientation(), prevOr);
-    Ogre::Vector3    estimatedPosition = (1 - interpolationFactor)*mCamera->getDerivedPosition() + interpolationFactor*prevPos;
-    Ogre::Matrix4 viewMatrix = Ogre::Math::makeViewMatrix(estimatedPosition, estimatedOrientation);
-    Ogre::Matrix4 projectionMatrix = mCamera->getProjectionMatrix();
-    *pVP = projectionMatrix*viewMatrix;
-    *iVP = (projectionMatrix*mCamera->getViewMatrix()).inverse();
-
-    mPreviousFPS = 1 / tslf;
-    prevPos = mCamera->getDerivedPosition();
-    prevOr = mCamera->getDerivedOrientation();
-}
-
 void Player::updateStats()
 {
     bodyPosition = body->getPosition();
@@ -527,71 +420,29 @@ void Player::updateStats()
 
     bodyVelocityL = body->getVelocity().length();
 
-    if(!onGround && !visi && !is_climbing && noClimbTimer<=0)
+    if(!onGround && !hanging && !is_climbing)
     {
-        updateClimbingPossibility();
+		pClimbing->updateClimbingPossibility();
     }
     else if(is_climbing)
     {
-        updateClimbingStats();
+		pClimbing->updateClimbingStats();
     }
 
-    if(!grabbed && !is_climbing && !visi)
+    if(!grabbed && !is_climbing && !hanging)
     {
         updateUseGui();
     }
+
+	if (inControl && onGround)
+		slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, 9);
+	else if (!onGround)
+		slidesAutoTarget->hideAutoTarget();
 }
 
 void Player::startCameraShake(float time,float power,float impulse)
 {
     shaker->startCameraShake(time,power,impulse);
-}
-
-void Player::tryToGrab()
-{
-    Vector3 p=necknode->_getDerivedPosition();
-    OgreNewt::BasicRaycast ray(m_World,p,p+mCamera->getDerivedOrientation()*Vector3(0,0,-4)  ,true);
-    OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
-
-    if (info.mBody)
-    {
-        //grabbable
-        if (info.mBody->getType() == Grabbable)
-        {
-            Gbody=info.mBody;
-            Gbody->setMaterialGroupID(wmaterials->playerIgnore_mat);
-            Gbody->unFreeze();
-            Gbody->setCustomForceAndTorqueCallback<Player>(&Player::grabbed_callback, this);
-            //Gbody->setMassMatrix(Gbody->getMass(),Gbody->getInertia()/20);
-            gADT=Gbody->getAngularDamping();
-            gLDT=Gbody->getLinearDamping();
-            body->setMassMatrix(body->getMass()+Gbody->getMass(),body->getInertia());
-            Gbody->setAngularDamping(Vector3(1,1,1)*300);
-            Gbody->setLinearDamping(300);
-            grabbed=true;
-        }
-
-        //trigger
-        if (info.mBody->getType() == Trigger)
-        {
-            Ogre::Any any = info.mBody->getUserData();
-
-            if(!any.isEmpty())
-            {
-                bodyUserData* a0=Ogre::any_cast<bodyUserData*>(any);
-                if (a0->enabledTrigger)
-                    Global::mEventsMgr->activatePlayerTrigger(a0);
-            }
-        }
-    }
-}
-
-void Player::updateAutoTarget()
-{
-    if (inControl && onGround)
-        slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, 9);
-    else if (!onGround)
-        slidesAutoTarget->hideAutoTarget();
 }
 
 

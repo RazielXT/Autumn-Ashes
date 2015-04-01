@@ -60,7 +60,7 @@ void GameStateManager::switchToLevel(int lvl)
 
     Player* p = new Player(wMaterials);
     auto postProcMgr = Global::mPPMgr;
-    p->injectPostProcess(&postProcMgr->hurtEffect, &postProcMgr->ivp, &postProcMgr->pvp, &postProcMgr->mbAmount);
+    p->pPostProcess->injectPostProcess(&postProcMgr->hurtEffect, &postProcMgr->ivp, &postProcMgr->pvp, &postProcMgr->mbAmount);
     Global::player = p;
 
     switch (lvl)

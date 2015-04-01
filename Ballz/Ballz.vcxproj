@@ -145,10 +145,13 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\lvl_update.cpp" />
     <ClCompile Include="src\GuiOverlay.cpp" />
     <ClCompile Include="src\PagingManager.cpp" />
+    <ClCompile Include="src\PlayerClimbing.cpp" />
+    <ClCompile Include="src\PlayerGrab.cpp" />
     <ClCompile Include="src\Player_core.cpp" />
     <ClCompile Include="src\PostProcessMgr.cpp" />
     <ClCompile Include="src\SlideContactCallback.cpp" />
     <ClCompile Include="src\SlidesAutoTarget.cpp" />
+    <ClCompile Include="src\PlayerPostProcess.cpp" />
     <ClCompile Include="src\Tasks.cpp" />
     <ClCompile Include="src\tinyxml2.cpp" />
     <ClCompile Include="src\TopSlide.cpp" />
@@ -203,6 +206,9 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\MathUtils.h" />
     <ClInclude Include="include\NewtonListener.h" />
     <ClInclude Include="include\PagingManager.h" />
+    <ClInclude Include="include\PlayerClimbing.h" />
+    <ClInclude Include="include\PlayerGrab.h" />
+    <ClInclude Include="include\PlayerPostProcess.h" />
     <ClInclude Include="include\ScaryPPListener.h" />
     <ClInclude Include="include\PSSMCamera.h" />
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h" />

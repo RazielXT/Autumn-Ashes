@@ -6,6 +6,9 @@
 #include "EventTask.h"
 #include "EventsManager.h"
 #include "SlidesAutoTarget.h"
+#include "PlayerPostProcess.h"
+#include "PlayerClimbing.h"
+#include "PlayerGrab.h"
 
 class Shaker
 {
@@ -30,10 +33,9 @@ private:
 
 class Player
 {
-    enum Direction
-    {
-        Left, Right, Up, Down
-    };
+	friend class PlayerPostProcess;
+	friend class PlayerClimbing;
+	friend class PlayerGrab;
 
 public:
 
@@ -42,17 +44,7 @@ public:
 
     void move_callback(OgreNewt::Body* me, float timeStep, int threadIndex );
     void move_callback_nothing(OgreNewt::Body* me, float timeStep, int threadIndex );
-    void grabbed_callback(OgreNewt::Body* me, float timeStep, int threadIndex );
     void default_callback(OgreNewt::Body* me, float timeStep, int threadIndex );
-    void climb_callback(OgreNewt::Body* me, float timeStep, int threadIndex );
-
-    void injectPostProcess(Ogre::Real* postPFall,Ogre::Matrix4* invVP,Ogre::Matrix4* prevVP, Ogre::Real* mbAm)
-    {
-        ppFall=postPFall;
-        iVP=invVP;
-        pVP=prevVP;
-        ppMotionBlur=mbAm;
-    }
 
     void update(Ogre::Real time);
     void pressedKey(const OIS::KeyEvent &arg);
@@ -64,11 +56,6 @@ public:
     void setPosition(Ogre::Vector3 pos)
     {
         body->setPositionOrientation(pos,body->getOrientation());
-    }
-
-    float getParam()
-    {
-        return fallPitchTimer;
     }
 
     void die();
@@ -104,42 +91,28 @@ public:
 
     SlidesAutoTargetAsync* slidesAutoTarget;
 
+	PlayerPostProcess* pPostProcess;
+	PlayerClimbing* pClimbing;
+	PlayerGrab* pGrabbing;
+
 protected:
-
-    void attachToSlide(OgreNewt::Body* slideBody);
-
-    void updateStats();
-    void updateMotionBlur();
-    void updateClimbingStats();
+   
     void updateUseGui();
-    void updateClimbingPossibility();
-    void updateGroundStats();
+
+	void updateStats();
+	void updateMovement();
+	void updateHead();
     void updateDirectionForce();
+	void updateGroundStats();
+	void walkingSound(Ogre::Real time);
 
-    void updateParkourPossibility();
-
-    void updateHead();
+	void jump();
     void manageFall();
 
-    void pressedC(char b);
-    void startClimbing(char type);
-    void stopClimbing();
-
-    void walkingSound(Ogre::Real time);
-
-    inline void updateVerticalClimb(bool leftPhase);
-    void updateClimbMovement();
-    void tryClimbToSide(Direction dir);
-    bool canClimb(Direction direction, bool soundIfTrue = false, bool needSpeed = false, bool secondPhase = false);
-    void tryToGrab();
-    void updatePullup();
-    void updateMovement();
-    void jump();
 
     void initBody();
 
     inline void updateHeadArrival();
-    void updateAutoTarget();
 
 private:
 
@@ -165,32 +138,20 @@ private:
     WorldMaterials* wmaterials;
 
     //state
-    bool alive, immortal, stoji, vpravo, vlavo, vzad, vpred;
-    bool onGround, visi, grabbed, inControl, inMoveControl;
-    Ogre::Real camPitch,fallVelocity,bodySpeedAccum,startMoveBoost,noClimbTimer,movespeed,walkSoundTimer;
-    float climb_yaw, climb_move_side, climb_move_vert, climb_pullup;
-    char fallPitch,cameraWalkFinisher,is_climbing;
-    Ogre::Real fallPitchSize,fallPitchTimer,cam_walking,head_turning,pullupPos,rolling;
+	bool alive, immortal;
+	bool stoji, vpravo, vlavo, vzad, vpred;
+    bool onGround, inControl, inMoveControl;
+	float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, walkSoundTimer;
+	char fallPitch, cameraWalkFinisher;
+
+	bool hanging, grabbed; 
+    char is_climbing;
+
+	float fallPitchTimer, cam_walking, head_turning, rolling;
     int groundID, mouseX;
-    Ogre::Real tslf, slowingDown;
-    Ogre::Vector3 forceDirection, gNormal, climbDir;
+	float tslf, slowingDown;
+    Ogre::Vector3 forceDirection, gNormal;
 
-    //climb helpers
-    Ogre::Vector3 climb_normal;
-    OgreNewt::BallAndSocket* climbJoint;
-
-    //grabbed obj
-    Ogre::Vector3 gADT;
-    Ogre::Real gLDT;
-    OgreNewt::Body* Gbody;
-
-    //motion blur
-    Ogre::Real* ppFall, *ppMotionBlur;
-    Ogre::Matrix4* iVP,*pVP;
-    Ogre::Matrix4 prevVP;
-    Ogre::Vector3 prevPos;
-    Ogre::Quaternion prevOr;
-    Ogre::Real mPreviousFPS;
 };
 
 #endif
