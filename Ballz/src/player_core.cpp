@@ -57,10 +57,10 @@ void Player::initBody()
 
 void Player::jump()
 {
-	if (pClimbing->makingPullup())
+    if (pClimbing->makingPullup())
         return;
 
-	if(!pClimbing->spacePressed() && onGround)
+    if(!pClimbing->spacePressed() && onGround)
     {
         if (!slidesAutoTarget->pressedAction())
         {
@@ -99,7 +99,7 @@ void Player::manageFall()
 
         if (fallVelocity > 35)
         {
-			*(pPostProcess->ppFall) = std::min(fallVelocity / 7.0f, 8.0f);
+            *(pPostProcess->ppFall) = std::min(fallVelocity / 7.0f, 8.0f);
 
             if (!fallPitch)
                 fallVelocity = 80;
@@ -121,73 +121,73 @@ void Player::manageFall()
 
 void Player::updateMovement()
 {
-	if (slowingDown < 1)
-	{
-		slowingDown += (tslf / 2);
-		if (slowingDown > 1) slowingDown = 1;
-	}
+    if (slowingDown < 1)
+    {
+        slowingDown += (tslf / 2);
+        if (slowingDown > 1) slowingDown = 1;
+    }
 
-	if (startMoveBoost)
-	{
-		startMoveBoost -= (tslf * 2);
-		if (startMoveBoost < 0) startMoveBoost = 0;
-	}
+    if (startMoveBoost)
+    {
+        startMoveBoost -= (tslf * 2);
+        if (startMoveBoost < 0) startMoveBoost = 0;
+    }
 
-	body->setMaterialGroupID(wmaterials->ide_mat);
+    body->setMaterialGroupID(wmaterials->ide_mat);
 
-	Vector3 movedDir = Vector3::ZERO;
-	if (forw_key) movedDir.z--;
-	if (back_key) movedDir.z++;
-	if (right_key) movedDir.x++;
-	if (left_key) movedDir.x--;
+    Vector3 movedDir = Vector3::ZERO;
+    if (forw_key) movedDir.z--;
+    if (back_key) movedDir.z++;
+    if (right_key) movedDir.x++;
+    if (left_key) movedDir.x--;
 
-	forceDirection = mCamera->getDerivedOrientation()*movedDir;
-	forceDirection.normalise();
-	forceDirection.y = 0;
+    forceDirection = mCamera->getDerivedOrientation()*movedDir;
+    forceDirection.normalise();
+    forceDirection.y = 0;
 
-	if (onGround)
-	{
-		Vector3 lookDirection = getFacingDirection();
-		lookDirection.y = 0;
-		Vector3 vel = body->getVelocity();
-		vel.y = 0;
+    if (onGround)
+    {
+        Vector3 lookDirection = getFacingDirection();
+        lookDirection.y = 0;
+        Vector3 vel = body->getVelocity();
+        vel.y = 0;
 
-		if (gNormal.y > 0.8f)
-			forceDirection += (1 - gNormal.y)*forceDirection * 2;
+        if (gNormal.y > 0.8f)
+            forceDirection += (1 - gNormal.y)*forceDirection * 2;
 
-		Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
+        Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
 
-		if (dirAngleDiff > 45 && forw_key && !back_key && !right_key && !left_key)
-			forceDirection *= movespeed*dirAngleDiff / 30;
-		else
-		{
-			Real ebd = 1.0f;
-			//brzdi pri velkej rychlosti z kopca
-			if (bodyVelocityL > 9)
-			{
-				ebd = 1 / (bodyVelocityL - 8);
-			}
+        if (dirAngleDiff > 45 && forw_key && !back_key && !right_key && !left_key)
+            forceDirection *= movespeed*dirAngleDiff / 30;
+        else
+        {
+            Real ebd = 1.0f;
+            //brzdi pri velkej rychlosti z kopca
+            if (bodyVelocityL > 9)
+            {
+                ebd = 1 / (bodyVelocityL - 8);
+            }
 
-			forceDirection *= movespeed*ebd*slowingDown;
-		}
+            forceDirection *= movespeed*ebd*slowingDown;
+        }
 
-		if (gNormal.y > 0.7f)
-		{
-			Vector3 antiSlide = -gNormal;
-			antiSlide.y *= -1;
-			forceDirection += antiSlide * 20 * (1 - gNormal.y);
-		}
-		else
-		{
-			//too steep
-			forceDirection *= 0.25f;
-		}
+        if (gNormal.y > 0.7f)
+        {
+            Vector3 antiSlide = -gNormal;
+            antiSlide.y *= -1;
+            forceDirection += antiSlide * 20 * (1 - gNormal.y);
+        }
+        else
+        {
+            //too steep
+            forceDirection *= 0.25f;
+        }
 
-		forceDirection += forceDirection*startMoveBoost;
-	}
-	//midair
-	else
-		forceDirection *= 5;// 3 / (1 + bodyVelocity);
+        forceDirection += forceDirection*startMoveBoost;
+    }
+    //midair
+    else
+        forceDirection *= 5;// 3 / (1 + bodyVelocity);
 }
 
 void Player::updateHead()
@@ -243,7 +243,7 @@ void Player::updateHead()
 
     {
         //walking camera
-		if (moving && !climbing && onGround && (bodyVelocityL > 2))
+        if (moving && !climbing && onGround && (bodyVelocityL > 2))
         {
             cameraWalkFinisher = 1;
             cam_walking += time*bodyVelocityL;

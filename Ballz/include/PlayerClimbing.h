@@ -6,46 +6,49 @@ class Player;
 
 class PlayerClimbing
 {
-	enum Direction
-	{
-		Left, Right, Up, Down
-	};
+    enum Direction
+    {
+        Left, Right, Up, Down
+    };
 
-	friend class Player;
-	
-	Player* p;
-	OgreNewt::Body* body;
-	OgreNewt::Body* Gbody;
+    friend class Player;
 
-	void pressedC();
-	bool spacePressed();
-	void updateClimbCamera(float moveX);
+    Player* p;
+    OgreNewt::Body* body;
+    OgreNewt::Body* Gbody;
 
-	void startPullup();
-	void updatePullup(float tslf);
-	bool makingPullup() { return climb_pullup!=0; }
+    void pressedC();
+    bool spacePressed();
+    void updateClimbCamera(float moveX);
 
-	void startClimbing(char type);
-	void stopClimbing();
+    void startPullup();
+    void updatePullup(float tslf);
+    bool makingPullup()
+    {
+        return climb_pullup!=0;
+    }
 
-	inline void updateVerticalClimb(bool leftPhase);
-	void updateClimbMovement(float tslf);
-	void tryClimbToSide(Direction dir);
-	bool canClimb(Direction direction, bool soundIfTrue = false, bool needSpeed = false, bool secondPhase = false);
+    void startClimbing(char type);
+    void stopClimbing();
 
-	void updateClimbingStats();
-	void updateClimbingPossibility();
+    inline void updateVerticalClimb(bool leftPhase);
+    void updateClimbMovement(float tslf);
+    void tryClimbToSide(Direction dir);
+    bool canClimb(Direction direction, bool soundIfTrue = false, bool needSpeed = false, bool secondPhase = false);
 
-	float climb_yaw, climb_move_side, climb_move_vert, climb_pullup, noClimbTimer, pullupPos;
-	Ogre::Vector3 climb_normal, climbDir;
+    void updateClimbingStats();
+    void updateClimbingPossibility();
 
-	OgreNewt::BallAndSocket* climbJoint;
+    float climb_yaw, climb_move_side, climb_move_vert, climb_pullup, noClimbTimer, pullupPos;
+    Ogre::Vector3 climb_normal, climbDir;
+
+    OgreNewt::BallAndSocket* climbJoint;
 
 public:
 
-	PlayerClimbing(Player* player);
+    PlayerClimbing(Player* player);
 
-	void climb_callback(OgreNewt::Body* me, float timeStep, int threadIndex);
+    void climb_callback(OgreNewt::Body* me, float timeStep, int threadIndex);
 
-	void update(float tslf);
+    void update(float tslf);
 };

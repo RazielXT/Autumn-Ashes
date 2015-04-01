@@ -33,17 +33,17 @@ private:
 
 class Player
 {
-	friend class PlayerPostProcess;
-	friend class PlayerClimbing;
-	friend class PlayerGrab;
+    friend class PlayerPostProcess;
+    friend class PlayerClimbing;
+    friend class PlayerGrab;
 
-	struct CamArrivalInfo
-	{
-		Ogre::SceneNode* tempNode = nullptr;
-		Ogre::Vector3 pos;
-		Ogre::Quaternion dir;
-		float timer = 0;
-	};
+    struct CamArrivalInfo
+    {
+        Ogre::SceneNode* tempNode = nullptr;
+        Ogre::Vector3 pos;
+        Ogre::Quaternion dir;
+        float timer = 0;
+    };
 
 public:
 
@@ -100,22 +100,22 @@ public:
 
     SlidesAutoTargetAsync* slidesAutoTarget;
 
-	PlayerPostProcess* pPostProcess;
-	PlayerClimbing* pClimbing;
-	PlayerGrab* pGrabbing;
+    PlayerPostProcess* pPostProcess;
+    PlayerClimbing* pClimbing;
+    PlayerGrab* pGrabbing;
 
 protected:
-   
+
     void updateUseGui();
 
-	void updateStats();
-	void updateMovement();
-	void updateHead();
+    void updateStats();
+    void updateMovement();
+    void updateHead();
     void updateDirectionForce();
-	void updateGroundStats();
-	void walkingSound(Ogre::Real time);
+    void updateGroundStats();
+    void walkingSound(Ogre::Real time);
 
-	void jump();
+    void jump();
     void manageFall();
 
 
@@ -139,22 +139,22 @@ private:
     WorldMaterials* wmaterials;
 
     //state
-	bool alive, immortal;
-	bool moving, right_key, left_key, back_key, forw_key;
+    bool alive, immortal;
+    bool moving, right_key, left_key, back_key, forw_key;
     bool onGround, inControl, inMoveControl;
 
-	bool hanging, grabbedObj;
-	char climbing;
+    bool hanging, grabbedObj;
+    char climbing;
 
 
-	float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, walkSoundTimer;
-	char fallPitch, cameraWalkFinisher;
+    float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, walkSoundTimer;
+    char fallPitch, cameraWalkFinisher;
 
-	float fallPitchTimer, cam_walking, head_turning, rolling;
+    float fallPitchTimer, cam_walking, head_turning, rolling;
     int groundID, mouseX;
-	float tslf, slowingDown;
+    float tslf, slowingDown;
     Ogre::Vector3 forceDirection, gNormal;
-	CamArrivalInfo cameraArrival;
+    CamArrivalInfo cameraArrival;
 };
 
 #endif

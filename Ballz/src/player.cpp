@@ -22,29 +22,29 @@ Player::Player(WorldMaterials* wMaterials)
     bodyVelocityL=0;
     gNormal=Vector3(0,1,0);
     fallVelocity=0;
-	camPitch = 0;
+    camPitch = 0;
     forceDirection=Vector3::ZERO;
     mSceneMgr=Global::mSceneMgr;
     m_World=Global::mWorld;
-	rolling = 0;
-    
+    rolling = 0;
+
     right_key=false;
     left_key=false;
     forw_key=false;
     back_key=false;
     moving=false;
-	onGround = false;
+    onGround = false;
 
     hanging=false;
-	climbing = 0;
-	grabbedObj = false;
+    climbing = 0;
+    grabbedObj = false;
 
-	inControl = true;
-	inMoveControl = true;
+    inControl = true;
+    inMoveControl = true;
 
-	immortal = true;
-	alive = true;
-	
+    immortal = true;
+    alive = true;
+
 
     wmaterials = wMaterials;
 
@@ -54,13 +54,13 @@ Player::Player(WorldMaterials* wMaterials)
 
     cameraArrival.tempNode = nullptr;
 
-	pPostProcess = new PlayerPostProcess(this);
-	pClimbing = new PlayerClimbing(this);
-	pGrabbing = new PlayerGrab(this);
+    initBody();
+
+    pPostProcess = new PlayerPostProcess(this);
+    pClimbing = new PlayerClimbing(this);
+    pGrabbing = new PlayerGrab(this);
 
     slidesAutoTarget = new SlidesAutoTargetAsync();
-
-    initBody();
 
     /*  Ogre::SceneNode* panode = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0,0,0));
       Ogre::ParticleSystem* ps=mSceneMgr->createParticleSystem("Smoke", "Examples/Smoke");
@@ -70,9 +70,9 @@ Player::Player(WorldMaterials* wMaterials)
 
 Player::~Player ()
 {
-	delete pPostProcess;
-	delete pClimbing;
-	delete pGrabbing;
+    delete pPostProcess;
+    delete pClimbing;
+    delete pGrabbing;
     delete slidesAutoTarget;
     delete shaker;
 }
@@ -189,7 +189,7 @@ void Player::releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
     {
     case OIS::MB_Right:
         if (grabbedObj)
-			pGrabbing->releaseObj();
+            pGrabbing->releaseObj();
 
         break;
     }
@@ -334,8 +334,8 @@ void Player::rotateCamera(Real hybX,Real hybY)
     }
 
     if(climbing)
-		pClimbing->updateClimbCamera(hybX);
-	else
+        pClimbing->updateClimbCamera(hybX);
+    else
     {
         //damping of turning speed if moving quickly midair
         if (!onGround && bodyVelocityL>10)
@@ -350,7 +350,7 @@ void Player::update(Real time)
 {
     tslf = time*Global::timestep;
 
-	pPostProcess->update(tslf);
+    pPostProcess->update(tslf);
 
     if(!alive)
         return;
@@ -359,7 +359,7 @@ void Player::update(Real time)
 
     updateDirectionForce();
 
-	pClimbing->update(tslf);
+    pClimbing->update(tslf);
 
     updateHead();
 }
@@ -370,11 +370,11 @@ void Player::updateDirectionForce()
 
     if (!climbing && rolling <= 0)
     {
-		if (!moving)
+        if (!moving)
         {
             body->setMaterialGroupID(wmaterials->stoji_mat);
             walkSoundTimer = 0.37;
-			startMoveBoost = 1;
+            startMoveBoost = 1;
         }
         else
         {
@@ -409,7 +409,7 @@ void Player::updateDirectionForce()
 
 void Player::updateStats()
 {
-	moving = right_key || forw_key || back_key || left_key;
+    moving = right_key || forw_key || back_key || left_key;
 
     bodyPosition = body->getPosition();
 
@@ -419,11 +419,11 @@ void Player::updateStats()
 
     if(!onGround && !hanging && !climbing)
     {
-		pClimbing->updateClimbingPossibility();
+        pClimbing->updateClimbingPossibility();
     }
     else if(climbing)
     {
-		pClimbing->updateClimbingStats();
+        pClimbing->updateClimbingStats();
     }
 
     if(!grabbedObj && !climbing && !hanging)
@@ -431,10 +431,10 @@ void Player::updateStats()
         updateUseGui();
     }
 
-	if (inControl && onGround)
-		slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, 9);
-	else if (!onGround)
-		slidesAutoTarget->hideAutoTarget();
+    if (inControl && onGround)
+        slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, 9);
+    else if (!onGround)
+        slidesAutoTarget->hideAutoTarget();
 }
 
 void Player::startCameraShake(float time,float power,float impulse)
