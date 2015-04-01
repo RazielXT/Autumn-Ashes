@@ -26,12 +26,12 @@ Player::Player(WorldMaterials* wMaterials)
     mSceneMgr=Global::mSceneMgr;
     m_World=Global::mWorld;
     is_climbing=0;
-    vpravo=false;
-    grabbed=false;
-    vlavo=false;
-    vpred=false;
-    vzad=false;
-    stoji=true;
+    right_key=false;
+    grabbedObj=false;
+    left_key=false;
+    forw_key=false;
+    back_key=false;
+    not_moving=true;
     hanging=false;
     onGround=false;
     inControl=true;
@@ -66,6 +66,8 @@ Player::Player(WorldMaterials* wMaterials)
 Player::~Player ()
 {
 	delete pPostProcess;
+	delete pClimbing;
+	delete pGrabbing;
     delete slidesAutoTarget;
     delete shaker;
 }
@@ -110,16 +112,16 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
     switch (arg.key)
     {
     case OIS::KC_D:
-        vpravo=true;
+        right_key=true;
         break;
     case OIS::KC_A:
-        vlavo=true;
+        left_key=true;
         break;
     case OIS::KC_W:
-        vpred=true;
+        forw_key=true;
         break;
     case OIS::KC_S:
-        vzad=true;
+        back_key=true;
         break;
 
     case OIS::KC_C:
@@ -148,33 +150,30 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
 }
 void Player::releasedKey(const OIS::KeyEvent &arg)
 {
-
     switch (arg.key)
     {
-
     case OIS::KC_D:
-        vpravo=false;
+        right_key=false;
         break;
     case OIS::KC_A:
-        vlavo=false;
+        left_key=false;
         break;
     case OIS::KC_W:
-        vpred=false;
+        forw_key=false;
         break;
     case OIS::KC_S:
-        vzad=false;
+        back_key=false;
         break;
     }
 }
 
 void Player::pressedMouse(const OIS::MouseEvent &arg,OIS::MouseButtonID id)
 {
-
     switch (id)
     {
     case OIS::MB_Right:
-        if (!grabbed)
-            tryToGrab();
+        if (!grabbedObj)
+            pGrabbing->tryToGrab();
 
         break;
     }
@@ -184,16 +183,9 @@ void Player::releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
     switch (id)
     {
     case OIS::MB_Right:
-        if (grabbed)
-        {
-            Gbody->setMaterialGroupID(m_World->getDefaultMaterialID());
-            //Gbody->setMassMatrix(Gbody->getMass(),Gbody->getInertia()*20);
-            Gbody->setCustomForceAndTorqueCallback<Player>(&Player::default_callback, this);
-            Gbody->setAngularDamping(gADT);
-            Gbody->setLinearDamping(gLDT);
-            body->setMassMatrix(body->getMass()-Gbody->getMass(),body->getInertia());
-            grabbed=false;
-        }
+        if (grabbedObj)
+			pGrabbing->releaseObj();
+
         break;
     }
 }
@@ -274,7 +266,7 @@ void Player::attachCamera()
     head_turning=0;
     mouseX=0;
     camPitch=0;
-    stoji=true;
+    not_moving=true;
 
     necknode->setOrientation(Ogre::Quaternion::IDENTITY);
     //necknode->setPosition(Vector3(0,1,0));
@@ -360,8 +352,6 @@ void Player::update(Real time)
 
     updateStats();
 
-    updateAutoTarget();
-
     updateDirectionForce();
 
 	pClimbing->update(tslf);
@@ -375,11 +365,11 @@ void Player::updateDirectionForce()
 
     if (!is_climbing && rolling <= 0)
     {
-        if (!vpravo && !vpred && !vzad && !vlavo)
+		if (not_moving)
         {
             body->setMaterialGroupID(wmaterials->stoji_mat);
-            stoji = true;
             walkSoundTimer = 0.37;
+			startMoveBoost = 1;
         }
         else
         {
@@ -389,7 +379,7 @@ void Player::updateDirectionForce()
     else if (rolling > 0)
     {
         body->setMaterialGroupID(wmaterials->ide_mat);
-        stoji = false;
+        not_moving = false;
         walkSoundTimer = 0.2f;
 
         auto dirVec = necknode->_getDerivedOrientation()*Vector3(0, 0, -1);
@@ -400,7 +390,7 @@ void Player::updateDirectionForce()
         rolling -= tslf;
     }
 
-    if (!stoji && onGround)
+    if (!not_moving && onGround)
     {
         if (movespeed < 17)
             movespeed += tslf * 10;
@@ -414,6 +404,8 @@ void Player::updateDirectionForce()
 
 void Player::updateStats()
 {
+	not_moving = !right_key && !forw_key && !back_key && !left_key;
+
     bodyPosition = body->getPosition();
 
     updateGroundStats();
@@ -429,7 +421,7 @@ void Player::updateStats()
 		pClimbing->updateClimbingStats();
     }
 
-    if(!grabbed && !is_climbing && !hanging)
+    if(!grabbedObj && !is_climbing && !hanging)
     {
         updateUseGui();
     }

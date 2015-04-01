@@ -2,7 +2,7 @@
 #include "PlayerGrab.h"
 #include "Player.h"
 
-PlayerGrab::PlayerGrab(Player* player) : p(player)
+PlayerGrab::PlayerGrab(Player* player) : p(player), body(player->body)
 {
 }
 
@@ -34,8 +34,8 @@ void PlayerGrab::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threa
 		Gbody->setCustomForceAndTorqueCallback<Player>(&Player::default_callback, p);
 		Gbody->setAngularDamping(gADT);
 		Gbody->setLinearDamping(gLDT);
-		p->body->setMassMatrix(p->body->getMass() - Gbody->getMass(), p->body->getInertia());
-		p->grabbed = false;
+		body->setMassMatrix(body->getMass() - Gbody->getMass(), body->getInertia());
+		p->grabbedObj = false;
 	}
 }
 
@@ -57,10 +57,10 @@ void PlayerGrab::tryToGrab()
 			//Gbody->setMassMatrix(Gbody->getMass(),Gbody->getInertia()/20);
 			gADT = Gbody->getAngularDamping();
 			gLDT = Gbody->getLinearDamping();
-			p->body->setMassMatrix(p->body->getMass() + Gbody->getMass(), p->body->getInertia());
+			body->setMassMatrix(body->getMass() + Gbody->getMass(), body->getInertia());
 			Gbody->setAngularDamping(Vector3(1, 1, 1) * 300);
 			Gbody->setLinearDamping(300);
-			p->grabbed = true;
+			p->grabbedObj = true;
 		}
 
 		//trigger
@@ -76,4 +76,15 @@ void PlayerGrab::tryToGrab()
 			}
 		}
 	}
+}
+
+void PlayerGrab::releaseObj()
+{
+	Gbody->setMaterialGroupID(Global::mWorld->getDefaultMaterialID());
+	//Gbody->setMassMatrix(Gbody->getMass(),Gbody->getInertia()*20);
+	Gbody->setCustomForceAndTorqueCallback<Player>(&Player::default_callback, p);
+	Gbody->setAngularDamping(gADT);
+	Gbody->setLinearDamping(gLDT);
+	body->setMassMatrix(body->getMass() - Gbody->getMass(), body->getInertia());
+	p->grabbedObj = false;
 }

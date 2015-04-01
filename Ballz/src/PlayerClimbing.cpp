@@ -105,13 +105,12 @@ bool PlayerClimbing::spacePressed()
 
 void PlayerClimbing::updateClimbMovement(float tslf)
 {
-	if (!p->vpravo && !p->vpred && !p->vzad && !p->vlavo && !climb_move_side && !climb_move_vert && !climb_pullup)
+	if (p->not_moving && !climb_move_side && !climb_move_vert && !climb_pullup)
 	{
 		body->setMaterialGroupID(p->wmaterials->stoji_mat);
-		p->stoji = true;
 	}
 	else
-		p->stoji = false;
+		p->not_moving = false;
 
 	auto wmaterials = p->wmaterials;
 
@@ -245,7 +244,7 @@ void PlayerClimbing::updateClimbMovement(float tslf)
 	//not moving yet
 	else
 	{
-		if (p->vpred)
+		if (p->forw_key)
 		{
 			Vector3 pohlad = p->getFacingDirection();
 
@@ -279,12 +278,12 @@ void PlayerClimbing::updateClimbMovement(float tslf)
 					body->setMaterialGroupID(wmaterials->stoji_mat);
 			}
 		}
-		else if (p->vlavo)
+		else if (p->left_key)
 		{
 			tryClimbToSide(Left);
 
 		}
-		else if (p->vpravo)
+		else if (p->right_key)
 		{
 			tryClimbToSide(Right);
 		}
@@ -329,7 +328,7 @@ void PlayerClimbing::updateVerticalClimb(bool leftPhase)
 	float diff = leftPhase ? -1.f : 1.f;
 	auto wmaterials = p->wmaterials;
 
-	if (p->vpred)
+	if (p->forw_key)
 	{
 		Vector3 pohlad = p->getFacingDirection();
 		bool con = false;

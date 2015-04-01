@@ -37,6 +37,14 @@ class Player
 	friend class PlayerClimbing;
 	friend class PlayerGrab;
 
+	struct CamArrivalInfo
+	{
+		Ogre::SceneNode* tempNode = nullptr;
+		Ogre::Vector3 pos;
+		Ogre::Quaternion dir;
+		float timer = 0;
+	};
+
 public:
 
     Player(WorldMaterials* wMaterials);
@@ -47,6 +55,7 @@ public:
     void default_callback(OgreNewt::Body* me, float timeStep, int threadIndex );
 
     void update(Ogre::Real time);
+
     void pressedKey(const OIS::KeyEvent &arg);
     void releasedKey(const OIS::KeyEvent &arg);
     void pressedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
@@ -70,10 +79,10 @@ public:
 
     void stopMoving()
     {
-        vlavo = false;
-        vpravo = false;
-        vpred = false;
-        vzad = false;
+        left_key = false;
+        right_key = false;
+        forw_key = false;
+        back_key = false;
         body->setVelocity(Ogre::Vector3(0, 0, 0));
     };
 
@@ -116,14 +125,6 @@ protected:
 
 private:
 
-    struct
-    {
-        Ogre::SceneNode* tempNode = nullptr;
-        Ogre::Vector3 pos;
-        Ogre::Quaternion dir;
-        float timer = 0;
-    } cameraArrival;
-
     Shaker* shaker;
     OgreNewt::World* m_World;
     Ogre::SceneManager * mSceneMgr;
@@ -139,19 +140,21 @@ private:
 
     //state
 	bool alive, immortal;
-	bool stoji, vpravo, vlavo, vzad, vpred;
+	bool not_moving, right_key, left_key, back_key, forw_key;
     bool onGround, inControl, inMoveControl;
+
+	bool hanging, grabbedObj;
+	char is_climbing;
+
+
 	float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, walkSoundTimer;
 	char fallPitch, cameraWalkFinisher;
-
-	bool hanging, grabbed; 
-    char is_climbing;
 
 	float fallPitchTimer, cam_walking, head_turning, rolling;
     int groundID, mouseX;
 	float tslf, slowingDown;
     Ogre::Vector3 forceDirection, gNormal;
-
+	CamArrivalInfo cameraArrival;
 };
 
 #endif

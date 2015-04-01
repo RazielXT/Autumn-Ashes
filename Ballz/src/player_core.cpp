@@ -133,17 +133,13 @@ void Player::updateMovement()
 		if (startMoveBoost < 0) startMoveBoost = 0;
 	}
 
-	if (stoji)
-		startMoveBoost = 1;
-
 	body->setMaterialGroupID(wmaterials->ide_mat);
-	stoji = false;
 
 	Vector3 movedDir = Vector3::ZERO;
-	if (vpred) movedDir.z--;
-	if (vzad) movedDir.z++;
-	if (vpravo) movedDir.x++;
-	if (vlavo) movedDir.x--;
+	if (forw_key) movedDir.z--;
+	if (back_key) movedDir.z++;
+	if (right_key) movedDir.x++;
+	if (left_key) movedDir.x--;
 
 	forceDirection = mCamera->getDerivedOrientation()*movedDir;
 	forceDirection.normalise();
@@ -161,7 +157,7 @@ void Player::updateMovement()
 
 		Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
 
-		if (dirAngleDiff > 45 && vpred && !vzad && !vpravo && !vlavo)
+		if (dirAngleDiff > 45 && forw_key && !back_key && !right_key && !left_key)
 			forceDirection *= movespeed*dirAngleDiff / 30;
 		else
 		{
@@ -247,7 +243,7 @@ void Player::updateHead()
 
     {
         //walking camera
-        if (!is_climbing && !stoji && onGround && (bodyVelocityL > 2))
+        if (!is_climbing && !not_moving && onGround && (bodyVelocityL > 2))
         {
             cameraWalkFinisher = 1;
             cam_walking += time*bodyVelocityL;
@@ -285,7 +281,7 @@ void Player::updateHead()
         }
 
         //roll camera a bit while turning
-        if (onGround && vpred && abs(mouseX) > 5)
+        if (onGround && forw_key && abs(mouseX) > 5)
         {
             head_turning += (bodyVelocityL / 9)*(mouseX - 5) / 250.0f;
             if (head_turning > 8)head_turning = 8;

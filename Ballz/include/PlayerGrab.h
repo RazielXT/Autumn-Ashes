@@ -9,6 +9,7 @@ class PlayerGrab
 	friend class Player;
 
 	Player* p;
+	OgreNewt::Body* body;
 
 	//grabbed obj
 	Ogre::Vector3 gADT;
@@ -22,4 +23,5 @@ public:
 	PlayerGrab(Player* player);
 
 	void tryToGrab();
+	void releaseObj();
 };
