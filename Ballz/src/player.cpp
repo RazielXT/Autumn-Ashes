@@ -22,24 +22,29 @@ Player::Player(WorldMaterials* wMaterials)
     bodyVelocityL=0;
     gNormal=Vector3(0,1,0);
     fallVelocity=0;
+	camPitch = 0;
     forceDirection=Vector3::ZERO;
     mSceneMgr=Global::mSceneMgr;
     m_World=Global::mWorld;
-    is_climbing=0;
+	rolling = 0;
+    
     right_key=false;
-    grabbedObj=false;
     left_key=false;
     forw_key=false;
     back_key=false;
-    not_moving=true;
+    moving=false;
+	onGround = false;
+
     hanging=false;
-    onGround=false;
-    inControl=true;
-    inMoveControl=true;
-    immortal=true;
-    alive=true;
-    rolling = false;
-    camPitch=0;
+	climbing = 0;
+	grabbedObj = false;
+
+	inControl = true;
+	inMoveControl = true;
+
+	immortal = true;
+	alive = true;
+	
 
     wmaterials = wMaterials;
 
@@ -266,7 +271,7 @@ void Player::attachCamera()
     head_turning=0;
     mouseX=0;
     camPitch=0;
-    not_moving=true;
+    moving=false;
 
     necknode->setOrientation(Ogre::Quaternion::IDENTITY);
     //necknode->setPosition(Vector3(0,1,0));
@@ -328,7 +333,7 @@ void Player::rotateCamera(Real hybX,Real hybY)
         }
     }
 
-    if(is_climbing)
+    if(climbing)
 		pClimbing->updateClimbCamera(hybX);
 	else
     {
@@ -363,9 +368,9 @@ void Player::updateDirectionForce()
 {
     forceDirection = Vector3::ZERO;
 
-    if (!is_climbing && rolling <= 0)
+    if (!climbing && rolling <= 0)
     {
-		if (not_moving)
+		if (!moving)
         {
             body->setMaterialGroupID(wmaterials->stoji_mat);
             walkSoundTimer = 0.37;
@@ -379,7 +384,7 @@ void Player::updateDirectionForce()
     else if (rolling > 0)
     {
         body->setMaterialGroupID(wmaterials->ide_mat);
-        not_moving = false;
+        moving = true;
         walkSoundTimer = 0.2f;
 
         auto dirVec = necknode->_getDerivedOrientation()*Vector3(0, 0, -1);
@@ -390,7 +395,7 @@ void Player::updateDirectionForce()
         rolling -= tslf;
     }
 
-    if (!not_moving && onGround)
+    if (moving && onGround)
     {
         if (movespeed < 17)
             movespeed += tslf * 10;
@@ -404,7 +409,7 @@ void Player::updateDirectionForce()
 
 void Player::updateStats()
 {
-	not_moving = !right_key && !forw_key && !back_key && !left_key;
+	moving = right_key || forw_key || back_key || left_key;
 
     bodyPosition = body->getPosition();
 
@@ -412,16 +417,16 @@ void Player::updateStats()
 
     bodyVelocityL = body->getVelocity().length();
 
-    if(!onGround && !hanging && !is_climbing)
+    if(!onGround && !hanging && !climbing)
     {
 		pClimbing->updateClimbingPossibility();
     }
-    else if(is_climbing)
+    else if(climbing)
     {
 		pClimbing->updateClimbingStats();
     }
 
-    if(!grabbedObj && !is_climbing && !hanging)
+    if(!grabbedObj && !climbing && !hanging)
     {
         updateUseGui();
     }

@@ -140,11 +140,11 @@ private:
 
     //state
 	bool alive, immortal;
-	bool not_moving, right_key, left_key, back_key, forw_key;
+	bool moving, right_key, left_key, back_key, forw_key;
     bool onGround, inControl, inMoveControl;
 
 	bool hanging, grabbedObj;
-	char is_climbing;
+	char climbing;
 
 
 	float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, walkSoundTimer;

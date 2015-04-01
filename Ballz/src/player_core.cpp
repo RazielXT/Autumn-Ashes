@@ -243,7 +243,7 @@ void Player::updateHead()
 
     {
         //walking camera
-        if (!is_climbing && !not_moving && onGround && (bodyVelocityL > 2))
+		if (moving && !climbing && onGround && (bodyVelocityL > 2))
         {
             cameraWalkFinisher = 1;
             cam_walking += time*bodyVelocityL;

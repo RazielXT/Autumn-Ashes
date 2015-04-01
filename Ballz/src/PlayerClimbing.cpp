@@ -16,7 +16,7 @@ void PlayerClimbing::update(float tslf)
 	{
 		updatePullup(tslf);
 	}
-	else if (p->is_climbing)
+	else if (p->climbing)
 	{
 		updateClimbMovement(tslf);
 	}
@@ -60,7 +60,7 @@ void PlayerClimbing::pressedC()
 		p->hanging = false;
 		noClimbTimer = 1;
 	}
-	else if (p->is_climbing)
+	else if (p->climbing)
 	{
 		stopClimbing();
 		noClimbTimer = 1;
@@ -73,13 +73,13 @@ bool PlayerClimbing::spacePressed()
 	{
 		startPullup();
 	}
-	else if (p->is_climbing == 2 || p->is_climbing == 6)
+	else if (p->climbing == 2 || p->climbing == 6)
 	{
 		Global::audioLib->play3D("pullup.wav", p->bodyPosition, 5, 0.7f);
 
 		climb_pullup = 0.05;
 	}
-	else if (p->is_climbing == 5)
+	else if (p->climbing == 5)
 	{
 		Vector3 camDir = p->getFacingDirection();
 		Vector3 pohlad(-camDir);
@@ -105,12 +105,12 @@ bool PlayerClimbing::spacePressed()
 
 void PlayerClimbing::updateClimbMovement(float tslf)
 {
-	if (p->not_moving && !climb_move_side && !climb_move_vert && !climb_pullup)
+	if (!p->moving && !climb_move_side && !climb_move_vert && !climb_pullup)
 	{
 		body->setMaterialGroupID(p->wmaterials->stoji_mat);
 	}
 	else
-		p->not_moving = false;
+		p->moving = true;
 
 	auto wmaterials = p->wmaterials;
 
@@ -462,7 +462,7 @@ void PlayerClimbing::updateClimbingStats()
 	{
 		if ((info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old || info.mBody->getType() == Climb_Pullup) && !p->onGround)
 		{
-			p->is_climbing = info.mBody->getType();
+			p->climbing = info.mBody->getType();
 			Ogre::Vector3 c_normal = info.mNormal.normalisedCopy();
 
 			if (c_normal != climb_normal)
@@ -626,7 +626,7 @@ void PlayerClimbing::startClimbing(char type)
 	climbJoint = new OgreNewt::BallAndSocket(hbody, body, p->bodyPosition + Vector3(0, 5, 0), 0);
 	hbody->setMaterialGroupID(p->wmaterials->stoji_mat);
 
-	p->is_climbing = type;
+	p->climbing = type;
 
 	/*if (type > 2)
 		startCameraShake(0.2f, 0.3f, 0.4f);
@@ -645,7 +645,7 @@ void PlayerClimbing::stopClimbing()
 	delete b;
 	Global::mSceneMgr->destroyEntity("BodyChytac");
 	Global::mSceneMgr->destroySceneNode("BodyChytac");
-	p->is_climbing = 0;
+	p->climbing = 0;
 	climb_yaw = 0;
 }
 
@@ -671,7 +671,7 @@ void PlayerClimbing::updatePullup(float tslf)
 		{
 			climb_pullup = 0;
 
-			if (p->is_climbing)
+			if (p->climbing)
 				stopClimbing();
 
 			if (p->hanging)
@@ -713,7 +713,7 @@ void PlayerClimbing::updateClimbCamera(float moveX)
 	else
 	{
 		Real max_angle = 90;
-		if (p->is_climbing) max_angle = 120;
+		if (p->climbing) max_angle = 120;
 
 		Real spomal;
 		angle -= (180 - max_angle);
