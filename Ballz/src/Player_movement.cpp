@@ -6,54 +6,97 @@
 using namespace Ogre;
 
 
-void Player::initBody()
+void Player::enableControl(bool enable)
 {
-    Ogre::Entity* ent = mSceneMgr->createEntity("name", "play2.mesh");
-    SceneNode* node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CenterNode");
-    node->attachObject(ent);
-    ent->setCastShadows(false);
-    ent->setVisible(false);
-    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World, ent, 10));
-    body = new OgreNewt::Body(m_World, col);
+	inControl = enable;
+	inMoveControl = enable;
 
-    uv = new OgreNewt::UpVector(body, Vector3::UNIT_Y);
-    uv2 = new OgreNewt::UpVector(body, Vector3::UNIT_Z);
-
-    Ogre::Vector3 inertia, offset;
-    col->calculateInertialMatrix(inertia, offset);
-#ifdef OGRENEWT_NO_COLLISION_SHAREDPTR
-    //no longer need the collision shape object
-    delete col;
-#endif
-    body->setMassMatrix(0.5, Vector3(20, 20, 20));
-    body->setCenterOfMass(offset);
-    body->setContinuousCollisionMode(1);
-    body->setPositionOrientation(Ogre::Vector3(0, 100, 0), Ogre::Quaternion::IDENTITY);
-    body->setLinearDamping(4);
-    body->attachNode(node);
-    body->setAutoSleep(0);
-    //body->setMaterialGroupID(pmat);
-    body->setCustomForceAndTorqueCallback<Player>(&Player::move_callback, this);
-
-
-    necknode = node->createChildSceneNode("NeckNod");
-    necknode->setPosition(Vector3(0, 1, 0));
-
-    headnode = necknode->createChildSceneNode("HeadNod");
-    headnode->setPosition(Vector3(0, 0, 0));
-
-    shakeNode = headnode->createChildSceneNode("ShakeHeadNod");
-    shakeNode->setPosition(Vector3(0, 0, 0));
-    shaker = new Shaker(shakeNode);
-
-    camnode = shakeNode->createChildSceneNode("CamNod");
-    camnode->attachObject(mCamera);
-    camnode->setPosition(Vector3(0, 0, 0));
-
-    ent = mSceneMgr->createEntity("pl_base", "cone_p2.mesh");
-    col_p = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World, ent, 10));
+	if (!enable)
+		stopMoving();
 }
 
+void Player::enableMovement(bool enable)
+{
+	inMoveControl = enable;
+
+	if (!enable)
+		stopMoving();
+}
+
+void Player::move_callback(OgreNewt::Body* me, float timeStep, int threadIndex)
+{
+	me->addForce(Ogre::Vector3(0, -9.0f, 0));
+	me->addForce(forceDirection);
+}
+
+void Player::walkingSound(Ogre::Real time)
+{
+	walkSoundTimer += (time*bodyVelocityL / 6.6f);
+
+	if (walkSoundTimer > 0.4)
+	{
+		Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID);
+
+		walkSoundTimer = 0;
+	}
+}
+
+void Player::updateDirectionForce()
+{
+	forceDirection = Vector3::ZERO;
+
+	if (!climbing && rolling <= 0)
+	{
+		if (!moving)
+		{
+			body->setMaterialGroupID(wmaterials->stoji_mat);
+			walkSoundTimer = 0.37;
+			startMoveBoost = 1;
+		}
+		else
+		{
+			updateMovement();
+		}
+	}
+	else if (rolling > 0)
+	{
+		body->setMaterialGroupID(wmaterials->ide_mat);
+		moving = true;
+		walkSoundTimer = 0.2f;
+
+		auto dirVec = necknode->_getDerivedOrientation()*Vector3(0, 0, -1);
+		dirVec.y = 0;
+		dirVec.normalise();
+		forceDirection += dirVec * 10 * rolling;
+
+		rolling -= tslf;
+	}
+
+	if (moving && onGround)
+	{
+		if (movespeed < 17)
+			movespeed += tslf * 10;
+		else
+			movespeed = 17;
+
+		walkingSound(tslf);
+	}
+	else movespeed = 7;
+}
+
+float Shaker::doRoll(float duration, Ogre::SceneNode* rNode, Ogre::SceneNode* hNode)
+{
+	if (rollingLeft > 0)
+		return rollingLeft;
+
+	heightNode = hNode;
+	rollNode = rNode;
+	rollingDuration = rollingLeft = duration;
+
+	startCameraShake(duration, 0.4f, 0.6f);
+
+	return duration;
+}
 
 void Player::jump()
 {
@@ -74,9 +117,9 @@ void Player::manageFall()
 {
     fallVelocity = abs(bodyVelocityL) * 2;
 
-    if (fallVelocity > 25)
+    if (fallVelocity > 35)
     {
-        if (!immortal && fallVelocity > 55)
+        if (!immortal && fallVelocity > 65)
         {
             die();
         }
@@ -91,13 +134,13 @@ void Player::manageFall()
 
             Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
 
-            if (dirAngleDiff < 45 && vel.length()>0.25f)
+            if (dirAngleDiff < 45 && vel.length()>0.5f)
             {
                 rolling = shaker->doRoll(1.2f, headnode, necknode);
             }
         }
 
-        if (fallVelocity > 35)
+        if (fallVelocity > 40)
         {
             *(pPostProcess->ppFall) = std::min(fallVelocity / 7.0f, 8.0f);
 
@@ -304,68 +347,7 @@ void Player::updateHead()
         mouseX = 0;
     }
 
-    updateHeadArrival();
-}
-
-void Player::updateHeadArrival()
-{
-    if (cameraArrival.tempNode)
-    {
-        cameraArrival.timer -= tslf;
-
-        if (cameraArrival.timer <= 0)
-        {
-            mCamera->detachFromParent();
-            camnode->attachObject(mCamera);
-            mSceneMgr->destroySceneNode(cameraArrival.tempNode);
-            cameraArrival.tempNode = nullptr;
-        }
-        else
-        {
-            auto w = cameraArrival.timer/0.2f;
-            auto pos = cameraArrival.pos*w + camnode->_getDerivedPosition()*(1 - w);
-            auto or = Quaternion::Slerp(1-w, cameraArrival.dir, camnode->_getDerivedOrientation(), true);
-
-            cameraArrival.tempNode->setPosition(pos);
-            cameraArrival.tempNode->setOrientation(or);
-        }
-    }
-}
-
-
-void Player::updateUseGui()
-{
-    auto pos = necknode->_getDerivedPosition();
-    OgreNewt::BasicRaycast ray(m_World, pos, pos + mCamera->getDerivedOrientation()*Vector3(0, 0, -4), true);
-    OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
-
-    if (info.mBody)
-    {
-        //grabbable
-        if (info.mBody->getType() == Grabbable)
-        {
-            Global::gameMgr->myMenu->showUseGui(Ui_Pickup);
-        }
-        //climbable
-        else if (info.mBody->getType() == Pullup_old)
-        {
-            Global::gameMgr->myMenu->showUseGui(Ui_Climb);
-        }
-        //trigger
-        else if (info.mBody->getType() == Trigger)
-        {
-            Ogre::Any any = info.mBody->getUserData();
-
-            if (!any.isEmpty())
-            {
-                bodyUserData* a0 = Ogre::any_cast<bodyUserData*>(any);
-                if (a0->enabledTrigger)
-                {
-                    Global::gameMgr->myMenu->showUseGui(Ui_Use);
-                }
-            }
-        }
-    }
+    updateCameraArrival();
 }
 
 void Player::updateGroundStats()
@@ -408,7 +390,7 @@ void Player::updateGroundStats()
             }
 
             groundBody = infoc.mBody;
-            gNormal = 1;
+            gNormal = Vector3(0,1,0);
         }
     }
 

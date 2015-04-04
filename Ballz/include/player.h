@@ -121,7 +121,7 @@ protected:
 
     void initBody();
 
-    inline void updateHeadArrival();
+    inline void updateCameraArrival();
 
 private:
 
@@ -143,9 +143,9 @@ private:
     bool moving, right_key, left_key, back_key, forw_key;
     bool onGround, inControl, inMoveControl;
 
-    bool hanging, grabbedObj;
+	//extern state
+    bool hanging, grabbedObj, wallrunning;
     char climbing;
-
 
     float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, walkSoundTimer;
     char fallPitch, cameraWalkFinisher;

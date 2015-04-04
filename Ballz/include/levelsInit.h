@@ -276,6 +276,20 @@ void createLevelTuto()
 
 }
 
+void createTestLevel()
+{
+    Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
+    Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
+    SceneParser::instance.loadScene("../../media/testLvl/test.scene");
+
+    PostProcessMgr* ppMgr = Global::mPPMgr;
+    ppMgr->setToScaryBloom();
+    ppMgr->ContSatuSharpNoise = 0.0;
+    ppMgr->radialHorizBlurVignette = 0.0;
+    ppMgr->ColouringShift = Ogre::Vector4(0.96, 0.92, 1.1, 0);
+
+    ppMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
+}
 
 void createLevel1_1()
 {

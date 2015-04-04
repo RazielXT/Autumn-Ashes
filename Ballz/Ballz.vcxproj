@@ -147,7 +147,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\PagingManager.cpp" />
     <ClCompile Include="src\PlayerClimbing.cpp" />
     <ClCompile Include="src\PlayerGrab.cpp" />
-    <ClCompile Include="src\Player_core.cpp" />
+    <ClCompile Include="src\Player_movement.cpp" />
     <ClCompile Include="src\PostProcessMgr.cpp" />
     <ClCompile Include="src\SlideContactCallback.cpp" />
     <ClCompile Include="src\SlidesAutoTarget.cpp" />

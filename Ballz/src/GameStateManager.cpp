@@ -74,6 +74,9 @@ void GameStateManager::switchToLevel(int lvl)
     case 3:
         createLevel2();
         break;
+    case 4:
+        createTestLevel();
+        break;
     default:
         switchToMainMenu();
     }

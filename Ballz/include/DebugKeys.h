@@ -70,7 +70,7 @@ public:
         case OIS::KC_L:
             if (Global::gameMgr->gameState == MENU)
             {
-                Global::gameMgr->switchToLevel(3);
+                Global::gameMgr->switchToLevel(4);
             }
             else
                 continueExecution = false;
