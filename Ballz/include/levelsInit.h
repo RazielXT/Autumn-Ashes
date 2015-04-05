@@ -286,7 +286,7 @@ void createTestLevel()
     ppMgr->setToScaryBloom();
     ppMgr->ContSatuSharpNoise = 0.0;
     ppMgr->radialHorizBlurVignette = 0.0;
-    ppMgr->ColouringShift = Ogre::Vector4(0.96, 0.92, 1.1, 0);
+    ppMgr->ColouringShift = Ogre::Vector4(1, 1.05, 0.9, 0);
 
     ppMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 }

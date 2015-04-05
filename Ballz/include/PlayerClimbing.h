@@ -50,5 +50,6 @@ public:
 
     void climb_callback(OgreNewt::Body* me, float timeStep, int threadIndex);
 
+    void forcePullup(Vector3 climbNormal, float startOffset = 0.0f);
     void update(float tslf);
 };

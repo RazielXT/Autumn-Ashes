@@ -9,6 +9,7 @@
 #include "PlayerPostProcess.h"
 #include "PlayerClimbing.h"
 #include "PlayerGrab.h"
+#include "PlayerParkour.h"
 
 class Shaker
 {
@@ -36,6 +37,7 @@ class Player
     friend class PlayerPostProcess;
     friend class PlayerClimbing;
     friend class PlayerGrab;
+    friend class PlayerParkour;
 
     struct CamArrivalInfo
     {
@@ -103,8 +105,10 @@ public:
     PlayerPostProcess* pPostProcess;
     PlayerClimbing* pClimbing;
     PlayerGrab* pGrabbing;
+    PlayerParkour* pParkour;
 
-protected:
+
+private:
 
     void updateUseGui();
 
@@ -118,12 +122,9 @@ protected:
     void jump();
     void manageFall();
 
-
     void initBody();
+    void updateCameraArrival();
 
-    inline void updateCameraArrival();
-
-private:
 
     Shaker* shaker;
     OgreNewt::World* m_World;
@@ -143,14 +144,14 @@ private:
     bool moving, right_key, left_key, back_key, forw_key;
     bool onGround, inControl, inMoveControl;
 
-	//extern state
+    //extern state
     bool hanging, grabbedObj, wallrunning;
     char climbing;
 
     float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, walkSoundTimer;
     char fallPitch, cameraWalkFinisher;
 
-    float fallPitchTimer, cam_walking, head_turning, rolling;
+    float fallPitchTimer, cam_walking, head_turning;
     int groundID, mouseX;
     float tslf, slowingDown;
     Ogre::Vector3 forceDirection, gNormal;

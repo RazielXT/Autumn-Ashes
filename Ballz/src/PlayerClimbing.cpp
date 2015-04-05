@@ -8,7 +8,6 @@ PlayerClimbing::PlayerClimbing(Player* player) : p(player), body(player->body)
     climb_yaw = 0;
     climb_move_side = 0;
     climb_move_vert = 0;
-    climb_pullup = 0;
     noClimbTimer = 0;
     pullupPos = 0;
 
@@ -54,7 +53,7 @@ void PlayerClimbing::startPullup()
     Ogre::Quaternion q(Ogre::Radian(-climb_yaw_change), Ogre::Vector3(0, 1, 0));
     climb_normal = q*climb_normal;
     climb_normal *= -1;
-    body->setVelocity(body->getVelocity() + Vector3(0, 15, 0));
+    body->setVelocity(body->getVelocity() + Vector3(0, 10, 0));
     p->inMoveControl = false;
     Gbody = mHelpBody;
 
@@ -77,8 +76,28 @@ void PlayerClimbing::pressedC()
     }
 }
 
+void PlayerClimbing::forcePullup(Vector3 climbNormal, float startOffset)
+{
+    startClimbing(Climb_Pullup);
+
+    Global::audioLib->play3D("pullup.wav", p->bodyPosition, 5, 0.7f);
+
+    climb_normal = climbNormal;
+    climb_pullup = 0.05f + startOffset;
+
+    if (!p->fallPitch)
+    {
+        p->fallPitch = 1;
+        p->fallPitchTimer = 0;
+        p->fallVelocity = 50;
+    }
+}
+
 bool PlayerClimbing::spacePressed()
 {
+    if (climb_pullup != 0)
+        return true;
+
     if (p->hanging)
     {
         startPullup();
@@ -86,8 +105,7 @@ bool PlayerClimbing::spacePressed()
     else if (p->climbing == 2 || p->climbing == 6)
     {
         Global::audioLib->play3D("pullup.wav", p->bodyPosition, 5, 0.7f);
-
-        climb_pullup = 0.05;
+        climb_pullup = 0.05f;
     }
     else if (p->climbing == 5)
     {
@@ -105,7 +123,7 @@ bool PlayerClimbing::spacePressed()
             noClimbTimer = 0.1;
             stopClimbing();
 
-            body->setVelocity(camDir * 10 + Vector3(0, 1, 0));
+            body->setVelocity(camDir * 12 + Vector3(0, 4, 0));
         }
     }
     else return false;
@@ -489,7 +507,7 @@ void PlayerClimbing::updateClimbingStats()
             //	stopClimbing();
         }
     }
-    else
+    else if (!climb_pullup)
         stopClimbing();
 }
 
@@ -632,7 +650,7 @@ void PlayerClimbing::startClimbing(char type)
     hbody->setMaterialGroupID(p->wmaterials->flag_mat);
     hbody->setCustomForceAndTorqueCallback<PlayerClimbing>(&PlayerClimbing::climb_callback, this);
     hbody->setPositionOrientation(p->bodyPosition + Vector3(0, 5, 0), Ogre::Quaternion::IDENTITY);
-    hbody->setCustomForceAndTorqueCallback<Player>(&Player::move_callback_nothing, p);
+    body->setCustomForceAndTorqueCallback<Player>(&Player::move_callback_nothing, p);
     climbJoint = new OgreNewt::BallAndSocket(hbody, body, p->bodyPosition + Vector3(0, 5, 0), 0);
     hbody->setMaterialGroupID(p->wmaterials->stoji_mat);
 
@@ -665,31 +683,30 @@ void PlayerClimbing::updatePullup(float tslf)
 
     if (climb_pullup > 0)
     {
+        if (p->hanging)
+            p->forceDirection = -5 * climb_normal;
 
-        climb_pullup += 2.5f*tslf;
-        if (climb_pullup > 2.5f) climb_pullup = 2.5f;
-        if (p->hanging) p->forceDirection = 5 * climb_normal;
+        climb_pullup = Math::Clamp( climb_pullup + tslf, 0.0f, 1.0f);
         climbDir = -climb_normal;
-        //climbDir.y=0;
-        //climbDir.normalise();
+        climbDir.y=0;
+        climbDir.normalise();
 
-        Real v = 1 / climb_pullup;
-        climbDir *= climb_pullup;
-        climbDir.y = v * 2;
+        Real v = 2 / (2.5f*climb_pullup);
+        climbDir *= 2;
+        climbDir.y =  v;
 
-        if (climb_pullup == 2.5f)
+        if (climb_pullup == 1.0f)
         {
             climb_pullup = 0;
 
             if (p->climbing)
                 stopClimbing();
-
-            if (p->hanging)
+            else if (p->hanging)
             {
+                p->inMoveControl = true;
                 p->hanging = false;
                 delete climbJoint;
                 delete Gbody;
-                p->inMoveControl = true;
             }
 
             noClimbTimer = 0;

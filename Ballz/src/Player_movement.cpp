@@ -8,94 +8,88 @@ using namespace Ogre;
 
 void Player::enableControl(bool enable)
 {
-	inControl = enable;
-	inMoveControl = enable;
+    inControl = enable;
+    inMoveControl = enable;
 
-	if (!enable)
-		stopMoving();
+    if (!enable)
+        stopMoving();
+
+    if (wallrunning)
+        pClimbing->stopClimbing();
 }
 
 void Player::enableMovement(bool enable)
 {
-	inMoveControl = enable;
+    inMoveControl = enable;
 
-	if (!enable)
-		stopMoving();
+    if (!enable)
+        stopMoving();
 }
 
 void Player::move_callback(OgreNewt::Body* me, float timeStep, int threadIndex)
 {
-	me->addForce(Ogre::Vector3(0, -9.0f, 0));
-	me->addForce(forceDirection);
+    me->addForce(Ogre::Vector3(0, -9.0f, 0));
+    me->addForce(forceDirection);
 }
 
 void Player::walkingSound(Ogre::Real time)
 {
-	walkSoundTimer += (time*bodyVelocityL / 6.6f);
+    walkSoundTimer += (time*bodyVelocityL / 6.6f);
 
-	if (walkSoundTimer > 0.4)
-	{
-		Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID);
+    if (walkSoundTimer > 0.4)
+    {
+        Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID);
 
-		walkSoundTimer = 0;
-	}
+        walkSoundTimer = 0;
+    }
 }
 
 void Player::updateDirectionForce()
 {
-	forceDirection = Vector3::ZERO;
+    forceDirection = Vector3::ZERO;
 
-	if (!climbing && rolling <= 0)
-	{
-		if (!moving)
-		{
-			body->setMaterialGroupID(wmaterials->stoji_mat);
-			walkSoundTimer = 0.37;
-			startMoveBoost = 1;
-		}
-		else
-		{
-			updateMovement();
-		}
-	}
-	else if (rolling > 0)
-	{
-		body->setMaterialGroupID(wmaterials->ide_mat);
-		moving = true;
-		walkSoundTimer = 0.2f;
+    if (!wallrunning && !climbing && !pParkour->isRolling())
+    {
+        if (!moving)
+        {
+            body->setMaterialGroupID(wmaterials->stoji_mat);
+            walkSoundTimer = 0.37;
+            startMoveBoost = 1;
+        }
+        else
+        {
+            updateMovement();
+        }
+    }
+    else if (pParkour->isRolling())
+    {
+        pParkour->updateRolling(tslf);
+    }
 
-		auto dirVec = necknode->_getDerivedOrientation()*Vector3(0, 0, -1);
-		dirVec.y = 0;
-		dirVec.normalise();
-		forceDirection += dirVec * 10 * rolling;
+    if (moving && onGround)
+    {
+        if (movespeed < 17)
+            movespeed += tslf * 10;
+        else
+            movespeed = 17;
 
-		rolling -= tslf;
-	}
-
-	if (moving && onGround)
-	{
-		if (movespeed < 17)
-			movespeed += tslf * 10;
-		else
-			movespeed = 17;
-
-		walkingSound(tslf);
-	}
-	else movespeed = 7;
+        walkingSound(tslf);
+    }
+    else movespeed = 7;
 }
 
 float Shaker::doRoll(float duration, Ogre::SceneNode* rNode, Ogre::SceneNode* hNode)
 {
-	if (rollingLeft > 0)
-		return rollingLeft;
+    if (rollingLeft > 0)
+        return rollingLeft;
 
-	heightNode = hNode;
-	rollNode = rNode;
-	rollingDuration = rollingLeft = duration;
+    heightNode = hNode;
+    rollNode = rNode;
+    rollingDuration = rollingLeft = duration;
 
-	startCameraShake(duration, 0.4f, 0.6f);
+    startCameraShake(duration, 0.4f, 0.6f);
 
-	return duration;
+    return duration;
 }
 
 void Player::jump()
@@ -103,7 +97,7 @@ void Player::jump()
     if (pClimbing->makingPullup())
         return;
 
-    if(!pClimbing->spacePressed() && onGround)
+    if (!pClimbing->spacePressed() && !pParkour->spacePressed() && onGround)
     {
         if (!slidesAutoTarget->pressedAction())
         {
@@ -116,6 +110,7 @@ void Player::jump()
 void Player::manageFall()
 {
     fallVelocity = abs(bodyVelocityL) * 2;
+    pParkour->hitGround();
 
     if (fallVelocity > 35)
     {
@@ -125,19 +120,7 @@ void Player::manageFall()
         }
         else
         {
-            Vector3 vel = body->getVelocity();
-            vel.normalise();
-            vel.y = 0;
-
-            Vector3 lookDirection = getFacingDirection();
-            lookDirection.y = 0;
-
-            Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
-
-            if (dirAngleDiff < 45 && vel.length()>0.5f)
-            {
-                rolling = shaker->doRoll(1.2f, headnode, necknode);
-            }
+            pParkour->doRoll();
         }
 
         if (fallVelocity > 40)
@@ -286,12 +269,14 @@ void Player::updateHead()
 
     {
         //walking camera
-        if (moving && !climbing && onGround && (bodyVelocityL > 2))
+        if ((moving && !climbing && onGround && (bodyVelocityL > 2)) || wallrunning)
         {
             cameraWalkFinisher = 1;
             cam_walking += time*bodyVelocityL;
-            camnode->setPosition(0, -1 * abs(Ogre::Math::Sin(cam_walking)) / 7.0f, 0);
-            camnode->setOrientation(Quaternion(Degree(Ogre::Math::Sin(cam_walking))*time*(bodyVelocityL + 1) * 4, Vector3(0, 0, 1)));
+            float walkSize = wallrunning ? 1.5f : 1.0f;
+            auto sinVal = Ogre::Math::Sin(cam_walking);
+            camnode->setPosition(0, -1.5f * abs(sinVal) / 7.0f, 0);
+            camnode->setOrientation(Quaternion(Degree(sinVal)*time*(bodyVelocityL + 1) * 4 * walkSize, Vector3(0, 0, 1)));
             //camnode->roll(Degree(Ogre::Math::Sin(cam_walking+Ogre::Math::PI/2))*time*9);
         }
         else if (cameraWalkFinisher)
@@ -326,7 +311,13 @@ void Player::updateHead()
         //roll camera a bit while turning
         if (onGround && forw_key && abs(mouseX) > 5)
         {
-            head_turning += (bodyVelocityL / 9)*(mouseX - 5) / 250.0f;
+            head_turning += (bodyVelocityL / 9)*(mouseX) / 250.0f;
+            if (head_turning > 8)head_turning = 8;
+            if (head_turning < -8)head_turning = -8;
+            headnode->setOrientation(Quaternion(Ogre::Radian(head_turning / 60), Vector3(0, 0, 1)));
+        }
+        else if (wallrunning)
+        {
             if (head_turning > 8)head_turning = 8;
             if (head_turning < -8)head_turning = -8;
             headnode->setOrientation(Quaternion(Ogre::Radian(head_turning / 60), Vector3(0, 0, 1)));

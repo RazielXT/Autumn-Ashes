@@ -372,8 +372,6 @@ void Slide::updateJumpToSlide(float time)
 {
     mJumpState->addTime(time);
 
-    Global::debug = mJumpState->getTimePosition() / mJumpState->getLength();
-
     if (mJumpState->hasEnded())
     {
         mJumpState->setEnabled(false);
