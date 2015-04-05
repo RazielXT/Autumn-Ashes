@@ -592,18 +592,26 @@ private:
 
         Forests::GrassLoader *grassLoader = new Forests::GrassLoader(grass);
 
-        element = element->NextSiblingElement("BodyFilter");
-        if (element && element->GetText())
+        auto belement = element->NextSiblingElement("BodyFilter");
+        if (belement && belement->GetText())
         {
             LoadedFilteredGrassArea g;
             g.data = offsets;
-            g.targetBody = element->GetText();
+            g.targetBody = belement->GetText();
 
             loadedGrassAreas.push_back(g);
             grassLoader->setHeightFunction(&HeightFunction::getTerrainHeightFiltered, offsets);
         }
         else
             grassLoader->setHeightFunction(&HeightFunction::getTerrainHeight, offsets);
+
+        auto startElement = element->NextSiblingElement("PlaneOffsetStart");
+        auto endElement = element->NextSiblingElement("PlaneOffsetEnd");
+        if (startElement && endElement && startElement->GetText() && endElement->GetText())
+        {
+            offsets->offset_maxY = offsets->offset_maxY - std::stoi(startElement->GetText());
+            offsets->offset_minY = offsets->offset_minY - std::stoi(endElement->GetText());
+        }
 
         grass->setPageLoader(grassLoader);
         char delim = ';';
