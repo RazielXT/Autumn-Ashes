@@ -2769,6 +2769,13 @@ public:
         mLayer->_markDirty();
     }
 
+    void  setScale(float scale)
+    {
+        mScale = scale;
+        mDirty = true;
+        mLayer->_markDirty();
+    }
+
     /*! function. colour
         desc.
             Set the text colour.
@@ -2846,6 +2853,7 @@ protected:
 
 protected:
 
+    float				  mScale = 1;
     Layer*                mLayer;
     GlyphData*            mGlyphData;
     Ogre::Real            mLeft, mTop, mWidth, mHeight;

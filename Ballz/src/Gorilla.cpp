@@ -2044,12 +2044,12 @@ void Caption::_redraw()
         Ogre::Vector2  a, b, c, d;
         a.x = mLeft;
         a.y = mTop;
-        b.x = mLeft + mWidth;
+        b.x = mLeft + mWidth * mScale;
         b.y = mTop;
         c.x = mLeft;
-        c.y = mTop + mHeight;
-        d.x = mLeft + mWidth;
-        d.y = c.y = mTop + mHeight;
+        c.y = mTop + mHeight * mScale;
+        d.x = mLeft + mWidth * mScale;
+        d.y = c.y = mTop + mHeight * mScale;
         Vertex temp;
         PUSH_TRIANGLE(mVertices, temp, c, b, a, uv, mBackground);
         PUSH_TRIANGLE(mVertices, temp, c, d, b, uv, mBackground);
@@ -2069,28 +2069,28 @@ void Caption::_redraw()
         if (mWidth)
         {
             clipRight = true;
-            clipRightPos = mLeft + mWidth;
+            clipRightPos = mLeft + mWidth * mScale;
         }
 
     }
     else if (mAlignment == TextAlign_Centre)
     {
         _calculateDrawSize(knownSize);
-        cursorX = mLeft + (mWidth * 0.5f) - (knownSize.x * 0.5f);
+        cursorX = mLeft + (mWidth * 0.5f  * mScale) - (knownSize.x * 0.5f  * mScale);
 
         if (mWidth)
         {
             clipLeft = true;
             clipLeftPos = mLeft;
             clipRight = true;
-            clipRightPos = mLeft + mWidth;
+            clipRightPos = mLeft + mWidth * mScale;
         }
 
     }
     else if (mAlignment == TextAlign_Right)
     {
         _calculateDrawSize(knownSize);
-        cursorX = mLeft + mWidth - knownSize.x;
+        cursorX = mLeft + (mWidth - knownSize.x) * mScale;
         if (mWidth)
         {
             clipLeft = true;
@@ -2101,9 +2101,9 @@ void Caption::_redraw()
     if (mVerticalAlign == VerticalAlign_Top)
         cursorY = mTop;
     else if (mVerticalAlign == VerticalAlign_Middle)
-        cursorY = mTop + (mHeight * 0.5) - (mGlyphData->mLineHeight * 0.5);
+        cursorY = mTop + (mHeight * 0.5  * mScale) - (mGlyphData->mLineHeight * 0.5  * mScale);
     else if (mVerticalAlign == VerticalAlign_Bottom)
-        cursorY = mTop +  mHeight - mGlyphData->mLineHeight;
+        cursorY = mTop + mHeight  * mScale - mGlyphData->mLineHeight  * mScale;
 
     unsigned char thisChar = 0, lastChar = 0;
     Vertex temp;
@@ -2120,7 +2120,7 @@ void Caption::_redraw()
         if (thisChar == ' ')
         {
             lastChar = thisChar;
-            cursorX += mGlyphData->mSpaceLength;
+            cursorX += mGlyphData->mSpaceLength * mScale;
             continue;
         }
 
@@ -2133,14 +2133,14 @@ void Caption::_redraw()
         glyph = mGlyphData->getGlyph(thisChar);
         if (glyph == 0)
             continue;
-        kerning = glyph->getKerning(lastChar);
+        kerning = glyph->getKerning(lastChar) * mScale;
         if (kerning == 0)
-            kerning = mGlyphData->mLetterSpacing;
+            kerning = mGlyphData->mLetterSpacing * mScale;
 
-        left = cursorX - texelOffsetX;
-        top = cursorY - texelOffsetY;
-        right = left + glyph->glyphWidth + texelOffsetX;
-        bottom = top + glyph->glyphHeight + texelOffsetY;
+        left = cursorX - texelOffsetX * mScale;
+        top = cursorY - texelOffsetY * mScale;
+        right = left + glyph->glyphWidth * mScale + texelOffsetX * mScale;
+        bottom = top + glyph->glyphHeight * mScale + texelOffsetY * mScale;
 
         if (clipLeft)
         {
@@ -2148,7 +2148,7 @@ void Caption::_redraw()
             {
                 if (mClippedLeftIndex == std::string::npos)
                     mClippedLeftIndex = i;
-                cursorX  += glyph->glyphAdvance + kerning;
+                cursorX += glyph->glyphAdvance * mScale + kerning;
                 lastChar = thisChar;
                 continue;
             }
@@ -2160,7 +2160,7 @@ void Caption::_redraw()
             {
                 if (mClippedRightIndex == std::string::npos)
                     mClippedRightIndex = i;
-                cursorX  += glyph->glyphAdvance + kerning;
+                cursorX += glyph->glyphAdvance * mScale + kerning;
                 lastChar = thisChar;
                 continue;
             }
@@ -2177,7 +2177,7 @@ void Caption::_redraw()
         PUSH_VERTEX(mVertices, temp, right, top, glyph->texCoords[TopRight], mColour);    // Right/Top    1
 
 
-        cursorX  += glyph->glyphAdvance + kerning;
+        cursorX += glyph->glyphAdvance * mScale + kerning;
         lastChar = thisChar;
 
     } // for

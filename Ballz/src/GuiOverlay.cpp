@@ -263,6 +263,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
 
     debugCaption = mouseLayer->createCaption(48, 50, 5, "007");
     debugCaption->size(1500,50);
+    debugCaption->setScale(0.5f);
     debugCaption->align(Gorilla::TextAlign_Left);
 
     infoTextTimer = 0;
