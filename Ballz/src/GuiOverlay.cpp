@@ -256,15 +256,19 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
     mousePointer->background_image("mousepointer");
     mousePointer->yes_background(1);
 
-    fpsCaption = mouseLayer->createCaption(48, 50, 5, "007");
+    fpsCaption = mouseLayer->createCaption(48, 50, 5, "0");
     fpsCaption->size(1500,50);
     fpsCaption->colour(Ogre::ColourValue(0,255,0));
     fpsCaption->align(Gorilla::TextAlign_Right);
 
-    debugCaption = mouseLayer->createCaption(48, 50, 5, "007");
-    debugCaption->size(1500,50);
-    debugCaption->setScale(0.5f);
-    debugCaption->align(Gorilla::TextAlign_Left);
+    for (size_t i = 0; i < MAX_DEBUG_LINES; i++)
+    {
+        debugCaption[i] = mouseLayer->createCaption(48, 50, 5 + 30 * i, "");
+        debugCaption[i]->size(1500, 50);
+        debugCaption[i]->setScale(0.5f);
+        debugCaption[i]->align(Gorilla::TextAlign_Left);
+    }
+
 
     infoTextTimer = 0;
     shownInfoText = false;
@@ -792,10 +796,15 @@ int GuiOverlay::mainMenuPressed()
     return 0;
 }
 
-void GuiOverlay::setDebugValue(Ogre::Real value1, Ogre::Real value2)
+void GuiOverlay::setDebugValue(Ogre::Real value1, std::vector<std::string>& values)
 {
     fpsCaption->text(Ogre::StringConverter::toString(value1));
-    debugCaption->text(Ogre::StringConverter::toString(value2));
+
+    for (size_t i = 0; i < values.size() && i < MAX_DEBUG_LINES; i++)
+    {
+        debugCaption[i]->text(values[i]);
+    }
+
 }
 
 void GuiOverlay::showDebug(bool show)
@@ -803,12 +812,20 @@ void GuiOverlay::showDebug(bool show)
     if(show)
     {
         fpsCaption->colour(Ogre::ColourValue(0,255,0,1));
-        debugCaption->colour(Ogre::ColourValue(0,255,0,1));
+
+        for (size_t i = 0; i < MAX_DEBUG_LINES; i++)
+        {
+            debugCaption[i]->colour(Ogre::ColourValue(0, 255, 0, 1));
+        }
     }
     else
     {
         fpsCaption->colour(Ogre::ColourValue(0,255,0,0));
-        debugCaption->colour(Ogre::ColourValue(0,255,0,0));
+
+        for (size_t i = 0; i < MAX_DEBUG_LINES; i++)
+        {
+            debugCaption[i]->colour(Ogre::ColourValue(0, 255, 0, 0));
+        }
     }
 }
 

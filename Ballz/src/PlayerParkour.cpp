@@ -98,7 +98,7 @@ bool PlayerParkour::tryWallJump()
             w3 = true;
         }
     }
-    Global::debug = -1;
+
     //wall jump up
     if (allowWalljump && w1 && w2 && w3)
     {
@@ -111,18 +111,18 @@ bool PlayerParkour::tryWallJump()
             p->fallPitchTimer = 0;
             p->fallVelocity = 30;
         }
-        Global::debug = 1;
+        Global::DebugPrint("walljump");
         return true;
     }
     else if (!w3 && (w2 || w1))
     {
         p->pClimbing->forcePullup(wall_normal);
-        Global::debug = 2;
+        Global::DebugPrint("pullup high");
     }
     else if (!w3 && !w2 && w1)
     {
         p->pClimbing->forcePullup(wall_normal, 0.75f);
-        Global::debug = 3;
+        Global::DebugPrint("pullup low");
     }
 
     return false;
@@ -171,7 +171,6 @@ bool PlayerParkour::tryWallrun()
     frontDir.y = 0;
     frontDir.normalise();
 
-    Global::debug = -2;
 
     if (getWallrunInfo(-1, frontDir, 70))
     {
@@ -184,8 +183,8 @@ bool PlayerParkour::tryWallrun()
 
     if (wallrunSide)
     {
-        Global::debug = 10;
-        wallrunCurrentDir = frontDir;
+        Global::DebugPrint("Start wallrun");
+        wallrunCurrentDir = Quaternion(Degree(90 * wallrunSide), Vector3(0, 1, 0))*wall_normal;
 
         Ogre::Vector3 size(0.2, 0.2, 0.2);
         Ogre::Real mass = 0.3;
@@ -264,8 +263,14 @@ void PlayerParkour::updateWallrunning()
         {
             wallrunCurrentDir = Quaternion(Degree(90 * wallrunSide), Vector3(0, 1, 0))* wall_normal;
             p->head_turning += p->tslf*-10*wallrunSide;
+
+            auto dirDiff = p->getFacingDirection().dotProduct(wallrunCurrentDir);
+
+            if (dirDiff > -0.5f)
+                return;
         }
-        else
+
+        //release
         {
             p->wallrunning = false;
             wallrunSide = 0;

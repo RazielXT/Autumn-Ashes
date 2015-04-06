@@ -27,7 +27,11 @@ extern float fallSoundOffsetL;
 
 extern std::map<std::string, void*>* globalData;
 
-extern float debug;
+extern std::vector<std::string> debug;
+
+#define MAX_DEBUG_LINES 7
+extern void DebugPrint(const std::string line);
+
 };
 
 extern bool continueExecution;
