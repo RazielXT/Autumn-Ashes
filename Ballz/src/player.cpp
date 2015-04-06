@@ -254,7 +254,7 @@ void Player::die()
 }
 
 
-Ogre::Vector3 Player::getFacingDirection()
+Ogre::Vector3 Player::getFacingDirection() const
 {
     return mCamera->getDerivedOrientation()*Ogre::Vector3(0,0,-1);
 }
@@ -421,6 +421,9 @@ void Player::updateStats()
     if (!onGround && !wallrunning && !hanging && !climbing)
     {
         pClimbing->updateClimbingPossibility();
+
+        if (!climbing && !hanging)
+            pParkour->updateParkourPossibility();
     }
     else if(climbing)
     {

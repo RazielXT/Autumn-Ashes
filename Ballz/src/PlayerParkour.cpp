@@ -25,10 +25,18 @@ bool PlayerParkour::spacePressed()
 
         return true;
     }
-    else if (!p->onGround && p->forw_key)
+
+    return ret;
+}
+
+bool PlayerParkour::updateParkourPossibility()
+{
+    auto ret = false;
+
+    if (p->forw_key)
         ret = tryWallrun();
 
-    if (!ret && !p->onGround && p->forw_key)
+    if (!ret && p->forw_key)
         ret = tryWallJump();
 
     return ret;
@@ -41,7 +49,7 @@ bool PlayerParkour::tryWallJump()
     auto rDir = p->getFacingDirection();
     rDir.y = 0;
     rDir.normalise();
-    auto rEnd = rDir*1.5f + rStart;
+    auto rEnd = rDir*1.75f + rStart;
 
     OgreNewt::BasicRaycast ray(Global::mWorld, rStart, rEnd, false);
 
@@ -90,7 +98,7 @@ bool PlayerParkour::tryWallJump()
             w3 = true;
         }
     }
-    Global::debug = 0;
+    Global::debug = -1;
     //wall jump up
     if (allowWalljump && w1 && w2 && w3)
     {
@@ -163,6 +171,8 @@ bool PlayerParkour::tryWallrun()
     frontDir.y = 0;
     frontDir.normalise();
 
+    Global::debug = -2;
+
     if (getWallrunInfo(-1, frontDir, 70))
     {
         wallrunSide = -1;
@@ -174,6 +184,7 @@ bool PlayerParkour::tryWallrun()
 
     if (wallrunSide)
     {
+        Global::debug = 10;
         wallrunCurrentDir = frontDir;
 
         Ogre::Vector3 size(0.2, 0.2, 0.2);

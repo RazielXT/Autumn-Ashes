@@ -43,4 +43,5 @@ public:
     bool tryWallrun();
     void updateWallrunning();
     void stopWallrun();
+    bool updateParkourPossibility();
 };
