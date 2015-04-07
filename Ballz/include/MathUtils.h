@@ -20,6 +20,17 @@ inline float getYawBetween(Quaternion& q1, Quaternion& q2)
     return r;
 }
 
+inline float getSideDotProduct(Vector3 v1, Vector3 v2)
+{
+    v1.y = 0;
+    v1.normalise();
+
+    Vector3 v2rot = Vector3(-v2.z, 0, v2.x);
+    v2rot.normalise();
+
+    return v2rot.dotProduct(v1);
+}
+
 struct LineProjState
 {
     Vector3 projPos;

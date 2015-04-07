@@ -28,7 +28,7 @@ bool PlayerParkour::spacePressed()
     {
         stopWallrun();
 
-        if (tryWallrun())
+        if (tryWallJump())
         {
             if (possibleWalljump)
                 doWalljump();
@@ -41,7 +41,13 @@ bool PlayerParkour::spacePressed()
             jumpDir.y = 0;
             jumpDir.normalise();
             jumpDir.y = 1;
-            body->setVelocity(jumpDir * 8);
+
+            if (jumpDir.dotProduct(wall_normal) < 0)
+                jumpDir = wall_normal * 2;
+            else
+                jumpDir *= 8;
+
+            body->setVelocity(jumpDir);
         }
 
         return true;
@@ -73,7 +79,7 @@ bool PlayerParkour::updateParkourPossibility()
 bool PlayerParkour::tryWallJump()
 {
     auto rStart = p->bodyPosition;
-    rStart.y += 0.7f;
+    rStart.y += 0.3f;
     auto rDir = p->getFacingDirection();
     rDir.y = 0;
     rDir.normalise();
@@ -81,11 +87,11 @@ bool PlayerParkour::tryWallJump()
 
     OgreNewt::BasicRaycast ray(Global::mWorld, rStart, rEnd, false);
 
-    rStart.y += 0.5f;
-    rEnd.y += 0.5f;
+    rStart.y += 0.6f;
+    rEnd.y += 0.6f;
     OgreNewt::BasicRaycast ray2(Global::mWorld, rStart, rEnd, false);
 
-    rStart.y += 0.7f;
+    rStart.y += 1.0f;
     rEnd = rDir*2.5f + rStart;
     OgreNewt::BasicRaycast ray3(Global::mWorld, rStart, rEnd, false);
 
@@ -130,19 +136,18 @@ bool PlayerParkour::tryWallJump()
     possibleWalljump = false;
 
     //wall jump up
-    if (allowWalljump && w1 && w2 && w3)
+    if (allowWalljump && !p->onGround && w1 && w2 && w3)
     {
         possibleWalljump = true;
     }
     else if (!w3 && (w2 || w1))
     {
         p->pClimbing->forcePullup(wall_normal);
-        Global::DebugPrint("pullup high");
-    }
-    else if (!w3 && !w2 && w1)
-    {
-        p->pClimbing->forcePullup(wall_normal, 0.75f);
-        Global::DebugPrint("pullup low");
+
+        if (w2)
+            Global::DebugPrint("pullup high");
+        else
+            Global::DebugPrint("pullup low");
     }
 
     return false;
@@ -151,6 +156,7 @@ bool PlayerParkour::tryWallJump()
 void PlayerParkour::hitGround()
 {
     allowWalljump = true;
+    possibleWalljump = false;
 }
 
 void PlayerParkour::doRoll()
@@ -239,7 +245,7 @@ bool PlayerParkour::getWallrunInfo(float side, Vector3 frontDir, float testDegre
 {
     auto rStart = p->bodyPosition;
 
-    auto rEnd = Quaternion(Degree(testDegree * side), Vector3(0, 1, 0))*frontDir*1.25f + rStart;
+    auto rEnd = Quaternion(Degree(testDegree * side), Vector3(0, 1, 0))*frontDir*1.45f + rStart;
 
     OgreNewt::BasicRaycast ray(Global::mWorld, rStart, rEnd, false);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
@@ -302,7 +308,7 @@ void PlayerParkour::updateWallrunning()
             wallrunSide = 0;
             stopWallrun();
 
-            body->setVelocity(wallrunCurrentDir*wallrunSpeed);
+            body->setVelocity(wallrunCurrentDir*wallrunSpeed*wallrunTimer - Ogre::Vector3(0, 1, 0)*wallrunTimer);
         }
     }
 }

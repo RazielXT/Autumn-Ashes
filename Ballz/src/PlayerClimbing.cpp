@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "Player.h"
+#include "MathUtils.h"
 
 PlayerClimbing::PlayerClimbing(Player* player) : p(player), body(player->body)
 {
@@ -78,6 +79,8 @@ void PlayerClimbing::pressedC()
 
 void PlayerClimbing::forcePullup(Vector3 climbNormal, float startOffset)
 {
+    pullupSide = (MathUtils::getSideDotProduct(p->getFacingDirection(), climbNormal) < 0) ? -1.0f : 1.0f;
+
     startClimbing(Climb_Pullup);
 
     Global::audioLib->play3D("pullup.wav", p->bodyPosition, 5, 0.7f);
@@ -431,8 +434,8 @@ void PlayerClimbing::updateClimbingPossibility()
     predsebou.normalise();
     predsebou *= 2;
 
-    auto ray = OgreNewt::BasicRaycast(Global::mWorld , pos, pos + predsebou / 1.3f, true);
-    auto info = ray.getInfoAt(0);
+    auto ray = OgreNewt::BasicRaycast(Global::mWorld , pos, pos + predsebou / 1.3f, false);
+    auto info = ray.getFirstHit();
     if (info.mBody)
     {
         if (info.mBody->getType() == Dynamic_Pullup)
@@ -483,9 +486,9 @@ void PlayerClimbing::updateClimbingPossibility()
 void PlayerClimbing::updateClimbingStats()
 {
     auto pos = p->necknode->_getDerivedPosition() + Vector3(0, 0.25, 0);
-    auto ray = OgreNewt::BasicRaycast(Global::mWorld, pos, pos + climb_normal*-3, true);
+    auto ray = OgreNewt::BasicRaycast(Global::mWorld, pos, pos + climb_normal*-3, false);
 
-    auto info = ray.getInfoAt(0);
+    auto info = ray.getFirstHit();
     if (info.mBody)
     {
         if ((info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old || info.mBody->getType() == Climb_Pullup) && !p->onGround)
@@ -551,12 +554,12 @@ bool PlayerClimbing::canClimb(Direction direction, bool soundIfTrue, bool needSp
     }
     };
 
-    Vector3 targetPos = p->necknode->_getDerivedPosition() + Vector3(0, 0.25, 0) + off / 3;
+    Vector3 targetPos = p->bodyPosition + Vector3(0, 1.25, 0) + off / 3;
     //Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage(Ogre::StringConverter::toString(smer),Ogre::LML_NORMAL);
     //Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage(Ogre::StringConverter::toString(off),Ogre::LML_NORMAL);
     //Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage(Ogre::StringConverter::toString(climb_normal),Ogre::LML_NORMAL);
-    OgreNewt::BasicRaycast ray(Global::mWorld, targetPos, targetPos + climb_normal*-3, true);
-    OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
+    OgreNewt::BasicRaycast ray(Global::mWorld, targetPos, targetPos + climb_normal*-3, false);
+    OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
 
     if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
     {
@@ -581,15 +584,17 @@ bool PlayerClimbing::canClimb(Direction direction, bool soundIfTrue, bool needSp
     }
     else
     {
+        //if current and big offset are ok, move anyway
+
         targetPos -= off / 3;
-        ray = OgreNewt::BasicRaycast(Global::mWorld, targetPos, targetPos + climb_normal*-3, true);
-        info = ray.getInfoAt(0);
+        ray = OgreNewt::BasicRaycast(Global::mWorld, targetPos, targetPos + climb_normal*-3, false);
+        info = ray.getFirstHit();
 
         if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
         {
             targetPos += off;
-            ray = OgreNewt::BasicRaycast(Global::mWorld, targetPos, targetPos + climb_normal*-3, true);
-            info = ray.getInfoAt(0);
+            ray = OgreNewt::BasicRaycast(Global::mWorld, targetPos, targetPos + climb_normal*-3, false);
+            info = ray.getFirstHit();
 
             if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
             {
@@ -695,6 +700,8 @@ void PlayerClimbing::updatePullup(float tslf)
         climbDir *= 2;
         climbDir.y =  v;
 
+        p->head_turning += p->tslf*-15*pullupSide;
+
         if (climb_pullup == 1.0f)
         {
             climb_pullup = 0;
@@ -740,7 +747,7 @@ void PlayerClimbing::updateClimbCamera(float moveX)
     else
     {
         Real max_angle = 90;
-        if (p->climbing) max_angle = 120;
+        if (p->climbing) max_angle = 160;
 
         Real spomal;
         angle -= (180 - max_angle);

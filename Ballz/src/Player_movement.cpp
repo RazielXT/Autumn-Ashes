@@ -312,14 +312,12 @@ void Player::updateHead()
         if (onGround && forw_key && abs(mouseX) > 5)
         {
             head_turning += (bodyVelocityL / 9)*(mouseX) / 250.0f;
-            if (head_turning > 8)head_turning = 8;
-            if (head_turning < -8)head_turning = -8;
+            head_turning = Math::Clamp(head_turning, -8.0f, 8.0f);
             headnode->setOrientation(Quaternion(Ogre::Radian(head_turning / 60), Vector3(0, 0, 1)));
         }
-        else if (wallrunning)
+        else if (wallrunning || climbing)
         {
-            if (head_turning > 8)head_turning = 8;
-            if (head_turning < -8)head_turning = -8;
+            head_turning = Math::Clamp(head_turning, -12.0f, 12.0f);
             headnode->setOrientation(Quaternion(Ogre::Radian(head_turning / 60), Vector3(0, 0, 1)));
         }
         else if (head_turning > 0)
@@ -344,8 +342,8 @@ void Player::updateHead()
 void Player::updateGroundStats()
 {
     OgreNewt::Body* groundBody = nullptr;
-    OgreNewt::BasicRaycast ray(m_World, (bodyPosition - Vector3(0, 1.6, 0)), (bodyPosition - Vector3(0, 2.6, 0)), true);
-    OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
+    OgreNewt::BasicRaycast ray(m_World, (bodyPosition - Vector3(0, 1.6, 0)), (bodyPosition - Vector3(0, 2.6, 0)), false);
+    OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
 
     if (info.mBody)
     {

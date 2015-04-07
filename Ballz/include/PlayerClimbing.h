@@ -21,6 +21,7 @@ class PlayerClimbing
     bool spacePressed();
     void updateClimbCamera(float moveX);
 
+    float pullupSide = 1;
     void startPullup();
     void updatePullup(float tslf);
     bool makingPullup()

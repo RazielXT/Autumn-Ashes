@@ -542,8 +542,9 @@ void Shaker::updateCameraShake(float time)
 
 void Player::updateUseGui()
 {
-    auto pos = necknode->_getDerivedPosition();
-    OgreNewt::BasicRaycast ray(m_World, pos, pos + mCamera->getDerivedOrientation()*Vector3(0, 0, -4), true);
+    auto pos = bodyPosition;
+    pos.y += 1;
+    OgreNewt::BasicRaycast ray(m_World, pos, pos + getFacingDirection()*-1, true);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
 
     if (info.mBody)
