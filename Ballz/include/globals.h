@@ -29,7 +29,7 @@ extern std::map<std::string, void*>* globalData;
 
 extern std::vector<std::string> debug;
 
-#define MAX_DEBUG_LINES 7
+#define MAX_DEBUG_LINES 15
 extern void DebugPrint(const std::string line);
 
 };

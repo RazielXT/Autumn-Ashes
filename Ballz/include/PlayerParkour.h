@@ -11,6 +11,7 @@ class PlayerParkour
     Player* p;
     OgreNewt::Body* body;
 
+    bool possibleWalljump = false;
     bool allowWalljump = true;
     bool tryWallJump();
 
@@ -21,11 +22,13 @@ class PlayerParkour
     float wallrunSide, wallrunTimer, wallrunSpeed;
     bool getWallrunInfo(float side, Ogre::Vector3 frontDir, float testDegree = 90);
 
+    void doWalljump();
+
 public:
 
     void wallrun_callback(OgreNewt::Body* me, float timeStep, int threadIndex)
     {
-        me->setVelocity(wallrunCurrentDir*wallrunSpeed - wall_normal);
+        me->setVelocity(wallrunCurrentDir*wallrunSpeed*wallrunTimer - wall_normal - Ogre::Vector3(0, 1, 0)*wallrunTimer);
     }
 
     PlayerParkour(Player* player);

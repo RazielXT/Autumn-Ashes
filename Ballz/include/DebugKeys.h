@@ -67,6 +67,10 @@ public:
             postProcMgr->ColouringShift.z -= 0.02;
             break;
 
+        case OIS::KC_DELETE:
+            Global::debug.clear();
+            break;
+
         case OIS::KC_L:
             if (Global::gameMgr->gameState == MENU)
             {

@@ -6,16 +6,37 @@ PlayerParkour::PlayerParkour(Player* player) : p(player), body(player->body)
 {
 }
 
+void PlayerParkour::doWalljump()
+{
+    body->setVelocity(Vector3(0, 8, 0));
+    allowWalljump = false;
+
+    if (!p->fallPitch)
+    {
+        p->fallPitch = 1;
+        p->fallPitchTimer = 0;
+        p->fallVelocity = 30;
+    }
+    Global::DebugPrint("walljump");
+}
+
 bool PlayerParkour::spacePressed()
 {
-    bool ret = false;
+    Global::DebugPrint("Space pressed");
 
     if (p->wallrunning)
     {
         stopWallrun();
 
-        if (!tryWallrun())
+        if (tryWallrun())
         {
+            if (possibleWalljump)
+                doWalljump();
+        }
+        else
+        {
+            Global::DebugPrint("Normal jump");
+
             auto jumpDir = p->getFacingDirection();
             jumpDir.y = 0;
             jumpDir.normalise();
@@ -25,8 +46,15 @@ bool PlayerParkour::spacePressed()
 
         return true;
     }
+    else if (possibleWalljump)
+    {
+        doWalljump();
+        return true;
+    }
 
-    return ret;
+    Global::DebugPrint("Nothing");
+
+    return false;
 }
 
 bool PlayerParkour::updateParkourPossibility()
@@ -99,20 +127,12 @@ bool PlayerParkour::tryWallJump()
         }
     }
 
+    possibleWalljump = false;
+
     //wall jump up
     if (allowWalljump && w1 && w2 && w3)
     {
-        body->setVelocity(Vector3(0, 8, 0));
-        allowWalljump = false;
-
-        if (!p->fallPitch)
-        {
-            p->fallPitch = 1;
-            p->fallPitchTimer = 0;
-            p->fallVelocity = 30;
-        }
-        Global::DebugPrint("walljump");
-        return true;
+        possibleWalljump = true;
     }
     else if (!w3 && (w2 || w1))
     {
@@ -183,6 +203,7 @@ bool PlayerParkour::tryWallrun()
 
     if (wallrunSide)
     {
+        wallrunTimer = 0.35f;
         Global::DebugPrint("Start wallrun");
         wallrunCurrentDir = Quaternion(Degree(90 * wallrunSide), Vector3(0, 1, 0))*wall_normal;
 
@@ -218,7 +239,7 @@ bool PlayerParkour::getWallrunInfo(float side, Vector3 frontDir, float testDegre
 {
     auto rStart = p->bodyPosition;
 
-    auto rEnd = Quaternion(Degree(testDegree * side), Vector3(0, 1, 0))*frontDir*2.25f + rStart;
+    auto rEnd = Quaternion(Degree(testDegree * side), Vector3(0, 1, 0))*frontDir*1.25f + rStart;
 
     OgreNewt::BasicRaycast ray(Global::mWorld, rStart, rEnd, false);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
@@ -259,8 +280,13 @@ void PlayerParkour::updateWallrunning()
 {
     if (wallrunSide)
     {
-        if (getWallrunInfo(wallrunSide, wallrunCurrentDir))
+        auto distB = wallrunJoint->getBody0()->getPosition().distance(wallrunJoint->getBody1()->getPosition());
+        //Global::DebugPrint(std::to_string(distB));
+
+        if (!p->onGround && distB<5.15f && getWallrunInfo(wallrunSide, wallrunCurrentDir))
         {
+            wallrunTimer = std::min(wallrunTimer + p->tslf, 1.0f);
+
             wallrunCurrentDir = Quaternion(Degree(90 * wallrunSide), Vector3(0, 1, 0))* wall_normal;
             p->head_turning += p->tslf*-10*wallrunSide;
 

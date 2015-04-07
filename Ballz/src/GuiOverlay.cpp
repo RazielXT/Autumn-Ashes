@@ -263,9 +263,9 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
 
     for (size_t i = 0; i < MAX_DEBUG_LINES; i++)
     {
-        debugCaption[i] = mouseLayer->createCaption(48, 50, 5 + 30 * i, "");
+        debugCaption[i] = mouseLayer->createCaption(48, 50, 5 + 20 * (float)i, "");
         debugCaption[i]->size(1500, 50);
-        debugCaption[i]->setScale(0.5f);
+        debugCaption[i]->setScale(0.3f);
         debugCaption[i]->align(Gorilla::TextAlign_Left);
     }
 
@@ -803,6 +803,11 @@ void GuiOverlay::setDebugValue(Ogre::Real value1, std::vector<std::string>& valu
     for (size_t i = 0; i < values.size() && i < MAX_DEBUG_LINES; i++)
     {
         debugCaption[i]->text(values[i]);
+    }
+
+    for (size_t i = values.size(); i < MAX_DEBUG_LINES; i++)
+    {
+        debugCaption[i]->text("");
     }
 
 }
