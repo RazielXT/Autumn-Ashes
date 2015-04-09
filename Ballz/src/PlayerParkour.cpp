@@ -42,10 +42,12 @@ bool PlayerParkour::spacePressed()
             jumpDir.normalise();
             jumpDir.y = 1;
 
-            if (jumpDir.dotProduct(wall_normal) < 0)
+            if (jumpDir.dotProduct(wall_normal) < 0.0f)
                 jumpDir = wall_normal * 2;
             else
                 jumpDir *= 8;
+
+            reattachFixTimer = 0.5f;
 
             body->setVelocity(jumpDir);
         }
@@ -192,6 +194,8 @@ void PlayerParkour::updateRolling(float tslf)
 
 bool PlayerParkour::tryWallrun()
 {
+    reattachFixTimer -= p->tslf;
+
     wallrunSide = 0;
     auto frontDir = p->getFacingDirection();
     frontDir.y = 0;
@@ -207,9 +211,13 @@ bool PlayerParkour::tryWallrun()
         wallrunSide = 1;
     }
 
-    if (wallrunSide)
+    float dotWall = frontDir.dotProduct(wall_normal);
+    bool correctDot = reattachFixTimer > 0 ? dotWall < -0.25f : dotWall < 0.0f;
+
+    if (wallrunSide && correctDot)
     {
-        wallrunTimer = 0.35f;
+        wallrunSpeed = 10;
+        wallrunTimer = std::min(p->bodyVelocityL/wallrunSpeed, 1.0f);
         Global::DebugPrint("Start wallrun");
         wallrunCurrentDir = Quaternion(Degree(90 * wallrunSide), Vector3(0, 1, 0))*wall_normal;
 
@@ -233,7 +241,6 @@ bool PlayerParkour::tryWallrun()
         hbody->setMaterialGroupID(p->wmaterials->stoji_mat);
 
         p->wallrunning = true;
-        wallrunSpeed = 10;
 
         return true;
     }
@@ -245,7 +252,7 @@ bool PlayerParkour::getWallrunInfo(float side, Vector3 frontDir, float testDegre
 {
     auto rStart = p->bodyPosition;
 
-    auto rEnd = Quaternion(Degree(testDegree * side), Vector3(0, 1, 0))*frontDir*1.45f + rStart;
+    auto rEnd = Quaternion(Degree(testDegree * side), Vector3(0, 1, 0))*frontDir*1.75f + rStart;
 
     OgreNewt::BasicRaycast ray(Global::mWorld, rStart, rEnd, false);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
@@ -304,6 +311,8 @@ void PlayerParkour::updateWallrunning()
 
         //release
         {
+            Global::DebugPrint("wallrun release");
+
             p->wallrunning = false;
             wallrunSide = 0;
             stopWallrun();

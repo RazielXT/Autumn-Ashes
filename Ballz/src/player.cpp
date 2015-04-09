@@ -380,7 +380,7 @@ void Player::rotateCamera(Real hybX,Real hybY)
     {
         //damping of turning speed if moving quickly midair
         if (!onGround && bodyVelocityL>10)
-            hybX *= std::max(0.f, (100-bodyVelocityL)/90.f);
+            hybX *= std::max(0.1f, (100-bodyVelocityL)/90.f);
 
         necknode->yaw(Degree(hybX), Node::TS_WORLD);
     }
