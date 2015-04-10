@@ -13,6 +13,11 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
     this->wMaterials = wMaterials;
 }
 
+GameStateManager::~GameStateManager()
+{
+    delete myMenu;
+}
+
 void GameStateManager::switchToMainMenu()
 {
     if (Global::player)
@@ -21,13 +26,13 @@ void GameStateManager::switchToMainMenu()
         Global::player = NULL;
     }
 
+    pagingMgr->clear();
     Global::mWorld->destroyAllBodies();
     Global::mSceneMgr->clearScene();
     Global::mEventsMgr->clear();
     Global::soundEngine->removeAllSoundSources();
     Global::mPPMgr->resetValues();
     myMenu->setMainMenu();
-    pagingMgr->clear();
 
     gameState = MENU;
     createMenuLevel();
@@ -181,14 +186,14 @@ void GameStateManager::update(float tslf)
             break;
         }
 
-	if (Global::fallSoundOffsetH > 0)
-	{
-		Global::fallSoundOffsetH -= tslf;
-	}
-	if (Global::fallSoundOffsetL > 0)
-	{
-		Global::fallSoundOffsetL -= tslf;
-	}
+    if (Global::fallSoundOffsetH > 0)
+    {
+        Global::fallSoundOffsetH -= tslf;
+    }
+    if (Global::fallSoundOffsetL > 0)
+    {
+        Global::fallSoundOffsetL -= tslf;
+    }
 }
 
 void GameStateManager::escapePressed()

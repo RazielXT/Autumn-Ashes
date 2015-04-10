@@ -16,7 +16,8 @@ public:
 
     ~ListLoop()
     {
-        clearAll();
+        if (previous)
+            clearAll();
     }
 
     ListLoop<T>* next;
@@ -51,6 +52,8 @@ protected:
         {
             auto l = it;
             it = it->next;
+
+            l->previous = nullptr;
 
             if (l != this)
                 delete l;
