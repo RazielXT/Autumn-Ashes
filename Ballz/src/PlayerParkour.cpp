@@ -11,6 +11,7 @@ void PlayerParkour::doWalljump()
 {
     body->setVelocity(Vector3(0, 8, 0));
     allowWalljump = false;
+    reattachFixTimer = 0.5f;
 
     if (!p->fallPitch)
     {
@@ -40,12 +41,12 @@ bool PlayerParkour::spacePressed()
             jumpDir.y = 0;
             jumpDir.normalise();
 
-            auto dotJump = std::min(0.0f,jumpDir.dotProduct(wall_normal))*-1;
+            auto dotJump = Math::Clamp(jumpDir.dotProduct(wall_normal)*-2.0f, 0.0f, 1.0f);
 
             if (dotJump > 0)
             {
-                jumpDir = jumpDir.reflect(wallrunCurrentDir);
-                Global::DebugPrint("Side jump with dot " + std::to_string(dotJump));
+                jumpDir = -jumpDir.reflect(wallrunCurrentDir);
+                Global::DebugPrint("Side jump with dot walldir dot " + std::to_string(dotJump));
             }
             else
                 Global::DebugPrint("Normal jump");
@@ -53,7 +54,8 @@ bool PlayerParkour::spacePressed()
             jumpDir.y = 1;
             jumpDir = MathUtils::lerp(jumpDir * 8, wall_normal * 4, dotJump);
 
-            reattachFixTimer = 0.5f;
+            reattachFixTimer = 0.5f + dotJump*0.5f;
+            allowWalljump = true;
 
             body->setVelocity(jumpDir);
         }
@@ -66,6 +68,21 @@ bool PlayerParkour::spacePressed()
         return true;
     }
 
+    if (freeJump > 0 && !p->onGround)
+    {
+        Global::DebugPrint("Free jump");
+
+        auto jumpDir = p->getFacingDirection();
+        jumpDir.y = 0;
+        jumpDir.normalise();
+        jumpDir.y = 1;
+
+        body->setVelocity(jumpDir*6);
+        allowWalljump = true;
+
+        return true;
+    }
+
     Global::DebugPrint("Nothing");
 
     return false;
@@ -75,11 +92,14 @@ bool PlayerParkour::updateParkourPossibility()
 {
     auto ret = false;
 
+    freeJump -= p->tslf;
+    reattachFixTimer -= p->tslf;
+
     if (p->forw_key)
-        ret = tryWallrun();
+        ret = tryWallJump();
 
     if (!ret && p->forw_key)
-        ret = tryWallJump();
+        ret = tryWallrun();
 
     return ret;
 }
@@ -204,13 +224,10 @@ void PlayerParkour::updateRolling(float tslf)
 
 bool PlayerParkour::tryWallrun()
 {
-    reattachFixTimer -= p->tslf;
-
     wallrunSide = 0;
     auto frontDir = p->getFacingDirection();
     frontDir.y = 0;
     frontDir.normalise();
-
 
     if (getWallrunInfo(-1, frontDir, 70))
     {
@@ -222,21 +239,21 @@ bool PlayerParkour::tryWallrun()
     }
 
     float dotWall = frontDir.dotProduct(wall_normal);
-    bool correctDot = reattachFixTimer > 0 ? dotWall < -0.25f : dotWall < 0.0f;
+    bool correctDot = dotWall < std::min(0.0f,-reattachFixTimer*2);
 
     if (wallrunSide && correctDot)
     {
-		wallrunCurrentDir = Quaternion(Degree(90 * wallrunSide), Vector3(0, 1, 0))*wall_normal;
+        wallrunCurrentDir = Quaternion(Degree(90 * wallrunSide), Vector3(0, 1, 0))*wall_normal;
 
         wallrunSpeed = 10;
-		auto bodyDir = body->getVelocity();
-		bodyDir.y = 0;
-		bodyDir.normalise();
-		auto wallDirVelocity = std::max(0.0f, wallrunCurrentDir.dotProduct(bodyDir));
-		wallrunTimer = std::min(1.0f, (p->bodyVelocityL*wallDirVelocity) / wallrunSpeed);
+        auto bodyDir = body->getVelocity();
+        bodyDir.y = 0;
+        bodyDir.normalise();
+        auto wallDirVelocity = std::max(0.0f, wallrunCurrentDir.dotProduct(bodyDir));
+        wallrunTimer = std::min(1.0f, (p->bodyVelocityL*wallDirVelocity) / wallrunSpeed);
 
-		Global::DebugPrint("Start wallrun with velocity dot " + std::to_string(wallDirVelocity));
-        
+        Global::DebugPrint("Start wallrun with start velocity dot " + std::to_string(wallDirVelocity));
+
 
         Ogre::Vector3 size(0.2, 0.2, 0.2);
         Ogre::Real mass = 0.3;
@@ -302,7 +319,7 @@ void PlayerParkour::stopWallrun()
     delete b;
 
     p->wallrunning = false;
-    allowWalljump = true;
+
     wallrunSide = 0;
 }
 
@@ -330,6 +347,7 @@ void PlayerParkour::updateWallrunning()
         {
             Global::DebugPrint("wallrun release");
 
+            freeJump = 0.3f;
             p->wallrunning = false;
             wallrunSide = 0;
             stopWallrun();

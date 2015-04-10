@@ -19,7 +19,7 @@ class PlayerParkour
 
     OgreNewt::BallAndSocket* wallrunJoint;
     Ogre::Vector3 wall_normal, wallrunCurrentDir;
-    float wallrunSide, wallrunTimer, wallrunSpeed, reattachFixTimer;
+    float wallrunSide, wallrunTimer, wallrunSpeed, reattachFixTimer = 0, freeJump = 0;
     bool getWallrunInfo(float side, Ogre::Vector3 frontDir, float testDegree = 90);
 
     void doWalljump();

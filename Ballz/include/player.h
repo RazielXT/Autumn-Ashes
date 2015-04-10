@@ -156,6 +156,7 @@ private:
     float tslf, slowingDown;
     Ogre::Vector3 forceDirection, gNormal;
     CamArrivalInfo cameraArrival;
+    Ogre::Vector3 facingDir;
 };
 
 #endif
