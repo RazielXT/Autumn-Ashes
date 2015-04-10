@@ -245,9 +245,10 @@ void Player::die()
     v.y = 0;
     v.normalise();
     if(v!=Ogre::Vector3::ZERO)
-        body->setOmega(v*7);
+        body->setOmega(v*bodyVelocityL);
     else
-        body->setOmega(Ogre::Vector3(7,0,0));
+        body->setOmega(Ogre::Vector3(5,0,0));
+
     enableControl(false);
 
     alive=false;
@@ -418,7 +419,7 @@ void Player::updateStats()
     if (!inControl)
         return;
 
-    if (!onGround && !wallrunning && !hanging && !climbing)
+    if (!onGround && !wallrunning && !hanging && !climbing && !pParkour->isRolling())
     {
         pClimbing->updateClimbingPossibility();
 
@@ -544,8 +545,8 @@ void Player::updateUseGui()
 {
     auto pos = bodyPosition;
     pos.y += 1;
-    OgreNewt::BasicRaycast ray(m_World, pos, pos + getFacingDirection()*-1, true);
-    OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
+    OgreNewt::BasicRaycast ray(m_World, pos, pos + getFacingDirection()*2, false);
+    OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
 
     if (info.mBody)
     {

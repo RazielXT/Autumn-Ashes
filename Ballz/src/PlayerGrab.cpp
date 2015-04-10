@@ -8,42 +8,39 @@ PlayerGrab::PlayerGrab(Player* player) : p(player), body(player->body)
 
 void PlayerGrab::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threadIndex)
 {
-    Vector3 pos;
-    pos = obj->getOgreNode()->_getDerivedPosition();
-    Vector3 p2;
-    p2 = p->necknode->_getDerivedPosition() + p->mCamera->getDerivedOrientation()*Vector3(0, 0, -3);
+	Vector3 currentPos = obj->getPosition();
 
-    Vector3 s = (p2 - pos) * 10;
+    Vector3 targetPos = p->bodyPosition;
+	targetPos.y += 1;
+    targetPos += p->getFacingDirection()*3;
 
-    Vector3 o = obj->getVelocity();
-    Real rad = s.angleBetween(o).valueDegrees();
+    Vector3 targetVector = (targetPos - currentPos) ;
 
-    if (rad > 45)
+	//release if too far away
+	if (targetVector.squaredLength() > 30)
+	{
+		releaseObj();
+		return;
+	}
+
+    Vector3 objVel = obj->getVelocity();
+    Real angleDiff = targetVector.angleBetween(objVel).valueDegrees();
+
+    if (angleDiff > 45)
     {
         obj->setVelocity(obj->getVelocity() / 2);
-        s *= rad / 40;
+        targetVector *= angleDiff / 45;
     }
-    obj->setForce(s);
-    obj->setPositionOrientation(obj->getPosition(), p->necknode->getOrientation());
 
-    //release if too far away
-    if (s.squaredLength() > 2025)
-    {
-        Gbody->setMaterialGroupID(Global::mWorld->getDefaultMaterialID());
-        //Gbody->setMassMatrix(Gbody->getMass(),Gbody->getInertia()*20);
-        Gbody->setCustomForceAndTorqueCallback<Player>(&Player::default_callback, p);
-        Gbody->setAngularDamping(gADT);
-        Gbody->setLinearDamping(gLDT);
-        body->setMassMatrix(body->getMass() - Gbody->getMass(), body->getInertia());
-        p->grabbedObj = false;
-    }
+	obj->setForce(targetVector * 10);
+    obj->setPositionOrientation(obj->getPosition(), p->necknode->getOrientation());
 }
 
 void PlayerGrab::tryToGrab()
 {
     Vector3 pos = p->necknode->_getDerivedPosition();
-    OgreNewt::BasicRaycast ray(Global::mWorld, pos, pos + p->mCamera->getDerivedOrientation()*Vector3(0, 0, -4), true);
-    OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getInfoAt(0);
+    OgreNewt::BasicRaycast ray(Global::mWorld, pos, pos + p->getFacingDirection()*4, false);
+    OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
 
     if (info.mBody)
     {
