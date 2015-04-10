@@ -8,20 +8,20 @@ PlayerGrab::PlayerGrab(Player* player) : p(player), body(player->body)
 
 void PlayerGrab::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threadIndex)
 {
-	Vector3 currentPos = obj->getPosition();
+    Vector3 currentPos = obj->getPosition();
 
     Vector3 targetPos = p->bodyPosition;
-	targetPos.y += 1;
+    targetPos.y += 1;
     targetPos += p->getFacingDirection()*3;
 
     Vector3 targetVector = (targetPos - currentPos) ;
 
-	//release if too far away
-	if (targetVector.squaredLength() > 30)
-	{
-		releaseObj();
-		return;
-	}
+    //release if too far away
+    if (targetVector.squaredLength() > 30)
+    {
+        releaseObj();
+        return;
+    }
 
     Vector3 objVel = obj->getVelocity();
     Real angleDiff = targetVector.angleBetween(objVel).valueDegrees();
@@ -32,7 +32,7 @@ void PlayerGrab::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threa
         targetVector *= angleDiff / 45;
     }
 
-	obj->setForce(targetVector * 10);
+    obj->setForce(targetVector * 10);
     obj->setPositionOrientation(obj->getPosition(), p->necknode->getOrientation());
 }
 

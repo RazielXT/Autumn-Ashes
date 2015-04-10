@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "PlayerParkour.h"
 #include "Player.h"
+#include "MathUtils.h"
 
 PlayerParkour::PlayerParkour(Player* player) : p(player), body(player->body)
 {
@@ -35,17 +36,22 @@ bool PlayerParkour::spacePressed()
         }
         else
         {
-            Global::DebugPrint("Normal jump");
-
             auto jumpDir = p->getFacingDirection();
             jumpDir.y = 0;
             jumpDir.normalise();
-            jumpDir.y = 1;
 
-            if (jumpDir.dotProduct(wall_normal) < 0.0f)
-                jumpDir = wall_normal * 2;
+            auto dotJump = std::min(0.0f,jumpDir.dotProduct(wall_normal))*-1;
+
+            if (dotJump > 0)
+            {
+                jumpDir = jumpDir.reflect(wallrunCurrentDir);
+                Global::DebugPrint("Side jump with dot " + std::to_string(dotJump));
+            }
             else
-                jumpDir *= 8;
+                Global::DebugPrint("Normal jump");
+
+            jumpDir.y = 1;
+            jumpDir = MathUtils::lerp(jumpDir * 8, wall_normal * 4, dotJump);
 
             reattachFixTimer = 0.5f;
 
@@ -141,6 +147,8 @@ bool PlayerParkour::tryWallJump()
     if (allowWalljump && !p->onGround && w1 && w2 && w3)
     {
         possibleWalljump = true;
+
+        return true;
     }
     else if (!w3 && (w2 || w1))
     {
@@ -150,6 +158,8 @@ bool PlayerParkour::tryWallJump()
             Global::DebugPrint("pullup high");
         else
             Global::DebugPrint("pullup low");
+
+        return true;
     }
 
     return false;
