@@ -38,6 +38,7 @@ public:
         delete Global::audioLib;
         delete mEventMgr;
         delete pagingMgr;
+		delete gameMgr;
 
         engine->drop();
         mBufferFlush.stop();
@@ -45,7 +46,7 @@ public:
         delete postProcMgr;
 
         delete wMaterials;
-
+		
     }
 
     MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse,SceneManager * sceneMgr,OgreNewt::World* nWorld, Ogre::Root *mRoot,Ogre::RenderWindow* mWin)
