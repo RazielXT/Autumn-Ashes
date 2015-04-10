@@ -257,7 +257,7 @@ void Player::die()
 
 Ogre::Vector3 Player::getFacingDirection() const
 {
-    return mCamera->getDerivedOrientation()*Ogre::Vector3(0,0,-1);
+    return facingDir;
 }
 
 Ogre::SceneNode* Player::detachHead()
@@ -391,6 +391,7 @@ void Player::rotateCamera(Real hybX,Real hybY)
 void Player::update(Real time)
 {
     tslf = time*Global::timestep;
+    facingDir = mCamera->getDerivedOrientation()*Ogre::Vector3(0, 0, -1);
 
     pPostProcess->update(tslf);
 
