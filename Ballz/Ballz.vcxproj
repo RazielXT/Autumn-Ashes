@@ -232,7 +232,6 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="resource1.h" />
     <ClInclude Include="include\start.h" />
     <ClInclude Include="include\stdafx.h" />
-    <ClInclude Include="include\tinyxml.h" />
     <ClInclude Include="include\TriggerObjectContactCallback.h" />
     <ClInclude Include="include\TriggerPlayerContactCallback.h" />
     <ClInclude Include="include\BodyUserData.h" />

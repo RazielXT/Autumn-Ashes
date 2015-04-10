@@ -185,9 +185,6 @@
     <ClInclude Include="include\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\tinyxml.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\TriggerObjectContactCallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
