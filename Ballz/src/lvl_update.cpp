@@ -30,14 +30,5 @@ Lvl2Update::Lvl2Update()
 
 bool Lvl2Update::update(Ogre::Real evt)
 {
-    if (Global::fallSoundOffsetH > 0)
-    {
-        Global::fallSoundOffsetH -= evt;
-    }
-    if (Global::fallSoundOffsetL > 0)
-    {
-        Global::fallSoundOffsetL -= evt;
-    }
-
     return true;
 }

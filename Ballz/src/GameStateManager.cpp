@@ -181,6 +181,14 @@ void GameStateManager::update(float tslf)
             break;
         }
 
+	if (Global::fallSoundOffsetH > 0)
+	{
+		Global::fallSoundOffsetH -= tslf;
+	}
+	if (Global::fallSoundOffsetL > 0)
+	{
+		Global::fallSoundOffsetL -= tslf;
+	}
 }
 
 void GameStateManager::escapePressed()
