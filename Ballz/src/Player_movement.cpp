@@ -32,18 +32,6 @@ void Player::move_callback(OgreNewt::Body* me, float timeStep, int threadIndex)
     me->addForce(forceDirection);
 }
 
-void Player::walkingSound(Ogre::Real time)
-{
-    walkSoundTimer += (time*bodyVelocityL / 6.6f);
-
-    if (walkSoundTimer > 0.4)
-    {
-        Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID);
-
-        walkSoundTimer = 0;
-    }
-}
-
 void Player::updateDirectionForce()
 {
     forceDirection = Vector3::ZERO;
@@ -53,7 +41,6 @@ void Player::updateDirectionForce()
         if (!moving)
         {
             body->setMaterialGroupID(wmaterials->stoji_mat);
-            walkSoundTimer = 0.37;
             startMoveBoost = 1;
         }
         else
@@ -68,12 +55,14 @@ void Player::updateDirectionForce()
 
     if (moving && onGround)
     {
-        if (movespeed < 17)
-            movespeed += tslf * 10;
-        else
-            movespeed = 17;
+        float sprintFactor = sprinting ? 1.5f : 1.0f;
 
-        walkingSound(tslf);
+        if (movespeed < 17 * sprintFactor)
+            movespeed += tslf * 10 * sprintFactor;
+        else
+            movespeed = 17 * sprintFactor;
+
+        sprintFactor = sprinting ? 1.25f : 1.0f;
     }
     else movespeed = 7;
 }
@@ -112,9 +101,9 @@ void Player::manageFall()
     fallVelocity = abs(bodyVelocityL) * 2;
     pParkour->hitGround();
 
-    if (fallVelocity > 35)
+    if (fallVelocity > 45)
     {
-        if (!immortal && fallVelocity > 65)
+        if (!immortal && fallVelocity > 75)
         {
             die();
         }
@@ -123,7 +112,7 @@ void Player::manageFall()
             pParkour->doRoll();
         }
 
-        if (fallVelocity > 40)
+        if (fallVelocity > 50)
         {
             *(pPostProcess->ppFall) = std::min(fallVelocity / 7.0f, 8.0f);
 
@@ -134,6 +123,8 @@ void Player::manageFall()
 
             Global::audioLib->play3D("pad.wav", bodyPosition, 10);
         }
+        else
+            slowingDown = 1 - fallVelocity/100.0f;
     }
 
     if (!fallPitch)
@@ -183,8 +174,11 @@ void Player::updateMovement()
 
         Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
 
-        if (dirAngleDiff > 45 && forw_key && !back_key && !right_key && !left_key)
-            forceDirection *= movespeed*dirAngleDiff / 30;
+        if (dirAngleDiff > 25 && forw_key && !back_key && !right_key && !left_key)
+        {
+            forceDirection *= movespeed*dirAngleDiff / 25;
+            forceDirection += -vel*5;
+        }
         else
         {
             Real ebd = 1.0f;
@@ -269,15 +263,27 @@ void Player::updateHead()
 
     {
         //walking camera
-        if ((moving && !climbing && onGround && (bodyVelocityL > 2)) || wallrunning)
+        if ((moving && !climbing && !pParkour->isRolling() && onGround && (bodyVelocityL > 2)) || wallrunning)
         {
+            float sprintFactor = sprinting ? 5.0f : 1.0f;
+
+            float walkSize = wallrunning ? 1.25f : 1.0f;
+
             cameraWalkFinisher = 1;
-            cam_walking += time*bodyVelocityL;
-            float walkSize = wallrunning ? 1.5f : 1.0f;
+            cam_walking += time*bodyVelocityL*walkSize;
+
             auto sinVal = Ogre::Math::Sin(cam_walking);
-            camnode->setPosition(0, -1.5f * abs(sinVal) / 7.0f, 0);
-            camnode->setOrientation(Quaternion(Degree(sinVal)*time*(bodyVelocityL + 1) * 4 * walkSize, Vector3(0, 0, 1)));
+            camnode->setPosition(0, sprintFactor * -1.5f * abs(sinVal) / 7.0f, 0);
+            camnode->setOrientation(Quaternion(Degree(sinVal)*time*(bodyVelocityL + 1) * 5 * pow(walkSize,5.0f) * sprintFactor, Vector3(0, 0, 1)));
             //camnode->roll(Degree(Ogre::Math::Sin(cam_walking+Ogre::Math::PI/2))*time*9);
+
+            int currentWalk = (int)cam_walking/Math::PI;
+            if (currentWalk != walkCycle)
+            {
+                walkCycle = currentWalk;
+                float volume = Math::Clamp(bodyVelocityL/35.0f, 0.25f, 0.8f);
+                Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID, 0.13f);
+            }
         }
         else if (cameraWalkFinisher)
         {
@@ -299,6 +305,9 @@ void Player::updateHead()
                 camnode->resetOrientation();
                 cameraWalkFinisher = 0;
                 cam_walking = 0;
+
+                if (onGround)
+                    Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID, 0.3f);
             }
             else
             {
@@ -317,7 +326,7 @@ void Player::updateHead()
         }
         else if (wallrunning || climbing)
         {
-            head_turning = Math::Clamp(head_turning, -12.0f, 12.0f);
+            head_turning = Math::Clamp(head_turning, -20.0f, 20.0f);
             headnode->setOrientation(Quaternion(Ogre::Radian(head_turning / 60), Vector3(0, 0, 1)));
         }
         else if (head_turning > 0)

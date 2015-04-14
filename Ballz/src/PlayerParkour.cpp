@@ -212,7 +212,6 @@ void PlayerParkour::updateRolling(float tslf)
 {
     body->setMaterialGroupID(p->wmaterials->ide_mat);
     p->moving = true;
-    p->walkSoundTimer = 0.2f;
 
     auto dirVec = p->necknode->_getDerivedOrientation()*Vector3(0, 0, -1);
     dirVec.y = 0;

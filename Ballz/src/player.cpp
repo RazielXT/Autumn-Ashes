@@ -13,7 +13,6 @@ Player::Player(WorldMaterials* wMaterials)
     slowingDown=1;
     startMoveBoost=0;
     cameraWalkFinisher=0;
-    walkSoundTimer=0;
     fallPitch=0;
     groundID=-1;
     movespeed=10;
@@ -34,6 +33,7 @@ Player::Player(WorldMaterials* wMaterials)
     back_key=false;
     moving=false;
     onGround = false;
+    sprinting = false;
 
     hanging=false;
     climbing = 0;
@@ -155,6 +155,9 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
     case OIS::KC_S:
         back_key=true;
         break;
+    case OIS::KC_LSHIFT:
+        sprinting = true;
+        break;
 
     case OIS::KC_C:
         pClimbing->pressedC();
@@ -195,6 +198,9 @@ void Player::releasedKey(const OIS::KeyEvent &arg)
         break;
     case OIS::KC_S:
         back_key=false;
+        break;
+    case OIS::KC_LSHIFT:
+        sprinting = false;
         break;
     }
 }

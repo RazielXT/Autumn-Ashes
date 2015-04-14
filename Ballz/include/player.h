@@ -117,7 +117,6 @@ private:
     void updateHead();
     void updateDirectionForce();
     void updateGroundStats();
-    void walkingSound(Ogre::Real time);
 
     void jump();
     void manageFall();
@@ -142,14 +141,15 @@ private:
     //state
     bool alive, immortal;
     bool moving, right_key, left_key, back_key, forw_key;
-    bool onGround, inControl, inMoveControl;
+    bool onGround, sprinting, inControl, inMoveControl;
 
     //extern state
     bool hanging, grabbedObj, wallrunning;
     char climbing;
 
-    float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, walkSoundTimer;
+    float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, sprintmeter;
     char fallPitch, cameraWalkFinisher;
+    int walkCycle = 0;
 
     float fallPitchTimer, cam_walking, head_turning;
     int groundID, mouseX;

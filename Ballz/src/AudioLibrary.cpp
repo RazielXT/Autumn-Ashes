@@ -69,26 +69,26 @@ void AudioLibrary::play3D(const char* name, Vector3& pos, float maxDistance, flo
 
     s->drop();
 }
-void AudioLibrary::playWalkingSound(float x, float y, float z, int groundID)
+void AudioLibrary::playWalkingSound(float x, float y, float z, int groundID, float volume)
 {
     auto soundEngine = Global::soundEngine;
-    irrklang::ISound* music;
 
     auto sounds = movementAudio.find(groundID);
-
     if (sounds == movementAudio.end()) return;
 
     int randID = (int)Ogre::Math::RangeRandom(0, sounds->second->size() - 0.01f);
 
     auto sound = sounds->second->at(randID);
-    music = soundEngine->play3D(sound.c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
+    auto music = soundEngine->play3D(sound.c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, false);
+    //music = soundEngine->play2D(sound.c_str(), false, false, true, irrklang::ESM_AUTO_DETECT, false);
 
-    music->setMaxDistance(10);
+    music->setVolume(volume);
+    /*music->setMinDistance(0.5f);
     music->setPlaybackSpeed(Global::timestep);
 
     if (Global::timestep < 1)
         music->getSoundEffectControl()->enableWavesReverbSoundEffect(0, -10 * Global::timestep, 2600, 0.5);
-
+    	*/
     music->drop();
 }
 
