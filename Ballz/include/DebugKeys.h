@@ -71,6 +71,26 @@ public:
             Global::debug.clear();
             break;
 
+        case OIS::KC_1:
+            Global::player->startCameraShake(10, 1,1);
+            break;
+
+        case OIS::KC_2:
+            Global::player->camShaker->startShaking(4, 1, 2, 0.1f, 1, 0.2, 0.1f, 1.0f);
+            break;
+
+        case OIS::KC_3:
+            Global::player->startCameraShake(10, 3, 3);
+            break;
+
+        case OIS::KC_4:
+            Global::player->startCameraShake(1, 1, 1);
+            break;
+
+        case OIS::KC_5:
+            Global::player->startCameraShake(10, 0.1, 0.1);
+            break;
+
         case OIS::KC_L:
             if (Global::gameMgr->gameState == MENU)
             {

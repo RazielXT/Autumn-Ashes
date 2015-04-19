@@ -5,10 +5,10 @@ class CameraShaker
 {
 public:
 
-    Ogre::Quaternion update(float time, float power = 1.0f);
+    Ogre::Quaternion update(float time);
 
     //0 duration = permanent
-    void startShaking(float duration, float initX, float initY, float powerX, float powerY, float freq);
+    void startShaking(float power, float freq, float duration = 5.0f, float angleShake = 0.5f, float initPowerW = 1.0f, float endPowerW = 1.0f, float wX = 1.0f, float wY = 1.0f);
 
     void stopShaking();
 
@@ -18,6 +18,14 @@ private:
 
     bool camShaking = false;
     bool permanent = false;
-    float camShakeTimer, camShakeTimerEnd, shakeSizeX, shakeSizeY, shakeFreq, camShakeTimeLeft;
+    bool nextRight = false;
+
+    float initPwrW, endPwrW;
+    float shakeSizeX, shakeSizeY, shakeFreq;
+    float angleShaking;
+
+    float camShakeTimer, camShakeTimerEnd;
+    float camShakeTimeLeft, shakingDuration;
+
     Ogre::Quaternion camShakePrev, camShakeTarget;
 };

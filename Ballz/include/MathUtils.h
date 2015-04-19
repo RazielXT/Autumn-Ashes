@@ -69,6 +69,11 @@ inline Vector3 lerp(Vector3 from, Vector3 to, float w)
     return to*w + from*(1 - w);
 }
 
+inline float lerp(float from, float to, float w)
+{
+    return to*w + from*(1 - w);
+}
+
 #define SMALL_NUM   0.00000001 // anything that avoids division overflow
 
 struct SegmentsDistanceInfo

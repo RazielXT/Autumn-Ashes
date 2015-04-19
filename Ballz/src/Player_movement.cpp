@@ -14,7 +14,7 @@ void Player::enableControl(bool enable)
     if (!enable)
         stopMoving();
 
-    if (wallrunning)
+    if (wallrunning || climbing)
         pClimbing->stopClimbing();
 }
 
@@ -86,9 +86,9 @@ void Player::jump()
     if (pClimbing->makingPullup())
         return;
 
-    if (!pClimbing->spacePressed() && !pParkour->spacePressed() && onGround && !pParkour->isRolling())
+    if (!slidesAutoTarget->pressedAction() && !pClimbing->spacePressed() && !pParkour->spacePressed() && !pParkour->isRolling())
     {
-        if (!slidesAutoTarget->pressedAction())
+        if (onGround)
         {
             Vector3 vel = body->getVelocity();
             body->setVelocity(vel + Vector3(0, 9, 0));
@@ -215,6 +215,8 @@ void Player::updateHead()
     float time = tslf;
 
     shaker->updateCameraShake(time);
+    auto sQ = camShaker->update(time);
+    shakeNode->setOrientation(sQ);
 
     if (bodyVelocityL < 0.05)
         bodyVelocityL = 0;

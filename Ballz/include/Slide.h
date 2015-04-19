@@ -46,10 +46,6 @@ protected:
 
     void removeControlFromPlayer();
 
-    static AnimationState * mJumpState;
-    static NodeAnimationTrack* jumpTrack;
-    static Animation* mJumpAnim;
-
     bool jumpingToSlide = false;
 
     void startJumpToSlide();
@@ -63,6 +59,7 @@ protected:
         Vector3 pos;
         Quaternion dir;
         float timer;
+        float heightDif;
     };
 
     struct HeadControlState

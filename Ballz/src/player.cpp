@@ -78,6 +78,7 @@ Player::~Player ()
     delete pParkour;
     delete slidesAutoTarget;
     delete shaker;
+    delete camShaker;
 }
 void Player::initBody()
 {
@@ -118,6 +119,7 @@ void Player::initBody()
     shakeNode = headnode->createChildSceneNode("ShakeHeadNod");
     shakeNode->setPosition(Vector3(0, 0, 0));
     shaker = new Shaker(shakeNode);
+    camShaker = new CameraShaker();
 
     camnode = shakeNode->createChildSceneNode("CamNod");
     camnode->attachObject(mCamera);
@@ -453,9 +455,46 @@ void Player::updateStats()
         slidesAutoTarget->hideAutoTarget();
 }
 
+void Player::updateUseGui()
+{
+    auto pos = bodyPosition;
+    pos.y += 1;
+    OgreNewt::BasicRaycast ray(m_World, pos, pos + getFacingDirection() * 2, false);
+    OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
+
+    if (info.mBody)
+    {
+        //grabbable
+        if (info.mBody->getType() == Grabbable)
+        {
+            Global::gameMgr->myMenu->showUseGui(Ui_Pickup);
+        }
+        //climbable
+        else if (info.mBody->getType() == Pullup_old)
+        {
+            Global::gameMgr->myMenu->showUseGui(Ui_Climb);
+        }
+        //trigger
+        else if (info.mBody->getType() == Trigger)
+        {
+            Ogre::Any any = info.mBody->getUserData();
+
+            if (!any.isEmpty())
+            {
+                bodyUserData* a0 = Ogre::any_cast<bodyUserData*>(any);
+                if (a0->enabledTrigger)
+                {
+                    Global::gameMgr->myMenu->showUseGui(Ui_Use);
+                }
+            }
+        }
+    }
+}
+
 void Player::startCameraShake(float time,float power,float impulse)
 {
-    shaker->startCameraShake(time,power,impulse);
+    //shaker->startCameraShake(time,power,impulse);
+    camShaker->startShaking(power, impulse, time);
 }
 
 
@@ -544,42 +583,6 @@ void Shaker::updateCameraShake(float time)
 
             camShakePrev = camShakeTarget;
             camShakeTarget.FromAngleAxis(random*Ogre::Degree(std::min<float>(camShakePower*timerVar*50,65)),Ogre::Vector3(camShakeDirectionX,camShakeDirectionY,camShakeDirectionZ));
-        }
-    }
-}
-
-void Player::updateUseGui()
-{
-    auto pos = bodyPosition;
-    pos.y += 1;
-    OgreNewt::BasicRaycast ray(m_World, pos, pos + getFacingDirection()*2, false);
-    OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
-
-    if (info.mBody)
-    {
-        //grabbable
-        if (info.mBody->getType() == Grabbable)
-        {
-            Global::gameMgr->myMenu->showUseGui(Ui_Pickup);
-        }
-        //climbable
-        else if (info.mBody->getType() == Pullup_old)
-        {
-            Global::gameMgr->myMenu->showUseGui(Ui_Climb);
-        }
-        //trigger
-        else if (info.mBody->getType() == Trigger)
-        {
-            Ogre::Any any = info.mBody->getUserData();
-
-            if (!any.isEmpty())
-            {
-                bodyUserData* a0 = Ogre::any_cast<bodyUserData*>(any);
-                if (a0->enabledTrigger)
-                {
-                    Global::gameMgr->myMenu->showUseGui(Ui_Use);
-                }
-            }
         }
     }
 }

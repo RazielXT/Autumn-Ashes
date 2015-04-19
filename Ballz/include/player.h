@@ -10,6 +10,7 @@
 #include "PlayerClimbing.h"
 #include "PlayerGrab.h"
 #include "PlayerParkour.h"
+#include "CameraShaker.h"
 
 class Shaker
 {
@@ -97,6 +98,8 @@ public:
     Ogre::SceneNode* detachHead();
     void attachHead(Ogre::SceneNode* headNode = nullptr);
 
+    CameraShaker* camShaker;
+
     Ogre::Vector3 bodyPosition;
     float bodyVelocityL;
 
@@ -126,6 +129,7 @@ private:
 
 
     Shaker* shaker;
+
     OgreNewt::World* m_World;
     Ogre::SceneManager * mSceneMgr;
 
