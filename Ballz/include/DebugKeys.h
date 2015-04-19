@@ -72,11 +72,11 @@ public:
             break;
 
         case OIS::KC_1:
-            Global::player->startCameraShake(10, 1,1);
+            Global::player->camShaker->startShaking(1, 1, 10, 0.5f, 1.0f, 0.0f);
             break;
 
         case OIS::KC_2:
-            Global::player->camShaker->startShaking(4, 1, 2, 0.1f, 1, 0.2, 0.1f, 1.0f);
+            Global::player->camShaker->startShaking(2.0,0.85,1,1,1,0.1,0.2,1,true);
             break;
 
         case OIS::KC_3:
