@@ -83,6 +83,7 @@ public:
         Global::mEventsMgr = mEventMgr;
         Global::soundEngine = engine;
         Global::audioLib = new AudioLibrary(engine);
+        Global::shaker = new CameraShaker();
 
         gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem(), wMaterials);
         Global::gameMgr = gameMgr;

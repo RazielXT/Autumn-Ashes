@@ -4,19 +4,19 @@
 
 using namespace Ogre;
 
-Quaternion CameraShaker::update(float time)
+void CameraShaker::update(float time)
 {
     if (!camShaking)
-        return Quaternion::IDENTITY;
+        return;
 
     camShakeTimer = std::min(time + camShakeTimer, camShakeTimerEnd);
-    Ogre::Quaternion shakeOr = Ogre::Quaternion::Slerp(camShakeTimer / camShakeTimerEnd, camShakePrev, camShakeTarget);
+    current = Ogre::Quaternion::Slerp(camShakeTimer / camShakeTimerEnd, camShakePrev, camShakeTarget);
 
     //last target duration passed, end shaking
     if (camShakeTimer == camShakeTimerEnd && camShakeTimeLeft<=0)
     {
         camShaking = false;
-        return Ogre::Quaternion::IDENTITY;
+        current = Quaternion::IDENTITY;
     }
     //time for next target
     else if (camShakeTimer >= camShakeTimerEnd)
@@ -32,7 +32,6 @@ Quaternion CameraShaker::update(float time)
         }
     }
 
-    return shakeOr;
 }
 
 void CameraShaker::makeNextTarget()

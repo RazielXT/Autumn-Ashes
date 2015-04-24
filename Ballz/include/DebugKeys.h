@@ -72,26 +72,36 @@ public:
             break;
 
         case OIS::KC_1:
-            Global::player->camShaker->startShaking(1, 1, 10, 0.5f, 1.0f, 0.0f);
+            Global::shaker->startShaking(1.5, 0.5, 0.1, 1, 1, 0.7, 0.25, 0.75, true);
             break;
 
         case OIS::KC_2:
-            Global::player->camShaker->startShaking(2.0,0.85,1,1,1,0.1,0.2,1,true);
+            Global::shaker->startShaking(1.5, 1.5, 0.5, 1, 1, 0.7, 0.35, 1, true);
             break;
 
         case OIS::KC_3:
-            Global::player->startCameraShake(10, 3, 3);
+            Global::shaker->startShaking(1.0, 1.5, 0.5, 1, 1, 0.5, 0.35, 1, true);
             break;
 
         case OIS::KC_4:
-            Global::player->startCameraShake(1, 1, 1);
+            Global::shaker->startShaking(1.0, 1.5, 5, 1, 1, 0.1, 1.35, 1, true);
             break;
 
         case OIS::KC_5:
-            Global::player->startCameraShake(10, 0.1, 0.1);
+            Global::shaker->startShaking(1.2, 1.5, 10, 1, 1, 0.1, 0.35, 1, true);
             break;
 
         case OIS::KC_L:
+            if (Global::gameMgr->gameState == MENU)
+            {
+                Global::gameMgr->switchToLevel(3);
+            }
+            else
+                continueExecution = false;
+
+            break;
+
+        case OIS::KC_NUMPAD3:
             if (Global::gameMgr->gameState == MENU)
             {
                 Global::gameMgr->switchToLevel(4);
