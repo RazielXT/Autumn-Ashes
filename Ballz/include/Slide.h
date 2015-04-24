@@ -48,7 +48,7 @@ protected:
 
     bool jumpingToSlide = false;
 
-    void startJumpToSlide();
+    void startJumpToSlide(bool fromGround = false);
     void updateJumpToSlide(float time);
 
     struct HeadTransitionState
@@ -58,8 +58,8 @@ protected:
         Vector3 posTarget;
         Vector3 pos;
         Quaternion dir;
+        Quaternion dirTarget;
         float timer;
-        float heightDif;
     };
 
     struct HeadControlState

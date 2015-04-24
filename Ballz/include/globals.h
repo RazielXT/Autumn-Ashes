@@ -7,6 +7,7 @@ class GameStateManager;
 class PagingManager;
 class PostProcessMgr;
 class AudioLibrary;
+class CameraShaker;
 
 namespace Global
 {
@@ -25,12 +26,14 @@ extern AudioLibrary* audioLib;
 extern float fallSoundOffsetH;
 extern float fallSoundOffsetL;
 
+extern CameraShaker* shaker;
+
 extern std::map<std::string, void*>* globalData;
 
 extern std::vector<std::string> debug;
 
 #define MAX_DEBUG_LINES 15
-extern void DebugPrint(const std::string line);
+extern void DebugPrint(const std::string line, bool logFile = false);
 
 };
 

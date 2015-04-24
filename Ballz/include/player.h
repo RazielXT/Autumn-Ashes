@@ -98,7 +98,10 @@ public:
     Ogre::SceneNode* detachHead();
     void attachHead(Ogre::SceneNode* headNode = nullptr);
 
-    CameraShaker* camShaker;
+    bool isInControl()
+    {
+        return inControl;
+    }
 
     Ogre::Vector3 bodyPosition;
     float bodyVelocityL;

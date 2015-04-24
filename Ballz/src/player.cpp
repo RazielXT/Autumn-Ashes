@@ -78,7 +78,6 @@ Player::~Player ()
     delete pParkour;
     delete slidesAutoTarget;
     delete shaker;
-    delete camShaker;
 }
 void Player::initBody()
 {
@@ -119,7 +118,6 @@ void Player::initBody()
     shakeNode = headnode->createChildSceneNode("ShakeHeadNod");
     shakeNode->setPosition(Vector3(0, 0, 0));
     shaker = new Shaker(shakeNode);
-    camShaker = new CameraShaker();
 
     camnode = shakeNode->createChildSceneNode("CamNod");
     camnode->attachObject(mCamera);
@@ -494,7 +492,7 @@ void Player::updateUseGui()
 void Player::startCameraShake(float time,float power,float impulse)
 {
     //shaker->startCameraShake(time,power,impulse);
-    camShaker->startShaking(power, impulse, time);
+    Global::shaker->startShaking(power, impulse, time);
 }
 
 

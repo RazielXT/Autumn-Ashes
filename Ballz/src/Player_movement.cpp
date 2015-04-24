@@ -122,6 +122,8 @@ void Player::manageFall()
             slowingDown = 0;
 
             Global::audioLib->play3D("pad.wav", bodyPosition, 10);
+
+            Global::shaker->startShaking(1.5, 1.5, 0.5, 1, 1, 0.7, 0.35, 1, true);
         }
         else
             slowingDown = 1 - fallVelocity/100.0f;
@@ -214,8 +216,11 @@ void Player::updateHead()
 {
     float time = tslf;
 
+    Global::shaker->update(time);
+
     shaker->updateCameraShake(time);
-    auto sQ = camShaker->update(time);
+
+    auto sQ = Global::shaker->current;
     shakeNode->setOrientation(sQ);
 
     if (bodyVelocityL < 0.05)
@@ -264,22 +269,23 @@ void Player::updateHead()
     }
 
     {
+        float walkAngleSize = 0.15f;
+
         //walking camera
         if ((moving && !climbing && !pParkour->isRolling() && onGround && (bodyVelocityL > 2)) || wallrunning)
         {
-            float sprintFactor = sprinting ? 5.0f : 1.0f;
-
-            float walkSize = wallrunning ? 1.25f : 1.0f;
+            float sprintFactor = sprinting ? 2.0f : 1.0f;
+            float walkSize = wallrunning ? 1.15f : 1.0f;
 
             cameraWalkFinisher = 1;
             cam_walking += time*bodyVelocityL*walkSize;
 
             auto sinVal = Ogre::Math::Sin(cam_walking);
             camnode->setPosition(0, sprintFactor * -1.5f * abs(sinVal) / 7.0f, 0);
-            camnode->setOrientation(Quaternion(Degree(sinVal)*time*(bodyVelocityL + 1) * 5 * pow(walkSize,5.0f) * sprintFactor, Vector3(0, 0, 1)));
-            //camnode->roll(Degree(Ogre::Math::Sin(cam_walking+Ogre::Math::PI/2))*time*9);
+            auto rad = Degree(sinVal*(bodyVelocityL + 1) * pow(walkSize, 5.0f) * sprintFactor)*walkAngleSize;
+            camnode->setOrientation(Quaternion(rad, Vector3(0, 0, 1)));
 
-            int currentWalk = (int)cam_walking/Math::PI;
+            int currentWalk = (int)(cam_walking/Math::PI);
             if (currentWalk != walkCycle)
             {
                 walkCycle = currentWalk;
@@ -289,19 +295,22 @@ void Player::updateHead()
         }
         else if (cameraWalkFinisher)
         {
-            if (onGround) cam_walking += time * 8;
-            else cam_walking += time * 10;
-            Real value = Ogre::Math::Sin(cam_walking);
+            float acc = onGround ? 10.0f : 15.0f;
+            cam_walking += time*acc;
+
+            Real sinVal = Ogre::Math::Sin(cam_walking);
+
+            Global::DebugPrint("fin", true);
 
             if (cameraWalkFinisher == 1)
             {
-                if (value > 0)
+                if (sinVal > 0)
                     cameraWalkFinisher = 2;
                 else
                     cameraWalkFinisher = 3;
             }
 
-            if ((value > 0 && cameraWalkFinisher == 3) || (value < 0 && cameraWalkFinisher == 2))
+            if ((sinVal > 0 && cameraWalkFinisher == 3) || (sinVal < 0 && cameraWalkFinisher == 2))
             {
                 camnode->setPosition(0, 0, 0);
                 camnode->resetOrientation();
@@ -313,9 +322,9 @@ void Player::updateHead()
             }
             else
             {
-                camnode->setPosition(0, -1 * abs(value) / 10, 0);
-                camnode->setOrientation(Quaternion(Degree(Ogre::Math::Sin(cam_walking))*time*(bodyVelocityL + 1) * 4, Vector3(0, 0, 1)));
-                //camnode->roll(Degree(Ogre::Math::Sin(cam_walking+Ogre::Math::PI/2))*time*9);
+                camnode->setPosition(0, -1.5f * abs(sinVal) / 7.0f, 0);
+                auto rad = Degree(sinVal*(bodyVelocityL + 1))*walkAngleSize;
+                camnode->setOrientation(Quaternion(rad, Vector3(0, 0, 1)));
             }
         }
 

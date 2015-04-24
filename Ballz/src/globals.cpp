@@ -6,6 +6,7 @@ float Global::fallSoundOffsetH = 0;
 float Global::fallSoundOffsetL = 0;
 EventsManager* Global::mEventsMgr = 0;
 Ogre::SceneManager* Global::mSceneMgr = 0;
+CameraShaker* Global::shaker = 0;
 Ogre::RenderWindow* Global::mWindow = 0;
 OgreNewt::World* Global::mWorld = 0;
 irrklang::ISoundEngine* Global::soundEngine = 0;
@@ -16,9 +17,12 @@ std::map<std::string,void*>* Global::globalData = new std::map<std::string,void*
 
 std::vector<std::string> Global::debug;
 
-void Global::DebugPrint(const std::string line)
+void Global::DebugPrint(const std::string line, bool logFile)
 {
     static int counter = 1;
+
+    if (logFile)
+        Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage(line);
 
     if (debug.size() >= MAX_DEBUG_LINES)
         debug.erase(debug.begin());
