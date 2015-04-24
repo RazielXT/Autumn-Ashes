@@ -13,7 +13,7 @@ void CameraShaker::update(float time)
     current = Ogre::Quaternion::Slerp(camShakeTimer / camShakeTimerEnd, camShakePrev, camShakeTarget);
 
     //last target duration passed, end shaking
-    if (camShakeTimer == camShakeTimerEnd && camShakeTimeLeft<0)
+    if (!permanent && camShakeTimer == camShakeTimerEnd && camShakeTimeLeft<0)
     {
         camShaking = false;
         current = Quaternion::IDENTITY;
@@ -24,7 +24,7 @@ void CameraShaker::update(float time)
         makeNextTarget();
 
         //time ended, last target
-        if (camShakeTimeLeft <= 0)
+        if (!permanent && camShakeTimeLeft <= 0)
         {
             camShakeTimeLeft = 0;
             //camShakePrev = camShakeTarget;
@@ -36,7 +36,7 @@ void CameraShaker::update(float time)
 
 void CameraShaker::makeNextTarget(bool first)
 {
-    float timerWeight = MathUtils::lerp(initPwrW, endPwrW, 1.0f - camShakeTimeLeft / shakingDuration);
+    float timerWeight = permanent ? initPwrW : MathUtils::lerp(initPwrW, endPwrW, 1.0f - camShakeTimeLeft / shakingDuration);
 
     float targetX = timerWeight * Ogre::Math::RangeRandom(0.5f, 1.0f) *shakeSizeX;
     float targetY = timerWeight * Ogre::Math::RangeRandom(0.5f, 1.0f) *shakeSizeY;

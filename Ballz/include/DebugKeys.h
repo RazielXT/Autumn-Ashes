@@ -72,7 +72,7 @@ public:
             break;
 
         case OIS::KC_1:
-            Global::shaker->startShaking(1.5, 0.5, 0.1, 1, 1, 0.7, 0.25, 0.75, true);
+            Global::shaker->startShaking(0.5, 0.5, 0.0, 1, 1, 0.7, 0.25, 0.75, true);
             break;
 
         case OIS::KC_2:
