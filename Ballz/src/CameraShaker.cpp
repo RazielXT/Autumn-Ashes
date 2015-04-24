@@ -13,7 +13,7 @@ void CameraShaker::update(float time)
     current = Ogre::Quaternion::Slerp(camShakeTimer / camShakeTimerEnd, camShakePrev, camShakeTarget);
 
     //last target duration passed, end shaking
-    if (camShakeTimer == camShakeTimerEnd && camShakeTimeLeft<=0)
+    if (camShakeTimer == camShakeTimerEnd && camShakeTimeLeft<0)
     {
         camShaking = false;
         current = Quaternion::IDENTITY;
@@ -34,7 +34,7 @@ void CameraShaker::update(float time)
 
 }
 
-void CameraShaker::makeNextTarget()
+void CameraShaker::makeNextTarget(bool first)
 {
     float timerWeight = MathUtils::lerp(initPwrW, endPwrW, 1.0f - camShakeTimeLeft / shakingDuration);
 
@@ -42,10 +42,10 @@ void CameraShaker::makeNextTarget()
     float targetY = timerWeight * Ogre::Math::RangeRandom(0.5f, 1.0f) *shakeSizeY;
     float targetZ = targetX*angleShaking;
 
-    if (nextUp && shakeSizeX<shakeSizeY)
+    if (nextUp && (shakeSizeX<shakeSizeY || first))
         targetY *= -1;
 
-    if (nextRight && shakeSizeX>=shakeSizeY)
+    if (nextRight && (shakeSizeX>=shakeSizeY || first))
         targetX *= -1;
 
     nextUp = !nextUp;
@@ -53,7 +53,10 @@ void CameraShaker::makeNextTarget()
 
     float random = Ogre::Math::RangeRandom(0.5, 1.0f) * timerWeight;
 
-    camShakePrev = camShakeTarget;
+    if (first && camShaking)
+        camShakePrev = current;
+    else
+        camShakePrev = camShakeTarget;
 
     camShakeTarget.FromAngleAxis(random*Ogre::Degree(Ogre::Math::Clamp(targetX * 50, -50.0f, 50.0f)), Ogre::Vector3(0, abs(targetX), targetZ));
     Quaternion camTemp = camShakeTarget;
@@ -81,6 +84,15 @@ void CameraShaker::startShaking(float power, float freq, float duration, float a
     initPwrW = Ogre::Math::Clamp(initPowerW, 0.05f, 2.0f);
     endPwrW = Ogre::Math::Clamp(endPowerW, 0.05f, 2.0f);
 
+    if (camShaking)
+        nextUp = true;
+
+    if (!camShaking)
+    {
+        nextUp = nextRight = Ogre::Math::RangeRandom(-1.0, 1.0f) < 0;
+        camShakePrev = camShakeTarget = Ogre::Quaternion::IDENTITY;
+    }
+
     if (forceDominantSideDownFirst)
     {
         if (shakeSizeX < shakeSizeY)
@@ -90,12 +102,10 @@ void CameraShaker::startShaking(float power, float freq, float duration, float a
             nextRight = true;
     }
 
-    if (!camShaking)
-    {
-        camShakePrev = Ogre::Quaternion::IDENTITY;
-    }
+    makeNextTarget(true);
 
-    makeNextTarget();
+    if (camShakeTimeLeft < 0)
+        camShakeTimeLeft = 0;
 
     camShaking = true;
 }

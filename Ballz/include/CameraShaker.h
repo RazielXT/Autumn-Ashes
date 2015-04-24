@@ -16,7 +16,7 @@ public:
 
 private:
 
-    void makeNextTarget();
+    void makeNextTarget(bool first = false);
 
     bool camShaking = false;
     bool permanent = false;
