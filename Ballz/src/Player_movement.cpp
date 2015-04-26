@@ -282,7 +282,7 @@ void Player::updateHead()
 
             auto sinVal = Ogre::Math::Sin(cam_walking);
             camnode->setPosition(0, sprintFactor * -1.5f * abs(sinVal) / 7.0f, 0);
-            auto rad = Degree(sinVal*(bodyVelocityL + 1) * pow(walkSize, 5.0f) * sprintFactor)*walkAngleSize;
+            auto rad = Degree(sinVal*(bodyVelocityL + 1) * walkSize * sprintFactor)*walkAngleSize;
             camnode->setOrientation(Quaternion(rad, Vector3(0, 0, 1)));
 
             int currentWalk = (int)(cam_walking/Math::PI);
@@ -299,8 +299,6 @@ void Player::updateHead()
             cam_walking += time*acc;
 
             Real sinVal = Ogre::Math::Sin(cam_walking);
-
-            Global::DebugPrint("fin", true);
 
             if (cameraWalkFinisher == 1)
             {

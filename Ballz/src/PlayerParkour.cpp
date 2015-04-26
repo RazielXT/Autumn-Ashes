@@ -24,13 +24,13 @@ void PlayerParkour::doWalljump()
 
 bool PlayerParkour::spacePressed()
 {
-    Global::DebugPrint("Space pressed");
+    //Global::DebugPrint("Space pressed");
 
     if (p->wallrunning)
     {
         stopWallrun();
 
-        if (tryWallJump())
+        if (tryWallClimb())
         {
             if (possibleWalljump)
                 doWalljump();
@@ -46,6 +46,7 @@ bool PlayerParkour::spacePressed()
             if (dotJump > 0)
             {
                 jumpDir = -jumpDir.reflect(wallrunCurrentDir);
+                jumpDir /= (1 + dotJump * 2);
                 Global::DebugPrint("Side jump with dot walldir dot " + std::to_string(dotJump));
             }
             else
@@ -55,8 +56,11 @@ bool PlayerParkour::spacePressed()
             jumpDir = MathUtils::lerp(jumpDir * 8, wall_normal * 4, dotJump);
 
             reattachFixTimer = 0.5f + dotJump*0.5f;
+            Global::DebugPrint("reattachFixTimer set to " + std::to_string(reattachFixTimer));
+
             allowWalljump = true;
 
+            Global::shaker->startShaking(0.75, 1.0, 0.1, 1, 1, 0.7, 0.15, 0.75, true);
             body->setVelocity(jumpDir);
         }
 
@@ -96,7 +100,7 @@ bool PlayerParkour::updateParkourPossibility()
     reattachFixTimer -= p->tslf;
 
     if (p->forw_key)
-        ret = tryWallJump();
+        ret = tryWallClimb();
 
     if (!ret && p->forw_key)
         ret = tryWallrun();
@@ -104,7 +108,7 @@ bool PlayerParkour::updateParkourPossibility()
     return ret;
 }
 
-bool PlayerParkour::tryWallJump()
+bool PlayerParkour::tryWallClimb()
 {
     auto rStart = p->bodyPosition;
     rStart.y += 0.3f;
@@ -164,7 +168,7 @@ bool PlayerParkour::tryWallJump()
     possibleWalljump = false;
 
     //wall jump up
-    if (allowWalljump && !p->onGround && w1 && w2 && w3)
+    if (allowWalljump && !p->onGround && reattachFixTimer <= 0.5f && w1 && w2 && w3)
     {
         possibleWalljump = true;
 
@@ -228,16 +232,17 @@ bool PlayerParkour::tryWallrun()
     frontDir.y = 0;
     frontDir.normalise();
 
-    if (getWallrunInfo(-1, frontDir, 70))
+    if (getWallrunInfo(-1, frontDir, 80))
     {
         wallrunSide = -1;
     }
-    else if (getWallrunInfo(1, frontDir, 70))
+    else if (getWallrunInfo(1, frontDir, 80))
     {
         wallrunSide = 1;
     }
 
     float dotWall = frontDir.dotProduct(wall_normal);
+    //reattachFix starting from 0.5 with static walljump/ 1 with wallrun jump
     bool correctDot = dotWall < std::min(0.0f,-reattachFixTimer*2);
 
     if (wallrunSide && correctDot)
@@ -251,7 +256,7 @@ bool PlayerParkour::tryWallrun()
         auto wallDirVelocity = std::max(0.0f, wallrunCurrentDir.dotProduct(bodyDir));
         wallrunTimer = std::min(1.0f, (p->bodyVelocityL*wallDirVelocity) / wallrunSpeed);
 
-        Global::DebugPrint("Start wallrun with start velocity dot " + std::to_string(wallDirVelocity));
+        Global::DebugPrint("Start wallrun with start velocity dot " + std::to_string(wallDirVelocity), true);
 
 
         Ogre::Vector3 size(0.2, 0.2, 0.2);
@@ -326,8 +331,8 @@ void PlayerParkour::updateWallrunning()
 {
     if (wallrunSide)
     {
+        //should be 5
         auto distB = wallrunJoint->getBody0()->getPosition().distance(wallrunJoint->getBody1()->getPosition());
-        //Global::DebugPrint(std::to_string(distB));
 
         if (!p->onGround && distB<5.15f && getWallrunInfo(wallrunSide, wallrunCurrentDir))
         {
@@ -344,7 +349,7 @@ void PlayerParkour::updateWallrunning()
 
         //release
         {
-            Global::DebugPrint("wallrun release");
+            Global::DebugPrint("wallrun release " + std::to_string(distB) + ";" + std::to_string(p->onGround));
 
             freeJump = 0.3f;
             p->wallrunning = false;

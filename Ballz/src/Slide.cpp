@@ -62,10 +62,6 @@ void Slide::movedMouse(const OIS::MouseEvent &e)
 
     headState.pitch = Math::Clamp(headState.pitch + mouseX, -maxAngle, maxAngle);
     headState.yaw = Math::Clamp(headState.yaw + mouseY, -maxAngle, maxAngle);
-
-    Quaternion qpitch = Quaternion(Degree(headState.pitch), Vector3(0,1,0));
-    Quaternion qyaw = Quaternion(Degree(headState.yaw), Vector3(1, 0, 0));
-    head->setOrientation(qpitch*qyaw*Global::shaker->current);
 }
 
 void Slide::initSlide(const std::string& zipAnimName)
@@ -557,6 +553,13 @@ void Slide::updateSlidingCamera(float time)
 {
     if (headArrival.timer > 0)
         updateHeadArrival(time);
+    else
+    {
+        Quaternion qpitch = Quaternion(Degree(headState.pitch), Vector3(0, 1, 0));
+        Quaternion qyaw = Quaternion(Degree(headState.yaw), Vector3(1, 0, 0));
+
+        head->setOrientation(qpitch*qyaw*Global::shaker->current);
+    }
 }
 
 void Slide::updateTargetSlide(float time)
