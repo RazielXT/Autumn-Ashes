@@ -19,6 +19,9 @@ void PlayerParkour::doWalljump()
         p->fallPitchTimer = 0;
         p->fallVelocity = 30;
     }
+
+    p->playWalkSound();
+
     Global::DebugPrint("walljump");
 }
 
@@ -62,6 +65,8 @@ bool PlayerParkour::spacePressed()
 
             Global::shaker->startShaking(0.75, 1.0, 0.1, 1, 1, 0.7, 0.15, 0.75, true);
             body->setVelocity(jumpDir);
+
+            p->playWalkSound();
         }
 
         return true;
@@ -83,6 +88,8 @@ bool PlayerParkour::spacePressed()
 
         body->setVelocity(jumpDir*6);
         allowWalljump = true;
+
+        p->playWalkSound();
 
         return true;
     }
@@ -172,6 +179,12 @@ bool PlayerParkour::tryWallClimb()
     {
         possibleWalljump = true;
 
+        int groundID = 0;
+        Ogre::Any any = info.mBody->getUserData();
+        if (!any.isEmpty()) groundID = any_cast<bodyUserData*>(any)->material;
+
+        p->groundID = groundID;
+
         return true;
     }
     else if (!w3 && (w2 || w1))
@@ -209,6 +222,8 @@ void PlayerParkour::doRoll()
     if (dirAngleDiff < 45 && vel.length()>0.5f)
     {
         rolling = p->shaker->doRoll(1.2f, p->headnode, p->necknode);
+
+        Global::audioLib->play3D("pullup.wav", p->bodyPosition, 5, 0.3f);
     }
 }
 

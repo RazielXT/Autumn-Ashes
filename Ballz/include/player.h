@@ -130,6 +130,10 @@ private:
     void initBody();
     void updateCameraArrival();
 
+    inline void playWalkSound()
+    {
+        Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID, 0.3f);
+    }
 
     Shaker* shaker;
 

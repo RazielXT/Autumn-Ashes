@@ -269,7 +269,7 @@ void Slide::startJumpToSlide(bool fromGround)
     headArrival.pos = pos;
     headArrival.posTarget = target;
     headArrival.timer = fromGround ? -0.5f : 0;
-    headArrival.pitch = pos.distance(target) / 10.0f;
+    headArrival.pitch = std::max(0.5f, pos.distance(target) / 10.0f);
     headArrival.dir = or;
 
     headArrival.dirTarget.FromAngleAxis(or.getYaw(), Vector3(0,1,0));
@@ -323,9 +323,9 @@ void Slide::updateJumpToSlide(float time)
 
     if (!beforeJump)
     {
-        headArrival.timer = std::min(headArrival.timer + time*2.0f, headArrival.pitch);
+        headArrival.timer = std::min(headArrival.timer + time*1.75f, headArrival.pitch);
         w = headArrival.timer / headArrival.pitch;
-        w = pow(w, 0.6f);
+        w = pow(w, 0.8f);
     }
 
     auto hDiff = headArrival.pos.y - headArrival.posTarget.y;
@@ -504,7 +504,7 @@ void Slide::release(bool returnControl)
         Global::player->attachCameraWithTransition();
         Global::player->body->setPositionOrientation(tracker->getPosition(), Ogre::Quaternion::IDENTITY);
         Global::player->body->unFreeze();
-        Global::player->body->setVelocity(tracker->getOrientation()*Vector3(0, 0, -1 * realSpeed));
+        Global::player->body->setVelocity(tracker->getOrientation()*Vector3(0, 0, -1 * realSpeed) + Vector3(0,3,0));
 
         enablePlayerControl = true;
     }
