@@ -278,9 +278,9 @@ void Player::updateHead()
             float walkSize = wallrunning ? 1.15f : 1.0f;
 
             cameraWalkFinisher = 1;
-            cam_walking += time*bodyVelocityL*walkSize;
+            cam_walking += time*bodyVelocityL*walkSize*walkSize;
 
-            auto sinVal = Ogre::Math::Sin(cam_walking);
+            float sinVal = Ogre::Math::Sin(cam_walking);
             camnode->setPosition(0, sprintFactor * -1.5f * abs(sinVal) / 7.0f, 0);
             auto rad = Degree(sinVal*(bodyVelocityL + 1) * walkSize * sprintFactor)*walkAngleSize;
             camnode->setOrientation(Quaternion(rad, Vector3(0, 0, 1)));
@@ -298,7 +298,7 @@ void Player::updateHead()
             float acc = onGround ? 10.0f : 15.0f;
             cam_walking += time*acc;
 
-            Real sinVal = Ogre::Math::Sin(cam_walking);
+            float sinVal = Ogre::Math::Sin(cam_walking);
 
             if (cameraWalkFinisher == 1)
             {
@@ -315,7 +315,7 @@ void Player::updateHead()
                 cameraWalkFinisher = 0;
                 cam_walking = 0;
 
-                if (onGround)
+                if (onGround || wallrunning)
                     Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID, 0.3f);
             }
             else

@@ -307,6 +307,12 @@ bool PlayerParkour::getWallrunInfo(float side, Vector3 frontDir, float testDegre
                 wall_normal.y = 0;
                 wall_normal.normalise();
 
+                int groundID = 0;
+                Ogre::Any any = info.mBody->getUserData();
+                if (!any.isEmpty()) groundID = any_cast<bodyUserData*>(any)->material;
+
+                p->groundID = groundID;
+
                 return true;
             }
         }

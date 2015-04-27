@@ -14,7 +14,7 @@ class PlayerParkour
     bool possibleWalljump = false;
     bool allowWalljump = true;
     bool tryWallClimb();
-	void doWalljump();
+    void doWalljump();
 
     float rolling;
 
@@ -23,7 +23,7 @@ class PlayerParkour
     float wallrunSide, wallrunTimer, wallrunSpeed, reattachFixTimer = 0, freeJump = 0;
     bool getWallrunInfo(float side, Ogre::Vector3 frontDir, float testDegree = 90);
 
-    
+
 
 public:
 
