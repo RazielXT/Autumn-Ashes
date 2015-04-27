@@ -183,6 +183,7 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
     }
     }
 }
+
 void Player::releasedKey(const OIS::KeyEvent &arg)
 {
     switch (arg.key)
@@ -448,7 +449,7 @@ void Player::updateStats()
     }
 
     if (onGround || wallrunning)
-        slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, 9);
+        slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, wallrunning ? 20.0f : 10.0f);
     else
         slidesAutoTarget->hideAutoTarget();
 }

@@ -14,8 +14,11 @@ void Player::enableControl(bool enable)
     if (!enable)
         stopMoving();
 
-    if (wallrunning || climbing)
+    if (climbing)
         pClimbing->stopClimbing();
+
+    if (wallrunning)
+        pParkour->stopWallrun();
 }
 
 void Player::enableMovement(bool enable)
@@ -290,7 +293,8 @@ void Player::updateHead()
             {
                 walkCycle = currentWalk;
                 float volume = Math::Clamp(bodyVelocityL/35.0f, 0.25f, 0.8f);
-                Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID, 0.13f);
+                //Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID, 0.13f);
+                playWalkSound();
             }
         }
         else if (cameraWalkFinisher)
@@ -316,7 +320,7 @@ void Player::updateHead()
                 cam_walking = 0;
 
                 if (onGround || wallrunning)
-                    Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID, 0.3f);
+                    playWalkSound();
             }
             else
             {
