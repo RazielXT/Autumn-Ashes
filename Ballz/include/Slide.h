@@ -26,6 +26,7 @@ public:
 
     Vector3 getTrackPosition(float timeOffset);
 
+    Ogre::Quaternion getDirectionState(float offset);
     Ogre::TransformKeyFrame getCurrentState();
 
     struct SlidePoint
@@ -89,6 +90,8 @@ protected:
     float currentSpeed;
     float avgSpeed = 5;
     bool loop = false;
+    bool bidirectional = false;
+    void invertTrack();
 
     bool enablePlayerControl = false;
     bool sliding = false;

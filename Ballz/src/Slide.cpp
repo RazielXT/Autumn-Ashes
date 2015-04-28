@@ -124,8 +124,22 @@ void Slide::initSlide(const std::string& zipAnimName)
 
 }
 
+void Slide::invertTrack()
+{
+    std::vector<Ogre::Vector3> newPoints;
+
+    for (size_t i = slidePoints.size(); i > 0; i--)
+    {
+        newPoints.push_back(slidePoints[i - 1].pos);
+    }
+
+    initSlide(newPoints);
+}
+
 void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
 {
+    bidirectional = true;
+
     headArrival.tempNode = nullptr;
 
     slidePoints.clear();
@@ -170,12 +184,25 @@ void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
         slidePoints[i].startOffset = timer;
     }
 
-    Animation* anim = Global::mSceneMgr->createAnimation(animName, timer);
-    anim->setInterpolationMode(Animation::IM_SPLINE);
+    Animation* anim;
 
-    track = anim->createNodeTrack(0, tracker);
+    if (Global::mSceneMgr->hasAnimation(animName))
+    {
+        anim = Global::mSceneMgr->getAnimation(animName);
+        track->removeAllKeyFrames();
 
-    track->setUseShortestRotationPath(true);
+        mTrackerState = nullptr;
+        Global::mSceneMgr->destroyAnimationState(animName);
+    }
+    else
+    {
+        anim = Global::mSceneMgr->createAnimation(animName, timer);
+        anim->setInterpolationMode(Animation::IM_SPLINE);
+
+        track = anim->createNodeTrack(0, tracker);
+        track->setUseShortestRotationPath(true);
+    }
+
 
     Quaternion previous;
     int loopEnd = loop ? 1 : 0;
@@ -393,6 +420,18 @@ bool Slide::start(float startOffset, bool withJump)
     if (sliding || unavailableTimer > 0)
         return false;
 
+    if (bidirectional)
+    {
+        auto pdir = Global::player->getFacingDirection();
+        auto slDir = getDirectionState(startOffset)*Vector3(0, 0, -1);
+
+        if (pdir.dotProduct(slDir) < 0)
+        {
+            invertTrack();
+            startOffset = Global::mSceneMgr->getAnimation(animName)->getLength() - startOffset;
+        }
+    }
+
     if (mTrackerState == nullptr)
         mTrackerState = Global::mSceneMgr->createAnimationState(animName);
 
@@ -438,6 +477,14 @@ Ogre::TransformKeyFrame Slide::getCurrentState()
     track->getInterpolatedKeyFrame(mTrackerState->getTimePosition(), &key);
 
     return key;
+}
+
+Ogre::Quaternion Slide::getDirectionState(float offset)
+{
+    Ogre::TransformKeyFrame key(0, 0);
+    track->getInterpolatedKeyFrame(offset, &key);
+
+    return key.getRotation();
 }
 
 void Slide::attach()
@@ -515,6 +562,7 @@ void Slide::release(bool returnControl)
     unavailableTimer = 1.5f;
     sliding = false;
 
+    invertTrack();
 }
 
 void Slide::updateHeadArrival(float time)
