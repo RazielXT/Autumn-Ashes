@@ -448,8 +448,10 @@ void Player::updateStats()
         updateUseGui();
     }
 
-    if (onGround || wallrunning)
+    if (wallrunning)
         slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, wallrunning ? 20.0f : 10.0f);
+    else if (inControl && !pParkour->isRolling() && !climbing && !hanging)
+        slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition() - Vector3(0,2,0), getFacingDirection(), tslf, 0);
     else
         slidesAutoTarget->hideAutoTarget();
 }

@@ -272,7 +272,7 @@ void Player::updateHead()
     }
 
     {
-        float walkAngleSize = 0.15f;
+        float walkAngleSize = 0.10f;
 
         //walking camera
         if ((moving && !climbing && !pParkour->isRolling() && onGround && (bodyVelocityL > 2)) || wallrunning)

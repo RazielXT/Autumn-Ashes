@@ -82,10 +82,6 @@ public:
 
     void stopMoving()
     {
-        left_key = false;
-        right_key = false;
-        forw_key = false;
-        back_key = false;
         body->setVelocity(Ogre::Vector3(0, 0, 0));
     };
 

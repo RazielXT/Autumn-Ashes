@@ -32,6 +32,7 @@ private:
 
     Slide* preparedSlide;
     float preparedSlideOffset;
+    Ogre::Vector3 preparedSlidePos;
 
     Ogre::BillboardSet* targetBillboardSet;
     Ogre::SceneNode* billboardNode;
@@ -40,4 +41,7 @@ private:
 
     std::future<bool> targetResult;
     bool getTargetSlideFunc(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide);
+
+    bool getTargetSlideRay(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide);
+    bool getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide* ignoredSlide);
 };

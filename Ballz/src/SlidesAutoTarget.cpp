@@ -23,7 +23,7 @@ SlidesAutoTargetAsync::SlidesAutoTargetAsync()
 
 bool SlidesAutoTargetAsync::pressedAction()
 {
-    if (targetInfo.targetSlide)
+    if (targetInfo.targetSlide && targetInfo.targetSlidePosOffset!=-1)
     {
         return targetInfo.targetSlide->start(targetInfo.targetSlidePosOffset, true);
     }
@@ -37,15 +37,15 @@ SlidesAutoTargetAsync::~SlidesAutoTargetAsync()
         targetResult.get();
 }
 
-bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide)
+bool SlidesAutoTargetAsync::getTargetSlideRay(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide)
 {
-    const float rayRadiusSq = 6*6;
+    const float rayRadiusSq = 6 * 6;
 
     //radius 6 at distance 30 (3 at 15 etc)
     const float minRayRadiusW = rayRadiusSq * rayDistance / 30.0f;
 
-    pos = pos + dir * 2;
-    auto target = pos + dir*rayDistance;
+    Vector3 rayStart = pos + dir * 2;
+    Vector3 rayTarget = rayStart + dir*rayDistance;
 
     float closest = rayRadiusSq;
 
@@ -62,10 +62,10 @@ bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, float r
             auto s0 = s->slidePoints[i - 1].pos;
             auto s1 = s->slidePoints[i].pos;
 
-            auto r = MathUtils::getSegmentsDistanceInfo(pos, target, s0, s1);
+            auto r = MathUtils::getSegmentsDistanceInfo(rayStart, rayTarget, s0, s1);
             float minCompDist = minRayRadiusW*r.s1Pos;
 
-            if (r.sqMinDistance<minCompDist && r.sqMinDistance<closest)
+            if (r.sqMinDistance < minCompDist && r.sqMinDistance < closest)
             {
                 closest = r.sqMinDistance;
 
@@ -81,12 +81,50 @@ bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, float r
 
             auto s0 = s->slidePoints[foundSegmentId - 1].startOffset;
             auto s1 = s->slidePoints[foundSegmentId].startOffset;
-            preparedSlideOffset = s0 + (s1-s0)*foundSegmentPos;
+            preparedSlideOffset = s0 + (s1 - s0)*foundSegmentPos;
         }
 
     }
 
     return closest<rayRadiusSq;
+}
+
+bool SlidesAutoTargetAsync::getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide* ignoredSlide)
+{
+    float maxDistSq = 2;
+    float closest = maxDistSq;
+
+    for (auto s : loadedSlides)
+    {
+        if (s == ignoredSlide)
+            continue;
+
+        for (size_t i = 1; i < s->slidePoints.size(); i++)
+        {
+            auto s0 = s->slidePoints[i - 1].pos;
+            auto s1 = s->slidePoints[i].pos;
+
+            auto r = MathUtils::getProjectedState(pos, s0, s1);
+
+            if (r.sqMinDistance < closest)
+            {
+                closest = r.sqMinDistance;
+                preparedSlidePos = r.projPos;
+                preparedSlide = s;
+                preparedSlideOffset = -1;
+            }
+        }
+    }
+
+    return closest < maxDistSq;
+}
+
+bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide)
+{
+    if (rayDistance != 0)
+        return getTargetSlideRay(pos, dir, rayDistance, ignoredSlide);
+    else
+        return getTargetSlideTouch(pos, dir, ignoredSlide);
 }
 
 void SlidesAutoTargetAsync::hideAutoTarget()
@@ -103,11 +141,18 @@ void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tsl
     {
         targetInfo.targetSlide = preparedSlide;
         targetInfo.targetSlidePosOffset = preparedSlideOffset;
-        targetInfo.targetSlidePos = targetInfo.targetSlide->getTrackPosition(targetInfo.targetSlidePosOffset);
+        targetInfo.targetSlidePos = (preparedSlideOffset==-1) ? preparedSlidePos : targetInfo.targetSlide->getTrackPosition(targetInfo.targetSlidePosOffset);
 
-        //Global::gameMgr->myMenu->showUseGui(Ui_Target);
-        targetBillboardSet->setVisible(true);
-        billboardNode->setPosition(targetInfo.targetSlidePos);
+        if (preparedSlideOffset != -1)
+        {
+            //Global::gameMgr->myMenu->showUseGui(Ui_Target);
+            targetBillboardSet->setVisible(true);
+            billboardNode->setPosition(targetInfo.targetSlidePos);
+        }
+        else
+        {
+            targetInfo.targetSlide->start(targetInfo.targetSlidePos);
+        }
     }
     else
     {

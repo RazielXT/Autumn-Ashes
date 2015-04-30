@@ -49,7 +49,7 @@ protected:
 
     bool jumpingToSlide = false;
 
-    void startJumpToSlide(bool fromGround = false);
+    void startJumpToSlide();
     void updateJumpToSlide(float time);
 
     struct HeadTransitionState
