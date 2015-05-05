@@ -10,6 +10,17 @@ Slide::~Slide()
 {
 }
 
+void Slide::releasedKey(const OIS::KeyEvent &arg)
+{
+    if (!sliding)
+        return;
+
+    if (arg.key == OIS::KC_LSHIFT)
+    {
+        sprint = false;
+    }
+}
+
 void Slide::pressedKey(const OIS::KeyEvent &arg)
 {
     if (!sliding)
@@ -39,6 +50,11 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
     {
         release();
     }
+
+    if (arg.key == OIS::KC_LSHIFT)
+    {
+        sprint = true;
+    }
 }
 
 Vector3 Slide::getTrackPosition(float timeOffset)
@@ -51,16 +67,16 @@ Vector3 Slide::getTrackPosition(float timeOffset)
 
 void Slide::movedMouse(const OIS::MouseEvent &e)
 {
-    if (!sliding)
+    if (!sliding || sprint)
         return;
 
     float mod = Global::timestep / -10.0f;
     float mouseX = e.state.X.rel*mod;
     float mouseY = e.state.Y.rel*mod;
 
-    const float maxAngle = 90;
+    const float maxAngle = 85;
 
-    headState.pitch = Math::Clamp(headState.pitch + mouseX, -maxAngle, maxAngle);
+    headState.pitch = headState.pitch + mouseX; // Math::Clamp(headState.pitch + mouseX, -maxAngle, maxAngle);
     headState.yaw = Math::Clamp(headState.yaw + mouseY, -maxAngle, maxAngle);
 }
 
@@ -273,7 +289,7 @@ bool Slide::placePointOnLine(Vector3& point)
 
 void Slide::startJumpToSlide()
 {
-    Global::shaker->startShaking(1.0, 1.0, 0.5, 1, 1, 0.5, 0.35, 1, true);
+    Global::shaker->startShaking(0.8, 1.0, 0.5, 1, 1, 0.4, 0.25, 1, true);
 
     auto target = getCurrentState().getTranslate();
     target.y += head->getPosition().y;
@@ -362,7 +378,7 @@ void Slide::updateJumpToSlide(float time)
     auto hAdd = heightFunc(w, hd)*maxH;
     pos.y += hAdd;
 
-    Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("Jumping: hadd " + Ogre::StringConverter::toString(hAdd) + ", hd " + Ogre::StringConverter::toString(hd), Ogre::LML_NORMAL);
+    //Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("Jumping: hadd " + Ogre::StringConverter::toString(hAdd) + ", hd " + Ogre::StringConverter::toString(hd), Ogre::LML_NORMAL);
 
     headArrival.tempNode->setPosition(pos);
     headArrival.tempNode->setOrientation(dir*Global::shaker->current);
@@ -371,7 +387,7 @@ void Slide::updateJumpToSlide(float time)
     {
         jumpingToSlide = false;
 
-        attach();
+        attach(true);
     }
 }
 
@@ -410,9 +426,10 @@ bool Slide::start(Vector3& pos, bool withJump)
     return false;
 }
 
-void Slide::setCorrectDirection()
+void Slide::setCorrectDirection(float startOffset)
 {
-    float startOffset = mTrackerState->getTimePosition();
+    if (startOffset<0)
+        startOffset = mTrackerState->getTimePosition();
 
     if (bidirectional)
     {
@@ -421,7 +438,8 @@ void Slide::setCorrectDirection()
 
         if (pdir.dotProduct(slDir) < 0)
         {
-            startOffset = mTrackerState->getLength() - startOffset;
+            Animation* anim = Global::mSceneMgr->getAnimation(animName);
+            startOffset = anim->getLength() - startOffset;
             invertTrack();
         }
     }
@@ -437,7 +455,7 @@ bool Slide::start(float startOffset, bool withJump)
     if (sliding || unavailableTimer > 0)
         return false;
 
-    setCorrectDirection();
+    setCorrectDirection(startOffset);
 
     currentSpeed = 0;
 
@@ -460,7 +478,7 @@ void Slide::updateSlidingSpeed(float time)
     //currentSpeed = Math::Clamp(currentSpeed + -dir.y*0.5f*time, 1.0f, 2.5f);
 
     auto diff = time*1.0f;
-    currentSpeed = std::min(0.5f, currentSpeed + diff);
+    currentSpeed = std::min(sprint ? 0.9f : 0.5f, currentSpeed + diff);
 }
 
 void Slide::removeControlFromPlayer()
@@ -541,6 +559,7 @@ void Slide::attach(bool retainDirection)
     mTrackerState->setEnabled(true);
     mTrackerState->setLoop(loop);
     sliding = true;
+    sprint = false;
 }
 
 void Slide::release(bool returnControl)
@@ -605,6 +624,23 @@ void Slide::updateSlidingCamera(float time)
         updateHeadArrival(time);
     else
     {
+        float headDif = abs(headState.pitch) + abs(headState.yaw);
+
+        if (sprint && headDif>0)
+        {
+            float pW = time * 250 * headState.pitch / headDif;
+            if (headState.pitch>0)
+                headState.pitch = std::max(0.0f, headState.pitch - pW);
+            else
+                headState.pitch = std::min(0.0f, headState.pitch - pW);
+
+            float yW = time * 90 * headState.yaw / headDif;
+            if (headState.yaw > 0)
+                headState.yaw = std::max(0.0f, headState.yaw - yW);
+            else
+                headState.yaw = std::min(0.0f, headState.yaw - yW);
+        }
+
         Quaternion qpitch = Quaternion(Degree(headState.pitch), Vector3(0, 1, 0));
         Quaternion qyaw = Quaternion(Degree(headState.yaw), Vector3(1, 0, 0));
 

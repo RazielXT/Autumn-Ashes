@@ -22,6 +22,7 @@ public:
     virtual bool update(Ogre::Real tslf);
 
     virtual void pressedKey(const OIS::KeyEvent &arg);
+    virtual void releasedKey(const OIS::KeyEvent &arg);
     virtual void movedMouse(const OIS::MouseEvent &e);
 
     Vector3 getTrackPosition(float timeOffset);
@@ -48,7 +49,7 @@ protected:
     virtual void resetHead() {};
 
     void removeControlFromPlayer();
-    void setCorrectDirection();
+    void setCorrectDirection(float startOffset = -1);
 
     bool jumpingToSlide = false;
 
@@ -98,6 +99,7 @@ protected:
 
     bool enablePlayerControl = false;
     bool sliding = false;
+    bool sprint = false;
     float unavailableTimer = 0;
 
     std::string animName;

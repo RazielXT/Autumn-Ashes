@@ -52,6 +52,8 @@ void TopSlide::releasedKey(const OIS::KeyEvent &arg)
     {
         rolling = 0;
     }
+
+    Slide::releasedKey(arg);
 }
 
 bool TopSlide::start()
