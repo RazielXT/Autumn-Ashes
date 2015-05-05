@@ -38,7 +38,7 @@ void ZipLineSlide::updateTurningRoll(float time)
     }
 
     //force to side, faster speed means more turn
-    auto yaw = MathUtils::getYawBetween(q, turnRollState.lastOr);
+    auto yaw = MathUtils::getYawBetween(q, turnRollState.lastOr)*Math::PI/180.0f;
     auto force = yaw*time*currentSpeed*turnForce;
 
     auto& headRoll = turnRollState.curHeadRoll;

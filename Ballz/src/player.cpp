@@ -3,6 +3,7 @@
 #include "PostProcessMgr.h"
 #include "PlayerPostProcess.h"
 #include "PlayerParkour.h"
+#include "MathUtils.h"
 
 using namespace Ogre;
 
@@ -138,23 +139,27 @@ void Player::default_callback(OgreNewt::Body* me, float timeStep, int threadInde
 
 void Player::pressedKey(const OIS::KeyEvent &arg)
 {
+    switch (arg.key)
+    {
+    case OIS::KC_D:
+        right_key = true;
+        break;
+    case OIS::KC_A:
+        left_key = true;
+        break;
+    case OIS::KC_W:
+        forw_key = true;
+        break;
+    case OIS::KC_S:
+        back_key = true;
+        break;
+    }
+
     if(!inMoveControl)
         return;
 
     switch (arg.key)
     {
-    case OIS::KC_D:
-        right_key=true;
-        break;
-    case OIS::KC_A:
-        left_key=true;
-        break;
-    case OIS::KC_W:
-        forw_key=true;
-        break;
-    case OIS::KC_S:
-        back_key=true;
-        break;
     case OIS::KC_LSHIFT:
         sprinting = true;
         break;
@@ -402,7 +407,7 @@ void Player::update(Real time)
 
     pPostProcess->update(tslf);
 
-    if(!alive)
+    if (!alive)
         return;
 
     updateStats();
@@ -416,7 +421,7 @@ void Player::update(Real time)
 
 void Player::updateStats()
 {
-    moving = right_key || forw_key || back_key || left_key;
+    moving = (right_key || forw_key || back_key || left_key) && inMoveControl;
 
     bodyPosition = body->getPosition();
 
@@ -449,9 +454,9 @@ void Player::updateStats()
     }
 
     if (wallrunning)
-        slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, wallrunning ? 20.0f : 10.0f);
+        slidesAutoTarget->getAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, wallrunning ? 20.0f : 10.0f);
     else if (inControl && !pParkour->isRolling() && !climbing && !hanging)
-        slidesAutoTarget->updateAutoTarget(mCamera->getDerivedPosition() - Vector3(0,2,0), getFacingDirection(), tslf, 0);
+        slidesAutoTarget->getAutoTarget(mCamera->getDerivedPosition() - Vector3(0,2,0), getFacingDirection(), tslf, 0);
     else
         slidesAutoTarget->hideAutoTarget();
 }

@@ -133,7 +133,13 @@ void SlidesAutoTargetAsync::hideAutoTarget()
     targetInfo.targetSlide = nullptr;
 }
 
-void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance, Slide* ignoredSlide)
+void SlidesAutoTargetAsync::computeAutoTarget()
+{
+    //preparedSlide = nullptr;
+    //targetResult = std::async(std::launch::async, &SlidesAutoTargetAsync::getTargetSlideFunc, this, pos, dir, rayDistance, ignoredSlide);
+}
+
+void SlidesAutoTargetAsync::getAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance, Slide* ignoredSlide)
 {
     auto found = targetResult.valid() ? targetResult.get() : false;
 

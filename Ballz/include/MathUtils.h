@@ -8,17 +8,50 @@ namespace MathUtils
 {
 inline float getYawBetween(Quaternion& q1, Quaternion& q2)
 {
-    auto yaw = q1.getYaw().valueRadians();
-    auto yaw2 = q2.getYaw().valueRadians();
+    auto yaw = q1.getYaw().valueDegrees();
+    auto yaw2 = q2.getYaw().valueDegrees();
 
     auto r = yaw - yaw2;
-    if (r > Math::PI)
-        r -= Math::TWO_PI;
-    if (r < -Math::PI)
-        r += Math::TWO_PI;
+    if (r > 180)
+        r -= 360;
+    if (r < -180)
+        r += 360;
 
     return r;
 }
+
+inline float getSign(float x)
+{
+    return (float)((x > 0) - (x < 0));
+}
+
+inline float getPitch(Quaternion& q)
+{
+    auto pDir = q*Ogre::Vector3(0, 0, -1);
+    pDir.normalise();
+
+    float x = sqrt(1 - pDir.y*pDir.y);
+
+    Vector3 dir(0, pDir.y, x);
+    auto r = dir.angleBetween(Vector3(0, 0, 1))*getSign(pDir.y);
+
+    return r.valueDegrees();
+}
+
+inline float getPitchBetween(Quaternion& q1, Quaternion& q2)
+{
+    auto pi = getPitch(q1);
+    auto pi2 = getPitch(q2);
+
+    auto r = pi - pi2;
+    if (r > 180)
+        r -= 360;
+    if (r < -180)
+        r += 360;
+
+    return r;
+}
+
 
 inline float getSideDotProduct(Vector3 v1, Vector3 v2)
 {

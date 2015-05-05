@@ -27,6 +27,8 @@ public:
     Vector3 getTrackPosition(float timeOffset);
 
     Ogre::Quaternion getDirectionState(float offset);
+    Ogre::Quaternion getDirectionState();
+
     Ogre::TransformKeyFrame getCurrentState();
 
     struct SlidePoint
@@ -46,6 +48,7 @@ protected:
     virtual void resetHead() {};
 
     void removeControlFromPlayer();
+    void setCorrectDirection();
 
     bool jumpingToSlide = false;
 
@@ -54,7 +57,7 @@ protected:
 
     struct HeadTransitionState
     {
-        float pitch;
+        float dist;
         SceneNode* tempNode;
         Vector3 posTarget;
         Vector3 pos;
@@ -84,7 +87,7 @@ protected:
 
     virtual void updateSlidingCamera(float time);
 
-    void attach();
+    void attach(bool retainDirection = false);
     void release(bool returnControl = true);
 
     float currentSpeed;
