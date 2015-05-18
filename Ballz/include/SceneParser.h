@@ -75,67 +75,119 @@ private:
     std::map<Ogre::String, std::vector<CompoundBodyInfo>> compoundBodiesParts;
     std::vector<LoadedInstanceForests> loadedForests;
 
-	const float staticEntitiesGridSize = 30;
-	const float maxOptimizableEntitySize = staticEntitiesGridSize;
-	std::map<void*, std::vector<Entity*>> loadedOptimizableEntities;
+    const float staticEntitiesGridSize = 30;
+    const float maxOptimizableEntitySize = staticEntitiesGridSize;
+    std::map<Ogre::String, std::vector<Ogre::Entity*>> loadedOptimizableEntities;
 
-	void optimizeEntities()
-	{
-		int sgCount = 0;
+    void addOptimizableEntity(Ogre::Entity* e)
+    {
+        auto sizeVec = e->getBoundingBox().getMaximum() - e->getBoundingBox().getMinimum();
+        sizeVec *= e->getParentSceneNode()->_getDerivedScale();
+        if (std::max(sizeVec.x, std::max(sizeVec.y, sizeVec.z)) > maxOptimizableEntitySize)
+            return;
 
-		for (auto it : loadedOptimizableEntities)
-		{
-			auto entities = it.second;
+        auto m = e->getSubEntity(0)->getMaterialName();
 
-			std::map < Ogre::Vector3, std::vector<Entity*>> grid;
+        if (loadedOptimizableEntities.find(m) == loadedOptimizableEntities.end())
+            loadedOptimizableEntities[m] = std::vector<Ogre::Entity*>();
 
-			for (auto e : entities)
-			{
-				auto sizeVec = e->getBoundingBox().getMaximum() - e->getBoundingBox().getMinimum();
-				if (std::max(sizeVec.x, std::max(sizeVec.y, sizeVec.z))>maxOptimizableEntitySize)
-					continue;
+        loadedOptimizableEntities[m].push_back(e);
+    }
 
-				Ogre::Vector3 gridPos = e->getParentNode()->_getDerivedPosition() / staticEntitiesGridSize;
-				gridPos = Vector3(floor(gridPos.x), floor(gridPos.y), floor(gridPos.z));
+    struct mvec
+    {
+        int x;
+        int y;
+        int z;
 
-				if (grid.find(gridPos) == grid.end())
-					grid[gridPos] = std::vector<Entity*>();
+        mvec::mvec(int xi, int yi, int zi) : x(xi), y(yi), z(zi) {}
 
-				grid[gridPos].push_back(e);
-			}
+        std::string str()
+        {
+            return std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z);
+        }
+    };
 
-			for (auto gIt : grid)
-			{
-				auto& v = gIt.second;
+    class comparator
+    {
+    public:
+        bool operator()(const mvec& lhs, const mvec& rhs) const
+        {
+            if (lhs.x < rhs.x)
+                return true;
+            else if (lhs.y < rhs.y)
+                return true;
+            else if (lhs.z < rhs.z)
+                return true;
+            else
+                return false;
+        }
+    };
 
-				if (v.size()<3)
-					continue;
+    void optimizeEntities()
+    {
+        int sgCount = 0;
 
-				Ogre::StaticGeometry* sg = Global::mSceneMgr->createStaticGeometry("sg" + std::to_string(sgCount++));
+        Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
+        myLog->logMessage("Start of optimizing entities", LML_NORMAL);
 
-				auto size = staticEntitiesGridSize;
-				sg->setRegionDimensions(Ogre::Vector3(size, size, size));
-				sg->setOrigin(Ogre::Vector3(-size / 2, 0, -size / 2));
+        for (auto it : loadedOptimizableEntities)
+        {
+            auto entities = it.second;
 
-				for (auto e : v)
-				{
-					auto sn = e->getParentSceneNode();
-					auto pos = sn->_getDerivedPosition();
-					auto quat = sn->_getDerivedOrientation();
-					auto scale = sn->_getDerivedScale();
+            std::map < mvec, std::vector<Entity*>, comparator> grid;
 
-					sn->removeAllChildren();
+            for (auto e : entities)
+            {
+                Ogre::Vector3 gridPos = e->getParentNode()->_getDerivedPosition() / staticEntitiesGridSize;
+                mvec mgridPos = mvec((int)gridPos.x, (int)gridPos.y, (int)gridPos.z);
 
-					sg->addEntity(e, pos, quat, scale);
-				}	
+                myLog->logMessage("Fitting entity with pos: " + Ogre::StringConverter::toString(e->getParentNode()->_getDerivedPosition()) + " and id: " + mgridPos.str() + " and m: " + it.first, LML_NORMAL);
 
-				sg->build();
-			}
-		}
+                grid[mgridPos].push_back(e);
+            }
 
-		loadedSlides.clear();
-		loadedSlideParts.clear();
-	}
+            Ogre::StaticGeometry* sg = nullptr;
+
+            for (auto gIt : grid)
+            {
+                auto& v = gIt.second;
+
+                if (v.size()<2)
+                    continue;
+
+                if (!sg)
+                {
+                    sg = Global::mSceneMgr->createStaticGeometry("sg" + std::to_string(sgCount++));
+                    sg->setRegionDimensions(Ogre::Vector3(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize));
+                    sg->setOrigin(Ogre::Vector3(0, 0, 0));
+                    sg->setCastShadows(true);
+                }
+
+                myLog->logMessage("Creating geometry with number of entities: " + Ogre::StringConverter::toString(v.size()), LML_NORMAL);
+
+                for (auto e : v)
+                {
+                    auto sn = e->getParentSceneNode();
+                    auto pos = sn->_getDerivedPosition();
+                    auto quat = sn->_getDerivedOrientation();
+                    auto scale = sn->_getDerivedScale();
+
+                    sn->detachAllObjects();
+                    sg->addEntity(e, pos, quat, scale);
+                }
+
+            }
+
+            if (sg)
+                sg->build();
+
+        }
+
+        myLog->logMessage("End of optimizing entities", LML_NORMAL);
+
+        loadedOptimizableEntities.clear();
+    }
 
     void connectSlideParts()
     {
@@ -1262,6 +1314,9 @@ private:
             break;
         }
 
+        if (body && body->getMass() == 0)
+            addOptimizableEntity(ent);
+
         return body;
     }
 
@@ -1865,6 +1920,8 @@ private:
                     }
 
                 }
+                else
+                    addOptimizableEntity(ent);
             }
         }
 
@@ -2258,6 +2315,7 @@ public:
         loadedForests.clear();
 
         connectSlideParts();
+        optimizeEntities();
 
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("LOADING COMPLETED :: filename \"" + filename + "\"", LML_NORMAL);
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("-----------------------------------------------------------", LML_NORMAL);
