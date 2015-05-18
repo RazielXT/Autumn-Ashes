@@ -75,6 +75,68 @@ private:
     std::map<Ogre::String, std::vector<CompoundBodyInfo>> compoundBodiesParts;
     std::vector<LoadedInstanceForests> loadedForests;
 
+	const float staticEntitiesGridSize = 30;
+	const float maxOptimizableEntitySize = staticEntitiesGridSize;
+	std::map<void*, std::vector<Entity*>> loadedOptimizableEntities;
+
+	void optimizeEntities()
+	{
+		int sgCount = 0;
+
+		for (auto it : loadedOptimizableEntities)
+		{
+			auto entities = it.second;
+
+			std::map < Ogre::Vector3, std::vector<Entity*>> grid;
+
+			for (auto e : entities)
+			{
+				auto sizeVec = e->getBoundingBox().getMaximum() - e->getBoundingBox().getMinimum();
+				if (std::max(sizeVec.x, std::max(sizeVec.y, sizeVec.z))>maxOptimizableEntitySize)
+					continue;
+
+				Ogre::Vector3 gridPos = e->getParentNode()->_getDerivedPosition() / staticEntitiesGridSize;
+				gridPos = Vector3(floor(gridPos.x), floor(gridPos.y), floor(gridPos.z));
+
+				if (grid.find(gridPos) == grid.end())
+					grid[gridPos] = std::vector<Entity*>();
+
+				grid[gridPos].push_back(e);
+			}
+
+			for (auto gIt : grid)
+			{
+				auto& v = gIt.second;
+
+				if (v.size()<3)
+					continue;
+
+				Ogre::StaticGeometry* sg = Global::mSceneMgr->createStaticGeometry("sg" + std::to_string(sgCount++));
+
+				auto size = staticEntitiesGridSize;
+				sg->setRegionDimensions(Ogre::Vector3(size, size, size));
+				sg->setOrigin(Ogre::Vector3(-size / 2, 0, -size / 2));
+
+				for (auto e : v)
+				{
+					auto sn = e->getParentSceneNode();
+					auto pos = sn->_getDerivedPosition();
+					auto quat = sn->_getDerivedOrientation();
+					auto scale = sn->_getDerivedScale();
+
+					sn->removeAllChildren();
+
+					sg->addEntity(e, pos, quat, scale);
+				}	
+
+				sg->build();
+			}
+		}
+
+		loadedSlides.clear();
+		loadedSlideParts.clear();
+	}
+
     void connectSlideParts()
     {
         for (auto it : loadedSlideParts)
