@@ -198,17 +198,29 @@ void GameStateManager::update(float tslf)
 
 void GameStateManager::escapePressed()
 {
+    static float lastNoise = 0;
+    static float lastCont = 0;
+
     if (gameState == GAME)
     {
         myMenu->clearMenu();
         myMenu->setIngameMenu();
-        Global::mPPMgr->radialHorizBlurVignette.z = 1.0;
+        Global::mPPMgr->radialHorizBlurVignette.z = 2.0;
+
+        lastNoise = Global::mPPMgr->ContSatuSharpNoise.z;
+        lastCont = Global::mPPMgr->ContSatuSharpNoise.x;
+        Global::mPPMgr->ContSatuSharpNoise.z = 1;
+        Global::mPPMgr->ContSatuSharpNoise.x = 1;
+
         gameState = PAUSE;
     }
     else if (gameState == PAUSE)
     {
         myMenu->clearMenu();
         Global::mPPMgr->radialHorizBlurVignette.z = 0.0;
+        Global::mPPMgr->ContSatuSharpNoise.z = lastNoise;
+        Global::mPPMgr->ContSatuSharpNoise.x = lastCont;
+
         gameState = GAME;
     }
 }

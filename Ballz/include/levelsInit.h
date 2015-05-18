@@ -86,7 +86,7 @@ void createLevelTuto()
     ppMgr->ColouringShift = Ogre::Vector4(0.95, 0.98, 0.83, 0);
     ppMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 
-    Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().getByName("TCENoonSkyBoxToDark");
+    //Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().getByName("TCENoonSkyBoxToDark");
     //mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("dark", 1);
 
     //BridgeMaker* bm=new BridgeMaker(GlobalPointer->mSceneMgr,GlobalPointer->mWorld);
@@ -288,7 +288,7 @@ void createTestLevel()
     ppMgr->radialHorizBlurVignette = 0.0;
     ppMgr->ColouringShift = Ogre::Vector4(1, 1.05, 0.9, 0);
 
-    ppMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
+    ppMgr->setAutoGodraySunDirection();
 }
 
 void createLevel1_1()
@@ -341,8 +341,7 @@ void createLevel2()
     ppMgr->radialHorizBlurVignette = 0.0;
     ppMgr->ColouringShift = Ogre::Vector4(0.95, 0.89, 1, 0);
 
-    auto d = Global::mSceneMgr->getLight("FDirect001")->getAs4DVector()*-1;
-    ppMgr->setGodraySunPositionFar(Vector3(d.x,d.y,d.z));
+    ppMgr->setAutoGodraySunDirection();
 
     auto lvlUp = new Lvl2Update();
     Global::mEventsMgr->addTask(lvlUp);

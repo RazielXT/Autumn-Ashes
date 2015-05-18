@@ -39,6 +39,7 @@ public:
     };
 
     std::vector<SlidePoint> slidePoints;
+    bool bidirectional = false;
 
 protected:
 
@@ -94,7 +95,7 @@ protected:
     float currentSpeed;
     float avgSpeed = 5;
     bool loop = false;
-    bool bidirectional = false;
+
     void invertTrack();
 
     bool enablePlayerControl = false;
