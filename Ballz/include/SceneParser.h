@@ -104,6 +104,16 @@ private:
             return e->GetText();
     }
 
+    bool getElementBoolValue(const XMLElement* rootElement, String elementName)
+    {
+        auto e = rootElement->FirstChildElement(elementName.c_str());
+
+        if (e == nullptr || e->GetText() == nullptr)
+            return false;
+        else
+            return getBool(e->GetText());
+    }
+
     int getElementIntValue(const XMLElement* rootElement, String elementName, int defaultValue = 0)
     {
         auto e = rootElement->FirstChildElement(elementName.c_str());
@@ -112,6 +122,41 @@ private:
             return defaultValue;
         else
             return Ogre::StringConverter::parseInt(String(e->GetText()), defaultValue);
+    }
+
+    Vector2 getElementV2Value(const XMLElement* rootElement, String elementName, Vector2 defaultValue = Vector2::ZERO)
+    {
+        auto e = rootElement->FirstChildElement(elementName.c_str());
+
+        if (e == nullptr || e->GetText() == nullptr)
+            return defaultValue;
+        else
+        {
+            Ogre::String txt(e->GetText());
+
+            Ogre::String f1 = txt.substr(0, txt.find_first_of(','));
+            Ogre::String f2 = txt.substr(txt.find_last_of(',')+1);
+
+            return Vector2(Ogre::StringConverter::parseReal(f1), Ogre::StringConverter::parseReal(f2));
+        }
+    }
+
+    Vector3 getElementV3Value(const XMLElement* rootElement, String elementName, Vector3 defaultValue = Vector3::ZERO)
+    {
+        auto e = rootElement->FirstChildElement(elementName.c_str());
+
+        if (e == nullptr || e->GetText() == nullptr)
+            return defaultValue;
+        else
+        {
+            Ogre::String txt(e->GetText());
+
+            Ogre::String f1 = txt.substr(0, txt.find_first_of(','));
+            Ogre::String f2 = txt.substr(txt.find_first_of(',')+1, txt.find_last_of(','));
+            Ogre::String f3 = txt.substr(txt.find_last_of(',')+1);
+
+            return Vector3(Ogre::StringConverter::parseReal(f1), Ogre::StringConverter::parseReal(f2), Ogre::StringConverter::parseReal(f3));
+        }
     }
 
     const XMLElement* IterateChildElements(const XMLElement* xmlElement, const XMLElement* childElement)
@@ -384,10 +429,30 @@ private:
         }
     }
 
+    void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
+    {
+        static int partID = 0;
+        Ogre::String name = getElementValue(rootElement, "Name");
+
+        Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem("Particle" + std::to_string(partID++), name);
+        ps->setRenderQueueGroup(std::max<int>(91, ent->getRenderQueueGroup()));
+
+        if (getElementBoolValue(rootElement, "EditParams"))
+        {
+            auto mat = getElementValue(rootElement, "Material");
+            if (!mat.empty()) ps->setMaterialName(mat);
+
+            auto psize = getElementV2Value(rootElement, "Size");
+            if (psize.x != 0) ps->setDefaultDimensions(psize.x, psize.y);
+        }
+
+        node->detachAllObjects();
+        Global::mSceneMgr->destroyEntity(ent);
+        node->attachObject(ps);
+    }
+
     void loadPlane(const XMLElement* planeElement, SceneNode* node, Ogre::SceneManager *mSceneMgr)
     {
-
-
         Ogre::Vector3 normal;
         Ogre::Vector3 upVector;
 
@@ -432,11 +497,15 @@ private:
 
     void loadLight(const XMLElement* lightElement, SceneNode* node, Ogre::SceneManager *mSceneMgr)
     {
+        auto type = ParseLightType(GetStringAttribute(lightElement, "type"));
+        Ogre::String name = lightElement->Attribute("name");
 
+        if (type == Light::LT_DIRECTIONAL && !mSceneMgr->hasLight("Sun"))
+            name = "Sun";
 
         //Create the light
-        Light* light = mSceneMgr->createLight(lightElement->Attribute("name"));
-        light->setType(ParseLightType(GetStringAttribute(lightElement, "type")));
+        Light* light = mSceneMgr->createLight(name);
+        light->setType(type);
         light->setCastShadows(getBool(lightElement->Attribute("castShadows")));
         light->setPowerScale(GetRealAttribute(lightElement, "power"));
         node->attachObject(light);
@@ -796,6 +865,7 @@ private:
         std::vector<Ogre::Vector3> points;
 
         auto loop = Ogre::StringConverter::parseBool(getElementValue(element, "Loop"));
+        auto bidir = Ogre::StringConverter::parseBool(getElementValue(element, "Bidirectional"));
         auto speed = Ogre::StringConverter::parseReal(getElementValue(element, "Speed"));
         auto top = Ogre::StringConverter::parseBool(getElementValue(element, "Top"));
         auto animTrack = getElementValue(element, "Animation");
@@ -833,6 +903,8 @@ private:
                 line = new TopSlide(points, node->getName(), loop, speed);
             else
                 line = new ZipLineSlide(points, node->getName(), loop, speed);
+
+            line->bidirectional = bidir;
         }
         else
             line = new TopSlide(node, node->getName(), animTrack, loop, speed);
@@ -1541,6 +1613,10 @@ private:
                         loadPhysics(root, ent, node, mWorld, mEventMgr, wMaterials);
 
                         setModifierEnd(root, &ent, &node, mSceneMgr);
+                    }
+                    else if (rootTag == "Particle")
+                    {
+                        loadParticle(root, ent, node);
                     }
                     else if (rootTag == "EnvSoundBody")
                     {

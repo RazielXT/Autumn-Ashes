@@ -25,6 +25,12 @@
         <enumItem name="Self" value="2" />
 </enum>
 
+<enum name="eType" type="string">
+		<enumItem name="Point" value="0" />
+        <enumItem name="Common" value="1" />
+        <enumItem name="Self" value="2" />
+</enum>
+
 <enum name="btype" type="int">
 		<enumItem name="Default" value="0" />
         <enumItem name="Pullup_old" value="2" />
@@ -236,7 +242,6 @@
 	<data name="ObjectModifier" displayName="Object Modifier" type="mtype" groupName="Modifier" defaultValue="Regular"/>
 	
 	<data name="Mask" displayName="Visibility mask" type="int" groupName="Reflection" defaultValue="1"/>
-	
 </class>
 
 <class name="Water" usage="object">
@@ -244,10 +249,36 @@
 	<data name="ObjectModifier" displayName="Object Modifier" type="mtype" groupName="Modifier" defaultValue="Regular"/>
 	
 	<data name="Reflection" displayName="Reflection enabled" type="bool" groupName="Reflection" defaultValue="true"/>
-	<data name="Mask" displayName="Visibility mask" type="int" groupName="Reflection" defaultValue="1"/>
-	
+	<data name="Mask" displayName="Visibility mask" type="int" groupName="Reflection" defaultValue="1"/>	
 </class>
 
+<enum name="emitterType" type="string">
+	   <enumItem name="Default" value="Default" />
+	   <enumItem name="Point" value="Point" />
+       <enumItem name="Box" value="Box" />
+	   <enumItem name="Ellipsoid" value="Box" />
+</enum>
+
+<class name="Particle" usage="object">
+	<data name="Name" type="string" defaultValue="Examples/Smoke"/>
+	
+	<data name="EditParams" displayName="Edit Params" type="bool" groupName="Params" defaultValue="false"/>
+	<data name="Material" displayName="Material" type="string" groupName="Params" visibilityParentName="EditParams"/>
+	<data name="Size" displayName="Size" type="int2" groupName="Params" visibilityParentName="EditParams" defaultValue="0,0"/>
+	<data name="Quota" displayName="Quota" type="int" groupName="Params" visibilityParentName="EditParams" defaultValue="0"/>
+	<data name="MoreParams" displayName="More Params" type="bool" groupName="Params" visibilityParentName="EditParams" defaultValue="false"/>
+	<data name="Sorted" displayName="Sorted" type="bool" groupName="Params" visibilityParentName="MoreParams" defaultValue="false"/>
+	<data name="CullEach" displayName="Cull Each" type="bool" groupName="Params" visibilityParentName="MoreParams" defaultValue="false"/>
+	
+	<data name="EditEmmiter" displayName="Edit Emmiter" type="bool" groupName="Emmiter" defaultValue="false"/>
+	<data name="EmmiterType" displayName="Type" type="emitterType" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
+	<data name="Angle" displayName="Angle" type="int" defaultValue="0" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
+	<data name="Emmision" displayName="Emmision" type="int" defaultValue="0" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
+	<data name="Velocity" displayName="Velocity" type="int2" defaultValue="0,0" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
+	<data name="Lifespan" displayName="Lifespan" type="int2" defaultValue="0,0" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
+
+	<data name="MaterialShader" displayName="Material Shader Params(var=val)" type="string" defaultValue="" groupName="Shader" editWidth="300" editHeight="100"/>
+</class>
 
 <class name="Player" usage="object">
 	<data name="reactions" displayName="Rections [int;int...]" groupName="Player" type="string"/>
