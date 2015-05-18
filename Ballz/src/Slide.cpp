@@ -159,7 +159,7 @@ void Slide::invertTrack()
 
 void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
 {
-    bidirectional = true;
+    //bidirectional = true;
 
     headArrival.tempNode = nullptr;
 
@@ -478,7 +478,7 @@ void Slide::updateSlidingSpeed(float time)
     //currentSpeed = Math::Clamp(currentSpeed + -dir.y*0.5f*time, 1.0f, 2.5f);
 
     auto diff = time*1.0f;
-    currentSpeed = std::min(sprint ? 0.9f : 0.5f, currentSpeed + diff);
+    currentSpeed = std::min(sprint ? avgSpeed*1.5f : avgSpeed, currentSpeed + diff);
 }
 
 void Slide::removeControlFromPlayer()
@@ -569,7 +569,7 @@ void Slide::release(bool returnControl)
         Global::player->attachCameraWithTransition();
         Global::player->body->setPositionOrientation(head->_getDerivedPosition(), Ogre::Quaternion::IDENTITY);
         Global::player->body->unFreeze();
-        Global::player->body->setVelocity(getDirectionState()*Vector3(0, 0, -1 * realSpeed) + Vector3(0, 3, 0));
+        Global::player->body->setVelocity(getDirectionState()*Vector3(0, 0, -1 * currentSpeed) + Vector3(0, 3, 0));
 
         enablePlayerControl = true;
     }
@@ -658,8 +658,8 @@ void Slide::updateSlidingState(float time)
     auto thisPos = tracker->getPosition();
     realSpeed = lastPos.distance(thisPos) / time;
 
-    auto log = Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log");
-    log->logMessage("LINE SPEED " + std::to_string(realSpeed), Ogre::LML_NORMAL);
+    //auto log = Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log");
+    //log->logMessage("LINE SPEED " + std::to_string(realSpeed), Ogre::LML_NORMAL);
 
     updateSlidingSpeed(time);
 

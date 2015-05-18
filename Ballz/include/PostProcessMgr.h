@@ -26,6 +26,7 @@ public:
 
     void setGodraySunPosition(Ogre::Vector3 pos);
     void setGodraySunPositionFar(Ogre::Vector3 pos);
+    void setAutoGodraySunDirection();
 
     Ogre::Matrix4 ivp;
     Ogre::Matrix4 pvp;

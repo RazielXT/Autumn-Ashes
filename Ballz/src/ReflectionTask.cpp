@@ -58,7 +58,7 @@ bool ReflectionTask::start()
     Viewport *v = rttTex->addViewport(mReflectCam);
     v->setClearEveryFrame(true);
     v->setBackgroundColour(ColourValue::Black);
-    //v->setShadowsEnabled(false);
+    v->setShadowsEnabled(false);
 
     MaterialPtr mat = mEntity->getSubEntity(0)->getMaterial();
     TextureUnitState* t = mat->getTechnique(0)->getPass(0)->getTextureUnitState("reflectionMap");

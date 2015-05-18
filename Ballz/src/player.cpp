@@ -33,7 +33,7 @@ Player::Player(WorldMaterials* wMaterials)
     forw_key=false;
     back_key=false;
     moving=false;
-    onGround = false;
+    onGround = true;
     sprinting = false;
 
     hanging=false;
@@ -64,11 +64,6 @@ Player::Player(WorldMaterials* wMaterials)
     pParkour = new PlayerParkour(this);
 
     slidesAutoTarget = new SlidesAutoTargetAsync();
-
-    /*  Ogre::SceneNode* panode = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0,0,0));
-      Ogre::ParticleSystem* ps=mSceneMgr->createParticleSystem("Smoke", "Examples/Smoke");
-      panode->attachObject(ps);
-      mSceneMgr->getParticleSystem("Smoke")->setRenderQueueGroup(91);*/
 }
 
 Player::~Player ()
@@ -247,6 +242,9 @@ void Player::movedMouse(const OIS::MouseEvent &e)
 
 void Player::die()
 {
+    if (!alive)
+        return;
+
     delete uv;
     delete uv2;
     body->setLinearDamping(2);
