@@ -81,7 +81,7 @@ private:
 
     void addOptimizableEntity(Ogre::Entity* e)
     {
-        auto sizeVec = e->getBoundingBox().getMaximum() - e->getBoundingBox().getMinimum();
+        auto sizeVec = e->getBoundingBox().getSize();
         sizeVec *= e->getParentSceneNode()->_getDerivedScale();
         if (std::max(sizeVec.x, std::max(sizeVec.y, sizeVec.z)) > maxOptimizableEntitySize)
             return;
@@ -138,8 +138,12 @@ private:
             std::map < mvec, std::vector<Entity*>, comparator> grid;
 
             for (auto e : entities)
-            {
-                Ogre::Vector3 gridPos = e->getParentNode()->_getDerivedPosition() / staticEntitiesGridSize;
+            {             
+				Ogre::Quaternion eQ = e->getParentNode()->_getDerivedOrientation();
+				Ogre::Vector3 bbCenterOffset = eQ*e->getBoundingBox().getHalfSize() - eQ*e->getBoundingBox().getCenter();
+				Ogre::Vector3 gridPos = (e->getParentNode()->_getDerivedPosition() - bbCenterOffset) / staticEntitiesGridSize;
+				//Ogre::Vector3 gridPos = e->getParentNode()->_getDerivedPosition() / staticEntitiesGridSize;
+
                 mvec mgridPos = mvec((int)gridPos.x, (int)gridPos.y, (int)gridPos.z);
 
                 myLog->logMessage("Fitting entity with pos: " + Ogre::StringConverter::toString(e->getParentNode()->_getDerivedPosition()) + " and id: " + mgridPos.str() + " and m: " + it.first, LML_NORMAL);
