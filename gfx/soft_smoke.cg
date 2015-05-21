@@ -1,0 +1,82 @@
+
+void softsmoke_vs(uniform float4x4 wpmat,
+    uniform float4x4 wmat,
+    in float4 inPos : POSITION,
+	in float4 inN : NORMAL,
+
+    out float4 pos : POSITION,
+    out float3 uvOut : TEXCOORD0,
+	out float4 dOut : TEXCOORD1,
+	out float3 wpos : TEXCOORD2,
+	
+	in float2 uvIn : TEXCOORD0,
+	in float4 vC : COLOR)
+{
+    pos = mul(wpmat, inPos);
+
+    uvOut.xy=uvIn.xy;
+	uvOut.z=vC.a;
+	
+	dOut=pos;
+	
+	wpos = mul(wmat, inPos).xyz;	
+}
+
+
+void softsmoke_ps(
+	uniform float3 camPos,
+	uniform sampler2D material: register(s0),
+	uniform sampler2D depth: register(s1),
+	float2 screenSpace : WPOS,
+	in float3 uv : TEXCOORD0,
+	in float4 d : TEXCOORD1,
+	in float3 wpos : TEXCOORD2,
+	out float4 color0 : COLOR0
+	)
+{
+	if(uv.x<0 || uv.x>1 || uv.y<0 || uv.y>1)
+	discard;
+		
+	float depthCloudZ=d.z;
+ 
+	float depthSides = 30;
+	float sideW = abs(uv.xy*2 - 1);
+	depthCloudZ += (sideW*sideW)*depthSides; 
+	
+	d/=d.w;
+	
+	float depthCloud = distance(wpos.xyz,camPos);
+	
+	float2 depthTexCoord = d.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+	depthTexCoord+=float2(0.5f/1280.0f,0.5f/768.0f);
+	
+	float depthEnv=tex2D(depth,depthTexCoord).y;   
+	if(depthEnv<depthCloudZ) discard;
+
+	float4 color=tex2D(material, uv.xy);
+	if(color.a==0) discard;
+
+	float camScale=3;
+	float scale=10;
+
+	/*float roz=saturate(abs(depthCloud-depthEnv)/scale);
+	roz*=0.8;
+
+	roz *= uv.z;*/
+	
+	float objBlend = saturate((depthEnv-depthCloudZ)/scale);
+	float camBlend = saturate(depthCloud/camScale);
+	
+	color0=color.rgbr*objBlend*camBlend*uv.z;
+		
+	//float dim=1;
+	//scale=2.5;
+	//if(depthCloud<scale) dim=depthCloud/scale;
+	//roz=min(roz,dim);
+	
+	//color.rgb=saturate(color.rgb-(1-uv.x));
+	//color.rgb*=saturate((uv.w-20)/5);
+	//color0= float4(color.rgb,color.a*roz*uv.z);
+	
+	//color0=float4(color.rgb*roz,color.r*roz);
+}

@@ -138,11 +138,11 @@ private:
             std::map < mvec, std::vector<Entity*>, comparator> grid;
 
             for (auto e : entities)
-            {             
-				Ogre::Quaternion eQ = e->getParentNode()->_getDerivedOrientation();
-				Ogre::Vector3 bbCenterOffset = eQ*e->getBoundingBox().getHalfSize() - eQ*e->getBoundingBox().getCenter();
-				Ogre::Vector3 gridPos = (e->getParentNode()->_getDerivedPosition() - bbCenterOffset) / staticEntitiesGridSize;
-				//Ogre::Vector3 gridPos = e->getParentNode()->_getDerivedPosition() / staticEntitiesGridSize;
+            {
+                Ogre::Quaternion eQ = e->getParentNode()->_getDerivedOrientation();
+                Ogre::Vector3 bbCenterOffset = eQ*e->getBoundingBox().getHalfSize() - eQ*e->getBoundingBox().getCenter();
+                Ogre::Vector3 gridPos = (e->getParentNode()->_getDerivedPosition() - bbCenterOffset) / staticEntitiesGridSize;
+                //Ogre::Vector3 gridPos = e->getParentNode()->_getDerivedPosition() / staticEntitiesGridSize;
 
                 mvec mgridPos = mvec((int)gridPos.x, (int)gridPos.y, (int)gridPos.z);
 

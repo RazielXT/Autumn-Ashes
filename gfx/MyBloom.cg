@@ -1,0 +1,257 @@
+float4 MyBloom_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D scene: register(s0),
+	    uniform sampler2D bloomxy: register(s1)	
+         
+    ) : COLOR
+
+{
+  float4 sharp = tex2D(scene,uv);
+	float4 blur  = tex2D(bloomxy,uv);
+
+	return ( sharp + blur);
+
+}
+
+float4 Brightcheck_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D scene: register(s0),
+	    uniform sampler2D sceneLum: register(s1)	
+         
+    ) : COLOR
+
+{
+  float4 sharp = tex2D(scene,uv);
+sharp.rbg-=0.3+sharp.a;
+if(sharp.x<0) sharp.x=0;
+if(sharp.y<0) sharp.y=0;
+if(sharp.z<0) sharp.z=0;
+
+float matBrightness = tex2D(sceneLum,uv).b;
+if(matBrightness==1) matBrightness = 10;
+
+sharp*=2*matBrightness;
+
+	return  sharp;
+
+}
+
+#define BLUR_RADIUS 3
+
+static const float samplesSmoke[10] =
+{//stddev=2.0
+0.03122447,
+0.05383468,
+0.0759061,
+0.10097757,
+0.15266632,
+0.15266632,
+0.10097757,
+0.07359061,
+0.05383468,
+0.03122447
+};
+
+static const float2 posYSmoke[10] =
+{
+0, -2.2,
+0, -1.4,
+0, -0.8,
+0, -0.4,
+0, -0.25,
+0, 0.25,
+0, 0.4,
+0, 0.8,
+0, 1.4,
+0, 2.2
+};
+
+static const float samples0[11] =
+{//stddev=2.0
+0.01222447,
+0.03783468,
+0.08559061,
+0.12097757,
+0.17466632,
+
+0.19741265,
+
+0.17466632,
+0.12097757,
+0.08559061,
+0.03783468,
+0.01222447
+};
+
+static const float2 pos0[11] =
+{
+0, -2.2,
+0, -1.4,
+0, -0.8,
+0, -0.4,
+0, -0.25,
+0, 0,
+0, 0.25,
+0, 0.4,
+0, 0.8,
+0, 1.4,
+0, 2.2
+};
+
+float4 MyBloomX_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D scene: register(s0),
+		uniform sampler2D brightness: register(s1)
+         
+    ) : COLOR
+
+{
+	float t=tex2D(brightness, uv).r*1.5;
+   float b=abs(1.4-t);
+
+    float4 sum = 0;
+   for (int i = 0; i < 11; i++)
+   {
+      sum += tex2D(scene, uv+ pos0[i]*0.04*b*b) * samples0[i];
+   }
+   return sum;
+
+}
+
+float4 MySmokeBloomX_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D scene: register(s0)
+         
+    ) : COLOR
+
+{
+
+    float4 ini=tex2Dlod(scene, float4(uv,0,0));
+    float4 sum = ini*0.15;
+
+   for (int i = 0; i < 10; i++)
+   {
+	float4 t=tex2Dlod(scene, float4(uv+ posYSmoke[i]*0.01,0,0)) * samplesSmoke[i];
+
+      sum +=t;
+   }
+
+   if(ini.a>sum.a) sum=(ini+sum)/2; 
+   return sum;
+}
+
+static const float samples[11] =
+{//stddev=2.0
+0.01122447,
+0.03383468,
+0.05359061,
+0.10097757,
+0.16266632,
+
+0.37241265,
+
+0.16266632,
+0.10097757,
+0.05359061,
+0.03383468,
+0.01122447
+};
+
+static const float2 posXSmoke[10] =
+{
+-2.2, 0,
+-1.4, 0,
+-0.8, 0,
+-0.4, 0,
+-0.25, 0,
+ 0.25, 0,
+ 0.4, 0,
+ 0.8, 0,
+ 1.4, 0,
+ 2.2, 0,
+};
+
+static const float2 pos[11] =
+{
+-2.2, 0,
+-1.4, 0,
+-0.8, 0,
+-0.4, 0,
+-0.25, 0,
+ 0, 0,
+ 0.25, 0,
+ 0.4, 0,
+ 0.8, 0,
+ 1.4, 0,
+ 2.2, 0,
+};
+
+float4 MyBloomY_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D blurX: register(s0),
+		uniform sampler2D brightness: register(s1)
+         
+    ) : COLOR
+
+{
+float t=tex2D(brightness, uv).r*1.5;
+   float b=abs(1.4-t);
+   float4 sum = 0;
+   for (int i = 0; i < 11; i++)
+   {
+      sum += tex2D(blurX, uv + pos[i]*0.08*b) * samples[i];
+   }
+   return sum;
+
+
+}
+
+float4 MySmokeBloomY_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D blurX: register(s0)
+         
+    ) : COLOR
+
+{
+   float4 ini=tex2Dlod(blurX, float4(uv,0,0));
+   float4 sum = ini*0.15;
+
+   for (int i = 0; i < 10; i++)
+   {
+      float4 t=tex2Dlod(blurX, float4(uv+ posXSmoke[i]*0.01,0,0)) * samplesSmoke[i];
+
+	sum +=t;
+   }
+
+   if(ini.a>sum.a) sum=(ini+sum)/2; 
+
+   return sum;
+}
+
+float4 MyBloomYF_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D blurX: register(s0),
+	    uniform sampler2D brightness: register(s1)
+         
+    ) : COLOR
+
+{
+    float t=tex2D(brightness, uv).r*1.5;
+   float b=abs(1.4-t);
+
+   float4 sum = 0;
+   for (int i = 0; i < 11; i++)
+   {
+      sum += tex2D(blurX, uv + pos[i]*0.1*b) * samples[i];
+   }
+   return sum*b;
+
+
+}

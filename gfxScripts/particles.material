@@ -1,0 +1,442 @@
+material Particles/FlarePointSprite
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+
+			point_sprites on
+			point_size 10
+			//point_size 20
+			//point_size_attenuation on
+
+			texture_unit
+			{
+				texture flare.png
+			}
+		}
+	}
+}
+
+
+material Particles/Aureola
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend alpha_blend
+			depth_write off
+			cull_hardware none
+
+			texture_unit
+			{
+				texture aureola.png
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material Particles/point_lensflare
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			point_sprites on
+			point_size 0.1
+			point_size_attenuation on
+
+			texture_unit
+			{
+				texture flare.png
+			}
+		}
+	}
+}
+
+material Particles/lensflare
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture flare.png
+			}
+		}
+	}
+}
+
+material Particles/bigFlame
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture bigflame.png
+			}
+		}
+	}
+}
+
+material Particles/Spark
+{
+	technique
+	{
+		pass
+		{
+			alpha_rejection greater 80
+            
+  			scene_blend alpha_blend
+            
+  		    cull_hardware none
+              cull_software none
+
+
+
+			texture_unit
+			{
+				texture pump_leave.png
+			}
+		}
+	}
+}
+
+material Particles/Dust
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture dust.png
+			}
+		}
+	}
+}
+
+material Particles/Twirl
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+		
+
+			texture_unit
+			{
+				tex_address_mode clamp
+				texture twirl.png
+			}
+		}
+	}
+}
+
+material Particles/Cross
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture cross1.png
+			}
+		}
+	}
+}
+
+material Particles/smoke
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend alpha_blend
+
+			texture_unit
+			{
+				texture smoke.png
+			}
+		}
+	}
+}
+
+material Particles/explosion
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture explosion.png
+			}
+		}
+	}
+}
+
+material Particles/ringflare
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture ring_flare.png
+			}
+		}
+	}
+}
+
+material Particles/Ring
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+			cull_hardware none
+			cull_software none
+
+			texture_unit
+			{
+				texture ring1.png
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material Particles/Fibres
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture fibres.png
+			}
+		}
+	}
+}
+
+material Particles/Fireball
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture fireball.tga
+			}
+		}
+	}
+}
+
+material Particles/ringflare2
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture ring_flare2.png
+			}
+		}
+	}
+}
+
+material Particles/Flare
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+
+			texture_unit
+			{
+				texture flaretrail.png
+			}
+		}
+	}
+}
+
+material Particles/FlarePointSprite2
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture spinbeam.png
+				tex_address_mode clamp
+			}
+
+		}
+	}
+}
+
+material Particles/Streak
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture streak.png
+			}
+		}
+	}
+}
+
+material Particles/Bubble1
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture bubble1.png
+			}
+		}
+	}
+}
+
+material Particles/Bubble2
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture bubble2.png
+			}
+		}
+	}
+}
+
+material Particles/SpinBeam
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			scene_blend add
+
+			texture_unit
+			{
+				texture spinbeam.png
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material Particles/Smoke2
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend alpha_blend
+			depth_write off
+			cull_hardware clockwise
+			cull_software back
+
+			texture_unit
+			{
+				texture smoke.png
+				tex_address_mode clamp
+			}
+		}
+	}
+}

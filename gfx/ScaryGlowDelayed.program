@@ -1,0 +1,106 @@
+fragment_program ScaryGlowDelay_fp cg
+{
+	source ScaryGlowDelayed.cg
+	profiles ps_3_0 arbfp1
+	entry_point GlowDelay_fp
+
+        default_params
+        {
+		param_named hurtCoef float 0
+		param_named colourOverlaying float4 0
+		param_named ContSatuSharpNoise float4 0 0 0 0
+		param_named ColouringShift float4 1 1 1 
+		param_named bloomStrDep float4 1 1 0 0
+		param_named_auto time time_0_x 8
+		param_named_auto invTexSize inverse_texture_size 0
+        }
+
+	
+}
+
+vertex_program givs_vs cg
+{
+    source gishader.cg
+    profiles vs_3_0
+    entry_point myvs_vs
+
+default_params
+    {
+        param_named_auto wmat worldviewproj_matrix
+    }
+
+}
+
+material ScaryGlowDelay
+{
+	technique
+	{
+		pass
+		{
+			
+
+				   
+				   vertex_program_ref givs_vs 
+                        {
+                        }
+
+                        fragment_program_ref ScaryGlowDelay_fp
+                        {
+                        }
+
+                        texture_unit scene
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering none
+                        }
+                        
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering bilinear
+                        }
+					texture_unit
+                        {
+                              tex_coord_set 0
+						tex_address_mode clamp
+						filtering none
+
+                        }
+
+					texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering none
+                        }
+
+																	texture_unit depth
+                        {
+                              tex_coord_set 0
+						tex_address_mode clamp
+						filtering none
+
+                        }
+
+					texture_unit noise
+                        {
+                              tex_coord_set 0
+						texture noise5nn.jpg
+						filtering bilinear
+                        }
+
+					texture_unit gray
+                        {
+                              tex_coord_set 0
+					texture 151009heightmapsbarra.jpg
+						filtering bilinear
+                        }
+
+
+
+
+                }
+        }
+}

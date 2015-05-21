@@ -1,0 +1,86 @@
+fragment_program BasicGlowDelay_fp cg
+{
+	source BasicGlowDelayed.cg
+	profiles ps_3_0 arbfp1
+	entry_point BasicGlowDelay_fp
+
+        default_params
+        {
+		param_named hurtCoef float 0
+		param_named colourOverlaying float4 0
+        }
+
+	
+}
+
+vertex_program givs_vs cg
+{
+    source gishader.cg
+    profiles vs_3_0
+    entry_point myvs_vs
+
+default_params
+    {
+        param_named_auto wmat worldviewproj_matrix
+    }
+
+}
+
+material BasicGlowDelay
+{
+	technique
+	{
+		pass
+		{
+			
+
+				   
+				   vertex_program_ref givs_vs 
+                        {
+                        }
+
+                        fragment_program_ref BasicGlowDelay_fp
+                        {
+                        }
+
+                        texture_unit scene
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering none
+                        }
+                        
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering bilinear
+                        }
+					texture_unit
+                        {
+                              tex_coord_set 0
+						tex_address_mode clamp
+						filtering none
+
+                        }
+
+					texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering none
+                        }
+
+																	texture_unit depth
+                        {
+                              tex_coord_set 0
+						tex_address_mode clamp
+						filtering none
+
+                        }
+
+
+
+                }
+        }
+}

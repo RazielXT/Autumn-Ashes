@@ -1,0 +1,370 @@
+compositor ScaryBloomNoSSAO
+{
+    technique
+    {
+texture rt0 target_width target_height PF_R8G8B8A8 PF_R8G8B8A8 PF_R8G8B8A8 PF_FLOAT16_GR
+
+texture rtT target_width target_height PF_R8G8B8A8
+texture rt1 target_width target_height PF_FLOAT16_RGBA
+texture rtD target_width target_height PF_FLOAT16_GR
+
+      texture godray0 320 240 PF_R8G8B8
+      texture godray1 320 240 PF_R8G8B8
+
+		texture bloom_rt0 320 180 PF_FLOAT16_RGB
+		texture bloom_rt 160 90 PF_FLOAT16_RGB
+		texture bloom_rt2 85 45 PF_FLOAT16_RGB
+
+
+	     texture test0 64 64 PF_FLOAT16_RGB
+		texture test1 16 16 PF_FLOAT16_RGB
+		texture test2 4 4 PF_FLOAT16_RGB
+		texture testfinal 1 1 PF_FLOAT16_RGB
+
+		texture nvm 1 1 PF_FLOAT16_RGB
+
+texture smoke_rt target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8A8
+
+texture smoke_rt2 target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8A8
+
+texture dof_rt target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8
+	texture dof_rt2 target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8
+
+		target nvm
+        {
+			only_initial on
+			input none
+			
+            pass render_quad
+            {	
+                material InitialBloom
+            }
+
+        }
+
+	//Fetch scene contents.
+        target rt0
+        {
+           input none  
+		pass clear
+         {
+         }  
+		 
+         pass render_scene
+         {
+			last_render_queue 89
+         }
+    
+        }
+
+
+		target rtD
+		{
+			input none
+            pass render_quad
+            {
+
+                material PutThrough
+                input 0 rt0 3
+            }
+
+		}
+
+	target smoke_rt
+      {
+         input none      
+         shadows off
+
+	    pass clear
+         {
+         }         
+         pass render_scene
+         {
+		first_render_queue 90
+         }
+        }
+
+	  target smoke_rt2
+        {
+            input none
+            pass render_quad
+            {
+                material MySmokeBloomY
+                input 0 smoke_rt
+            }
+        }
+
+	  target smoke_rt
+        {
+            input none
+            pass render_quad
+            {
+                material MySmokeBloomX
+                input 0 smoke_rt2
+            }
+        }
+
+		target rtT
+		{
+	     input none
+            pass render_quad
+            {
+                material ModThrough
+                input 0 rt0 0
+				input 1 smoke_rt 0
+            }
+
+		}
+
+	target test0
+		{
+	     input none
+            pass render_quad
+            {
+
+                material PutThrough
+                input 0 rtT
+            }
+
+		}
+
+
+	target test1
+		{
+            input none
+
+            pass render_quad
+            {
+
+                // Downsample using a 3x3 filter
+                material Ogre/Compositor/HDR/Downsample3x3
+                input 0 test0
+            }
+		}
+
+
+	target test2
+		{
+             input none
+            pass render_quad
+            {
+
+                // Downsample using a 3x3 filter
+                material Ogre/Compositor/HDR/Downsample3x3
+                input 0 test1
+            }
+
+         }
+
+
+
+		target testfinal
+		{
+            input none
+            pass render_quad
+            {
+
+                // Downsample using a 3x3 filter
+                material Ogre/Compositor/HDR/Downsample3x3
+                input 0 test2
+            }
+		}
+
+
+	   target nvm
+        {
+	        input none
+            pass render_quad
+            {
+
+                material DelayBloom
+                input 0 nvm
+			input 1 testfinal
+            }
+
+        }	   
+
+       
+
+	target bloom_rt0
+        {
+            input none
+            pass render_quad
+            {
+                material Brightcheck
+                input 0 rtT
+				input 1 rt0 1
+            }
+
+        }
+
+	target bloom_rt 
+        {
+            input none
+            pass render_quad
+            {
+                material MyBloomX
+                input 0 bloom_rt0
+			input 1 nvm
+            }
+        }
+
+	target bloom_rt2
+        {
+            input none
+            pass render_quad
+            {
+                material MyBloomY
+                input 0 bloom_rt
+			input 1 nvm
+            }
+        }
+
+	target test0
+        {
+            input none
+            pass render_quad
+            {
+                material MyBloomX
+                input 0 bloom_rt2
+				input 1 nvm
+            }
+        }
+
+	target bloom_rt2
+        {
+            input none
+            pass render_quad
+            {
+                material MyBloomYF
+                input 0 test0
+			input 1 nvm
+            }
+        }
+
+     target godray0
+      {
+            input none
+            pass render_quad
+            {
+
+                material PutThrough
+                input 0 rt0 2
+            }
+      }
+
+	target godray1
+        {
+         input none
+            pass render_quad
+            {
+            identifier 1
+            material Compositor/GodRays
+            input 0 godray0
+            }
+        }
+
+
+      target godray0
+        {
+         input none
+            pass render_quad
+            {
+            identifier 2
+            material Compositor/GodRays
+            input 0 godray1
+            }
+        }
+
+      
+      target godray1
+        {
+            input none
+
+            pass render_quad
+            {
+            identifier 3
+            material Compositor/GodRays
+            input 0 godray0
+            }
+        }
+
+ 	 target rt1
+      {
+            input none
+            pass render_quad
+            {
+
+                material AddThrough
+                input 0 rtT
+			input 1 godray1
+            }
+      }
+
+
+        target rt0 0
+        {
+            input none
+            pass render_quad
+            {
+			identifier 13
+                material ScaryGlowDelay
+                input 0 rt1
+                input 1 bloom_rt2
+				input 2 nvm
+				input 3 rt0 1
+				input 4 rtD
+
+            }
+        }
+
+	/*
+	target dof_rt 
+        {
+            input none
+            pass render_quad
+            {
+                material gausX
+                input 0 rt0 0
+            }
+        }
+
+
+	target dof_rt2
+        {
+            input none
+            pass render_quad
+            {
+                material gausY
+                input 0 dof_rt
+            }
+        }
+*/
+	 target rt1
+      {
+            input none
+            pass render_quad
+            {		
+                material FXAA_post
+                input 0 rt0 0
+            }
+      }
+
+
+		target_output
+		{
+            input none
+            pass render_quad
+            {
+			identifier 14
+                material MBFinalExtra
+                input 0 rt1
+			input 1 rtD
+            }
+       	}
+
+
+
+
+    }
+}

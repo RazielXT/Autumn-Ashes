@@ -1,0 +1,179 @@
+struct VIn
+{
+    float4 p : POSITION;
+    float4 n : NORMAL;
+    float3 t : TANGENT;
+    float2 uv  : TEXCOORD0;
+    float3 c : COLOR;
+};
+
+struct VOut
+{
+    float4 p : POSITION;
+    float4 uv  : TEXCOORD0;
+    float4 wp  : TEXCOORD1;
+    float3 n : TEXCOORD2;
+    float3 t : TEXCOORD3;
+    float4 vVec : TEXCOORD5;
+    float3 b : TEXCOORD6;
+    float4 oLightPosition0 : TEXCOORD7;
+	float3 projectionCoord : TEXCOORD8;
+};
+
+struct PIn
+{
+    float4 uv  : TEXCOORD0;
+    float4 wp  : TEXCOORD1;
+    float4 n : TEXCOORD2;
+    float4 t : TEXCOORD3;
+    float4 vVec : TEXCOORD5;
+    float3 b : TEXCOORD6;
+    float4 shadowMapPos0 : TEXCOORD7;
+	float3 projectionCoord : TEXCOORD8;
+};
+
+
+VOut wdiffuse_vs_op(VIn IN,
+	uniform float4x4 wMat,
+	uniform float4x4 vpMat,
+	uniform float3 camPos,
+	uniform float time,
+	uniform float3 waveSeedSizeSpeed,
+	uniform float4x4 texWorldViewProjMatrix3
+)
+{
+    VOut OUT;
+    float4 wpos = mul(wMat, IN.p);
+	float4 wnor = mul(wMat, IN.n);
+	
+	float waveSeed = waveSeedSizeSpeed.x;
+    float waveSize = waveSeedSizeSpeed.y;
+	float waveSpeed = waveSeedSizeSpeed.z;
+	
+	float vertexId = fmod(wpos.x,5*waveSeed) + fmod(wpos.z,3*waveSeed);
+	float add = sin(vertexId+time*waveSpeed)*waveSize;
+	wpos.y += add;
+	OUT.p = mul(vpMat, wpos);
+	
+	 // Projective texture coordinates, adjust for mapping
+	float4x4 scalemat = float4x4(0.5,   0,   0, 0.5, 
+	                               0,-0.5,   0, 0.5,
+								   0,   0, 0.5, 0.5,
+								   0,   0,   0,   1);
+	float4 projection = mul(scalemat, OUT.p);
+	OUT.projectionCoord.xyz = projection.xyw;
+
+	OUT.wp.xyz=wpos.xyz;
+    
+      
+    OUT.uv.xy = IN.uv.xy;
+    OUT.uv.zw=OUT.p.zw;
+    
+    OUT.n.xyz = IN.n.xyz;
+    OUT.t.xyz = IN.t;
+    OUT.b.xyz = cross(IN.t.xyz, IN.n.xyz);
+     
+    float3 viewVec = camPos - IN.p.xyz;
+    OUT.vVec.x = dot(viewVec, OUT.t );
+    OUT.vVec.y = dot(viewVec, OUT.b );
+    OUT.vVec.z = dot(viewVec, OUT.n.xyz );
+    OUT.oLightPosition0 = mul(texWorldViewProjMatrix3, IN.p);
+    
+	float3 eyeDir = normalize(IN.p.xyz - camPos.xyz);
+	OUT.vVec.w = pow(1+dot(eyeDir, IN.n), 1.5);
+	
+	OUT.wp.w = max(OUT.vVec.w*add/(waveSize*1.5),IN.c.x);
+	
+    return OUT;
+}
+
+
+void wdiffuse_ps_op(
+	PIn IN,
+	uniform float scrollTime,
+	uniform float speed,
+	uniform float2 scaleDiff,
+	uniform float4 lightDiffuse,
+	uniform float3 matDiffuse,
+	uniform float3 lightDif0,
+	uniform float4 lightPos0,
+	uniform float4 lightAtt0,
+	uniform float3 camPos,
+	uniform float playerSpeed,
+	uniform float3 lightSpec0,
+	uniform float matShininess,
+	uniform float4 spotlightParams,
+	uniform float4x4 iTWMat,
+	uniform sampler2D diffuseMap : register(s0),
+	uniform sampler2D normalMap : register(s1),
+	uniform sampler2D groundMap : register(s2),
+	uniform sampler2D reflMap : register(s3),
+	uniform sampler2D shadowMap0: register(s4),
+	uniform sampler2D shadowMap1: register(s5),
+	uniform sampler2D shadowMap2: register(s6),
+	uniform sampler2D shadowMap: register(s7),
+	out float4 color0 : COLOR0,
+	out float4 color1 : COLOR1,
+	out float4 color2 : COLOR2,
+	out float4 color3 : COLOR3
+)
+{
+    
+	float2 texCoord = IN.uv.yx;
+    float speedUV=speed*0.08;
+    float fShadowTerm=IN.wp.w*0.75+0.25;
+    
+    // direction
+    float3 ld0 = normalize(lightPos0.xyz - (lightPos0.w * IN.wp.xyz));
+    ld0.xz = lerp(-ld0.xz,ld0.xz,fShadowTerm);
+     
+    
+    float4 diffTex = tex2D(diffuseMap, float2(texCoord.x+0.5,texCoord.y+ scrollTime * (speedUV*2))*scaleDiff);
+    
+    texCoord.y += scrollTime * speedUV;
+    
+    float4 normalTex = tex2D(normalMap, texCoord*scaleDiff);
+    
+    texCoord += float2(0.5,scrollTime * speedUV);
+    float height = normalTex.z;
+    normalTex.z=1;
+    
+    normalTex+=tex2D(normalMap, texCoord*scaleDiff);
+    normalTex/=2;
+    
+    // Parallax mapping
+    //float height = tex2D(dispMap, texCoord.xy*scaleDiff).x;
+    texCoord = IN.uv + saturate(speed)*(0.015 * height - 0.01) * normalize(IN.vVec.xyz).xy;
+    
+    
+    float3x3 tbn = float3x3(IN.t.xyz,IN.b.xyz, IN.n.xyz);
+    float3 normal = mul(transpose(tbn), normalTex.xyz * 2 - 1); // to object space
+    normal = normalize(mul((float3x3)iTWMat, normal));
+    
+    float3 diffuse = max(dot(ld0, normal), 0);
+    
+    texCoord.x += scrollTime * speed*0.25;
+    
+    float3 diffuseTex = tex2D(groundMap, texCoord*scaleDiff*1.4).rgb*fShadowTerm;
+    float3 reflectionTex = tex2D(reflMap, IN.projectionCoord.xy/IN.projectionCoord.z).rgb;
+	
+    float3 diffuseContrib = (diffuse * lightDif0 * diffuseTex.rgb);
+    diffuseContrib = diffuseContrib/2+reflectionTex*IN.vVec.w;
+	
+    float3 camDir = normalize(camPos - IN.wp.xyz);
+    float3 halfVec = normalize(ld0 + camDir);
+    float3 specular = pow(max(dot(normal, halfVec), 0), matShininess);
+    
+    float3 specularContrib = (specular * lightSpec0*(fShadowTerm*0.8+0.2));
+    
+    float3 light0C = (diffuseContrib);
+    
+    float3 def=diffuseTex*diffTex.rgb*matDiffuse;
+    
+    color0=float4(def+light0C+specularContrib, diffTex.a*0.35*max(0.5,fShadowTerm)+specularContrib.r*2);
+    float2 normalOut = lerp(float2(0.5,0.5),normalTex.rg,saturate(speed)*clamp((15-IN.uv.z)/15,0.65,1));
+	
+    color1=float4(normalOut,0.4+specularContrib.r ,1);
+    color2=color0;
+    color3=float4(IN.uv.z/IN.uv.w,IN.uv.z,0,0);
+}

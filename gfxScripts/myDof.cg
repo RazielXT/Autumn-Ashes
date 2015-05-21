@@ -1,0 +1,95 @@
+static const float2 pos0[11] =
+{
+0, -1.5,
+0, -1.2,
+0, -0.9,
+0, -0.6,
+0, -0.3,
+0, 0,
+0, 0.3,
+0, 0.6,
+0, 0.9,
+0, 1.2,
+0, 1.5
+};
+
+
+float4 gausX_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D scene: register(s0),
+	    uniform float4 invTexSize
+         
+    ) : COLOR
+
+{
+
+    float4 sum = 0;
+   for (int i = 0; i < 11; i++)
+   {
+	//need texture inv size not just small number
+      sum += tex2D(scene, uv+pos0[i]*0.004);
+   }
+   return sum/11;
+
+}
+
+
+static const float2 pos[11] =
+{
+-1.5, 0,
+-1.2, 0,
+-0.9, 0,
+-0.6, 0,
+-0.3, 0,
+ 0, 0,
+ 0.3, 0,
+ 0.6, 0,
+ 0.9, 0,
+ 1.2, 0,
+ 1.5, 0,
+};
+
+float4 gausY_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D scene: register(s0),
+ 	    uniform float4 invTexSize
+         
+    ) : COLOR
+
+{
+
+   float4 sum = 0;
+   for (int i = 0; i < 11; i++)
+   {
+	//need texture inv size not just small number
+      sum += tex2D(scene, uv+pos[i]*0.004);
+   }
+   return sum/11;
+
+
+}
+
+float4 dofFinal_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D scene: register(s0),
+		uniform sampler2D blur: register(s1),
+		uniform sampler2D depthMap: register(s2)        
+    ) : COLOR
+
+{
+     float startDof = 10;
+     float fullDof = 20;
+
+	float4 dep=tex2D(depthMap,uv);
+	dep.r=saturate((dep.r-startDof)/(fullDof-startDof));
+  float4 color = tex2D(scene, uv);
+  float4 cBlur = tex2D(blur, uv);
+
+//need to prevent leakage
+   return lerp(color,cBlur,dep.r);
+
+
+}

@@ -1,0 +1,262 @@
+vertex_program skybox_vs cg
+{
+    source skybox.cg
+    profiles vs_3_0
+    entry_point skybox_vs
+
+default_params
+    {
+        param_named_auto wmat worldviewproj_matrix
+    }
+
+}
+
+fragment_program skybox_ps cg
+{
+    source skybox.cg
+    profiles ps_3_0
+    entry_point skybox_ps
+
+
+}
+
+fragment_program skybox_ps_d cg
+{
+    source skybox.cg
+    profiles ps_3_0
+    entry_point skyboxToDark_ps
+
+	default_params
+    {
+        param_named_auto dark ambient_light_colour    
+}
+
+}
+
+material TCENoonSkyBoxToDark
+{
+
+    technique
+    {
+        pass
+        {
+
+            vertex_program_ref skybox_vs
+            {
+            }
+
+            fragment_program_ref skybox_ps_d
+            {
+            }
+
+		lighting off
+		depth_write off
+
+			texture_unit
+			{
+				//stormydays.tga 
+				cubic_texture sky8m.jpg separateUV 
+				tex_address_mode clamp
+			}
+
+
+        }
+    }
+
+
+technique
+    {
+
+	scheme ssaoScheme
+
+	pass
+        {	 
+            vertex_program_ref SSAO/GBuffer_vp
+            {
+                param_named_auto cWorldViewProj worldviewproj_matrix
+                param_named_auto cWorldView worldview_matrix
+            }
+
+            fragment_program_ref SSAO/GBuffer_fp
+            {
+                param_named_auto cNearClipDistance near_clip_distance
+                param_named_auto cFarClipDistance far_clip_distance
+            }
+        }
+	
+
+    }
+
+
+}
+
+material TCENoonSkyBox2
+{
+
+    technique
+    {
+        pass
+        {
+
+            vertex_program_ref skybox_vs
+            {
+            }
+
+            fragment_program_ref skybox_ps
+            {
+            }
+
+		lighting off
+		depth_write off
+
+			texture_unit
+			{
+				//stormydays.tga 
+				cubic_texture sunset02.jpg separateUV 
+				tex_address_mode clamp
+			}
+
+
+        }
+    }
+
+
+technique
+    {
+
+	scheme ssaoScheme
+
+	pass
+        {	 
+            vertex_program_ref SSAO/GBuffer_vp
+            {
+                param_named_auto cWorldViewProj worldviewproj_matrix
+                param_named_auto cWorldView worldview_matrix
+            }
+
+            fragment_program_ref SSAO/GBuffer_fp
+            {
+                param_named_auto cNearClipDistance near_clip_distance
+                param_named_auto cFarClipDistance far_clip_distance
+            }
+        }
+	
+
+    }
+
+
+}
+
+material TCENoonSkyBox
+{
+
+    technique
+    {
+        pass
+        {
+
+            vertex_program_ref skybox_vs
+            {
+            }
+
+            fragment_program_ref skybox_ps
+            {
+            }
+
+		lighting off
+		depth_write off
+
+			texture_unit
+			{
+				//stormydays.tga 
+				cubic_texture sky8m.jpg separateUV 
+				tex_address_mode clamp
+			}
+
+
+        }
+    }
+
+
+technique
+    {
+
+	scheme ssaoScheme
+
+	pass
+        {	 
+            vertex_program_ref SSAO/GBuffer_vp
+            {
+                param_named_auto cWorldViewProj worldviewproj_matrix
+                param_named_auto cWorldView worldview_matrix
+            }
+
+            fragment_program_ref SSAO/GBuffer_fp
+            {
+                param_named_auto cNearClipDistance near_clip_distance
+                param_named_auto cFarClipDistance far_clip_distance
+            }
+        }
+	
+
+    }
+
+
+}
+
+material MorningSkyBox
+{
+
+    technique
+    {
+        pass
+        {
+
+            vertex_program_ref skybox_vs
+            {
+            }
+
+            fragment_program_ref skybox_ps
+            {
+            }
+
+		lighting off
+		depth_write off
+
+			texture_unit
+			{
+				//stormydays.tga 
+				cubic_texture morning.jpg separateUV 
+				tex_address_mode clamp
+			}
+
+
+        }
+    }
+
+
+technique
+    {
+
+	scheme ssaoScheme
+
+	pass
+        {	 
+            vertex_program_ref SSAO/GBuffer_vp
+            {
+                param_named_auto cWorldViewProj worldviewproj_matrix
+                param_named_auto cWorldView worldview_matrix
+            }
+
+            fragment_program_ref SSAO/GBuffer_fp
+            {
+                param_named_auto cNearClipDistance near_clip_distance
+                param_named_auto cFarClipDistance far_clip_distance
+            }
+        }
+	
+
+    }
+
+
+}

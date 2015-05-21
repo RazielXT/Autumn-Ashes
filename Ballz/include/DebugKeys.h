@@ -127,6 +127,14 @@ public:
             postProcMgr->bloomStrDep.x -= 0.25;
             break;
 
+        case OIS::KC_NUMPAD9:
+            postProcMgr->radialHorizBlurVignette.y += 0.1;
+            break;
+
+        case OIS::KC_NUMPAD6:
+            postProcMgr->radialHorizBlurVignette.y -= 0.1;
+            break;
+
         case OIS::KC_NUMPAD0:
             postProcMgr->resetValues();
             break;

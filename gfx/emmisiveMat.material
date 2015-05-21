@@ -1,0 +1,42 @@
+vertex_program emmisive_vs cg
+{
+    source emmisiveMat.cg
+    profiles vs_3_0
+    entry_point main_vs
+
+	default_params
+    {
+        param_named_auto wmat worldviewproj_matrix
+    }
+}
+
+fragment_program emmisive_ps cg
+{
+    source emmisiveMat.cg
+    profiles ps_3_0
+    entry_point main_ps
+}
+
+material SunMat
+{
+
+    technique
+    {
+        pass
+        {
+
+            vertex_program_ref emmisive_vs
+            {
+            }
+
+            fragment_program_ref emmisive_ps
+            {
+            }
+
+			//lighting off
+			//depth_write off
+
+        }
+    }
+
+}
