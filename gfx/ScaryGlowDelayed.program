@@ -6,16 +6,15 @@ fragment_program ScaryGlowDelay_fp cg
 
         default_params
         {
-		param_named hurtCoef float 0
-		param_named colourOverlaying float4 0
-		param_named ContSatuSharpNoise float4 0 0 0 0
-		param_named ColouringShift float4 1 1 1 
-		param_named bloomStrDep float4 1 1 0 0
-		param_named_auto time time_0_x 8
-		param_named_auto invTexSize inverse_texture_size 0
+			param_named hurtCoef float 0
+			param_named colourOverlaying float4 0
+			param_named ContSatuSharpNoise float4 0 0 0 0
+			param_named ColouringShift float4 1 1 1 
+			param_named bloomStrDep float4 1 1 0 0
+			param_named_auto time time
+			param_named_auto invTexSize inverse_texture_size 0
         }
 
-	
 }
 
 vertex_program givs_vs cg

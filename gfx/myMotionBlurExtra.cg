@@ -45,10 +45,10 @@ velocity.x*=-1.5f;
 
 float shade = lerp(1,tex2D(shadeMap,texCoord).r,radialHorizBlurShade.z);
 
-float2 uvn = texCoord.xy*3;
-uvn.y = uvn.y +time*6;
+float2 uvn = texCoord.yx*6;
+uvn.x = uvn.x + time*6;
 float3 noise = tex2D(randMap,uvn).r;
-texCoord.x+=noise*0.02*radialHorizBlurShade.y;
+texCoord.y+=noise*0.02*radialHorizBlurShade.y;
 
 float2 toCenter = normalize(texCoord-0.5)/-40*pow(texCoord-0.5,1.5);
 velocity=lerp(velocity,toCenter,radialHorizBlurShade.x);

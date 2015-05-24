@@ -18,7 +18,7 @@ import pmf2s_material_dynamic_op from "general_pmf2tsop.material"
 import cheap_2normals_material_dynamic_op from "general_2n_bop.material"
 import glass_material_dynamic_op from "general_glass.material"
 import glass_material_dynamic_op from "general_glass.material"
-import vc2t_material_static from "terrain_vc2tex.material"
+import vc2t_material_static from "general_vc2tex.material"
 
 material building4Mat : cheap_material_dynamic_sop
 {
@@ -31,6 +31,28 @@ set $difUV "1 1"
 set $diffuseCol "1 1 1"
 set $brightness "0.3"
 set $specularCol "0.1036 0.101 0.152"
+set $shininess "16"
+}
+
+material crow1 : cheap_material_dynamic_op
+{
+set_texture_alias diffuseMap vorona_256.tif
+
+set $difUV "1 1"
+set $diffuseCol "1 1 1"
+set $brightness "0.3"
+set $specularCol "0.01036 0.0101 0.0152"
+set $shininess "16"
+}
+
+material crow2 : cheap_material_dynamic_op
+{
+set_texture_alias diffuseMap OBJ_Crow_D.tga
+
+set $difUV "1 1"
+set $diffuseCol "1 1 1"
+set $brightness "0.3"
+set $specularCol "0.01036 0.0101 0.0152"
 set $shininess "16"
 }
 

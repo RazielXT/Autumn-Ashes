@@ -78,7 +78,7 @@ void CameraShaker::startShaking(float power, float freq, float duration, float a
     camShakeTimeLeft = shakingDuration = duration;
     shakeSizeX = Ogre::Math::Clamp(power * wX, 0.01f, 2.0f);
     shakeSizeY = Ogre::Math::Clamp(power * wY, 0.01f, 2.0f);
-    shakeFreq = Ogre::Math::Clamp(freq, 0.1f, 5.0f);
+    shakeFreq = Ogre::Math::Clamp(freq, 0.01f, 5.0f);
     angleShaking = angleShake;
 
     initPwrW = Ogre::Math::Clamp(initPowerW, 0.05f, 2.0f);

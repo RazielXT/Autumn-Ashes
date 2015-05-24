@@ -131,6 +131,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\CameraShaker.cpp" />
     <ClCompile Include="src\ChainsSoundReaction.cpp" />
     <ClCompile Include="src\Console.cpp" />
+    <ClCompile Include="src\DebugKeys.cpp" />
     <ClCompile Include="src\DefaultObjectContactCallback.cpp" />
     <ClCompile Include="src\DefShadowCamera.cpp" />
     <ClCompile Include="src\EffectsTasks.cpp" />

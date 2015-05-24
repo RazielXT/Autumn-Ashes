@@ -318,7 +318,6 @@ blurom  += tex2D(bloomp,float2(uv.x,uv.y+ps));
 blurom  += tex2D(bloomp,float2(uv.x,uv.y-ps));
 blurom = saturate(blurom/5);
 
-
 //float bright=(blurom.r+blurom.g+blurom.b)/3;
 blurom+=blurom*b*b*3*bloomStrDep.y;
 blurom*=bloomStrDep.x;
@@ -333,15 +332,16 @@ col=ContrastSaturationBrightness(col,1,sat,contr)+blurom.rgb;
 float3 blood=float3(1,0,0);
 col=lerp(col,blood,clamp(uv.y-1+hurtCoef/7,0,1));
 
-float luma=  dot(col.rgb, float3(0.299, 0.587, 0.114));
+float luma =  dot(col.rgb, float3(0.299, 0.587, 0.114));
 //coldblue-0.97,0.98,0.85
 //pinkred-0.8,0.98,1.03
 //yellow-0.85,0.9,1.05
 col = colorgrade_shadows(col,ColouringShift.rgb);
 
 col=lerp(colourOverlaying.rgb,col.rgb,colourOverlaying.a);
-float3 noise = tex2D(noiseTex,uv+time*2+time*4).rgb;
-col=lerp(col,noise*0.2+0.8*col*noise,ContSatuSharpNoise.w);
+uv.y -= time*6;
+float3 noise = tex2D(noiseTex,uv*5).rgb;
+col=lerp(col,col*noise*2,ContSatuSharpNoise.w);
 
 return float4(col,luma);
 }

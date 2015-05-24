@@ -31,6 +31,7 @@ void createMenuLevel()
     mCamera->lookAt(Vector3(0,15,0));
     camRotator->yaw(Ogre::Degree(-65));
 
+    Global::mSceneMgr->setFog(FOG_LINEAR, Ogre::ColourValue(0.5,0.55,0.65,0.5f), 1, 80, 150);
 
     /*Forests::PagedGeometry *grass = new Forests::PagedGeometry(GlobalPointer->mSceneMgr->getCamera("Camera"), 50);
     grass->addDetailLevel<Forests::GrassPage>(200,20);
