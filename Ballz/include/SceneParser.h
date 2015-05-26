@@ -551,9 +551,10 @@ private:
     {
         static int partID = 0;
         Ogre::String name = getElementValue(rootElement, "Name");
+		int rGroup = getElementIntValue(rootElement, "RenderQroup", 91);
 
         Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem("Particle" + std::to_string(partID++), name);
-        ps->setRenderQueueGroup(std::max<int>(91, ent->getRenderQueueGroup()));
+		ps->setRenderQueueGroup(rGroup);
 
         if (getElementBoolValue(rootElement, "EditParams"))
         {

@@ -261,6 +261,7 @@
 
 <class name="Particle" usage="object">
 	<data name="Name" type="string" defaultValue="Examples/Smoke"/>
+	<data name="RenderGroup" type="int" defaultValue="91"/>
 	
 	<data name="EditParams" displayName="Edit Params" type="bool" groupName="Params" defaultValue="false"/>
 	<data name="Material" displayName="Material" type="string" groupName="Params" visibilityParentName="EditParams"/>
