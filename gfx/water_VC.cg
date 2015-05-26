@@ -173,7 +173,7 @@ void wdiffuse_ps_op(
     color0=float4(def+light0C+specularContrib, diffTex.a*0.35*max(0.5,fShadowTerm)+specularContrib.r*2);
     float2 normalOut = lerp(float2(0.5,0.5),normalTex.rg,saturate(speed)*clamp((15-IN.uv.z)/15,0.65,1));
 	
-    color1=float4(normalOut,0.4+specularContrib.r ,1);
+    color1=float4(normalOut,saturate(0.4+specularContrib.r)*0.8 ,1);
     color2=color0;
     color3=float4(IN.uv.z/IN.uv.w,IN.uv.z,0,0);
 }

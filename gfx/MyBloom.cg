@@ -30,12 +30,12 @@ if(sharp.y<0) sharp.y=0;
 if(sharp.z<0) sharp.z=0;
 
 float matBrightness = tex2D(sceneLum,uv).b;
-if(matBrightness==1) matBrightness = 10;
+//b > 0.8 -> 0.5-10
+matBrightness = max(matBrightness, (matBrightness-0.77)*30);
 
 sharp*=2*matBrightness;
 
-	return  sharp;
-
+return  sharp;
 }
 
 #define BLUR_RADIUS 3
@@ -100,6 +100,8 @@ static const float2 pos0[11] =
 0, 2.2
 };
 
+#define bloomSize 2;
+
 float4 MyBloomX_fp
     (
          float2 uv: TEXCOORD0,
@@ -109,8 +111,8 @@ float4 MyBloomX_fp
     ) : COLOR
 
 {
-	float t=tex2D(brightness, uv).r*1.5;
-   float b=abs(1.4-t);
+	float t= 1 - tex2D(brightness, uv).r;
+   float b=t*bloomSize + 0.1;
 
     float4 sum = 0;
    for (int i = 0; i < 11; i++)
@@ -199,8 +201,9 @@ float4 MyBloomY_fp
     ) : COLOR
 
 {
-float t=tex2D(brightness, uv).r*1.5;
-   float b=abs(1.4-t);
+	float t= 1 - tex2D(brightness, uv).r;
+   float b=t*bloomSize + 0.1;
+   
    float4 sum = 0;
    for (int i = 0; i < 11; i++)
    {
@@ -243,8 +246,8 @@ float4 MyBloomYF_fp
     ) : COLOR
 
 {
-    float t=tex2D(brightness, uv).r*1.5;
-   float b=abs(1.4-t);
+	float t= 1 - tex2D(brightness, uv).r;
+   float b=t*bloomSize + 0.1;
 
    float4 sum = 0;
    for (int i = 0; i < 11; i++)
