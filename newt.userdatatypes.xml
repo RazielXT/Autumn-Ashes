@@ -281,6 +281,19 @@
 	<data name="MaterialShader" displayName="Material Shader Params(var=val)" type="string" defaultValue="" groupName="Shader" editWidth="300" editHeight="100"/>
 </class>
 
+<class name="CrowLanding" usage="object">
+	<data name="ID" type="int" defaultValue="1"/>
+	<data name="Init crows" type="int" defaultValue="0"/>
+	<data name="Player min radius" type="float" defaultValue="5"/>
+</class>
+
+<class name="CrowFlight" usage="object">
+	<data name="ID" type="int" defaultValue="1"/>
+	<data name="Init crows" type="int" defaultValue="0"/>
+	<data name="Random yaw" type="float" defaultValue="360" minValue="0" maxValue="360"/>
+	<data name="Min flight time" type="float" defaultValue="10"/>
+</class>
+
 <class name="Player" usage="object">
 	<data name="reactions" displayName="Rections [int;int...]" groupName="Player" type="string"/>
 	<data name="rfunctions" displayName="Functions" groupName="Player" type="string"/>
