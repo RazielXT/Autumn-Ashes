@@ -10,7 +10,7 @@ class CrowFlight
 {
 public:
 
-	CrowFlight(int crows, float randomYaw, float flightMinTime);
+	CrowFlight(int crows, float randomYaw, float flightMinTime, Ogre::SceneNode* node);
 	~CrowFlight();
 
 	bool update(Ogre::Real tslf);
@@ -19,9 +19,12 @@ public:
 
 private:
 
+	float randomYawMax;
+	float flightMinTime;
+
+	std::vector<Ogre::Animation*> flightNames;
 	std::vector<Crow*> crows;
 	CrowsGroup* pack;
-	Ogre::Entity* mEntity;
 };
 
 class CrowLanding
@@ -37,9 +40,10 @@ public:
 
 private:
 
+	float radius;
+
 	std::vector<Crow*> crows;
 	CrowsGroup* pack;
-	Ogre::Entity* mEntity;
 };
 
 class CrowsGroup : public EventTask
@@ -50,8 +54,9 @@ public:
 	~CrowsGroup();
 
 	bool update(Ogre::Real tslf);
-	void getPossibleFlight();
-	void getPossibleLanding();
+
+	CrowFlight* getPossibleFlight();
+	CrowLanding* getPossibleLanding();
 
 	const int id;
 
