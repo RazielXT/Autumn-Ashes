@@ -1,9 +1,9 @@
 #pragma once
 
 #include "stdafx.h"
+#include "CrowPath.h"
 
 class CrowsPack;
-
 
 class Crow
 {
@@ -22,13 +22,9 @@ public:
 
 protected:
 
-	void createLandingAnim();
-	void createLiftingAnim();
-
-	enum {	OnGround, Flying, Landing, Lifting, None	} state = None;
-	float stateTimer;
+	float stateChangeTimer;
 
 	Ogre::SceneNode* mNode;
 	Ogre::Entity* mEntity;
-
+	CrowPath path;
 };

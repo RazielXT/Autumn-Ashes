@@ -69,11 +69,11 @@ bool CrowFlight::update(Ogre::Real tslf)
 
 void CrowFlight::addCrow(Crow* crow)
 {
-	crow->flyTo(getPossibleFlight());
+	crow->flyTo(getFlightAnim());
 	crows.push_back(crow);	
 }
 
-Ogre::Animation* CrowFlight::getPossibleFlight()
+Ogre::Animation* CrowFlight::getFlightAnim()
 {
 	//find best free path
 	int rand = (int)Ogre::Math::RangeRandom(0, flightAnims.size() - 0.01f);

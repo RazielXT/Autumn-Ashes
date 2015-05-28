@@ -7,13 +7,11 @@ Crow::Crow()
 {
 	//init entity+node
 
-	state = None;
-	stateTimer = 0;
+	stateChangeTimer = 0;
 }
 
 Crow::~Crow()
 {
-
 }
 
 bool Crow::update(Ogre::Real tslf)
@@ -25,17 +23,17 @@ bool Crow::update(Ogre::Real tslf)
 
 bool Crow::readyToFly() const
 {
-	return (state == OnGround && stateTimer <= 0);
+	return (path.state == OnGround && stateChangeTimer <= 0);
 }
 
 bool Crow::readyToLand() const
 {
-	return (state == Flying && stateTimer <= 0);
+	return (path.state == Flying && stateChangeTimer <= 0);
 }
 
 void Crow::flyTo(Ogre::Animation* flightAnim)
 {
-	if (state == OnGround)
+	if (path.state == OnGround)
 	{
 		//start lifting
 	}
@@ -47,7 +45,7 @@ void Crow::flyTo(Ogre::Animation* flightAnim)
 
 void Crow::landTo(Ogre::Vector3 pos)
 {
-	if (state == OnGround)
+	if (path.state == OnGround)
 	{
 		//start landing
 	}
@@ -55,13 +53,4 @@ void Crow::landTo(Ogre::Vector3 pos)
 	{
 		//force state
 	}
-}
-
-void Crow::createLandingAnim()
-{
-}
-
-void Crow::createLiftingAnim()
-{
-
 }

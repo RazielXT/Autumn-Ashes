@@ -15,7 +15,7 @@ public:
 
 	bool update(Ogre::Real tslf);
 
-	Ogre::Animation* getPossibleFlight();
+	Ogre::Animation* getFlightAnim();
 	void addCrow(Crow* crow);
 
 private:

@@ -131,7 +131,9 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\CameraShaker.cpp" />
     <ClCompile Include="src\ChainsSoundReaction.cpp" />
     <ClCompile Include="src\Console.cpp" />
+    <ClCompile Include="src\Crow.cpp" />
     <ClCompile Include="src\CrowdGroup.cpp" />
+    <ClCompile Include="src\CrowPath.cpp" />
     <ClCompile Include="src\DebugKeys.cpp" />
     <ClCompile Include="src\DefaultObjectContactCallback.cpp" />
     <ClCompile Include="src\DefShadowCamera.cpp" />
@@ -186,6 +188,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\ChainsSoundTask.h" />
     <ClInclude Include="include\Console.h" />
     <ClInclude Include="include\Crow.h" />
+    <ClInclude Include="include\CrowPath.h" />
     <ClInclude Include="include\CrowsGroup.h" />
     <ClInclude Include="include\DebugKeys.h" />
     <ClInclude Include="include\DefaultObjectContactCallback.h" />

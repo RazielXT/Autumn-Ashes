@@ -19,6 +19,12 @@
     <Filter Include="Source Files\tasks">
       <UniqueIdentifier>{1b8c9220-1093-484b-b0a9-d1ff43d497ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Crow">
+      <UniqueIdentifier>{e353782c-bcf5-41f6-8f06-1aad1f616354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Crow">
+      <UniqueIdentifier>{ea31a7ec-26b2-4174-8050-62ace58ae83d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AAmain.cpp">
@@ -165,8 +171,14 @@
     <ClCompile Include="src\DebugKeys.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Crow.cpp">
+      <Filter>Source Files\Crow</Filter>
+    </ClCompile>
     <ClCompile Include="src\CrowdGroup.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Crow</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CrowPath.cpp">
+      <Filter>Source Files\Crow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -360,10 +372,13 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Crow.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Crow</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CrowPath.h">
+      <Filter>Header Files\Crow</Filter>
     </ClInclude>
     <ClInclude Include="include\CrowsGroup.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Crow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
