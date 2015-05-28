@@ -3,7 +3,7 @@
 
 using namespace Ogre;
 
-CrowFlight::CrowFlight(int crows, float randomYaw, float mFlightMinTime, Ogre::SceneNode* node)
+CrowFlight::CrowFlight(int num_crows, float randomYaw, float mFlightMinTime, Ogre::SceneNode* node)
 {
 	randomYawMax = randomYaw;
 	flightMinTime = mFlightMinTime;
@@ -24,6 +24,10 @@ CrowFlight::CrowFlight(int crows, float randomYaw, float mFlightMinTime, Ogre::S
 	}
 
 	//init crows
+	for (int i = 0; i < num_crows; i++)
+	{
+		addCrow(new Crow());
+	}
 }
 
 CrowFlight::~CrowFlight()
@@ -76,12 +80,16 @@ Ogre::Animation* CrowFlight::getPossibleFlight()
 	return flightAnims[rand];
 }
 
-CrowLanding::CrowLanding(int crows, float mRadius, Ogre::SceneNode* node)
+CrowLanding::CrowLanding(int num_crows, float mRadius, Ogre::SceneNode* node)
 {
 	radius = mRadius;
 	pos = node->_getDerivedPosition();
 
 	//init crows
+	for (int i = 0; i < num_crows && acceptsLanding(); i++)
+	{
+		addCrow(new Crow());
+	}
 }
 
 CrowLanding::~CrowLanding()
@@ -166,10 +174,13 @@ bool CrowsGroup::update(Ogre::Real tslf)
 CrowFlight* CrowsGroup::getPossibleFlight()
 {
 	//try in all
-	for (auto f : flights)
+	/*for (auto f : flights)
 	{
 		return f;
-	}
+	}*/
+
+	int rand = (int)Ogre::Math::RangeRandom(0, flights.size() - 0.01f);
+	return flights[rand];
 }
 
 CrowLanding* CrowsGroup::getPossibleLanding()

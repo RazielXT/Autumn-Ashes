@@ -7,12 +7,9 @@ class CrowsPack;
 
 class Crow
 {
-	friend class CrowFlight;
-	friend class CrowLanding;
-
 public:
 
-	Crow(Ogre::SceneNode* node, Ogre::Entity* entity) : mNode(node), mEntity(entity) {};
+	Crow();
 	~Crow();
 
 	bool update(Ogre::Real tslf);
@@ -29,7 +26,9 @@ protected:
 	void createLiftingAnim();
 
 	enum {	OnGround, Flying, Landing, Lifting, None	} state = None;
-	
+	float stateTimer;
+
 	Ogre::SceneNode* mNode;
 	Ogre::Entity* mEntity;
+
 };
