@@ -9,13 +9,18 @@ struct CrowPathAnimations
 	Ogre::Vector3 lastPos;
 	Ogre::Quaternion lastOr;
 
+	Ogre::NodeAnimationTrack* mFlightTrack = nullptr;
 	Ogre::AnimationState * mFlightState = nullptr;
+
+	Ogre::NodeAnimationTrack* mTempTrack = nullptr;
 	Ogre::AnimationState * mTempState = nullptr;
+
 	float animWeight = 0;
 
-	Ogre::Vector3 getAnimPos();
-	Ogre::Quaternion getAnimOr();
+	Ogre::Vector3 getCurrentPos();
+	Ogre::Quaternion getCurrentOr();
 
+	void clearTemp();
 	void clear();
 
 	~CrowPathAnimations() { clear(); }
@@ -32,7 +37,6 @@ public:
 
 	Ogre::Vector3 getPosition();
 	Ogre::Quaternion getOrientation();
-	float getPathTimeLeft();
 
 	PathState state = None;
 	void setLandingAnim(Ogre::Vector3 targetPos);
@@ -40,7 +44,11 @@ public:
 
 protected:
 
-	CrowPathAnimations animState;
+	void createLandAnimation(Vector3 startPos, Ogre::Quaternion startOr, Vector3 end);
+	void createLiftAnimation(Vector3 start, Vector3 endPos, Ogre::Quaternion endOr);
 
+	CrowPathAnimations animState;
+	float animWeightSize = 1;
+	void updateAnimState(Ogre::Real tslf);
 
 };

@@ -77,6 +77,8 @@ Ogre::Animation* CrowFlight::getFlightAnim()
 {
 	//find best free path
 	int rand = (int)Ogre::Math::RangeRandom(0, flightAnims.size() - 0.01f);
+
+	//send new randomized copy
 	return flightAnims[rand];
 }
 
