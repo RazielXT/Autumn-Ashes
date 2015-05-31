@@ -1,384 +1,398 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
-    <Filter Include="Header Files\tasks">
-      <UniqueIdentifier>{2b87eae1-d81d-4a9b-bb19-bd609893605c}</UniqueIdentifier>
+    <Filter Include="Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Source Files\tasks">
-      <UniqueIdentifier>{1b8c9220-1093-484b-b0a9-d1ff43d497ef}</UniqueIdentifier>
+    <Filter Include="Files\Core">
+      <UniqueIdentifier>{4603536c-b1d4-4331-8e91-aad2112c9c68}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Crow">
+    <Filter Include="Files\Listeners">
+      <UniqueIdentifier>{0f89d97c-1f79-410a-823a-adc0666ed262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Objects">
+      <UniqueIdentifier>{e494ab79-738f-4934-b163-79e094c6c94f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Objects\Crow">
       <UniqueIdentifier>{e353782c-bcf5-41f6-8f06-1aad1f616354}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Crow">
-      <UniqueIdentifier>{ea31a7ec-26b2-4174-8050-62ace58ae83d}</UniqueIdentifier>
+    <Filter Include="Files\Objects\slide">
+      <UniqueIdentifier>{f51400e4-fdd5-49af-acbb-557cd993ffd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Physics">
+      <UniqueIdentifier>{6e60017f-8c0b-4bd1-b655-51af6a2c33c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Scene">
+      <UniqueIdentifier>{a73548c5-2044-4481-8a96-5ec60aa6dbc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Player">
+      <UniqueIdentifier>{e4d1eb8e-e2ab-4484-b6db-9c07d9feabd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Shadow">
+      <UniqueIdentifier>{a7231673-5de4-46f7-a722-ba11cb79d047}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Tasks">
+      <UniqueIdentifier>{2b87eae1-d81d-4a9b-bb19-bd609893605c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\AAmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Console.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\DefaultObjectContactCallback.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Gorilla.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\OgreGpuCommandBufferFlush.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TriggerObjectContactCallback.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\HandFromGroundReaction.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TestReaction.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\HandGripReaction.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\globals.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PagingManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\EntityMovementReaction.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ChainsSoundReaction.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BridgeMaker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GuiOverlay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PostProcessMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\lvl1Reactions.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\EventTask.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\EventsManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameStateManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\WorldMaterials.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Tasks.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\lvl_update.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LoadNextPart.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AudioLibrary.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TransformationTaskTemplate.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ReflectionTask.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\WaterArea.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CameraShaker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\EffectsTasks.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CommonTasks.cpp">
-      <Filter>Source Files\tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PSSMCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\DefShadowCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TriggerPlayerContactCallback.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Slide.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ZipLineSlide.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TopSlide.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SlideContactCallback.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SlidesAutoTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\tinyxml2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PlayerPostProcess.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PlayerClimbing.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PlayerGrab.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Player_movement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PlayerParkour.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\DebugKeys.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Crow.cpp">
-      <Filter>Source Files\Crow</Filter>
+    <ClCompile Include="src\CrowPath.cpp">
+      <Filter>Files\Objects\Crow</Filter>
     </ClCompile>
     <ClCompile Include="src\CrowdGroup.cpp">
-      <Filter>Source Files\Crow</Filter>
+      <Filter>Files\Objects\Crow</Filter>
     </ClCompile>
-    <ClCompile Include="src\CrowPath.cpp">
-      <Filter>Source Files\Crow</Filter>
+    <ClCompile Include="src\Crow.cpp">
+      <Filter>Files\Objects\Crow</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ChainsSoundReaction.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommonTasks.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EffectsTasks.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EntityMovementReaction.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EventTask.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HandFromGroundReaction.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HandGripReaction.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LoadNextPart.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lvl_update.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lvl1Reactions.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ReflectionTask.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tasks.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TestReaction.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TransformationTaskTemplate.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WaterArea.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WorldMaterials.cpp">
+      <Filter>Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TriggerPlayerContactCallback.cpp">
+      <Filter>Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TriggerObjectContactCallback.cpp">
+      <Filter>Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BridgeMaker.cpp">
+      <Filter>Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ZipLineSlide.cpp">
+      <Filter>Files\Objects\slide</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TopSlide.cpp">
+      <Filter>Files\Objects\slide</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SlidesAutoTarget.cpp">
+      <Filter>Files\Objects\slide</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SlideContactCallback.cpp">
+      <Filter>Files\Objects\slide</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Slide.cpp">
+      <Filter>Files\Objects\slide</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DefShadowCamera.cpp">
+      <Filter>Files\Shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PSSMCamera.cpp">
+      <Filter>Files\Shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Player.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Player_movement.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerClimbing.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerGrab.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerParkour.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerPostProcess.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AudioLibrary.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CameraShaker.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Console.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DebugKeys.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DefaultObjectContactCallback.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EventsManager.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameStateManager.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\globals.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gorilla.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GuiOverlay.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OgreGpuCommandBufferFlush.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PagingManager.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PostProcessMgr.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml2.cpp">
+      <Filter>Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AAmain.cpp">
+      <Filter>Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stdafx.cpp">
+      <Filter>Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Console.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\DefaultObjectContactCallback.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Gorilla.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\OgreGpuCommandBufferFlush.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
+      <Filter>Files</Filter>
     </ClInclude>
     <ClInclude Include="resource1.h">
-      <Filter>Header Files</Filter>
+      <Filter>Files</Filter>
     </ClInclude>
     <ClInclude Include="include\stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\TriggerObjectContactCallback.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\TriggerPlayerContactCallback.h">
-      <Filter>Header Files</Filter>
+      <Filter>Files</Filter>
     </ClInclude>
     <ClInclude Include="include\TriggerInfo.h">
-      <Filter>Header Files\tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PagingManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GrassHeightFunction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\BridgeMaker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GuiOverlay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PostProcessMgr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\BasicPPListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ScaryPPListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\InputListener.h">
-      <Filter>Header Files</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\ChainsSoundTask.h">
-      <Filter>Header Files\tasks</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonTasks.h">
-      <Filter>Header Files\tasks</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\EffectsTasks.h">
-      <Filter>Header Files\tasks</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\EntityMovementTask.h">
-      <Filter>Header Files\tasks</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\EventTask.h">
-      <Filter>Header Files\tasks</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\HandFromGroundTask.h">
-      <Filter>Header Files\tasks</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\HandGripTask.h">
-      <Filter>Header Files\tasks</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\lvl1Tasks.h">
-      <Filter>Header Files\tasks</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\Tasks.h">
-      <Filter>Header Files\tasks</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\TestTask.h">
-      <Filter>Header Files\tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\DebugKeys.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\EventsManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameStateManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\NewtonListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\WorldMaterials.h">
-      <Filter>Header Files</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\lvl_update.h">
-      <Filter>Header Files\tasks</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\LoadNextPart.h">
-      <Filter>Header Files\tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AudioLibrary.h">
-      <Filter>Header Files</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\ReflectionTask.h">
-      <Filter>Header Files\tasks</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\WaterArea.h">
-      <Filter>Header Files\tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ListLoop.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\CameraShaker.h">
-      <Filter>Header Files</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\BodyUserData.h">
-      <Filter>Header Files\tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\DefShadowCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MainListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GodrayListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PSSMCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\start.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\levelsInit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\globals.h">
-      <Filter>Header Files</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\TransformationTaskTemplate.h">
-      <Filter>Header Files\tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MathUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ZipLineSlide.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\TopSlide.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Slide.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SlideContactCallback.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SlidesAutoTarget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\tinyxml2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameConfig.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SceneParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PlayerPostProcess.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PlayerClimbing.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PlayerGrab.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PlayerParkour.h">
-      <Filter>Header Files</Filter>
+      <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\Crow.h">
-      <Filter>Header Files\Crow</Filter>
+      <Filter>Files\Objects\Crow</Filter>
     </ClInclude>
     <ClInclude Include="include\CrowPath.h">
-      <Filter>Header Files\Crow</Filter>
+      <Filter>Files\Objects\Crow</Filter>
     </ClInclude>
     <ClInclude Include="include\CrowsGroup.h">
-      <Filter>Header Files\Crow</Filter>
+      <Filter>Files\Objects\Crow</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AudioLibrary.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BasicPPListener.h">
+      <Filter>Files\Listeners</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BridgeMaker.h">
+      <Filter>Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CameraShaker.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Console.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DebugKeys.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DefaultObjectContactCallback.h">
+      <Filter>Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DefShadowCamera.h">
+      <Filter>Files\Shadow</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EventsManager.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameConfig.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameStateManager.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\globals.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GodrayListener.h">
+      <Filter>Files\Listeners</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InputListener.h">
+      <Filter>Files\Listeners</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MainListener.h">
+      <Filter>Files\Listeners</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathUtils.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NewtonListener.h">
+      <Filter>Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GuiOverlay.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Gorilla.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GrassHeightFunction.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ListLoop.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OgreGpuCommandBufferFlush.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TopSlide.h">
+      <Filter>Files\Objects\slide</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ZipLineSlide.h">
+      <Filter>Files\Objects\slide</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Slide.h">
+      <Filter>Files\Objects\slide</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Player.h">
+      <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerClimbing.h">
+      <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerGrab.h">
+      <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerParkour.h">
+      <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerPostProcess.h">
+      <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PSSMCamera.h">
+      <Filter>Files\Shadow</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PagingManager.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PostProcessMgr.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ScaryPPListener.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TriggerObjectContactCallback.h">
+      <Filter>Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TriggerPlayerContactCallback.h">
+      <Filter>Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WorldMaterials.h">
+      <Filter>Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SlidesAutoTarget.h">
+      <Filter>Files\Objects\slide</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SlideContactCallback.h">
+      <Filter>Files\Objects\slide</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tinyxml2.h">
+      <Filter>Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneParser.h">
+      <Filter>Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\levelsInit.h">
+      <Filter>Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\start.h">
+      <Filter>Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
