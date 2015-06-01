@@ -4,68 +4,71 @@
 #include "EventTask.h"
 #include "Crow.h"
 
-class CrowsGroup;
+class CrowFlight;
+class CrowLanding;
+
+class CrowsGroup
+{
+    friend class CrowsManager;
+
+public:
+
+    CrowsGroup(int mID) : id(mID) {};
+    ~CrowsGroup();
+
+    void update(Ogre::Real tslf);
+
+    CrowFlight* getPossibleFlight();
+    CrowLanding* getPossibleLanding();
+
+    const int id;
+
+private:
+
+    std::vector<CrowFlight*> flights;
+    std::vector<CrowLanding*> landings;
+
+};
 
 class CrowFlight
 {
 public:
 
-	CrowFlight(int crows, float randomYaw, float flightMinTime, Ogre::SceneNode* node);
-	~CrowFlight();
+    CrowFlight(int crows, float randomYaw, float flightMinTime, Ogre::SceneNode* node, CrowsGroup* pgroup);
+    ~CrowFlight();
 
-	bool update(Ogre::Real tslf);
+    void update(Ogre::Real tslf);
 
-	Ogre::Animation* getFlightAnim();
-	void addCrow(Crow* crow);
+    Ogre::Animation* createFlightAnim();
+    void addCrow(Crow* crow);
 
 private:
 
-	float randomYawMax;
-	float flightMinTime;
+    float randomYawMax;
+    float flightMinTime;
 
-	std::vector<Ogre::Animation*> flightAnims;
-	std::vector<Crow*> crows;
-	CrowsGroup* group;
+    std::vector<Ogre::Animation*> flightAnims;
+    std::vector<Crow*> crows;
+    CrowsGroup* group;
 };
 
 class CrowLanding
 {
 public:
 
-	CrowLanding(int crows, float radius, Ogre::SceneNode* node);
-	~CrowLanding();
+    CrowLanding(int crows, float radius, Ogre::SceneNode* node, CrowsGroup* pgroup);
+    ~CrowLanding();
 
-	bool update(Ogre::Real tslf);
+    void update(Ogre::Real tslf);
 
-	bool acceptsLanding() const;
-	void addCrow(Crow* crow);
-
-private:
-
-	float radius;
-	Ogre::Vector3 pos;
-
-	std::vector<Crow*> crows;
-	CrowsGroup* group;
-};
-
-class CrowsGroup : public EventTask
-{
-public:
-
-	CrowsGroup(int mID) : id(mID) {};
-	~CrowsGroup();
-
-	bool update(Ogre::Real tslf);
-
-	CrowFlight* getPossibleFlight();
-	CrowLanding* getPossibleLanding();
-
-	const int id;
+    bool acceptsLanding() const;
+    void addCrow(Crow* crow);
 
 private:
 
-	std::vector<CrowFlight*> flights;
-	std::vector<CrowLanding*> landings;
-	
+    float radius;
+    Ogre::Vector3 pos;
+
+    std::vector<Crow*> crows;
+    CrowsGroup* group;
 };

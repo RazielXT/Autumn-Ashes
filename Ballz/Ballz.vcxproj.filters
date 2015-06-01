@@ -21,9 +21,6 @@
     <Filter Include="Files\Objects\Crow">
       <UniqueIdentifier>{e353782c-bcf5-41f6-8f06-1aad1f616354}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Files\Objects\slide">
-      <UniqueIdentifier>{f51400e4-fdd5-49af-acbb-557cd993ffd6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Files\Physics">
       <UniqueIdentifier>{6e60017f-8c0b-4bd1-b655-51af6a2c33c3}</UniqueIdentifier>
     </Filter>
@@ -39,12 +36,12 @@
     <Filter Include="Files\Tasks">
       <UniqueIdentifier>{2b87eae1-d81d-4a9b-bb19-bd609893605c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\Objects\Slide">
+      <UniqueIdentifier>{f51400e4-fdd5-49af-acbb-557cd993ffd6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CrowPath.cpp">
-      <Filter>Files\Objects\Crow</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CrowdGroup.cpp">
       <Filter>Files\Objects\Crow</Filter>
     </ClCompile>
     <ClCompile Include="src\Crow.cpp">
@@ -108,19 +105,19 @@
       <Filter>Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="src\ZipLineSlide.cpp">
-      <Filter>Files\Objects\slide</Filter>
+      <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
     <ClCompile Include="src\TopSlide.cpp">
-      <Filter>Files\Objects\slide</Filter>
+      <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
     <ClCompile Include="src\SlidesAutoTarget.cpp">
-      <Filter>Files\Objects\slide</Filter>
+      <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
     <ClCompile Include="src\SlideContactCallback.cpp">
-      <Filter>Files\Objects\slide</Filter>
+      <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
     <ClCompile Include="src\Slide.cpp">
-      <Filter>Files\Objects\slide</Filter>
+      <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
     <ClCompile Include="src\DefShadowCamera.cpp">
       <Filter>Files\Shadow</Filter>
@@ -193,6 +190,12 @@
     </ClCompile>
     <ClCompile Include="src\stdafx.cpp">
       <Filter>Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CrowsGroup.cpp">
+      <Filter>Files\Objects\Crow</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Crows.cpp">
+      <Filter>Files\Objects\Crow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -332,13 +335,13 @@
       <Filter>Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="include\TopSlide.h">
-      <Filter>Files\Objects\slide</Filter>
+      <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
     <ClInclude Include="include\ZipLineSlide.h">
-      <Filter>Files\Objects\slide</Filter>
+      <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
     <ClInclude Include="include\Slide.h">
-      <Filter>Files\Objects\slide</Filter>
+      <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
     <ClInclude Include="include\Player.h">
       <Filter>Files\Player</Filter>
@@ -377,10 +380,10 @@
       <Filter>Files\Physics</Filter>
     </ClInclude>
     <ClInclude Include="include\SlidesAutoTarget.h">
-      <Filter>Files\Objects\slide</Filter>
+      <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
     <ClInclude Include="include\SlideContactCallback.h">
-      <Filter>Files\Objects\slide</Filter>
+      <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
     <ClInclude Include="include\tinyxml2.h">
       <Filter>Files\Scene</Filter>
@@ -393,6 +396,9 @@
     </ClInclude>
     <ClInclude Include="include\start.h">
       <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Crows.h">
+      <Filter>Files\Objects\Crow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

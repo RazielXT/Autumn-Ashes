@@ -10,6 +10,7 @@
 #include "TopSlide.h"
 #include "ZipLineSlide.h"
 #include "player.h"
+#include "Crows.h"
 
 
 using namespace Ogre;
@@ -547,14 +548,38 @@ private:
         }
     }
 
+    void loadCrowFlight(const XMLElement* rootElement, Entity* ent, SceneNode* node)
+    {
+        int mID = getElementIntValue(rootElement, "ID");
+        int crows = getElementIntValue(rootElement, "InitCrows");
+
+        node->detachAllObjects();
+        Global::mSceneMgr->destroyEntity(ent);
+
+        CrowsManager::get()->addCrowFlight(crows, 0, 10, node, mID);
+    }
+
+    void loadCrowLanding(const XMLElement* rootElement, Entity* ent, SceneNode* node)
+    {
+        int mID = getElementIntValue(rootElement, "ID");
+        int crows = getElementIntValue(rootElement, "InitCrows");
+
+        node->detachAllObjects();
+        Global::mSceneMgr->destroyEntity(ent);
+
+        CrowsManager::get()->addCrowLanding(crows, 5, node, mID);
+
+        Global::mSceneMgr->destroySceneNode(node);
+    }
+
     void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
     {
         static int partID = 0;
         Ogre::String name = getElementValue(rootElement, "Name");
-		int rGroup = getElementIntValue(rootElement, "RenderQroup", 91);
+        int rGroup = getElementIntValue(rootElement, "RenderQroup", 91);
 
         Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem("Particle" + std::to_string(partID++), name);
-		ps->setRenderQueueGroup(rGroup);
+        ps->setRenderQueueGroup(rGroup);
 
         if (getElementBoolValue(rootElement, "EditParams"))
         {
@@ -1739,6 +1764,14 @@ private:
                     else if (rootTag == "Particle")
                     {
                         loadParticle(root, ent, node);
+                    }
+                    else if (rootTag == "CrowFlight")
+                    {
+                        loadCrowFlight(root, ent, node);
+                    }
+                    else if (rootTag == "CrowLanding")
+                    {
+                        loadCrowLanding(root, ent, node);
                     }
                     else if (rootTag == "EnvSoundBody")
                     {

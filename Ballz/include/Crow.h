@@ -9,22 +9,22 @@ class Crow
 {
 public:
 
-	Crow();
-	~Crow();
+    Crow();
+    ~Crow();
 
-	bool update(Ogre::Real tslf);
+    void update(Ogre::Real tslf);
 
-	bool readyToFly() const;
-	bool readyToLand() const;
+    bool readyToFly() const;
+    bool readyToLand() const;
 
-	void flyTo(Ogre::Animation* flightAnim);
-	void landTo(Ogre::Vector3 pos);
+    void flyTo(Ogre::Animation* flightAnim);
+    void landTo(Ogre::Vector3 pos);
 
 protected:
 
-	float stateChangeTimer;
+    float stateChangeTimer;
 
-	Ogre::SceneNode* mNode;
-	Ogre::Entity* mEntity;
-	CrowPath path;
+    Ogre::SceneNode* mNode;
+    Ogre::Entity* mEntity;
+    CrowPath path;
 };
