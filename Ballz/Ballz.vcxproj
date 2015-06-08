@@ -126,6 +126,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\AAmain.cpp" />
+    <ClCompile Include="src\AnimationBlender.cpp" />
     <ClCompile Include="src\AudioLibrary.cpp" />
     <ClCompile Include="src\BridgeMaker.cpp" />
     <ClCompile Include="src\CameraShaker.cpp" />
@@ -182,6 +183,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\ZipLineSlide.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\AnimationBlender.h" />
     <ClInclude Include="include\AudioLibrary.h" />
     <ClInclude Include="include\BasicPPListener.h" />
     <ClInclude Include="include\BridgeMaker.h" />

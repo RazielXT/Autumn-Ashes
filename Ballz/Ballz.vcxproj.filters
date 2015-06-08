@@ -197,6 +197,9 @@
     <ClCompile Include="src\Crows.cpp">
       <Filter>Files\Objects\Crow</Filter>
     </ClCompile>
+    <ClCompile Include="src\AnimationBlender.cpp">
+      <Filter>Files\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -399,6 +402,9 @@
     </ClInclude>
     <ClInclude Include="include\Crows.h">
       <Filter>Files\Objects\Crow</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimationBlender.h">
+      <Filter>Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
