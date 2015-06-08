@@ -20,6 +20,30 @@ inline float getYawBetween(Quaternion& q1, Quaternion& q2)
     return r;
 }
 
+inline Quaternion quaternionFromDir(Vector3 dirFront)
+{
+    dirFront.normalise();
+
+    Vector3 dirRight = Vector3(-dirFront.z, 0, dirFront.x);
+    dirRight.normalise();
+
+    Vector3 dirUp = dirRight.crossProduct(dirFront);
+
+    return Quaternion(dirFront, dirUp, dirRight);
+}
+
+inline Quaternion quaternionFromDirNoPitch(Vector3 dirFront)
+{
+    dirFront.y = 0;
+    dirFront.normalise();
+
+    Vector3 dirRight = Vector3(-dirFront.z, 0, dirFront.x);
+
+    Vector3 dirUp(0,1,0);
+
+    return Quaternion(dirFront, dirUp, dirRight);
+}
+
 inline float getSign(float x)
 {
     return (float)((x > 0) - (x < 0));

@@ -7,25 +7,28 @@ class AnimationBlender
 {
 public:
 
-	~AnimationBlender() { clear(); }
+    ~AnimationBlender()
+    {
+        clear();
+    }
 
-	void init(Ogre::Entity* targetEntity);
+    void init(Ogre::Entity* targetEntity);
 
-	void fadeTo(std::string animName, float fadeTime);
-	void update(float tslf);
+    void fadeTo(std::string animName, float fadeTime);
+    void update(float tslf);
 
 private:
 
-	void clear();
+    void clear();
 
-	Ogre::Entity* targetEnt;
+    Ogre::Entity* targetEnt;
 
-	float blendTimer;
-	float blendTargetTime;
-	bool blending = false;
+    float blendTimer;
+    float blendTargetTime;
+    bool blending = false;
 
-	Ogre::AnimationState* currentState;
+    Ogre::AnimationState* currentState = nullptr;
 
-	std::vector<Ogre::AnimationState*> fadingStates;
-	std::vector<float> fadingStatesStartWeight;
+    std::vector<Ogre::AnimationState*> fadingStates;
+    std::vector<float> fadingStatesStartWeight;
 };

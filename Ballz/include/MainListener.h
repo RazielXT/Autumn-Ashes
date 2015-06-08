@@ -151,8 +151,17 @@ public:
         {
             if (gameMgr->gameState == GAME)
                 makecube();
+
+            break;
         }
-        break;
+
+        case OIS::KC_NUMPAD1:
+        {
+            if (gameMgr->gameState == GAME)
+                makecube(true);
+
+            break;
+        }
 
         case OIS::KC_G:
         {
@@ -162,7 +171,7 @@ public:
             break;
         }
 
-        case OIS::KC_NUMPAD6:
+        case OIS::KC_NUMPAD2:
         {
             reloadShaders();
 
@@ -226,10 +235,10 @@ public:
         return true;
     }
 
-    void makecube()
+    void makecube(bool platform = false)
     {
         Ogre::Vector3 size( 2, 2,2 );
-        Ogre::Real mass = 0.3;
+        Ogre::Real mass = platform ? 0 : 0.3f;
 
         Entity* ent = mSceneMgr->createEntity( "boxEL.mesh" );
         SceneNode* node = mSceneMgr->getRootSceneNode()->createChildSceneNode();
@@ -252,7 +261,7 @@ public:
         body->attachNode( node );
         body->setType(Grabbable);
         body->setCustomForceAndTorqueCallback<MainListener>(&MainListener::default_callback, this);
-        body->setPositionOrientation(Global::player->bodyPosition + Vector3(0, 5, 0), Ogre::Quaternion::IDENTITY);
+        body->setPositionOrientation(Global::player->bodyPosition + Vector3(0, platform ? -3 : 5, 0), Ogre::Quaternion::IDENTITY);
     }
 
 

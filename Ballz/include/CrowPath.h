@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-enum PathState { OnGround, Flying, Landing, Lifting, None };
+enum CrowState { OnGround, Flying, Landing, Lifting, None };
 
 struct CrowPathAnimations
 {
@@ -38,14 +38,17 @@ public:
     CrowPath();
     ~CrowPath();
 
-    bool update(Ogre::Real tslf, Ogre::SceneNode* node);
+    bool update(Ogre::Real tslf, Ogre::SceneNode* node, Ogre::Quaternion& qOffset, Ogre::Vector3& pOffset);
 
     Ogre::Vector3 getPosition();
     Ogre::Quaternion getOrientation();
 
-    PathState state = None;
+    CrowState state = None;
     void setLandingAnim(Ogre::Vector3 targetPos);
     void setLiftingAnim(Ogre::Animation* targetFlightAnim, float timePos);
+
+    float getTempTimeLeft();
+    float getTempTime();
 
 protected:
 

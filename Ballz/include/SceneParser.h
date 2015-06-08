@@ -2016,6 +2016,13 @@ private:
         }
     }
 
+    inline void fixSpline(Quaternion& rotation, Quaternion previous)
+    {
+        float fCos = previous.Dot(rotation);
+        if (fCos < 0.0f)
+            rotation = -rotation;
+    }
+
     void loadAnimations(const XMLElement* element, Ogre::SceneNode* node, Ogre::SceneManager* mSceneMgr)
     {
 
@@ -2045,6 +2052,7 @@ private:
                 anim->setRotationInterpolationMode(Animation::RIM_LINEAR);
 
             NodeAnimationTrack* track = anim->createNodeTrack(0, node);
+            Quaternion previous;
 
             const XMLElement* keyElement = 0;
             while (keyElement = IterateChildElements(childElement, keyElement))
@@ -2055,7 +2063,14 @@ private:
                 const XMLElement* keyInfoElement = keyElement->FirstChildElement();
                 kf->setTranslate(LoadXYZ(keyInfoElement));
                 keyInfoElement = keyInfoElement->NextSiblingElement();
-                kf->setRotation(LoadRotation(keyInfoElement));
+                Quaternion rot = LoadRotation(keyInfoElement);
+
+                fixSpline(rot, previous);
+
+                kf->setRotation(rot);
+
+                previous = rot;
+
                 keyInfoElement = keyInfoElement->NextSiblingElement();
                 kf->setScale(LoadXYZ(keyInfoElement));
             }

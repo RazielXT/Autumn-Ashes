@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 #include "CrowPath.h"
+#include "AnimationBlender.h"
 
 class CrowsPack;
 
@@ -9,7 +10,7 @@ class Crow
 {
 public:
 
-    Crow();
+    Crow(bool onGround);
     ~Crow();
 
     void update(Ogre::Real tslf);
@@ -22,9 +23,16 @@ public:
 
 protected:
 
+    void updateAnimationState();
+
     float stateChangeTimer;
 
+    CrowState curAnimType;
     Ogre::SceneNode* mNode;
     Ogre::Entity* mEntity;
     CrowPath path;
+    AnimationBlender animation;
+
+    Ogre::Quaternion modelOr;
+    Ogre::Vector3 modelOffset;
 };

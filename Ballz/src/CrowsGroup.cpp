@@ -19,6 +19,8 @@ CrowsGroup::~CrowsGroup()
 
 void CrowsGroup::update(Ogre::Real tslf)
 {
+    tslf *= 0.8f;
+
     //update vectors
     for (auto l : landings)
     {
@@ -45,6 +47,9 @@ CrowFlight* CrowsGroup::getPossibleFlight()
 
 CrowLanding* CrowsGroup::getPossibleLanding()
 {
+    int rand = (int)Ogre::Math::RangeRandom(0, landings.size() - 0.01f);
+    return landings[rand];
+
     //try in all
     for (auto l : landings)
     {
@@ -77,7 +82,7 @@ CrowFlight::CrowFlight(int num_crows, float randomYaw, float mFlightMinTime, Ogr
     //init crows
     for (int i = 0; i < num_crows; i++)
     {
-        addCrow(new Crow());
+        addCrow(new Crow(false));
     }
 
     group = pgroup;
@@ -150,7 +155,7 @@ CrowLanding::CrowLanding(int num_crows, float mRadius, Ogre::SceneNode* node, Cr
     //init crows
     for (int i = 0; i < num_crows && acceptsLanding(); i++)
     {
-        addCrow(new Crow());
+        addCrow(new Crow(true));
     }
 
     group = pgroup;
@@ -202,6 +207,8 @@ bool CrowLanding::acceptsLanding() const
 void CrowLanding::addCrow(Crow* crow)
 {
     Vector3 lpos(pos);
+
+    //TODO randomize pos
 
     crow->landTo(lpos);
     crows.push_back(crow);
