@@ -20,8 +20,12 @@ private:
 
 	Ogre::Entity* targetEnt;
 
-	float blendTime;
+	float blendTimer;
+	float blendTargetTime;
 	bool blending = false;
+
 	Ogre::AnimationState* currentState;
+
 	std::vector<Ogre::AnimationState*> fadingStates;
+	std::vector<float> fadingStatesStartWeight;
 };

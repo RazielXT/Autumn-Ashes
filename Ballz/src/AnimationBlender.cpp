@@ -12,19 +12,38 @@ void AnimationBlender::fadeTo(std::string animName, float fadeTime)
 	auto animState = targetEnt->getAnimationState(animName);
 
 	if (currentState)
+	{
 		fadingStates.push_back(currentState);
+		fadingStatesStartWeight.push_back(currentState->getWeight());
+	}
 
-	fadingStates.erase(std::remove(fadingStates.begin(), fadingStates.end(), animState), fadingStates.end());
-
-	blendTime = fadeTime;
+	blendTargetTime = fadeTime;
 	currentState = animState;
 	blending = true;
 
-	if (!currentState->getEnabled())
+
+	int fadedId = -1;
+	for (int i = 0; i < fadingStates.size(); i++)
+	{
+		if (fadingStates[i] == animState)
+		{
+			fadedId = i;
+		}
+	}
+
+	if (fadedId == -1)
 	{
 		currentState->setEnabled(true);
 		currentState->setWeight(0);
-	}	
+		blendTimer = 0;
+	}
+	else
+	{
+		fadingStates.erase(fadingStates.begin() + fadedId);
+		fadingStatesStartWeight.erase(fadingStatesStartWeight.begin() + fadedId);
+		blendTimer = currentState->getWeight()*blendTargetTime;
+	}
+		
 
 	if (fadeTime == 0)
 	{
@@ -38,21 +57,23 @@ void AnimationBlender::update(float tslf)
 {
 	if (blending)
 	{
-		float wDiff = tslf / blendTime;
+		blendTimer += tslf;
+		float weight = std::min(1.0f, blendTimer / blendTargetTime);
+		currentState->setWeight(weight);
 
-		currentState->setWeight(std::min(1.0f, currentState->getWeight() + wDiff));
-		bool blended = currentState->getWeight() == 1.0f;
+		bool blended = weight == 1.0f;
 
-		for (auto s : fadingStates)
+		for (int i = 0; i < fadingStates.size(); i++)
 		{
-			float fw = wDiff / fadingStates.size();
-			s->setWeight(std::max(0.0f, s->getWeight() - fw));
+			auto s = fadingStates[i];
+			s->setWeight((1 - weight)*fadingStatesStartWeight[i]);
 			s->setEnabled(!blended);
 		}	
 
 		if (blended)
 		{
 			fadingStates.clear();
+			fadingStatesStartWeight.clear();
 			blending = false;
 		}
 		else
@@ -79,5 +100,5 @@ void AnimationBlender::clear()
 	}
 
 	fadingStates.clear();
-
+	fadingStatesStartWeight.clear();
 }
