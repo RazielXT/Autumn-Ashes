@@ -21,10 +21,14 @@ public:
     void flyTo(Ogre::Animation* flightAnim);
     void landTo(Ogre::Vector3 pos);
 
+	bool readyToChangeFlyPath() const;
+	void switchFlyTo(Ogre::Animation* flightAnim);
+
 protected:
 
     void updateAnimationState();
 
+	float flightNoChangeTimer;
     float stateChangeTimer;
 
     CrowState curAnimType;

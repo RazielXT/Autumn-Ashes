@@ -120,6 +120,10 @@ void CrowFlight::update(Ogre::Real tslf)
                 continue;
             }
         }
+		else if ((*c)->readyToChangeFlyPath())
+		{
+			(*c)->switchFlyTo(createFlightAnim());
+		}
 
         c++;
     }
@@ -135,7 +139,7 @@ Ogre::Animation* CrowFlight::createFlightAnim()
 {
     static int flightsNum = 0;
 
-    //find best free path
+    //find best free path/ random may be enough?
     int rand = (int)Ogre::Math::RangeRandom(0, flightAnims.size() - 0.01f);
     auto chosenAnim = flightAnims[rand];
 

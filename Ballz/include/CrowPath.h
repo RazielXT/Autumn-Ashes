@@ -2,12 +2,16 @@
 
 #include "stdafx.h"
 
-enum CrowState { OnGround, Flying, Landing, Lifting, None };
+enum CrowState { OnGround, Flying, SwitchFlying, Landing, Lifting, None };
 
 struct CrowPathAnimations
 {
     Ogre::Vector3 lastPos;
     Ogre::Quaternion lastOr;
+
+	Ogre::NodeAnimationTrack* mOldFlightTrack = nullptr;
+	float mOldFlightLenght = -1;
+	float mOldFlightPos;
 
     Ogre::NodeAnimationTrack* mFlightTrack = nullptr;
     float mFlightLenght = -1;
@@ -19,9 +23,9 @@ struct CrowPathAnimations
 
     float animWeight = 0;
 
-    Ogre::Vector3 getCurrentPos();
-    Ogre::Quaternion getCurrentOr();
+	void refresh();
 
+	void clearOldFlight();
     void clearTemp();
     void clear();
 
@@ -46,6 +50,7 @@ public:
     CrowState state = None;
     void setLandingAnim(Ogre::Vector3 targetPos);
     void setLiftingAnim(Ogre::Animation* targetFlightAnim, float timePos);
+	void setSwitchFlightAnim(Ogre::Animation* targetFlightAnim, float timePos);
 
     float getTempTimeLeft();
     float getTempTime();
@@ -54,6 +59,7 @@ protected:
 
     void createLandAnimation(Ogre::Vector3 startPos, Ogre::Quaternion startOr, Ogre::Vector3 end);
     void createLiftAnimation(Ogre::Vector3 start, Ogre::Vector3 endPos, Ogre::Quaternion endOr);
+	void createSwitchFlightAnimation(Ogre::Vector3 endPos, Ogre::Quaternion endOr);
 
     CrowPathAnimations animState;
     float animWeightSize = 1;

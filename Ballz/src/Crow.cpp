@@ -18,6 +18,7 @@ Crow::Crow(bool onGround)
     curAnimType = Flying;
 
     stateChangeTimer = 0;
+	flightNoChangeTimer = 0;
 
     modelOr = Quaternion(Degree(-90), Vector3(0, 1, 0)) * Quaternion(Degree(90), Vector3(0, 0, 1));
     modelOffset = Vector3(0, 0.75f, 0);
@@ -60,11 +61,25 @@ void Crow::update(Ogre::Real tslf)
     animation.update(tslf);
 
     //update node pos
-    if (path.update(tslf/3.0f, mNode, modelOr, modelOffset))
-        stateChangeTimer = path.state == Flying ? 5.0f : 3.0f;
-    else
-        //update state timer
-        stateChangeTimer -= tslf;
+	if (path.update(tslf / 3.0f, mNode, modelOr, modelOffset))
+	{
+		stateChangeTimer = path.state == Flying ? 5.0f : 3.0f;
+
+		if (path.state == Flying)
+			flightNoChangeTimer = 5;
+	}       
+	else
+	{
+		//update state timer
+		stateChangeTimer -= tslf;
+		flightNoChangeTimer -= tslf;
+	}
+
+}
+
+bool Crow::readyToChangeFlyPath() const
+{
+	return (path.state == Flying && flightNoChangeTimer <= 0);
 }
 
 bool Crow::readyToFly() const
@@ -75,6 +90,14 @@ bool Crow::readyToFly() const
 bool Crow::readyToLand() const
 {
     return (path.state == Flying && stateChangeTimer <= 0);
+}
+
+void Crow::switchFlyTo(Ogre::Animation* flightAnim)
+{
+	//TODO try find pos where dir isnt against crow - must be in front + threshold, path dir dot cur or must not be < -0.5 ?
+	float pos = Math::RangeRandom(0, flightAnim->getLength());
+
+	path.setLiftingAnim(flightAnim, pos);
 }
 
 void Crow::flyTo(Ogre::Animation* flightAnim)
