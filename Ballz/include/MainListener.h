@@ -261,7 +261,7 @@ public:
         body->attachNode( node );
         body->setType(Grabbable);
         body->setCustomForceAndTorqueCallback<MainListener>(&MainListener::default_callback, this);
-        body->setPositionOrientation(Global::player->bodyPosition + Vector3(0, platform ? -3 : 5, 0), Ogre::Quaternion::IDENTITY);
+        body->setPositionOrientation(Global::player->bodyPosition + Vector3(0, platform ? -3.0f : 5.0f, 0), Ogre::Quaternion::IDENTITY);
     }
 
 

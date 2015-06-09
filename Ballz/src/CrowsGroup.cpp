@@ -102,6 +102,9 @@ void CrowFlight::update(Ogre::Real tslf)
     //update crows
     for (auto c : crows)
     {
+        if (c->readyToChangeFlyPath())
+            c->switchFlyTo(createFlightAnim());
+
         c->update(tslf);
     }
 
@@ -120,10 +123,10 @@ void CrowFlight::update(Ogre::Real tslf)
                 continue;
             }
         }
-		else if ((*c)->readyToChangeFlyPath())
-		{
-			(*c)->switchFlyTo(createFlightAnim());
-		}
+        else if ((*c)->readyToChangeFlyPath())
+        {
+            (*c)->switchFlyTo(createFlightAnim());
+        }
 
         c++;
     }
