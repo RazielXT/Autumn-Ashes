@@ -44,6 +44,9 @@ public:
 
 private:
 
+	void randomizeAnim(Ogre::Animation* anim);
+
+	Vector3 centerPos;
     float randomYawMax;
     float flightMinTime;
 
