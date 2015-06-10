@@ -68,7 +68,7 @@ CrowFlight::CrowFlight(int num_crows, float randomYaw, float mFlightMinTime, Ogr
     auto animNode = Global::mSceneMgr->getSceneNode(node->getName() + "Anim");
     auto anims = Global::mSceneMgr->getAnimations();
 
-	centerPos = node->_getDerivedPosition();
+    centerPos = node->_getDerivedPosition();
 
     for (auto it = anims.cbegin(); it != anims.cend(); it++)
     {
@@ -106,7 +106,7 @@ void CrowFlight::update(Ogre::Real tslf)
     auto c = crows.begin();
     while (c != crows.end())
     {
-		(*c)->update(tslf);
+        (*c)->update(tslf);
 
         if ((*c)->readyToLand())
         {
@@ -146,26 +146,26 @@ Ogre::Animation* CrowFlight::createFlightAnim()
     auto newAnim = chosenAnim->clone(chosenAnim->getName() + std::to_string(flightsNum++));
 
     //randomize
-	randomizeAnim(newAnim);
+    randomizeAnim(newAnim);
 
     return newAnim;
 }
 
 void CrowFlight::randomizeAnim(Ogre::Animation* anim)
 {
-	auto track = anim->getNodeTrack(0);
+    auto track = anim->getNodeTrack(0);
 
-	float yaw = Math::RangeRandom(-randomYawMax / 2.0f, randomYawMax / 2.0f);
+    float yaw = Math::RangeRandom(-randomYawMax / 2.0f, randomYawMax / 2.0f);
 
-	Quaternion rot(Degree(yaw),Vector3(0, 1, 0));
+    Quaternion rot(Degree(yaw),Vector3(0, 1, 0));
 
-	for (size_t i = 0; i < track->getNumKeyFrames(); i++)
-	{
-		TransformKeyFrame* key = (TransformKeyFrame*)track->getKeyFrame(i);
-		Vector3 centralized = key->getTranslate() - centerPos;
-		key->setTranslate(centerPos + rot*centralized);
-		key->setRotation(key->getRotation()*rot);
-	}
+    for (size_t i = 0; i < track->getNumKeyFrames(); i++)
+    {
+        TransformKeyFrame* key = (TransformKeyFrame*)track->getKeyFrame(i);
+        Vector3 centralized = key->getTranslate() - centerPos;
+        key->setTranslate(centerPos + rot*centralized);
+        key->setRotation(key->getRotation()*rot);
+    }
 }
 
 CrowLanding::CrowLanding(int num_crows, float mRadius, Ogre::SceneNode* node, CrowsGroup* pgroup)

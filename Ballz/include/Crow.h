@@ -24,6 +24,10 @@ public:
     bool readyToChangeFlyPath() const;
     void switchFlyTo(Ogre::Animation* flightAnim);
 
+    float minFlightTime = 10;
+    float switchFlightTime = 5;
+    float minGroundTime = 5;
+
 protected:
 
     void updateAnimationState();

@@ -22,6 +22,8 @@ Crow::Crow(bool onGround)
 
     modelOr = Quaternion(Degree(-90), Vector3(0, 1, 0)) * Quaternion(Degree(90), Vector3(0, 0, 1));
     modelOffset = Vector3(0, 0.75f, 0);
+
+    minFlightTime = 10;
 }
 
 Crow::~Crow()
@@ -61,12 +63,21 @@ void Crow::update(Ogre::Real tslf)
     animation.update(tslf*5);
 
     //update node pos
+    auto lastState = path.state;
+
     if (path.update(tslf, mNode, modelOr, modelOffset))
     {
-        stateChangeTimer = path.state == Flying ? 19.0f : 3.0f;
-
         if (path.state == Flying)
-            flightNoChangeTimer = 5;
+        {
+            flightNoChangeTimer = switchFlightTime;
+
+            if (lastState != SwitchFlying)
+                stateChangeTimer = minFlightTime;
+            else
+                stateChangeTimer = std::max(stateChangeTimer, switchFlightTime / 2.0f);
+        }
+        else
+            stateChangeTimer = minGroundTime;
     }
     else
     {
