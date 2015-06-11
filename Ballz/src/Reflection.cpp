@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "ReflectionTask.h"
+#include "Reflection.h"
 
 using namespace Ogre;
 

@@ -175,7 +175,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\HandFromGroundReaction.cpp" />
     <ClCompile Include="src\TestReaction.cpp" />
     <ClCompile Include="src\CommonTasks.cpp" />
-    <ClCompile Include="src\ReflectionTask.cpp" />
+    <ClCompile Include="src\Reflection.cpp" />
     <ClCompile Include="src\TriggerPlayerContactCallback.cpp" />
     <ClCompile Include="src\WaterArea.cpp" />
     <ClCompile Include="src\WorldMaterials.cpp" />
@@ -228,7 +228,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\Player.h" />
     <ClInclude Include="include\PostProcessMgr.h" />
     <ClInclude Include="include\CommonTasks.h" />
-    <ClInclude Include="include\ReflectionTask.h" />
+    <ClInclude Include="include\Reflection.h" />
     <ClInclude Include="include\SceneParser.h" />
     <ClInclude Include="include\SlideContactCallback.h" />
     <ClInclude Include="include\SlidesAutoTarget.h" />

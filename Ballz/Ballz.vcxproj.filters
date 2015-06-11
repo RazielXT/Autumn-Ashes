@@ -77,9 +77,6 @@
     <ClCompile Include="src\lvl1Reactions.cpp">
       <Filter>Files\Tasks</Filter>
     </ClCompile>
-    <ClCompile Include="src\ReflectionTask.cpp">
-      <Filter>Files\Tasks</Filter>
-    </ClCompile>
     <ClCompile Include="src\Tasks.cpp">
       <Filter>Files\Tasks</Filter>
     </ClCompile>
@@ -87,9 +84,6 @@
       <Filter>Files\Tasks</Filter>
     </ClCompile>
     <ClCompile Include="src\TransformationTaskTemplate.cpp">
-      <Filter>Files\Tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\WaterArea.cpp">
       <Filter>Files\Tasks</Filter>
     </ClCompile>
     <ClCompile Include="src\WorldMaterials.cpp">
@@ -200,6 +194,12 @@
     <ClCompile Include="src\AnimationBlender.cpp">
       <Filter>Files\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="src\WaterArea.cpp">
+      <Filter>Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Reflection.cpp">
+      <Filter>Files\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -248,12 +248,6 @@
       <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\LoadNextPart.h">
-      <Filter>Files\Tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ReflectionTask.h">
-      <Filter>Files\Tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\WaterArea.h">
       <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\BodyUserData.h">
@@ -404,6 +398,12 @@
       <Filter>Files\Objects\Crow</Filter>
     </ClInclude>
     <ClInclude Include="include\AnimationBlender.h">
+      <Filter>Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WaterArea.h">
+      <Filter>Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Reflection.h">
       <Filter>Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>
