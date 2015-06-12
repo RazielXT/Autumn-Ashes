@@ -161,9 +161,6 @@ void Crow::flyTo(Ogre::Animation* flightAnim)
 
 void Crow::landTo(Ogre::Vector3 pos)
 {
-    Vector3 offset(Math::RangeRandom(-4, 4), 0, Math::RangeRandom(-4, 4));
-    pos += offset;
-
 	pos = MathUtils::getVerticalRayPos(pos, 5);
 
     if (path.state == OnGround)

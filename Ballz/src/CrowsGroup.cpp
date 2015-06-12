@@ -59,10 +59,11 @@ CrowLanding* CrowsGroup::getPossibleLanding()
     return nullptr;
 }
 
-CrowFlight::CrowFlight(int num_crows, float randomYaw, float mFlightMinTime, Ogre::SceneNode* node, CrowsGroup* pgroup)
+CrowFlight::CrowFlight(int num_crows, float randomYaw, float mFlightAvgTime, float mSwitchAvgTime, Ogre::SceneNode* node, CrowsGroup* pgroup)
 {
     randomYawMax = randomYaw;
-    flightMinTime = mFlightMinTime;
+	flightAvgTime = mFlightAvgTime;
+	switchAvgTime = mSwitchAvgTime;
 
     //init paths
     auto animNode = Global::mSceneMgr->getSceneNode(node->getName() + "Anim");
@@ -130,6 +131,9 @@ void CrowFlight::update(Ogre::Real tslf)
 
 void CrowFlight::addCrow(Crow* crow)
 {
+	crow->minFlightTime = flightAvgTime / 2.0f + Ogre::Math::RangeRandom(0, flightAvgTime);
+	crow->switchFlightTime = switchAvgTime / 2.0f + Ogre::Math::RangeRandom(0, switchAvgTime);
+
     crow->flyTo(createFlightAnim());
     crows.push_back(crow);
 }
@@ -171,13 +175,19 @@ void CrowFlight::randomizeAnim(Ogre::Animation* anim)
     }
 }
 
-CrowLanding::CrowLanding(int num_crows, float mRadius, Ogre::SceneNode* node, CrowsGroup* pgroup)
+CrowLanding::CrowLanding(int crows, int mMaxCrows, float mGroundAvgTime, bool mAllowWalk, Ogre::SceneNode* node, CrowsGroup* pgroup)
 {
-    radius = mRadius;
+	groundAvgTime = mGroundAvgTime;
+	maxCrows = mMaxCrows;
+	allowWalk = mAllowWalk;
+
     pos = node->_getDerivedPosition();
+	auto bounds = node->getAttachedObject(0)->getBoundingBox().getHalfSize();
+
+	maxPosOffsets = std::max(bounds.x, bounds.z);
 
     //init crows
-    for (int i = 0; i < num_crows && acceptsLanding(); i++)
+	for (int i = 0; i < crows && acceptsLanding(); i++)
     {
         addCrow(new Crow(true));
     }
@@ -225,15 +235,16 @@ void CrowLanding::update(Ogre::Real tslf)
 bool CrowLanding::acceptsLanding() const
 {
     //check if free
-    return (crows.size() <= radius);
+	return (crows.size() < maxCrows);
 }
 
 void CrowLanding::addCrow(Crow* crow)
 {
-    Vector3 lpos(pos);
+	crow->minGroundTime = groundAvgTime / 2.0f + Ogre::Math::RangeRandom(0, groundAvgTime);
+	crow->allowedWalking = allowWalk;
 
-    //TODO randomize pos
+	Vector3 offset(Math::RangeRandom(-maxPosOffsets, maxPosOffsets), 0, Math::RangeRandom(-maxPosOffsets, maxPosOffsets));
 
-    crow->landTo(lpos);
+	crow->landTo(pos + offset);
     crows.push_back(crow);
 }

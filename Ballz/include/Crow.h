@@ -27,6 +27,7 @@ public:
     float minFlightTime = 10;
     float switchFlightTime = 5;
     float minGroundTime = 5;
+	bool allowedWalking = true;
 
 protected:
 

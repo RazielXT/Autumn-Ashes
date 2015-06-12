@@ -37,38 +37,38 @@ bool CrowsManager::update(Ogre::Real tslf)
     return true;
 }
 
-void CrowsManager::addCrowFlight(int num_crows, float randomYaw, float mFlightMinTime, Ogre::SceneNode* node, int id)
+void CrowsManager::addCrowFlight(int num_crows, float randomYaw, float mFlightMinTime, float mSwitchMinTime, Ogre::SceneNode* node, int id)
 {
     for (auto g : subGroups)
     {
         if (g->id == id)
         {
-            auto f = new CrowFlight(num_crows, randomYaw, mFlightMinTime, node, g);
+            auto f = new CrowFlight(num_crows, randomYaw, mFlightMinTime, mSwitchMinTime, node, g);
             g->flights.push_back(f);
             return;
         }
     }
 
     CrowsGroup* g = new CrowsGroup(id);
-    auto f = new CrowFlight(num_crows, randomYaw, mFlightMinTime, node, g);
+	auto f = new CrowFlight(num_crows, randomYaw, mFlightMinTime, mSwitchMinTime, node, g);
     g->flights.push_back(f);
     subGroups.push_back(g);
 }
 
-void CrowsManager::addCrowLanding(int num_crows, float mRadius, Ogre::SceneNode* node, int id)
+void CrowsManager::addCrowLanding(int num_crows, int mMaxCrows, float mGroundAvgTime, bool mAllowWalk, Ogre::SceneNode* node, int id)
 {
     for (auto g : subGroups)
     {
         if (g->id == id)
         {
-            auto l = new CrowLanding(num_crows, mRadius, node, g);
+			auto l = new CrowLanding(num_crows, mMaxCrows, mGroundAvgTime, mAllowWalk, node, g);
             g->landings.push_back(l);
             return;
         }
     }
 
     CrowsGroup* g = new CrowsGroup(id);
-    auto l = new CrowLanding(num_crows, mRadius, node, g);
+	auto l = new CrowLanding(num_crows, mMaxCrows, mGroundAvgTime, mAllowWalk, node, g);
     g->landings.push_back(l);
     subGroups.push_back(g);
 }

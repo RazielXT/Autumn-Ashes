@@ -284,14 +284,17 @@
 <class name="CrowLanding" usage="object">
 	<data name="ID" type="int" defaultValue="1"/>
 	<data name="InitCrows" displayName="Init crows" type="int" defaultValue="0"/>
-	<data name="PlayerRadius" displayName="Min player radius" type="float" defaultValue="5"/>
+	<data name="MaxCrows" displayName="Max crows" type="int" defaultValue="5"/>
+	<data name="Groundtime" displayName="Avg ground time" type="float" defaultValue="5"/>
+	<data name="AllowWalk" displayName="Allow walking" type="bool" defaultValue="true"/>
 </class>
 
 <class name="CrowFlight" usage="object">
 	<data name="ID" type="int" defaultValue="1"/>
 	<data name="InitCrows" displayName="Init crows" type="int" defaultValue="0"/>
 	<data name="RandomYaw" displayName="Random yaw" type="float" defaultValue="360" minValue="0" maxValue="360"/>
-	<data name="Flighttime" displayName="Min flight time" type="float" defaultValue="10"/>
+	<data name="Flighttime" displayName="Avg flight time" type="float" defaultValue="10"/>
+	<data name="Switchtime" displayName="Avg switch time" type="float" defaultValue="5"/>
 </class>
 
 <class name="Player" usage="object">
