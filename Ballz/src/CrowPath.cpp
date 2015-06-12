@@ -246,8 +246,6 @@ void CrowPath::setSwitchFlightAnim(Ogre::Animation* flightAnim, float timePos)
     animState.mOldFlightLenght = animState.mFlightLenght;
 
     animState.mFlightTrack = flightAnim->getNodeTrack(0);
-    animState.mFlightTrack->setUseShortestRotationPath(true);
-    animState.mFlightTrack->_keyFrameDataChanged();
     animState.mFlightPos = timePos;
     animState.mFlightLenght = animState.mFlightTrack->getKeyFrame(animState.mFlightTrack->getNumKeyFrames() - 1)->getTime();
 

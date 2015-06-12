@@ -20,6 +20,11 @@ inline float getYawBetween(Quaternion& q1, Quaternion& q2)
     return r;
 }
 
+inline Vector3 dirFromQuaternion(Quaternion or)
+{
+	return or*Vector3(0,0,-1);
+}
+
 inline Quaternion quaternionFromDir(Vector3 dirFront)
 {
     dirFront.normalise();
@@ -30,6 +35,15 @@ inline Quaternion quaternionFromDir(Vector3 dirFront)
     Vector3 dirUp = dirRight.crossProduct(dirFront);
 
     return Quaternion(dirFront, dirUp, dirRight);
+}
+
+inline Vector3 getVerticalRayPos(Vector3 pos, float yOffset)
+{
+	OgreNewt::BasicRaycast ray(Global::mWorld, Vector3(pos.x, pos.y + yOffset, pos.z), Vector3(pos.x, pos.y - yOffset, pos.z), false);
+	OgreNewt::BasicRaycast::BasicRaycastInfo& info = ray.getFirstHit();
+	pos.y += -yOffset + 2 * yOffset * info.getDistance();
+
+	return pos;
 }
 
 inline Quaternion quaternionFromDirNoPitch(Vector3 dirFront)

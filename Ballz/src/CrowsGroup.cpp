@@ -154,11 +154,14 @@ Ogre::Animation* CrowFlight::createFlightAnim()
 void CrowFlight::randomizeAnim(Ogre::Animation* anim)
 {
     auto track = anim->getNodeTrack(0);
+	track->setUseShortestRotationPath(true);
+	track->_keyFrameDataChanged();
 
     float yaw = Math::RangeRandom(-randomYawMax / 2.0f, randomYawMax / 2.0f);
 
     Quaternion rot(Degree(yaw),Vector3(0, 1, 0));
 
+	//todo fix rot maybe?
     for (size_t i = 0; i < track->getNumKeyFrames(); i++)
     {
         TransformKeyFrame* key = (TransformKeyFrame*)track->getKeyFrame(i);

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Crow.h"
+#include "MathUtils.h"
 
 using namespace Ogre;
 
@@ -105,15 +106,45 @@ bool Crow::readyToLand() const
 
 void Crow::switchFlyTo(Ogre::Animation* flightAnim)
 {
-    //TODO try find pos where dir isnt against crow - must be in front + threshold, path dir dot cur or must not be < -0.5 ?
-    float pos = Math::RangeRandom(0, flightAnim->getLength());
+	for (int i = 0; i < 3; i++)
+	{
+		float pos = Math::RangeRandom(0, flightAnim->getLength());
 
-    path.setSwitchFlightAnim(flightAnim, pos);
+		if (validateFlightChange(flightAnim, pos))
+		{
+			path.setSwitchFlightAnim(flightAnim, pos);
+			animation.fadeTo("flightFast", 0.2f);
+			curModelAnimType = Flying;
+
+			return;
+		}	
+	}
+
+	flightNoChangeTimer += 2;
+}
+
+bool Crow::validateFlightChange(Ogre::Animation* flightAnim, float pos)
+{
+	auto track = flightAnim->getNodeTrack(0);
+
+	Ogre::TransformKeyFrame key0(0, 0);
+	track->getInterpolatedKeyFrame(pos, &key0);
+
+	//too close
+	if (key0.getTranslate().squaredDistance(path.getPosition()) < 25)
+		return false;
+
+	Vector3 dir(key0.getTranslate() - path.getPosition());
+
+	//fly away +-90 deg 
+	if (dir.dotProduct(key0.getRotation()*Vector3(0,0,-1)) > 0)
+		return false;
+
+	return true;
 }
 
 void Crow::flyTo(Ogre::Animation* flightAnim)
 {
-    //TODO try find pos where dir isnt against crow
     float pos = Math::RangeRandom(0, flightAnim->getLength());
 
     if (path.state == OnGround)
@@ -130,9 +161,10 @@ void Crow::flyTo(Ogre::Animation* flightAnim)
 
 void Crow::landTo(Ogre::Vector3 pos)
 {
-    //TODO try find offset + raycast
     Vector3 offset(Math::RangeRandom(-4, 4), 0, Math::RangeRandom(-4, 4));
     pos += offset;
+
+	pos = MathUtils::getVerticalRayPos(pos, 5);
 
     if (path.state == OnGround)
     {

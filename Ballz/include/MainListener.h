@@ -113,7 +113,7 @@ public:
 
     bool frameStarted(const FrameEvent& evt)
     {
-        float tslf = evt.timeSinceLastFrame;
+        float tslf = std::min(0.1f,evt.timeSinceLastFrame);
 
         postProcMgr->update(tslf);
         pagingMgr->update();

@@ -30,6 +30,8 @@ public:
 
 protected:
 
+	bool validateFlightChange(Ogre::Animation* flightAnim, float pos);
+
     void updateAnimationState();
 
     float flightNoChangeTimer;
