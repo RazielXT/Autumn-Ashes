@@ -371,10 +371,11 @@ void CrowPath::createSwitchFlightAnimation(Ogre::Vector3 endPos, Ogre::Quaternio
 {
     static int counter = 0;
 
-    float animSpeed = 1.5f;
+    float l = animState.lastPos.distance(endPos);
+    float animSpeed = l / 45.0f;
 
     //create mTempTrack
-    Animation* anim = Global::mSceneMgr->createAnimation("switch" + std::to_string(counter++), 3 / animSpeed);
+    Animation* anim = Global::mSceneMgr->createAnimation("switch" + std::to_string(counter++), animSpeed);
     anim->setInterpolationMode(Animation::IM_SPLINE);
     anim->setRotationInterpolationMode(Animation::RIM_SPHERICAL);
 
@@ -390,7 +391,7 @@ void CrowPath::createSwitchFlightAnimation(Ogre::Vector3 endPos, Ogre::Quaternio
     auto prev = animState.lastOr;
     auto rot = MathUtils::quaternionFromDir(flyDir);
     fixSpline(rot, prev);
-    kf = track->createNodeKeyFrame(1 / animSpeed);
+    kf = track->createNodeKeyFrame(animSpeed/3.0f);
     Vector3 p1(animState.lastPos + flyDir / 3.0f);
     kf->setTranslate(p1);
     kf->setRotation(rot);
@@ -399,7 +400,7 @@ void CrowPath::createSwitchFlightAnimation(Ogre::Vector3 endPos, Ogre::Quaternio
     prev = animState.lastOr;
     rot = MathUtils::quaternionFromDir(flyDir);
     fixSpline(rot, prev);
-    kf = track->createNodeKeyFrame(2 / animSpeed);
+    kf = track->createNodeKeyFrame(animSpeed / 2.0f);
     Vector3 p2(animState.lastPos + flyDir * (2.0f/ 3.0f));
     kf->setTranslate(p2);
     kf->setRotation(rot);
@@ -408,7 +409,7 @@ void CrowPath::createSwitchFlightAnimation(Ogre::Vector3 endPos, Ogre::Quaternio
     prev = animState.lastOr;
     rot = MathUtils::quaternionFromDir(flyDir);
     fixSpline(rot, prev);
-    kf = track->createNodeKeyFrame(3 / animSpeed);
+    kf = track->createNodeKeyFrame(animSpeed);
     kf->setTranslate(endPos);
     kf->setRotation(rot);
     prev = rot;
@@ -424,10 +425,12 @@ void CrowPath::createLandAnimation(Vector3 startPos, Ogre::Quaternion startOr, V
 {
     static int counter = 0;
 
-    float animSpeed = 1;// 0.15f;
+    float l = startPos.distance(end);
+    float animLen = l / 40.0f;
+    float landTime = 1.0f;
 
     //create mTempTrack
-    Animation* anim = Global::mSceneMgr->createAnimation("landing" + std::to_string(counter++), 2 / animSpeed);
+    Animation* anim = Global::mSceneMgr->createAnimation("landing" + std::to_string(counter++), animLen + landTime);
     anim->setInterpolationMode(Animation::IM_SPLINE);
     anim->setRotationInterpolationMode(Animation::RIM_SPHERICAL);
 
@@ -444,15 +447,15 @@ void CrowPath::createLandAnimation(Vector3 startPos, Ogre::Quaternion startOr, V
     kf->setTranslate(startPos);
     kf->setRotation(startOr);
 
-    kf = track->createNodeKeyFrame(1 / animSpeed);
+    kf = track->createNodeKeyFrame(animLen/2.0f);
     kf->setTranslate(halfPos);
     kf->setRotation(MathUtils::quaternionFromDir(landPrepPos - startPos));
 
-    kf = track->createNodeKeyFrame((2 - 0.35f) / animSpeed);
+    kf = track->createNodeKeyFrame(animLen);
     kf->setTranslate(landPrepPos);
     kf->setRotation(neutralDir);
 
-    kf = track->createNodeKeyFrame(2 / animSpeed);
+    kf = track->createNodeKeyFrame(animLen + landTime);
     kf->setTranslate(end);
     kf->setRotation(neutralDir);
 
@@ -467,10 +470,12 @@ void CrowPath::createLiftAnimation(Vector3 start, Vector3 endPos, Ogre::Quaterni
 {
     static int counter = 0;
 
-    float animSpeed = 1.15f;
+    float l = start.distance(endPos);
+    float liftTime = 0.5f;
+    float animLen = l / 30.0f;
 
     //create mTempTrack
-    Animation* anim = Global::mSceneMgr->createAnimation("lifting" + std::to_string(counter++), 2 / animSpeed);
+    Animation* anim = Global::mSceneMgr->createAnimation("lifting" + std::to_string(counter++), animLen + liftTime);
     anim->setInterpolationMode(Animation::IM_SPLINE);
     anim->setRotationInterpolationMode(Animation::RIM_SPHERICAL);
 
@@ -487,15 +492,15 @@ void CrowPath::createLiftAnimation(Vector3 start, Vector3 endPos, Ogre::Quaterni
     kf->setTranslate(start);
     kf->setRotation(animState.lastOr);
 
-    kf = track->createNodeKeyFrame(0.35f/animSpeed);
+    kf = track->createNodeKeyFrame(liftTime);
     kf->setTranslate(jumpPos);
     kf->setRotation(MathUtils::quaternionFromDir(halfPos - jumpPos));
 
-    kf = track->createNodeKeyFrame(1 / animSpeed);
+    kf = track->createNodeKeyFrame(liftTime + animLen / 3.0f);
     kf->setTranslate(halfPos);
     kf->setRotation(MathUtils::quaternionFromDir(endPos - halfPos));
 
-    kf = track->createNodeKeyFrame(2 / animSpeed);
+    kf = track->createNodeKeyFrame(liftTime + animLen);
     kf->setTranslate(endPos);
     kf->setRotation(endOr);
 

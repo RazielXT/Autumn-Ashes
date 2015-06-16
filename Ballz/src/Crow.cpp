@@ -67,7 +67,7 @@ void Crow::updateAnimationState()
 
 void Crow::update(Ogre::Real tslf)
 {
-    //tslf /= 2;
+    //tslf /= 10.0f;
     updateAnimationState();
     animation.update(tslf);
 
