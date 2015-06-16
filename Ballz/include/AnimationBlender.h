@@ -14,7 +14,7 @@ public:
 
     void init(Ogre::Entity* targetEntity);
 
-    void fadeTo(std::string animName, float fadeTime);
+    void fadeTo(std::string animName, float fadeTime, bool loop = true);
     void update(float tslf);
 
 private:

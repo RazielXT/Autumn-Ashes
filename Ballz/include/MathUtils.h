@@ -22,7 +22,7 @@ inline float getYawBetween(Quaternion& q1, Quaternion& q2)
 
 inline Vector3 dirFromQuaternion(Quaternion or)
 {
-	return or*Vector3(0,0,-1);
+    return or*Vector3(0,0,-1);
 }
 
 inline Quaternion quaternionFromDir(Vector3 dirFront)
@@ -37,13 +37,26 @@ inline Quaternion quaternionFromDir(Vector3 dirFront)
     return Quaternion(dirFront, dirUp, dirRight);
 }
 
-inline Vector3 getVerticalRayPos(Vector3 pos, float yOffset)
+inline bool getVerticalRayPos(Vector3& pos, float yOffset)
 {
-	OgreNewt::BasicRaycast ray(Global::mWorld, Vector3(pos.x, pos.y + yOffset, pos.z), Vector3(pos.x, pos.y - yOffset, pos.z), false);
-	OgreNewt::BasicRaycast::BasicRaycastInfo& info = ray.getFirstHit();
-	pos.y += -yOffset + 2 * yOffset * info.getDistance();
+    OgreNewt::BasicRaycast ray(Global::mWorld, Vector3(pos.x, pos.y + yOffset, pos.z), Vector3(pos.x, pos.y - yOffset, pos.z), false);
 
-	return pos;
+    if (ray.getHitCount() > 0)
+    {
+        OgreNewt::BasicRaycast::BasicRaycastInfo& info = ray.getFirstHit();
+        pos.y += -yOffset + 2 * yOffset * (1 - info.getDistance());
+
+        return true;
+    }
+    else
+        return false;
+}
+
+inline bool isPathFree(Vector3 start, Vector3 end)
+{
+    OgreNewt::BasicRaycast ray(Global::mWorld, start, end, false);
+
+    return (ray.getHitCount() == 0);
 }
 
 inline Quaternion quaternionFromDirNoPitch(Vector3 dirFront)

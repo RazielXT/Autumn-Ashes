@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Crow.h"
 #include "MathUtils.h"
+#include "Player.h"
 
 using namespace Ogre;
 
@@ -15,16 +16,18 @@ Crow::Crow(bool onGround)
 
     animation.init(mEntity);
 
-    animation.fadeTo("flight1", 0);
+    animation.fadeTo("flightFast", 0);
     curModelAnimType = Flying;
 
     stateChangeTimer = 0;
-    flightNoChangeTimer = 0;
+    stateVariationTimer = 0;
 
     modelOr = Quaternion(Degree(-90), Vector3(0, 1, 0)) * Quaternion(Degree(90), Vector3(0, 0, 1));
     modelOffset = Vector3(0, 0.75f, 0);
 
     minFlightTime = 10;
+
+    playerPos = &Global::player->bodyPosition;
 }
 
 Crow::~Crow()
@@ -34,34 +37,39 @@ Crow::~Crow()
 void Crow::updateAnimationState()
 {
     //update model anim
-    if (curModelAnimType != Landing && path.state == Landing && path.getTempTimeLeft() < 0.75f)
+    if (curModelAnimType != Landing && path.state == Landing && path.getTempTimeLeft() < 0.65f)
     {
-        animation.fadeTo("landing", 0.25f);
+        animation.fadeTo("landing", 0.15f, false);
         curModelAnimType = Landing;
     }
-    else if (curModelAnimType != Flying && (path.state == Flying || (path.state == Lifting && path.getTempTime() > 0.5f)))
+    else if (curModelAnimType != Flying && (path.state == Flying || (path.state == Lifting && path.getTempTime() > 0.6f)))
     {
-        animation.fadeTo("flight1", 0.25f);
+        animation.fadeTo("flightFast", 0.25f);
         curModelAnimType = Flying;
     }
-    else if (curModelAnimType != Lifting && path.state == Lifting && path.getTempTime() < 0.5f)
+    else if (curModelAnimType != Lifting && path.state == Lifting && path.getTempTime() < 0.6f)
     {
-        animation.fadeTo("takeoff", 0.25f);
+        animation.fadeTo("takeoff", 0.05f, false);
         curModelAnimType = Lifting;
     }
-    else if (curModelAnimType != OnGround && path.state == OnGround)
+    else if (curModelAnimType != Standing && path.state == Standing)
     {
         animation.fadeTo("idle", 0.25f);
-        curModelAnimType = OnGround;
+        curModelAnimType = Standing;
     }
-
+    else if (curModelAnimType != Walking && path.state == Walking && stateVariationTimer < 0)
+    {
+        animation.fadeTo("walking", 0.1f);
+        curModelAnimType = Walking;
+    }
     //Global::DebugPrint(std::to_string(curAnimType), true);
 }
 
 void Crow::update(Ogre::Real tslf)
 {
+    //tslf /= 2;
     updateAnimationState();
-    animation.update(tslf*5);
+    animation.update(tslf);
 
     //update node pos
     auto lastState = path.state;
@@ -70,7 +78,7 @@ void Crow::update(Ogre::Real tslf)
     {
         if (path.state == Flying)
         {
-            flightNoChangeTimer = switchFlightTime;
+            stateVariationTimer = switchFlightTime;
 
             if (lastState != SwitchFlying)
                 stateChangeTimer = minFlightTime;
@@ -78,25 +86,38 @@ void Crow::update(Ogre::Real tslf)
                 stateChangeTimer = std::max(stateChangeTimer, switchFlightTime / 2.0f);
         }
         else
-            stateChangeTimer = minGroundTime;
+        {
+            if (lastState != Walking)
+                stateChangeTimer = minGroundTime;
+
+            if (path.state == Standing)
+                scheduleWalking();
+        }
+
     }
     else
     {
         //update state timer
         stateChangeTimer -= tslf;
-        flightNoChangeTimer -= tslf;
+        stateVariationTimer -= tslf;
+
+        if (stateVariationTimer < 0 && path.state == Standing && allowedWalking)
+            startWalking();
     }
 
 }
 
 bool Crow::readyToChangeFlyPath() const
 {
-    return (path.state == Flying && flightNoChangeTimer <= 0);
+    return (path.state == Flying && stateVariationTimer <= 0);
 }
 
 bool Crow::readyToFly() const
 {
-    return (path.state == OnGround && stateChangeTimer <= 0);
+    if (!validateGroundPos(path.getPosition()))
+        return true;
+
+    return (path.state == Standing && stateChangeTimer <= 0);
 }
 
 bool Crow::readyToLand() const
@@ -106,48 +127,48 @@ bool Crow::readyToLand() const
 
 void Crow::switchFlyTo(Ogre::Animation* flightAnim)
 {
-	for (int i = 0; i < 3; i++)
-	{
-		float pos = Math::RangeRandom(0, flightAnim->getLength());
+    for (int i = 0; i < 3; i++)
+    {
+        float pos = Math::RangeRandom(0, flightAnim->getLength());
 
-		if (validateFlightChange(flightAnim, pos))
-		{
-			path.setSwitchFlightAnim(flightAnim, pos);
-			animation.fadeTo("flightFast", 0.2f);
-			curModelAnimType = Flying;
+        if (validateFlightChange(flightAnim, pos))
+        {
+            path.setSwitchFlightAnim(flightAnim, pos);
+            animation.fadeTo("flightFast", 0.2f);
+            curModelAnimType = Flying;
 
-			return;
-		}	
-	}
+            return;
+        }
+    }
 
-	flightNoChangeTimer += 2;
+    stateVariationTimer += 2;
 }
 
 bool Crow::validateFlightChange(Ogre::Animation* flightAnim, float pos)
 {
-	auto track = flightAnim->getNodeTrack(0);
+    auto track = flightAnim->getNodeTrack(0);
 
-	Ogre::TransformKeyFrame key0(0, 0);
-	track->getInterpolatedKeyFrame(pos, &key0);
+    Ogre::TransformKeyFrame key0(0, 0);
+    track->getInterpolatedKeyFrame(pos, &key0);
 
-	//too close
-	if (key0.getTranslate().squaredDistance(path.getPosition()) < 25)
-		return false;
+    //too close
+    if (key0.getTranslate().squaredDistance(path.getPosition()) < 25)
+        return false;
 
-	Vector3 dir(key0.getTranslate() - path.getPosition());
+    Vector3 dir(key0.getTranslate() - path.getPosition());
 
-	//fly away +-90 deg 
-	if (dir.dotProduct(key0.getRotation()*Vector3(0,0,-1)) > 0)
-		return false;
+    //fly away +-90 deg
+    if (dir.dotProduct(key0.getRotation()*Vector3(0,0,1)) < 0)
+        return false;
 
-	return true;
+    return true;
 }
 
 void Crow::flyTo(Ogre::Animation* flightAnim)
 {
     float pos = Math::RangeRandom(0, flightAnim->getLength());
 
-    if (path.state == OnGround)
+    if (path.state == Standing)
     {
         //start lifting
         path.setLiftingAnim(flightAnim, pos);
@@ -159,18 +180,69 @@ void Crow::flyTo(Ogre::Animation* flightAnim)
     }
 }
 
-void Crow::landTo(Ogre::Vector3 pos)
+bool Crow::validateGroundPos(Ogre::Vector3 pos) const
 {
-	pos = MathUtils::getVerticalRayPos(pos, 5);
+    return pos.squaredDistance(*playerPos) > 25;
+}
 
-    if (path.state == OnGround)
+void Crow::landTo(Ogre::Vector3 pos, float maxOffset)
+{
+    Vector3 offset(Math::RangeRandom(-maxOffset, maxOffset), 0, Math::RangeRandom(-maxOffset, maxOffset));
+    Vector3 lpos(pos + offset);
+    bool passRay = MathUtils::getVerticalRayPos(lpos, 5);
+
+    //try 3 positions, get last one if nothing passes
+    for (size_t i = 0; i < 2; i++)
+    {
+        if (!passRay || !validateGroundPos(lpos))
+        {
+            offset = Math::RangeRandom(-maxOffset, maxOffset), 0, Math::RangeRandom(-maxOffset, maxOffset);
+            lpos = pos + offset;
+            passRay = MathUtils::getVerticalRayPos(lpos, 5);
+        }
+        else
+            break;
+    }
+
+    if (path.state == Standing)
     {
         //start landing
-        path.setLandingAnim(pos);
+        path.setLandingAnim(lpos);
     }
     else
     {
         //force state
-        path.setLandingAnim(pos);
+        path.setLandingAnim(lpos);
     }
+}
+
+void Crow::scheduleWalking()
+{
+    stateVariationTimer = Math::RangeRandom(3, 5);
+}
+
+void Crow::startWalking()
+{
+    bool found = false;
+    Vector3 lpos;
+    Vector3 spos = path.getPosition();
+
+    //try 3 positions
+    for (size_t i = 0; i < 3 && !found; i++)
+    {
+        float walkDistMax = 3;
+        Vector3 offset(Math::RangeRandom(-walkDistMax, walkDistMax), 0, Math::RangeRandom(-walkDistMax, walkDistMax));
+        lpos = (spos + offset);
+
+        found = MathUtils::getVerticalRayPos(lpos, 5) && MathUtils::isPathFree(spos, lpos) && validateGroundPos(lpos);
+    }
+
+    if (found)
+    {
+        path.setWalkingAnim(lpos);
+        animation.fadeTo("sideWalk", 0.05f);
+        stateVariationTimer = 0.5f;
+    }
+    else
+        scheduleWalking();
 }

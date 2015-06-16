@@ -32,9 +32,11 @@ private:
 
 class CrowFlight
 {
+    friend class CrowsManager;
+
 public:
 
-	CrowFlight(int crows, float randomYaw, float flightAvgTime, float mSwitchAvgTime, Ogre::SceneNode* node, CrowsGroup* pgroup);
+    CrowFlight(int crows, float randomYaw, float flightAvgTime, float mSwitchAvgTime, Ogre::SceneNode* node, CrowsGroup* pgroup);
     ~CrowFlight();
 
     void update(Ogre::Real tslf);
@@ -49,7 +51,7 @@ private:
     Ogre::Vector3 centerPos;
     float randomYawMax;
     float flightAvgTime;
-	float switchAvgTime;
+    float switchAvgTime;
 
     std::vector<Ogre::Animation*> flightAnims;
     std::vector<Crow*> crows;
@@ -58,9 +60,11 @@ private:
 
 class CrowLanding
 {
+    friend class CrowsManager;
+
 public:
 
-	CrowLanding(int crows, int mMaxCrows, float mGroundAvgTime, bool mAllowWalk, Ogre::SceneNode* node, CrowsGroup* pgroup);
+    CrowLanding(int crows, int mMaxCrows, float mGroundAvgTime, bool mAllowWalk, Ogre::SceneNode* node, CrowsGroup* pgroup);
     ~CrowLanding();
 
     void update(Ogre::Real tslf);
@@ -70,11 +74,11 @@ public:
 
 private:
 
-	int maxCrows;
-	float groundAvgTime;
-	bool allowWalk;
-	
-	float maxPosOffsets;
+    int maxCrows;
+    float groundAvgTime;
+    bool allowWalk;
+
+    float maxPosOffsets;
     Ogre::Vector3 pos;
 
     std::vector<Crow*> crows;

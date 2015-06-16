@@ -19,23 +19,34 @@ public:
     bool readyToLand() const;
 
     void flyTo(Ogre::Animation* flightAnim);
-    void landTo(Ogre::Vector3 pos);
+    void landTo(Ogre::Vector3 pos, float maxOffset);
 
     bool readyToChangeFlyPath() const;
     void switchFlyTo(Ogre::Animation* flightAnim);
 
+    Ogre::SceneNode* getNode() const
+    {
+        return mNode;
+    }
+
     float minFlightTime = 10;
     float switchFlightTime = 5;
     float minGroundTime = 5;
-	bool allowedWalking = true;
+    bool allowedWalking = true;
 
 protected:
 
-	bool validateFlightChange(Ogre::Animation* flightAnim, float pos);
+    void scheduleWalking();
+    void startWalking();
+
+    bool validateFlightChange(Ogre::Animation* flightAnim, float pos);
+    bool validateGroundPos(Ogre::Vector3 pos) const;
 
     void updateAnimationState();
 
-    float flightNoChangeTimer;
+    Ogre::Vector3* playerPos;
+
+    float stateVariationTimer;
     float stateChangeTimer;
 
     CrowState curModelAnimType;

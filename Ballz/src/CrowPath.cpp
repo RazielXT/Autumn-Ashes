@@ -54,6 +54,18 @@ void CrowPathAnimations::clearOldFlight()
     }
 }
 
+void CrowPathAnimations::clearManuallyFlight()
+{
+    if (mFlightTrack)
+    {
+        auto name = mFlightTrack->getParent()->getName();
+        Global::mSceneMgr->destroyAnimation(name);
+
+        mFlightTrack = nullptr;
+        mFlightLenght = -2;
+    }
+}
+
 void CrowPathAnimations::clearTemp()
 {
     if (mTempTrack)
@@ -92,6 +104,11 @@ bool CrowPath::update(Ogre::Real tslf, Ogre::SceneNode* mNode, Ogre::Quaternion&
     //update path/paths
     updateAnimState(tslf);
 
+    animState.refresh();
+
+    mNode->setPosition(getPosition() + pOffset);
+    mNode->setOrientation(getOrientation()*qOffset);
+
     //update state
     if (state == Lifting)
     {
@@ -109,7 +126,7 @@ bool CrowPath::update(Ogre::Real tslf, Ogre::SceneNode* mNode, Ogre::Quaternion&
         {
             animState.clear();
             Global::DebugPrint("ground");
-            state = OnGround;
+            state = Standing;
             return true;
         }
     }
@@ -123,22 +140,27 @@ bool CrowPath::update(Ogre::Real tslf, Ogre::SceneNode* mNode, Ogre::Quaternion&
             return true;
         }
     }
-
-    animState.refresh();
-
-    mNode->setPosition(getPosition() + pOffset);
-    mNode->setOrientation(getOrientation()*qOffset);
+    else if (state == Walking)
+    {
+        if (animState.mFlightPos == animState.mFlightLenght)
+        {
+            animState.clearManuallyFlight();
+            Global::DebugPrint("endWalk");
+            state = Standing;
+            return true;
+        }
+    }
 
     return false;
 }
 
-Ogre::Vector3 CrowPath::getPosition()
+Ogre::Vector3 CrowPath::getPosition() const
 {
     //current +blending
     return animState.lastPos;
 }
 
-Ogre::Quaternion CrowPath::getOrientation()
+Ogre::Quaternion CrowPath::getOrientation() const
 {
     //current +blending
     return animState.lastOr;
@@ -149,7 +171,13 @@ void CrowPath::updateAnimState(Ogre::Real tslf)
     if (animState.mOldFlightTrack)
         animState.mOldFlightPos = std::fmod(animState.mOldFlightPos + tslf, animState.mOldFlightLenght);
     else if (animState.mFlightPos >= 0 && animState.animWeight > 0)
-        animState.mFlightPos = std::fmod(animState.mFlightPos + tslf*animState.animWeight, animState.mFlightLenght);
+    {
+        if (state == Walking)
+            animState.mFlightPos = std::min(animState.mFlightPos + tslf, animState.mFlightLenght);
+        else
+            animState.mFlightPos = std::fmod(animState.mFlightPos + tslf*animState.animWeight, animState.mFlightLenght);
+
+    }
 
     if (animState.mTempTrack)
     {
@@ -195,6 +223,25 @@ void CrowPath::updateAnimState(Ogre::Real tslf)
     //Global::DebugPrint("state: " + std::to_string(state) + ",w: " + std::to_string(animState.animWeight), true);
 }
 
+void CrowPath::setWalkingAnim(Ogre::Vector3 pos)
+{
+    if (state == Standing)
+    {
+        //create land anim + init
+        createWalkAnimation(pos);
+        Global::DebugPrint("walk");
+        state = Walking;
+    }
+    else
+    {
+        animState.lastPos = pos;
+        animState.lastOr = Quaternion(Degree(Math::RangeRandom(0, 360)), Vector3(0, 1, 0));
+        Global::DebugPrint("ground");
+
+        state = Standing;
+    }
+}
+
 void CrowPath::setLandingAnim(Ogre::Vector3 pos)
 {
     if (state == Flying)
@@ -210,7 +257,7 @@ void CrowPath::setLandingAnim(Ogre::Vector3 pos)
         animState.lastOr = Quaternion(Degree(Math::RangeRandom(0, 360)), Vector3(0, 1, 0));
         Global::DebugPrint("ground");
 
-        state = OnGround;
+        state = Standing;
     }
 }
 
@@ -222,7 +269,7 @@ void CrowPath::setLiftingAnim(Ogre::Animation* flightAnim, float timePos)
     animState.mFlightPos = timePos;
     animState.mFlightLenght = animState.mFlightTrack->getKeyFrame(animState.mFlightTrack->getNumKeyFrames() - 1)->getTime();
 
-    if (state == OnGround)
+    if (state == Standing)
     {
         //create lift anim + init
         Ogre::TransformKeyFrame key(0, 0);
@@ -281,6 +328,43 @@ inline void fixSpline(Quaternion& rotation, Quaternion previous)
     float fCos = previous.Dot(rotation);
     if (fCos < 0.0f)
         rotation = -rotation;
+}
+
+void CrowPath::createWalkAnimation(Ogre::Vector3 endPos)
+{
+    static int counter = 0;
+
+    float animSpeed = 1;// 0.15f;
+
+    //create mTempTrack
+    Animation* anim = Global::mSceneMgr->createAnimation("walking" + std::to_string(counter++), 2 / animSpeed);
+    anim->setInterpolationMode(Animation::IM_SPLINE);
+    anim->setRotationInterpolationMode(Animation::RIM_SPHERICAL);
+
+    auto track = anim->createNodeTrack(0);
+    track->setUseShortestRotationPath(true);
+
+    Vector3 walkDir(endPos - animState.lastPos);
+    Quaternion walkOr = MathUtils::quaternionFromDirNoPitch(walkDir);
+    fixSpline(walkOr, animState.lastOr);
+
+    Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(0);
+    kf->setTranslate(animState.lastPos);
+    kf->setRotation(animState.lastOr);
+
+    kf = track->createNodeKeyFrame(1 / animSpeed);
+    kf->setTranslate(animState.lastPos);
+    kf->setRotation(walkOr);
+
+    kf = track->createNodeKeyFrame(2 / animSpeed);
+    kf->setTranslate(endPos);
+    kf->setRotation(walkOr);
+
+    animState.mFlightTrack = track;
+    animState.mFlightPos = 0;
+    animState.mFlightLenght = track->getKeyFrame(track->getNumKeyFrames() - 1)->getTime();
+
+    animWeightSize = 1;
 }
 
 void CrowPath::createSwitchFlightAnimation(Ogre::Vector3 endPos, Ogre::Quaternion endOr)

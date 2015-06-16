@@ -290,6 +290,12 @@ void Player::attachHead(Ogre::SceneNode* headNode)
     //mSceneMgr->getSceneNode("CenterNode")->addChild(necknode);
 }
 
+Ogre::Camera* Player::detachCamera()
+{
+    camnode->detachObject(mCamera);
+    return mCamera;
+}
+
 void Player::attachCamera()
 {
     camPitch = 0;

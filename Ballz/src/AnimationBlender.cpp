@@ -8,10 +8,10 @@ void AnimationBlender::init(Ogre::Entity* targetEntity)
     targetEnt = targetEntity;
 }
 
-void AnimationBlender::fadeTo(std::string animName, float fadeTime)
+void AnimationBlender::fadeTo(std::string animName, float fadeTime, bool loop)
 {
     auto animState = targetEnt->getAnimationState(animName);
-    animState->setLoop(true);
+    animState->setLoop(loop);
 
     if (currentState)
     {
@@ -37,6 +37,7 @@ void AnimationBlender::fadeTo(std::string animName, float fadeTime)
     {
         currentState->setEnabled(true);
         currentState->setWeight(0);
+        currentState->setTimePosition(0);
         blendTimer = 0;
     }
     else

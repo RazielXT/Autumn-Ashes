@@ -194,6 +194,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\CrowPath.h" />
     <ClInclude Include="include\Crows.h" />
     <ClInclude Include="include\CrowsGroup.h" />
+    <ClInclude Include="include\CrowWatch.h" />
     <ClInclude Include="include\DebugKeys.h" />
     <ClInclude Include="include\DefaultObjectContactCallback.h" />
     <ClInclude Include="include\DefShadowCamera.h" />

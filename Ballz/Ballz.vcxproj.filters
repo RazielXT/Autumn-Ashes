@@ -406,6 +406,9 @@
     <ClInclude Include="include\Reflection.h">
       <Filter>Files\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="include\CrowWatch.h">
+      <Filter>Files\Objects\Crow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AutumnAshes.rc">

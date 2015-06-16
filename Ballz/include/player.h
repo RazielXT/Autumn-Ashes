@@ -85,6 +85,7 @@ public:
         body->setVelocity(Ogre::Vector3(0, 0, 0));
     };
 
+    Ogre::Camera* detachCamera();
     void attachCamera();
     void attachCameraWithTransition();
 

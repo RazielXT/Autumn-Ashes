@@ -6,6 +6,7 @@
 #include "PostProcessMgr.h"
 #include "lvl_update.h"
 #include "SceneParser.h"
+#include "CrowWatch.h"
 
 using namespace Ogre;
 
@@ -14,7 +15,7 @@ void createMenuLevel()
 {
     PostProcessMgr* postProcMgr = Global::mPPMgr;
     postProcMgr->ColouringShift = Ogre::Vector4(1.08, 1.12, 1.16, postProcMgr->ColouringShift.w);
-    postProcMgr->fadeIn(Vector3(1, 1, 1), 2);
+    postProcMgr->fadeIn(Vector3(0, 0, 0), 2);
     postProcMgr->radialHorizBlurVignette.z = 1.0;
     postProcMgr->ContSatuSharpNoise = 0.0;
     postProcMgr->bloomStrDep.y = 10.0;
@@ -290,6 +291,8 @@ void createTestLevel()
     ppMgr->ColouringShift = Ogre::Vector4(1, 1.05, 0.9, 0);
 
     ppMgr->setAutoGodraySunDirection();
+
+    new CrowWatch();
 }
 
 void createLevel1_1()

@@ -243,15 +243,15 @@ private:
             return Ogre::StringConverter::parseInt(String(e->GetText()), defaultValue);
     }
 
-	float getElementFloatValue(const XMLElement* rootElement, String elementName, float defaultValue = 0)
-	{
-		auto e = rootElement->FirstChildElement(elementName.c_str());
+    float getElementFloatValue(const XMLElement* rootElement, String elementName, float defaultValue = 0)
+    {
+        auto e = rootElement->FirstChildElement(elementName.c_str());
 
-		if (e == nullptr || e->GetText() == nullptr)
-			return defaultValue;
-		else
-			return Ogre::StringConverter::parseReal(String(e->GetText()), defaultValue);
-	}
+        if (e == nullptr || e->GetText() == nullptr)
+            return defaultValue;
+        else
+            return Ogre::StringConverter::parseReal(String(e->GetText()), defaultValue);
+    }
 
     Vector2 getElementV2Value(const XMLElement* rootElement, String elementName, Vector2 defaultValue = Vector2::ZERO)
     {
@@ -563,14 +563,14 @@ private:
         int mID = getElementIntValue(rootElement, "ID");
         int crows = getElementIntValue(rootElement, "InitCrows");
 
-		int randomYaw = getElementFloatValue(rootElement, "RandomYaw");
-		int flightTime = getElementFloatValue(rootElement, "Flighttime");
-		int switchTime = getElementFloatValue(rootElement, "Switchtime");
+        float randomYaw = getElementFloatValue(rootElement, "RandomYaw");
+        float flightTime = getElementFloatValue(rootElement, "Flighttime");
+        float switchTime = getElementFloatValue(rootElement, "Switchtime");
 
-		CrowsManager::get()->addCrowFlight(crows, randomYaw, flightTime, switchTime, node, mID);
+        CrowsManager::get()->addCrowFlight(crows, randomYaw, flightTime, switchTime, node, mID);
 
-		node->detachAllObjects();
-		Global::mSceneMgr->destroyEntity(ent);
+        node->detachAllObjects();
+        Global::mSceneMgr->destroyEntity(ent);
     }
 
     void loadCrowLanding(const XMLElement* rootElement, Entity* ent, SceneNode* node)
@@ -578,14 +578,14 @@ private:
         int mID = getElementIntValue(rootElement, "ID");
         int crows = getElementIntValue(rootElement, "InitCrows");
 
-		int maxCrows = getElementIntValue(rootElement, "MaxCrows");
-		int groundTime = getElementFloatValue(rootElement, "Groundtime");
-		bool walking = getElementBoolValue(rootElement, "AllowWalk");
+        int maxCrows = getElementIntValue(rootElement, "MaxCrows");
+        float groundTime = getElementFloatValue(rootElement, "Groundtime");
+        bool walking = getElementBoolValue(rootElement, "AllowWalk");
 
         CrowsManager::get()->addCrowLanding(crows, maxCrows, groundTime, walking, node, mID);
 
-		node->detachAllObjects();
-		Global::mSceneMgr->destroyEntity(ent);
+        node->detachAllObjects();
+        Global::mSceneMgr->destroyEntity(ent);
         Global::mSceneMgr->destroySceneNode(node);
     }
 
