@@ -200,6 +200,9 @@
     <ClCompile Include="src\Reflection.cpp">
       <Filter>Files\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="src\TrackBuilder.cpp">
+      <Filter>Files\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -408,6 +411,9 @@
     </ClInclude>
     <ClInclude Include="include\CrowWatch.h">
       <Filter>Files\Objects\Crow</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TrackBuilder.h">
+      <Filter>Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

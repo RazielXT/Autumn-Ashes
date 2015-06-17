@@ -2,6 +2,7 @@
 #include "CrowPath.h"
 #include "MathUtils.h"
 #include "Player.h"
+#include "TrackBuilder.h"
 
 using namespace Ogre;
 
@@ -337,32 +338,21 @@ void CrowPath::createWalkAnimation(Ogre::Vector3 endPos)
     float animSpeed = 1;// 0.15f;
 
     //create mTempTrack
-    Animation* anim = Global::mSceneMgr->createAnimation("walking" + std::to_string(counter++), 2 / animSpeed);
-    anim->setInterpolationMode(Animation::IM_SPLINE);
-    anim->setRotationInterpolationMode(Animation::RIM_SPHERICAL);
-
-    auto track = anim->createNodeTrack(0);
-    track->setUseShortestRotationPath(true);
-
+	TrackBuilder builder;
+	builder.init(2 / animSpeed);
+  
     Vector3 walkDir(endPos - animState.lastPos);
     Quaternion walkOr = MathUtils::quaternionFromDirNoPitch(walkDir);
-    fixSpline(walkOr, animState.lastOr);
 
-    Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(0);
-    kf->setTranslate(animState.lastPos);
-    kf->setRotation(animState.lastOr);
+	builder.addKey(0, animState.lastPos, animState.lastOr);
 
-    kf = track->createNodeKeyFrame(1 / animSpeed);
-    kf->setTranslate(animState.lastPos);
-    kf->setRotation(walkOr);
+	builder.addKey(1 / animSpeed, animState.lastPos, walkOr);
 
-    kf = track->createNodeKeyFrame(2 / animSpeed);
-    kf->setTranslate(endPos);
-    kf->setRotation(walkOr);
+	builder.addKey(2 / animSpeed, endPos, walkOr);
 
-    animState.mFlightTrack = track;
+    animState.mFlightTrack = builder.track;
     animState.mFlightPos = 0;
-    animState.mFlightLenght = track->getKeyFrame(track->getNumKeyFrames() - 1)->getTime();
+	animState.mFlightLenght = 2 / animSpeed;
 
     animWeightSize = 1;
 }
@@ -374,49 +364,27 @@ void CrowPath::createSwitchFlightAnimation(Ogre::Vector3 endPos, Ogre::Quaternio
     float l = animState.lastPos.distance(endPos);
     float animSpeed = l / 45.0f;
 
-    //create mTempTrack
-    Animation* anim = Global::mSceneMgr->createAnimation("switch" + std::to_string(counter++), animSpeed);
-    anim->setInterpolationMode(Animation::IM_SPLINE);
-    anim->setRotationInterpolationMode(Animation::RIM_SPHERICAL);
+	TrackBuilder builder;
+	builder.init(animSpeed);
 
-    auto track = anim->createNodeTrack(0);
-    track->setUseShortestRotationPath(true);
-
-    Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(0);
-    kf->setTranslate(animState.lastPos);
-    kf->setRotation(animState.lastOr);
+	builder.addKey(0, animState.lastPos, animState.lastOr);
 
     //+side offset
     Vector3 flyDir(endPos - animState.lastPos);
-    auto prev = animState.lastOr;
     auto rot = MathUtils::quaternionFromDir(flyDir);
-    fixSpline(rot, prev);
-    kf = track->createNodeKeyFrame(animSpeed/3.0f);
-    Vector3 p1(animState.lastPos + flyDir / 3.0f);
-    kf->setTranslate(p1);
-    kf->setRotation(rot);
-    prev = rot;
+	Vector3 p1(animState.lastPos + flyDir / 3.0f);
+	builder.addKey(animSpeed / 3.0f, p1, rot);
 
-    prev = animState.lastOr;
     rot = MathUtils::quaternionFromDir(flyDir);
-    fixSpline(rot, prev);
-    kf = track->createNodeKeyFrame(animSpeed / 2.0f);
     Vector3 p2(animState.lastPos + flyDir * (2.0f/ 3.0f));
-    kf->setTranslate(p2);
-    kf->setRotation(rot);
-    prev = rot;
+	builder.addKey(animSpeed / 2.0f, p2, rot);
 
-    prev = animState.lastOr;
     rot = MathUtils::quaternionFromDir(flyDir);
-    fixSpline(rot, prev);
-    kf = track->createNodeKeyFrame(animSpeed);
-    kf->setTranslate(endPos);
-    kf->setRotation(rot);
-    prev = rot;
+	builder.addKey(animSpeed / 2.0f, endPos, rot);
 
-    animState.mTempTrack = track;
+	animState.mTempTrack = builder.track;
     animState.mTempPos = 0;
-    animState.mTempLenght = track->getKeyFrame(track->getNumKeyFrames() - 1)->getTime();
+	animState.mTempLenght = animSpeed;
 
     animWeightSize = 1;
 }
@@ -429,39 +397,25 @@ void CrowPath::createLandAnimation(Vector3 startPos, Ogre::Quaternion startOr, V
     float animLen = l / 40.0f;
     float landTime = 1.0f;
 
-    //create mTempTrack
-    Animation* anim = Global::mSceneMgr->createAnimation("landing" + std::to_string(counter++), animLen + landTime);
-    anim->setInterpolationMode(Animation::IM_SPLINE);
-    anim->setRotationInterpolationMode(Animation::RIM_SPHERICAL);
-
-    auto track = anim->createNodeTrack(0);
-    track->setUseShortestRotationPath(true);
+	TrackBuilder builder;
+	builder.init(animLen + landTime);
 
     Vector3 landDir(end - startPos);
     landDir.normalise();
     Vector3 landPrepPos = end - landDir*5 + Vector3(0, 0.5f, 0);
     Vector3 halfPos = (landPrepPos + startPos) / 2 - Vector3(0, 1, 0);
     Quaternion neutralDir = MathUtils::quaternionFromDirNoPitch(landDir);
+	builder.addKey(0, startPos, startOr);
 
-    Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(0);
-    kf->setTranslate(startPos);
-    kf->setRotation(startOr);
+	builder.addKey(animLen / 2.0f, halfPos, MathUtils::quaternionFromDir(landPrepPos - startPos));
 
-    kf = track->createNodeKeyFrame(animLen/2.0f);
-    kf->setTranslate(halfPos);
-    kf->setRotation(MathUtils::quaternionFromDir(landPrepPos - startPos));
+	builder.addKey(animLen, landPrepPos, neutralDir);
 
-    kf = track->createNodeKeyFrame(animLen);
-    kf->setTranslate(landPrepPos);
-    kf->setRotation(neutralDir);
+	builder.addKey(animLen + landTime, end, neutralDir);
 
-    kf = track->createNodeKeyFrame(animLen + landTime);
-    kf->setTranslate(end);
-    kf->setRotation(neutralDir);
-
-    animState.mTempTrack = track;
+	animState.mTempTrack = builder.track;
     animState.mTempPos = 0;
-    animState.mTempLenght = track->getKeyFrame(track->getNumKeyFrames() - 1)->getTime();
+	animState.mTempLenght = animLen + landTime;
 
     animWeightSize = 1;
 }
@@ -475,38 +429,25 @@ void CrowPath::createLiftAnimation(Vector3 start, Vector3 endPos, Ogre::Quaterni
     float animLen = l / 30.0f;
 
     //create mTempTrack
-    Animation* anim = Global::mSceneMgr->createAnimation("lifting" + std::to_string(counter++), animLen + liftTime);
-    anim->setInterpolationMode(Animation::IM_SPLINE);
-    anim->setRotationInterpolationMode(Animation::RIM_SPHERICAL);
-
-    auto track = anim->createNodeTrack(0);
-    track->setUseShortestRotationPath(true);
+	TrackBuilder builder;
+	builder.init(animLen + liftTime);
 
     Vector3 flightDir(endPos - start);
     flightDir.normalise();
     Vector3 jumpPos = start + flightDir + Vector3(0, 2.5f, 0);
     Vector3 halfPos = (jumpPos + endPos) / 2 - Vector3(0, 1, 0);
 
+	builder.addKey(0, start, animState.lastOr);
 
-    Ogre::TransformKeyFrame* kf = track->createNodeKeyFrame(0);
-    kf->setTranslate(start);
-    kf->setRotation(animState.lastOr);
+	builder.addKey(liftTime, jumpPos, MathUtils::quaternionFromDir(halfPos - jumpPos));
 
-    kf = track->createNodeKeyFrame(liftTime);
-    kf->setTranslate(jumpPos);
-    kf->setRotation(MathUtils::quaternionFromDir(halfPos - jumpPos));
+	builder.addKey(liftTime + animLen / 3.0f, halfPos, MathUtils::quaternionFromDir(endPos - halfPos));
 
-    kf = track->createNodeKeyFrame(liftTime + animLen / 3.0f);
-    kf->setTranslate(halfPos);
-    kf->setRotation(MathUtils::quaternionFromDir(endPos - halfPos));
+	builder.addKey(liftTime + animLen, endPos, endOr);
 
-    kf = track->createNodeKeyFrame(liftTime + animLen);
-    kf->setTranslate(endPos);
-    kf->setRotation(endOr);
-
-    animState.mTempTrack = track;
+	animState.mTempTrack = builder.track;
     animState.mTempPos = 0;
-    animState.mTempLenght = track->getKeyFrame(track->getNumKeyFrames() - 1)->getTime();
+	animState.mTempLenght = animLen + liftTime;
 
     animWeightSize = 1;
 }
