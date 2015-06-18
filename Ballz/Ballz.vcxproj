@@ -139,6 +139,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\DebugKeys.cpp" />
     <ClCompile Include="src\DefaultObjectContactCallback.cpp" />
     <ClCompile Include="src\DefShadowCamera.cpp" />
+    <ClCompile Include="src\DynamicRope.cpp" />
     <ClCompile Include="src\EffectsTasks.cpp" />
     <ClCompile Include="src\EntityMovementReaction.cpp" />
     <ClCompile Include="src\EventsManager.cpp" />
@@ -223,6 +224,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\PlayerGrab.h" />
     <ClInclude Include="include\PlayerParkour.h" />
     <ClInclude Include="include\PlayerPostProcess.h" />
+    <ClInclude Include="include\DynamicRope.h" />
     <ClInclude Include="include\ScaryPPListener.h" />
     <ClInclude Include="include\PSSMCamera.h" />
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h" />

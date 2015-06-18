@@ -297,6 +297,9 @@
 	<data name="Switchtime" displayName="Avg switch time" type="float" defaultValue="5"/>
 </class>
 
+<class name="Rope" usage="object">
+</class>
+
 <class name="Player" usage="object">
 	<data name="reactions" displayName="Rections [int;int...]" groupName="Player" type="string"/>
 	<data name="rfunctions" displayName="Functions" groupName="Player" type="string"/>

@@ -191,13 +191,16 @@
     <ClCompile Include="src\Crows.cpp">
       <Filter>Files\Objects\Crow</Filter>
     </ClCompile>
-    <ClCompile Include="src\AnimationBlender.cpp">
-      <Filter>Files\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="src\WaterArea.cpp">
       <Filter>Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="src\Reflection.cpp">
+      <Filter>Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimationBlender.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DynamicRope.cpp">
       <Filter>Files\Objects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -397,9 +400,6 @@
     <ClInclude Include="include\Crows.h">
       <Filter>Files\Objects\Crow</Filter>
     </ClInclude>
-    <ClInclude Include="include\AnimationBlender.h">
-      <Filter>Files\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="include\WaterArea.h">
       <Filter>Files\Objects</Filter>
     </ClInclude>
@@ -408,6 +408,12 @@
     </ClInclude>
     <ClInclude Include="include\CrowWatch.h">
       <Filter>Files\Objects\Crow</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimationBlender.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DynamicRope.h">
+      <Filter>Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
