@@ -769,6 +769,18 @@ private:
         }
     }
 
+    void loadDetailGeometry(const XMLElement* element, Entity* ent)
+    {
+        std::vector<GeometryPresetInfo> geometries;
+        Global::gameMgr->geometryMgr->addDetailGeometry(ent, geometries, nullptr, 25);
+
+        auto node = ent->getParentSceneNode();
+
+        node->detachObject(ent);
+        Global::mSceneMgr->destroyEntity(ent);
+        Global::mSceneMgr->destroySceneNode(node);
+    }
+
     void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre::SceneManager *mSceneMgr)
     {
         Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
@@ -906,7 +918,7 @@ private:
         mSceneMgr->destroyEntity(ent);
         mSceneMgr->destroySceneNode(node);
 
-        Global::gameMgr->pagingMgr->addPagedGeometry(grass);
+        Global::gameMgr->geometryMgr->addPagedGeometry(grass);
         myLog->logMessage("Grass Area Loaded", LML_NORMAL);
     }
 
@@ -954,7 +966,7 @@ private:
             trees->addDetailLevel<Forests::ImpostorPage>((float)iMax, (float)tran);	//Use impostors up to 400 units, and for for 50 more units
             Forests::TreeLoader3D *treeLoader = new Forests::TreeLoader3D(trees, Forests::TBounds(-1500, -1500, 1500, 1500));
             trees->setPageLoader(treeLoader);	//Assign the "treeLoader" to be used to load geometry for the PagedGeometry instance
-            Global::gameMgr->pagingMgr->addPagedGeometry(trees);
+            Global::gameMgr->geometryMgr->addPagedGeometry(trees);
             LoadedInstanceForests lf;
             lf.gm = gMax;
             lf.im = iMax;
@@ -1812,6 +1824,10 @@ private:
                     else if (rootTag == "GrassArea")
                     {
                         loadGrassArea(element, ent, node, mSceneMgr);
+                    }
+                    else if (rootTag == "DetailGeometry")
+                    {
+                        loadDetailGeometry(element, ent);
                     }
                     else if (rootTag == "Billboard")
                     {

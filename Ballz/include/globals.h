@@ -4,7 +4,7 @@ class EventsManager;
 class InputListener;
 class Player;
 class GameStateManager;
-class PagingManager;
+class GeometryManager;
 class PostProcessMgr;
 class AudioLibrary;
 class CameraShaker;

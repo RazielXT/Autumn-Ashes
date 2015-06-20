@@ -6,9 +6,9 @@ class DynamicRope
 {
 public:
 
-	DynamicRope(Ogre::Vector3 pos, int size, int parts, bool climbable);
+    DynamicRope(Ogre::Vector3 pos, int size, int parts, bool climbable);
 
 private:
 
-	
+
 };

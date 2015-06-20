@@ -26,7 +26,7 @@ void GameStateManager::switchToMainMenu()
         Global::player = NULL;
     }
 
-    pagingMgr->clear();
+    geometryMgr->clear();
     Global::mWorld->destroyAllBodies();
     Global::mSceneMgr->clearScene();
     Global::mEventsMgr->clear();
@@ -55,7 +55,7 @@ void GameStateManager::switchToLevel(int lvl)
         myMenu->clearMenu();
 
     gameState = GAME;
-    pagingMgr->clear();
+    geometryMgr->clear();
 
     Global::mWorld->destroyAllBodies();
     Global::mSceneMgr->clearScene();
@@ -65,7 +65,7 @@ void GameStateManager::switchToLevel(int lvl)
 
     Player* p = new Player(wMaterials);
     auto postProcMgr = Global::mPPMgr;
-    p->pPostProcess->injectPostProcess(&postProcMgr->hurtEffect, &postProcMgr->ivp, &postProcMgr->pvp, &postProcMgr->mbAmount);
+
     Global::player = p;
 
     switch (lvl)

@@ -3,7 +3,7 @@
 #include "InputListener.h"
 #include "Tasks.h"
 #include "EventsManager.h"
-#include "PagingManager.h"
+#include "GeometryManager.h"
 #include "SceneParser.h"
 #include "DefaultObjectContactCallback.h"
 #include "TriggerObjectContactCallback.h"
@@ -37,7 +37,7 @@ public:
     {
         delete Global::audioLib;
         delete mEventMgr;
-        delete pagingMgr;
+        delete geometryMgr;
         delete gameMgr;
 
         engine->drop();
@@ -64,7 +64,7 @@ public:
         nListener.init(nWorld);
 
         mEventMgr = new EventsManager();
-        pagingMgr = new PagingManager();
+        geometryMgr = new GeometryManager();
         mBufferFlush.start(1);
 
         engine = irrklang::createIrrKlangDevice();
@@ -87,7 +87,7 @@ public:
 
         gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem(), wMaterials);
         Global::gameMgr = gameMgr;
-        Global::gameMgr->pagingMgr = pagingMgr;
+        Global::gameMgr->geometryMgr = geometryMgr;
 
         postProcMgr = new PostProcessMgr(mCamera);
         postProcMgr->setToScaryBloom();
@@ -116,7 +116,7 @@ public:
         float tslf = std::min(0.1f,evt.timeSinceLastFrame);
 
         postProcMgr->update(tslf);
-        pagingMgr->update();
+        geometryMgr->update();
         mEventMgr->update(tslf);
 
         mKeyboard->capture();
@@ -279,7 +279,7 @@ private:
     Ogre::RenderWindow* mWindow;
     OgreNewt::Body* vytah;
     EventsManager* mEventMgr;
-    PagingManager* pagingMgr;
+    GeometryManager* geometryMgr;
     PostProcessMgr* postProcMgr;
     GameStateManager* gameMgr;
     NewtonListener nListener;

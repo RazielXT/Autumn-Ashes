@@ -39,9 +39,6 @@
     <Filter Include="Files\Objects\Slide">
       <UniqueIdentifier>{f51400e4-fdd5-49af-acbb-557cd993ffd6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Files\Core\geometry">
-      <UniqueIdentifier>{6009a606-e1a1-4c38-958c-609a987e8828}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CrowPath.cpp">
@@ -173,6 +170,9 @@
     <ClCompile Include="src\OgreGpuCommandBufferFlush.cpp">
       <Filter>Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\PagingManager.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
     <ClCompile Include="src\PostProcessMgr.cpp">
       <Filter>Files\Core</Filter>
     </ClCompile>
@@ -197,20 +197,15 @@
     <ClCompile Include="src\Reflection.cpp">
       <Filter>Files\Objects</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="src\AnimationBlender.cpp">
       <Filter>Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\DynamicRope.cpp">
-      <Filter>Files\Objects</Filter>
-    </ClCompile>
+=======
     <ClCompile Include="src\TrackBuilder.cpp">
+>>>>>>> 3c913700c7f69ed0bceb21c45f1b398a4970657b
       <Filter>Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GeometryManager.cpp">
-      <Filter>Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RockGeometryPreset.cpp">
-      <Filter>Files\Core\geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -370,6 +365,9 @@
     <ClInclude Include="include\PSSMCamera.h">
       <Filter>Files\Shadow</Filter>
     </ClInclude>
+    <ClInclude Include="include\PagingManager.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
     <ClInclude Include="include\PostProcessMgr.h">
       <Filter>Files\Core</Filter>
     </ClInclude>
@@ -415,23 +413,15 @@
     <ClInclude Include="include\CrowWatch.h">
       <Filter>Files\Objects\Crow</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="include\AnimationBlender.h">
       <Filter>Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="include\DynamicRope.h">
-      <Filter>Files\Objects</Filter>
-    </ClInclude>
+=======
     <ClInclude Include="include\TrackBuilder.h">
+>>>>>>> 3c913700c7f69ed0bceb21c45f1b398a4970657b
       <Filter>Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GeometryManager.h">
-      <Filter>Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GeometryPreset.h">
-      <Filter>Files\Core\geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="include\RockGeometryPreset.h">
-      <Filter>Files\Core\geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

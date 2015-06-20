@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "WorldMaterials.h"
-#include "PagingManager.h"
+#include "GeometryManager.h"
 
 
 enum GameState { GAME, PAUSE, MENU, CONSOLE, UNDEFINED };
@@ -34,7 +34,7 @@ public:
     GameState gameState;
     GuiOverlay* myMenu;
     WorldMaterials* wMaterials;
-    PagingManager* pagingMgr;
+    GeometryManager* geometryMgr;
 
     std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
 

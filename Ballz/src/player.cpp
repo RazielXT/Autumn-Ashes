@@ -59,6 +59,9 @@ Player::Player(WorldMaterials* wMaterials)
     initBody();
 
     pPostProcess = new PlayerPostProcess(this);
+
+    pPostProcess->injectPostProcess(&Global::mPPMgr->hurtEffect, &Global::mPPMgr->ivp, &Global::mPPMgr->pvp, &Global::mPPMgr->mbAmount);
+
     pClimbing = new PlayerClimbing(this);
     pGrabbing = new PlayerGrab(this);
     pParkour = new PlayerParkour(this);

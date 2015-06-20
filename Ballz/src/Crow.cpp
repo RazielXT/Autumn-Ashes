@@ -37,7 +37,7 @@ Crow::~Crow()
 void Crow::updateAnimationState()
 {
     //update model anim
-    if (curModelAnimType != Landing && path.state == Landing && path.getTempTimeLeft() < 0.65f)
+    if (curModelAnimType != Landing && path.state == Landing && path.getTempTimeLeft() < 0.95f)
     {
         animation.fadeTo("landing", 0.15f, false);
         curModelAnimType = Landing;

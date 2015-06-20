@@ -23,12 +23,3 @@ bool LvlMenuUpdate::update(Ogre::Real evt)
     return true;
 }
 
-Lvl2Update::Lvl2Update()
-{
-    stateExecution = UNDEFINED;
-}
-
-bool Lvl2Update::update(Ogre::Real evt)
-{
-    return true;
-}

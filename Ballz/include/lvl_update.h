@@ -19,15 +19,3 @@ private:
     Forests::PagedGeometry *grass;
     Ogre::SceneNode* cRotator;
 };
-
-
-class Lvl2Update : public EventTask
-{
-public:
-
-    Lvl2Update();
-    bool update(Ogre::Real tslf);
-
-private:
-
-};

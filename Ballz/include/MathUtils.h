@@ -59,6 +59,40 @@ inline bool isPathFree(Vector3 start, Vector3 end)
     return (ray.getHitCount() == 0);
 }
 
+struct RayInfo
+{
+    Vector3 pos;
+    Quaternion normal;
+    OgreNewt::Body* body;
+};
+
+
+inline bool getRayInfo(Vector3 start, Vector3 end, RayInfo& minfo)
+{
+    OgreNewt::BasicRaycast ray(Global::mWorld, start, end, false);
+
+    if (ray.getHitCount() > 0)
+    {
+        OgreNewt::BasicRaycast::BasicRaycastInfo& info = ray.getFirstHit();
+        minfo.normal = info.getNormalOrientation();
+        minfo.pos = end* info.getDistance() + start*(1 - info.getDistance());
+        minfo.body = info.getBody();
+
+        return true;
+    }
+    else
+        return false;
+}
+
+inline bool getRayInfo(Vector3 start, Vector3 dir, float len, RayInfo& minfo)
+{
+    dir.normalise();
+    Vector3 end = start + dir*len;
+
+    return getRayInfo(start, end, minfo);
+}
+
+
 inline Quaternion quaternionFromDirNoPitch(Vector3 dirFront)
 {
     dirFront.y = 0;

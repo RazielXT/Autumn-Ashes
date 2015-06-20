@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "BridgeMaker.h"
-#include "PagingManager.h"
+#include "GeometryManager.h"
 #include "PostProcessMgr.h"
 #include "lvl_update.h"
 #include "SceneParser.h"
@@ -34,41 +34,12 @@ void createMenuLevel()
 
     Global::mSceneMgr->setFog(FOG_LINEAR, Ogre::ColourValue(0.5,0.55,0.65,0.5f), 1, 80, 150);
 
-    /*Forests::PagedGeometry *grass = new Forests::PagedGeometry(GlobalPointer->mSceneMgr->getCamera("Camera"), 50);
-    grass->addDetailLevel<Forests::GrassPage>(200,20);
-    Forests::GrassLoader *grassLoader = new Forests::GrassLoader(grass);
-    grassLoader->setHeightFunction(&HeightFunction::getTerrainHeight, new int2());
-    grass->setPageLoader(grassLoader);
-    Forests::GrassLayer *layer = grassLoader->addLayer("grassHop");
-    layer->setMinimumSize(2.0f, 2.0f);
-    layer->setMaximumSize(2.5f, 2.5f);
-    layer->setAnimationEnabled(true);
-    layer->setSwayDistribution(10.0f);
-    layer->setSwayLength(0.5f);
-    layer->setSwaySpeed(0.5f);
-    layer->setDensity(1.8f);
-    layer->setFadeTechnique(Forests::FADETECH_ALPHA);
-    layer->setMapBounds(Forests::TBounds(-30, -30,30,30));
-    //layer->setColorMap("lm.png");
-    layer = grassLoader->addLayer("grassHop");
-    layer->setMinimumSize(1.0f, 1.0f);
-    layer->setMaximumSize(1.5f, 1.5f);
-    layer->setAnimationEnabled(true);
-    layer->setSwayDistribution(10.0f);
-    layer->setSwayLength(0.5f);
-    layer->setSwaySpeed(0.5f);
-    layer->setDensity(0.3f);
-    layer->setFadeTechnique(Forests::FADETECH_ALPHA);
-    layer->setMapBounds(Forests::TBounds(-30, -30,30,30));*/
-
     auto lvlUp= new LvlMenuUpdate(camRotator,NULL);
     Global::mEventsMgr->addTask(lvlUp);
 }
 
 void createLevelTuto()
 {
-    //Rope* rr=new Rope(mSceneMgr,mWorld,Vector3(13,11,6),10,0.5);
-
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBoxToDark");
     Global::mWorld->setWorldSize(Vector3(-2000,-500,-2000),Vector3(2000,500,2000));
     SceneParser::instance.loadScene("../../media/park/park.scene");
@@ -273,9 +244,6 @@ void createLevelTuto()
     b=new Bird(mSceneMgr,mWorld,Vector3(50,200,0),node,flag_mat);
     */
 
-    auto lvlUp = new Lvl2Update();
-    Global::mEventsMgr->addTask(lvlUp);
-
 }
 
 void createTestLevel()
@@ -319,9 +287,6 @@ void createLevel1_1()
     ppMgr->radialHorizBlurVignette = 0.0;
     ppMgr->ColouringShift = Ogre::Vector4(0.95, 0.89, 1, 0);
 
-    auto lvlUp = new Lvl2Update();
-    Global::mEventsMgr->addTask(lvlUp);
-
     ppMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 }
 
@@ -346,7 +311,4 @@ void createLevel2()
     ppMgr->ColouringShift = Ogre::Vector4(0.95, 0.89, 1, 0);
 
     ppMgr->setAutoGodraySunDirection();
-
-    auto lvlUp = new Lvl2Update();
-    Global::mEventsMgr->addTask(lvlUp);
 }

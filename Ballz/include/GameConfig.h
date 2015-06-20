@@ -7,7 +7,32 @@ struct GameConfig
     int shadow;
     bool ssao;
     bool fs;
+    /*
+    struct LevelInfo
+    {
+        std::string path;
+        int id;
+        std::string img;
+    };
 
+    std::vector<LevelInfo> levels;
+
+    std::string strtok_str(std::string& txt, char delim)
+    {
+        auto dPos = txt.find_first_of(delim);
+        std::string ret = txt;
+
+        if (dPos != std::string::npos)
+        {
+            ret.erase(dPos, std::string::npos);
+            txt.erase(0, dPos + 1);
+        }
+        else
+            txt.clear();
+
+        return ret;
+    }
+    */
     void loadCfg()
     {
         Ogre::ConfigFile cfgFile;
@@ -22,6 +47,20 @@ struct GameConfig
         shadow = Ogre::StringConverter::parseInt(shdString);
         ssao = Ogre::StringConverter::parseBool(ssaoString);
         fs = Ogre::StringConverter::parseBool(fsString);
+        /*
+        auto it = cfgFile.getSettingsIterator("levels");
+
+        for (auto l = it.begin(); l != it.end(); l++)
+        {
+            auto str = l->second;
+            LevelInfo info;
+
+            info.id = Ogre::StringConverter::parseInt(l->first);
+            info.path = strtok_str(str, '\t');
+            info.img = strtok_str(str, '\n');
+
+            levels.push_back(info);
+        }*/
     }
 
     void saveCfg()
@@ -33,5 +72,12 @@ struct GameConfig
         cfgFile << "shadow = " << std::string(Ogre::StringConverter::toString(shadow) + "\n");
         cfgFile << "ssao = " << std::string(Ogre::StringConverter::toString(ssao) + "\n");
         cfgFile << "fullscreen = " << std::string(Ogre::StringConverter::toString(fs) + "\n");
+        /*
+        cfgFile << "\n[levels]\n";
+
+        for (auto l : levels)
+        {
+            cfgFile << std::string(Ogre::StringConverter::toString(l.id)) << "\t" << l.path << "\t" << l.img << "\n";
+        }*/
     }
 };
