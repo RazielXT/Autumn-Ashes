@@ -25,7 +25,14 @@ inline Vector3 dirFromQuaternion(Quaternion or)
     return or*Vector3(0,0,-1);
 }
 
-inline Quaternion quaternionFromDir(Vector3 dirFront)
+inline Quaternion quaternionFromNormal(Vector3 dirFront)
+{
+    dirFront.normalise();
+
+    return Vector3::UNIT_Y.getRotationTo(dirFront);
+}
+
+inline Quaternion crowQuaternionFromDir(Vector3 dirFront)
 {
     dirFront.normalise();
 
@@ -62,7 +69,7 @@ inline bool isPathFree(Vector3 start, Vector3 end)
 struct RayInfo
 {
     Vector3 pos;
-    Quaternion normal;
+    Vector3 normal;
     OgreNewt::Body* body;
 };
 
@@ -74,7 +81,7 @@ inline bool getRayInfo(Vector3 start, Vector3 end, RayInfo& minfo)
     if (ray.getHitCount() > 0)
     {
         OgreNewt::BasicRaycast::BasicRaycastInfo& info = ray.getFirstHit();
-        minfo.normal = info.getNormalOrientation();
+        minfo.normal = info.getNormal();
         minfo.pos = end* info.getDistance() + start*(1 - info.getDistance());
         minfo.body = info.getBody();
 
@@ -93,7 +100,7 @@ inline bool getRayInfo(Vector3 start, Vector3 dir, float len, RayInfo& minfo)
 }
 
 
-inline Quaternion quaternionFromDirNoPitch(Vector3 dirFront)
+inline Quaternion crowQuaternionFromDirNoPitch(Vector3 dirFront)
 {
     dirFront.y = 0;
     dirFront.normalise();

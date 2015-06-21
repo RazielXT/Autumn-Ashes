@@ -1,15 +1,18 @@
 #pragma once
 
 #include "stdafx.h"
-#include "GeometryPreset.h"
+#include "BasicGeometryPreset.h"
 
-class RockGeometryPreset : public GeometryPreset
+class RockGeometryPreset : public BasicGeometryPreset
 {
 public:
 
-    virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, GeometryPresetInfo& info);
+    virtual ~RockGeometryPreset() {}
 
-private:
+protected:
 
-    void placeRock(Ogre::Vector3 pos, Ogre::Quaternion or);
+    virtual bool acceptsWeight(float w) const;
+    virtual void placeObject(Ogre::Vector3 pos, Ogre::Quaternion or, float scale, Ogre::Vector3 color);
+    virtual void init(GeometryPresetInfo& info);
+
 };

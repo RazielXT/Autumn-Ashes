@@ -23,8 +23,7 @@ struct GeometryPresetInfo
     std::string name;
     Ogre::ColourValue weightMask;
     Ogre::Vector3 color;
-    float maxScale;
-    float minScale;
+    Ogre::Vector2 minmaxScale;
     float density;
 };
 
@@ -32,9 +31,13 @@ class GeometryPreset
 {
 public:
 
+    virtual ~GeometryPreset() {}
+
     virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, GeometryPresetInfo& info) = 0;
 
 protected:
+
+    static int matID;
 
     GeometryMaskPoint getMaskAt(MaskGrid& grid, GeometryMaskInfo& gridInfo, float x, float y)
     {
@@ -77,10 +80,10 @@ protected:
         out.pos = gridInfo.node->getOrientation()*out.pos;
         out.pos += gridInfo.node->getPosition();
 
-        Ogre::ColourValue p1(0, 0, 0);// = grid[rowStart][colStart].color;
-        Ogre::ColourValue p2(1, 0, 0);// = grid[rowStart+1][colStart].color;
-        Ogre::ColourValue p3(0, 0, 1);// = grid[rowStart][colStart+1].color;
-        Ogre::ColourValue p4(0, 1, 0);// = grid[rowStart+1][colStart+1].color;
+        Ogre::ColourValue p1 = grid[rowStart][colStart].color;
+        Ogre::ColourValue p2 = grid[rowStart+1][colStart].color;
+        Ogre::ColourValue p3 = grid[rowStart][colStart+1].color;
+        Ogre::ColourValue p4 = grid[rowStart+1][colStart+1].color;
 
         // Calculate the weights for each pixel
         float fy = (x - grid[rowStart][colStart].pos.x) / rowDifSize;

@@ -769,10 +769,38 @@ private:
         }
     }
 
-    void loadDetailGeometry(const XMLElement* element, Entity* ent)
+    void loadDetailGeometryChannel(const XMLElement* rootElement, std::string channel, std::vector<GeometryPresetInfo>& geometries)
     {
+        bool enabled = getElementBoolValue(rootElement, channel);
+
+        if (enabled)
+        {
+            GeometryPresetInfo info;
+            info.weightMask = ColourValue(channel == "R" ? 1.0f : 0.0f, channel == "G" ? 1.0f : 0.0f, channel == "B" ? 1.0f : 0.0f, channel == "A" ? 1.0f : 0.0f);
+            info.name = getElementValue(rootElement, "Geometry" + channel);
+            info.minmaxScale = getElementV2Value(rootElement, "ScaleMinMax" + channel);
+            info.color = getElementV3Value(rootElement, "Color" + channel);
+            info.density = getElementFloatValue(rootElement, "Density" + channel);
+
+            geometries.push_back(info);
+        }
+    }
+
+    void loadDetailGeometry(const XMLElement* rootElement, Entity* ent)
+    {
+        float ray = getElementFloatValue(rootElement, "Ray");
+
+        auto targetName = getElementValue(rootElement, "Target");
+        auto targetBodyIt = loadedBodies.find(targetName);
+        auto body = targetBodyIt == loadedBodies.end() ? nullptr : targetBodyIt->second;
+
         std::vector<GeometryPresetInfo> geometries;
-        Global::gameMgr->geometryMgr->addDetailGeometry(ent, geometries, nullptr, 25);
+        loadDetailGeometryChannel(rootElement, "R", geometries);
+        loadDetailGeometryChannel(rootElement, "G", geometries);
+        loadDetailGeometryChannel(rootElement, "B", geometries);
+        loadDetailGeometryChannel(rootElement, "A", geometries);
+
+        Global::gameMgr->geometryMgr->addDetailGeometry(ent, geometries, body, ray);
 
         auto node = ent->getParentSceneNode();
 
@@ -1827,7 +1855,7 @@ private:
                     }
                     else if (rootTag == "DetailGeometry")
                     {
-                        loadDetailGeometry(element, ent);
+                        loadDetailGeometry(root, ent);
                     }
                     else if (rootTag == "Billboard")
                     {

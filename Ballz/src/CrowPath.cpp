@@ -342,7 +342,7 @@ void CrowPath::createWalkAnimation(Ogre::Vector3 endPos)
     builder.init(2 / animSpeed);
 
     Vector3 walkDir(endPos - animState.lastPos);
-    Quaternion walkOr = MathUtils::quaternionFromDirNoPitch(walkDir);
+    Quaternion walkOr = MathUtils::crowQuaternionFromDirNoPitch(walkDir);
 
     builder.addKey(0, animState.lastPos, animState.lastOr);
 
@@ -371,15 +371,15 @@ void CrowPath::createSwitchFlightAnimation(Ogre::Vector3 endPos, Ogre::Quaternio
 
     //+side offset
     Vector3 flyDir(endPos - animState.lastPos);
-    auto rot = MathUtils::quaternionFromDir(flyDir);
+    auto rot = MathUtils::crowQuaternionFromDir(flyDir);
     Vector3 p1(animState.lastPos + flyDir / 3.0f);
     builder.addKey(animSpeed / 3.0f, p1, rot);
 
-    rot = MathUtils::quaternionFromDir(flyDir);
+    rot = MathUtils::crowQuaternionFromDir(flyDir);
     Vector3 p2(animState.lastPos + flyDir * (2.0f/ 3.0f));
     builder.addKey(animSpeed / 2.0f, p2, rot);
 
-    rot = MathUtils::quaternionFromDir(flyDir);
+    rot = MathUtils::crowQuaternionFromDir(flyDir);
     builder.addKey(animSpeed / 2.0f, endPos, rot);
 
     animState.mTempTrack = builder.track;
@@ -404,10 +404,10 @@ void CrowPath::createLandAnimation(Vector3 startPos, Ogre::Quaternion startOr, V
     landDir.normalise();
     Vector3 landPrepPos = end - landDir*5 + Vector3(0, 0.5f, 0);
     Vector3 halfPos = (landPrepPos + startPos) / 2 - Vector3(0, 1, 0);
-    Quaternion neutralDir = MathUtils::quaternionFromDirNoPitch(landDir);
+    Quaternion neutralDir = MathUtils::crowQuaternionFromDirNoPitch(landDir);
     builder.addKey(0, startPos, startOr);
 
-    builder.addKey(animLen / 2.0f, halfPos, MathUtils::quaternionFromDir(landPrepPos - startPos));
+    builder.addKey(animLen / 2.0f, halfPos, MathUtils::crowQuaternionFromDir(landPrepPos - startPos));
 
     builder.addKey(animLen, landPrepPos, neutralDir);
 
@@ -439,9 +439,9 @@ void CrowPath::createLiftAnimation(Vector3 start, Vector3 endPos, Ogre::Quaterni
 
     builder.addKey(0, start, animState.lastOr);
 
-    builder.addKey(liftTime, jumpPos, MathUtils::quaternionFromDir(halfPos - jumpPos));
+    builder.addKey(liftTime, jumpPos, MathUtils::crowQuaternionFromDir(halfPos - jumpPos));
 
-    builder.addKey(liftTime + animLen / 3.0f, halfPos, MathUtils::quaternionFromDir(endPos - halfPos));
+    builder.addKey(liftTime + animLen / 3.0f, halfPos, MathUtils::crowQuaternionFromDir(endPos - halfPos));
 
     builder.addKey(liftTime + animLen, endPos, endOr);
 

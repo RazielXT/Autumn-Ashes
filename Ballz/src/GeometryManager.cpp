@@ -36,7 +36,10 @@ void GeometryManager::update()
 
 GeometryPreset* GeometryManager::getPreset(std::string name)
 {
-    return new RockGeometryPreset();
+    if (name == "Rocks")
+        return new RockGeometryPreset();
+
+    return nullptr;
 }
 
 void GeometryManager::addDetailGeometry(Ogre::Entity* maskEnt, std::vector<GeometryPresetInfo>& geometries, OgreNewt::Body* targetarget, float rayDistance)
@@ -48,9 +51,6 @@ void GeometryManager::addDetailGeometry(Ogre::Entity* maskEnt, std::vector<Geome
     info.node = maskEnt->getParentSceneNode();
 
     generateGeometryMask(maskEnt, posGrid, info.size);
-
-    GeometryPresetInfo i;
-    getPreset("")->addGeometry(posGrid, info, i);
 
     for (auto g : geometries)
     {

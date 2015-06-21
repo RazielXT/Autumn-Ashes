@@ -209,6 +209,9 @@
     <ClCompile Include="src\GeometryManager.cpp">
       <Filter>Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\BasicGeometryPreset.cpp">
+      <Filter>Files\Core\geometry</Filter>
+    </ClCompile>
     <ClCompile Include="src\RockGeometryPreset.cpp">
       <Filter>Files\Core\geometry</Filter>
     </ClCompile>
@@ -428,6 +431,9 @@
       <Filter>Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="include\GeometryPreset.h">
+      <Filter>Files\Core\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BasicGeometryPreset.h">
       <Filter>Files\Core\geometry</Filter>
     </ClInclude>
     <ClInclude Include="include\RockGeometryPreset.h">

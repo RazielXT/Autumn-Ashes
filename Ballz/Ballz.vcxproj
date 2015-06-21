@@ -157,6 +157,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\PlayerParkour.cpp" />
     <ClCompile Include="src\Player_movement.cpp" />
     <ClCompile Include="src\PostProcessMgr.cpp" />
+    <ClCompile Include="src\BasicGeometryPreset.cpp" />
     <ClCompile Include="src\RockGeometryPreset.cpp" />
     <ClCompile Include="src\SlideContactCallback.cpp" />
     <ClCompile Include="src\SlidesAutoTarget.cpp" />
@@ -206,6 +207,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\EventsManager.h" />
     <ClInclude Include="include\GameConfig.h" />
     <ClInclude Include="include\GeometryPreset.h" />
+    <ClInclude Include="include\RockGeometryPreset.h" />
     <ClInclude Include="include\MainListener.h" />
     <ClInclude Include="include\GameStateManager.h" />
     <ClInclude Include="include\globals.h" />
@@ -228,7 +230,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\PlayerParkour.h" />
     <ClInclude Include="include\PlayerPostProcess.h" />
     <ClInclude Include="include\DynamicRope.h" />
-    <ClInclude Include="include\RockGeometryPreset.h" />
+    <ClInclude Include="include\BasicGeometryPreset.h" />
     <ClInclude Include="include\ScaryPPListener.h" />
     <ClInclude Include="include\PSSMCamera.h" />
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h" />
