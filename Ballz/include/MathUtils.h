@@ -73,6 +73,34 @@ struct RayInfo
     OgreNewt::Body* body;
 };
 
+inline bool getRayFilteredInfo(Vector3 start, Vector3 end, RayInfo& minfo, OgreNewt::Body* target)
+{
+    OgreNewt::BasicRaycast ray(Global::mWorld, start, end, true);
+
+    for (int i = 0; i < ray.getHitCount(); i++)
+    {
+        OgreNewt::BasicRaycast::BasicRaycastInfo& info = ray.getFirstHit();
+
+        if (info.getBody() == target)
+        {
+            minfo.normal = info.getNormal();
+            minfo.pos = end* info.getDistance() + start*(1 - info.getDistance());
+            minfo.body = info.getBody();
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+inline bool getRayFilteredInfo(Vector3 start, Vector3 dir, float len, RayInfo& minfo, OgreNewt::Body* target)
+{
+    dir.normalise();
+    Vector3 end = start + dir*len;
+
+    return getRayFilteredInfo(start, end, minfo, target);
+}
 
 inline bool getRayInfo(Vector3 start, Vector3 end, RayInfo& minfo)
 {

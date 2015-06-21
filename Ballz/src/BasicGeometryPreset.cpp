@@ -29,7 +29,14 @@ void BasicGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
             float w = wmasked.r + wmasked.g + wmasked.b + wmasked.a;
 
             MathUtils::RayInfo ray;
-            if (ray.normal.y >= maxSteepY && acceptsWeight(w) && MathUtils::getRayInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray))
+            bool foundRay = false;
+
+            if (gridInfo.target)
+                foundRay = MathUtils::getRayFilteredInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray, gridInfo.target);
+            else
+                foundRay = MathUtils::getRayInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray);
+
+            if (foundRay && ray.normal.y >= maxSteepY && acceptsWeight(w))
             {
                 float scale = Ogre::Math::RangeRandom(info.minmaxScale.x, info.minmaxScale.y);
                 placeObject(ray.pos, MathUtils::quaternionFromNormal(ray.normal), scale, info.color);
