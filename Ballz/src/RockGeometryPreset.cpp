@@ -16,7 +16,7 @@ void RockGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, Ve
 
     updateMaterial(ent, color);
 
-    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::mWorld, ent, 0));
+    /*OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::mWorld, ent, 0));
     auto body = new OgreNewt::Body(Global::mWorld, col);
     Ogre::Vector3 inertia, offset;
     col->calculateInertialMatrix(inertia, offset);
@@ -24,7 +24,9 @@ void RockGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, Ve
     body->setUserData(Ogre::Any(userD));
     body->setMassMatrix(0, inertia);
     body->setCenterOfMass(offset);
-    body->setPositionOrientation(node->_getDerivedPosition(), node->_getDerivedOrientation());
+    body->setPositionOrientation(node->_getDerivedPosition(), node->_getDerivedOrientation());*/
+
+	entities.push_back(ent);
 }
 
 bool RockGeometryPreset::acceptsWeight(float w) const

@@ -2373,7 +2373,74 @@ private:
         return false;
     }
 
+
+	std::string getUserDataType(const XMLElement* nodeElement)
+	{
+		const XMLElement* childElement = nodeElement->FirstChildElement("entity");
+		if (childElement != NULL)
+		{
+			const XMLElement* userdataElement = childElement->FirstChildElement("userData");
+
+			if (userdataElement != NULL)
+			{
+				Ogre::String userData;
+				GetChildText(userdataElement, userData);
+
+				XMLDocument document;
+				document.Parse(userData.c_str());
+				if (!document.Error())
+				{
+					XMLElement *root = document.RootElement();
+
+					if (root->Value() != NULL)
+					{
+						Ogre::String rootTag(root->Value());
+						if (rootTag.size() > 12)
+							rootTag.erase(12, rootTag.size() - 12);
+
+						return rootTag;
+					}
+				}
+			}
+		}
+
+		return "";
+	}
+
+
 public:
+
+	void reloadScene(Ogre::String filename)
+	{
+		Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("RELOADING SCENE :: filename \"" + filename + "\"", LML_NORMAL);
+
+		Global::gameMgr->geometryMgr->resetDetailGeometries();
+
+		XMLDocument document;
+		document.LoadFile(filename.c_str());
+		auto mainElement = document.RootElement();
+		auto nodesElement = mainElement->FirstChildElement("nodes");
+
+		std::vector<const XMLElement*> compBodies;
+		String elementName;
+		const XMLElement* childElement = 0;
+		while (childElement = IterateChildElements(nodesElement, childElement))
+		{
+			elementName = childElement->Value();
+
+			if (elementName == "node")
+			{
+				auto type = getUserDataType(childElement);
+				
+				if (type == "DetailGeometry")
+					loadNode(childElement);
+			}
+		}
+
+		Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("RELOADING COMPLETED :: filename \"" + filename + "\"", LML_NORMAL);
+		Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("-----------------------------------------------------------", LML_NORMAL);
+	}
+
 
     void loadScene(Ogre::String filename)
     {

@@ -10,6 +10,7 @@ public:
     virtual ~BasicGeometryPreset() {}
 
     virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, GeometryPresetInfo& info);
+	virtual void clear();
 
 protected:
 
@@ -20,6 +21,7 @@ protected:
     void updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color);
     std::map<std::string, Ogre::Material*> materials;
 
+	std::vector<Ogre::Entity*> entities;
 
     Ogre::Vector2 stepSize;
     float maxSteepY;

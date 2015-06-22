@@ -11,6 +11,27 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
 
     myMenu = new GuiOverlay(&gameConfig, cam, Global::mWindow, rs, Global::soundEngine);
     this->wMaterials = wMaterials;
+
+	LevelInfo info;
+	info.path = "../../media/menu/menu.scene";
+	info.init = this->switchToMainMenu;
+	levels.push_back(info);
+
+	info.path = "../../media/park/park.scene";
+	info.init = createLevelTuto;
+	levels.push_back(info);
+
+	info.path = "../../media/caves.scene";
+	info.init = createLevel1_1;
+	levels.push_back(info);
+
+	info.path = "../../media/valley/valley.scene";
+	info.init = createLevel2;
+	levels.push_back(info);
+
+	info.path = "../../media/testLvl/test.scene";
+	info.init = createTestLevel;
+	levels.push_back(info);
 }
 
 GameStateManager::~GameStateManager()
@@ -35,7 +56,7 @@ void GameStateManager::switchToMainMenu()
     myMenu->setMainMenu();
 
     gameState = MENU;
-    createMenuLevel();
+	createMenuLevel();
 }
 
 void GameStateManager::switchToLevel(int lvl)
@@ -68,23 +89,7 @@ void GameStateManager::switchToLevel(int lvl)
 
     Global::player = p;
 
-    switch (lvl)
-    {
-    case 1:
-        createLevelTuto();
-        break;
-    case 2:
-        createLevel1_1();
-        break;
-    case 3:
-        createLevel2();
-        break;
-    case 4:
-        createTestLevel();
-        break;
-    default:
-        switchToMainMenu();
-    }
+	levels[lvl].init();
 
     Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
 }
@@ -92,6 +97,11 @@ void GameStateManager::switchToLevel(int lvl)
 void GameStateManager::restartLevel()
 {
     switchToLevel(lastLVL);
+}
+
+void GameStateManager::reloadLevel()
+{
+	SceneParser::instance.loadScene(Level::levelName[2]);
 }
 
 bool GameStateManager::insideMenuPressed()
