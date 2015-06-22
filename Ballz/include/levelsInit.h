@@ -21,7 +21,7 @@ void createMenuLevel()
     postProcMgr->bloomStrDep.x = 0.35;
     postProcMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 
-	SceneParser::instance.loadScene("../../media/menu/menu.scene");
+    SceneParser::instance.loadScene("../../media/menu/menu.scene");
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
     Camera* mCamera=Global::mSceneMgr->getCamera("Camera");
     SceneNode* camRotator=Global::mSceneMgr->getRootSceneNode()->createChildSceneNode("camRotator");
@@ -41,7 +41,7 @@ void createLevelTuto()
 {
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBoxToDark");
     Global::mWorld->setWorldSize(Vector3(-2000,-500,-2000),Vector3(2000,500,2000));
-	SceneParser::instance.loadScene("../../media/park/park.scene");
+    SceneParser::instance.loadScene("../../media/park/park.scene");
 
     irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("tokyostreetatnight.ogg").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
     //music->setMinDistance(20);
@@ -249,7 +249,7 @@ void createTestLevel()
 {
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
     Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
-	SceneParser::instance.loadScene("../../media/testLvl/test.scene");
+    SceneParser::instance.loadScene("../../media/testLvl/test.scene");
 
     PostProcessMgr* ppMgr = Global::mPPMgr;
     ppMgr->setToScaryBloom();

@@ -46,14 +46,14 @@ void BasicGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 
 void BasicGeometryPreset::clear()
 {
-	for (auto e : entities)
-	{
-		auto node = e->getParentSceneNode();
-		node->detachAllObjects();
+    for (auto e : entities)
+    {
+        auto node = e->getParentSceneNode();
+        node->detachAllObjects();
 
-		Global::mSceneMgr->destroySceneNode(node);
-		Global::mSceneMgr->destroyEntity(e);
-	}
+        Global::mSceneMgr->destroySceneNode(node);
+        Global::mSceneMgr->destroyEntity(e);
+    }
 }
 
 bool BasicGeometryPreset::acceptsWeight(float w) const

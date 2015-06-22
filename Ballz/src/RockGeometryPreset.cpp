@@ -26,7 +26,7 @@ void RockGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, Ve
     body->setCenterOfMass(offset);
     body->setPositionOrientation(node->_getDerivedPosition(), node->_getDerivedOrientation());*/
 
-	entities.push_back(ent);
+    entities.push_back(ent);
 }
 
 bool RockGeometryPreset::acceptsWeight(float w) const

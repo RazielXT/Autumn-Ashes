@@ -12,26 +12,26 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
     myMenu = new GuiOverlay(&gameConfig, cam, Global::mWindow, rs, Global::soundEngine);
     this->wMaterials = wMaterials;
 
-	LevelInfo info;
-	info.path = "../../media/menu/menu.scene";
-	info.init = this->switchToMainMenu;
-	levels.push_back(info);
+    LevelInfo info;
+    info.path = "../../media/menu/menu.scene";
+    info.init = std::bind(&GameStateManager::switchToMainMenu, this);
+    levels[0] = info;
 
-	info.path = "../../media/park/park.scene";
-	info.init = createLevelTuto;
-	levels.push_back(info);
+    info.path = "../../media/park/park.scene";
+    info.init = createLevelTuto;
+    levels[1] = info;
 
-	info.path = "../../media/caves.scene";
-	info.init = createLevel1_1;
-	levels.push_back(info);
+    info.path = "../../media/caves.scene";
+    info.init = createLevel1_1;
+    levels[2] = info;
 
-	info.path = "../../media/valley/valley.scene";
-	info.init = createLevel2;
-	levels.push_back(info);
+    info.path = "../../media/valley/valley.scene";
+    info.init = createLevel2;
+    levels[3] = info;
 
-	info.path = "../../media/testLvl/test.scene";
-	info.init = createTestLevel;
-	levels.push_back(info);
+    info.path = "../../media/testLvl/test.scene";
+    info.init = createTestLevel;
+    levels[4] = info;
 }
 
 GameStateManager::~GameStateManager()
@@ -56,7 +56,7 @@ void GameStateManager::switchToMainMenu()
     myMenu->setMainMenu();
 
     gameState = MENU;
-	createMenuLevel();
+    createMenuLevel();
 }
 
 void GameStateManager::switchToLevel(int lvl)
@@ -89,7 +89,7 @@ void GameStateManager::switchToLevel(int lvl)
 
     Global::player = p;
 
-	levels[lvl].init();
+    levels[lvl].init();
 
     Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
 }
@@ -101,7 +101,7 @@ void GameStateManager::restartLevel()
 
 void GameStateManager::reloadLevel()
 {
-	SceneParser::instance.loadScene(Level::levelName[2]);
+    SceneParser::instance.reloadScene(levels[lastLVL].path);
 }
 
 bool GameStateManager::insideMenuPressed()

@@ -20,6 +20,12 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
     }
     break;
 
+    case OIS::KC_SLASH:
+    {
+        Global::gameMgr->reloadLevel();
+    }
+    break;
+
     case OIS::KC_B:
     {
         auto task = new SwitchColorSchemeFx("0.8,0.95,1.05,2");

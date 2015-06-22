@@ -22,12 +22,12 @@ void GeometryManager::clear()
 
     pagedGeometries.clear();
 
-	for (auto g : detailGeometries)
-	{
-		delete g;
-	}
+    for (auto g : detailGeometries)
+    {
+        delete g;
+    }
 
-	detailGeometries.clear();
+    detailGeometries.clear();
 }
 
 void GeometryManager::update()
@@ -52,13 +52,13 @@ GeometryPreset* GeometryManager::getPreset(std::string name)
 
 void GeometryManager::resetDetailGeometries()
 {
-	for (auto g : detailGeometries)
-	{
-		g->clear();
-		delete g;
-	}
+    for (auto g : detailGeometries)
+    {
+        g->clear();
+        delete g;
+    }
 
-	detailGeometries.clear();
+    detailGeometries.clear();
 }
 
 void GeometryManager::addDetailGeometry(Ogre::Entity* maskEnt, std::vector<GeometryPresetInfo>& geometries, OgreNewt::Body* targetarget, float rayDistance)
@@ -77,7 +77,7 @@ void GeometryManager::addDetailGeometry(Ogre::Entity* maskEnt, std::vector<Geome
 
         if (p)
         {
-			detailGeometries.push_back(p);
+            detailGeometries.push_back(p);
 
             p->addGeometry(posGrid, info, g);
         }

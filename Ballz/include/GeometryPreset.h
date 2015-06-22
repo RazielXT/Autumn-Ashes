@@ -34,7 +34,7 @@ public:
     virtual ~GeometryPreset() {}
 
     virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, GeometryPresetInfo& info) = 0;
-	virtual void clear() = 0;
+    virtual void clear() = 0;
 
 protected:
 

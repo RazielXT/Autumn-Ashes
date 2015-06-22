@@ -24,7 +24,7 @@ public:
     void switchToLevel(int lvl);
 
     void restartLevel();
-	void reloadLevel();
+    void reloadLevel();
 
     void switchState(int target, float time = 1.0f);
 
@@ -43,13 +43,13 @@ public:
 
 private:
 
-	struct LevelInfo
-	{
-		std::string path;
-		std::function<void()> init;
-	};
+    struct LevelInfo
+    {
+        std::string path;
+        std::function<void()> init;
+    };
 
-	std::vector<LevelInfo> levels;
+    std::map<int, LevelInfo> levels;
 
     void updateStateSwitching(float tslf);
     int stateTarget=0;

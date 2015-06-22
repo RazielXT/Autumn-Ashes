@@ -15,11 +15,11 @@ public:
 
     void addDetailGeometry(Ogre::Entity* maskEnt, std::vector<GeometryPresetInfo>& geometries, OgreNewt::Body* targetarget, float rayDistance);
 
-	void resetDetailGeometries();
+    void resetDetailGeometries();
 
 private:
 
-	std::vector<GeometryPreset *> detailGeometries;
+    std::vector<GeometryPreset *> detailGeometries;
     GeometryPreset* getPreset(std::string name);
 
     void generateGeometryMask(Ogre::Entity* maskEnt, MaskGrid& grid, Ogre::Vector2& size);
