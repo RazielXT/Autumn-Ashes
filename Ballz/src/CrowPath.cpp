@@ -221,7 +221,7 @@ void CrowPath::updateAnimState(Ogre::Real tslf)
             animState.animWeight = 0;
     }
 
-    //Global::DebugPrint("state: " + std::to_string(state) + ",w: " + std::to_string(animState.animWeight), true);
+    Global::DebugPrint("state: " + std::to_string(state) + ",fl: " + std::to_string(animState.mFlightTrack != nullptr) + ",t: " + std::to_string(animState.mTempTrack != nullptr) + ",o: " + std::to_string(animState.mOldFlightTrack != nullptr) + ",w: " + std::to_string(animState.animWeight) + ",l: " + std::to_string(animState.mTempLenght), true);
 }
 
 void CrowPath::setWalkingAnim(Ogre::Vector3 pos)
@@ -270,7 +270,7 @@ void CrowPath::setLiftingAnim(Ogre::Animation* flightAnim, float timePos)
     animState.mFlightPos = timePos;
     animState.mFlightLenght = animState.mFlightTrack->getKeyFrame(animState.mFlightTrack->getNumKeyFrames() - 1)->getTime();
 
-    if (state == Standing)
+	if (state == Standing || state == Walking)
     {
         //create lift anim + init
         Ogre::TransformKeyFrame key(0, 0);
@@ -362,7 +362,7 @@ void CrowPath::createSwitchFlightAnimation(Ogre::Vector3 endPos, Ogre::Quaternio
     static int counter = 0;
 
     float l = animState.lastPos.distance(endPos);
-    float animSpeed = l / 45.0f;
+    float animSpeed = l / 35.0f;
 
     TrackBuilder builder;
     builder.init(animSpeed);
@@ -380,13 +380,13 @@ void CrowPath::createSwitchFlightAnimation(Ogre::Vector3 endPos, Ogre::Quaternio
     builder.addKey(animSpeed / 2.0f, p2, rot);
 
     rot = MathUtils::crowQuaternionFromDir(flyDir);
-    builder.addKey(animSpeed / 2.0f, endPos, rot);
+    builder.addKey(animSpeed, endPos, rot);
 
     animState.mTempTrack = builder.track;
     animState.mTempPos = 0;
     animState.mTempLenght = animSpeed;
 
-    animWeightSize = 1;
+    animWeightSize = animState.mTempLenght/2.0f;
 }
 
 void CrowPath::createLandAnimation(Vector3 startPos, Ogre::Quaternion startOr, Vector3 end)
@@ -394,7 +394,7 @@ void CrowPath::createLandAnimation(Vector3 startPos, Ogre::Quaternion startOr, V
     static int counter = 0;
 
     float l = startPos.distance(end);
-    float animLen = l / 40.0f;
+    float animLen = l / 30.0f;
     float landTime = 1.0f;
 
     TrackBuilder builder;
@@ -417,7 +417,7 @@ void CrowPath::createLandAnimation(Vector3 startPos, Ogre::Quaternion startOr, V
     animState.mTempPos = 0;
     animState.mTempLenght = animLen + landTime;
 
-    animWeightSize = 1;
+    animWeightSize = std::min(animWeightSize = animState.mTempLenght,1.0f);
 }
 
 void CrowPath::createLiftAnimation(Vector3 start, Vector3 endPos, Ogre::Quaternion endOr)
@@ -426,7 +426,7 @@ void CrowPath::createLiftAnimation(Vector3 start, Vector3 endPos, Ogre::Quaterni
 
     float l = start.distance(endPos);
     float liftTime = 0.5f;
-    float animLen = l / 30.0f;
+    float animLen = l / 20.0f;
 
     //create mTempTrack
     TrackBuilder builder;
@@ -449,5 +449,5 @@ void CrowPath::createLiftAnimation(Vector3 start, Vector3 endPos, Ogre::Quaterni
     animState.mTempPos = 0;
     animState.mTempLenght = animLen + liftTime;
 
-    animWeightSize = 1;
+    animWeightSize = std::min(animWeightSize = animState.mTempLenght, 1.0f);
 }

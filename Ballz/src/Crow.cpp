@@ -168,16 +168,8 @@ void Crow::flyTo(Ogre::Animation* flightAnim)
 {
     float pos = Math::RangeRandom(0, flightAnim->getLength());
 
-    if (path.state == Standing)
-    {
-        //start lifting
-        path.setLiftingAnim(flightAnim, pos);
-    }
-    else
-    {
-        //force state
-        path.setLiftingAnim(flightAnim, pos);
-    }
+    //start lifting
+    path.setLiftingAnim(flightAnim, pos);
 }
 
 bool Crow::validateGroundPos(Ogre::Vector3 pos) const
@@ -196,7 +188,7 @@ void Crow::landTo(Ogre::Vector3 pos, float maxOffset)
     {
         if (!passRay || !validateGroundPos(lpos))
         {
-            offset = Math::RangeRandom(-maxOffset, maxOffset), 0, Math::RangeRandom(-maxOffset, maxOffset);
+            offset = Vector3(Math::RangeRandom(-maxOffset, maxOffset), 0, Math::RangeRandom(-maxOffset, maxOffset));
             lpos = pos + offset;
             passRay = MathUtils::getVerticalRayPos(lpos, 5);
         }
@@ -204,16 +196,8 @@ void Crow::landTo(Ogre::Vector3 pos, float maxOffset)
             break;
     }
 
-    if (path.state == Standing)
-    {
-        //start landing
-        path.setLandingAnim(lpos);
-    }
-    else
-    {
-        //force state
-        path.setLandingAnim(lpos);
-    }
+    //start landing
+    path.setLandingAnim(lpos);
 }
 
 void Crow::scheduleWalking()
