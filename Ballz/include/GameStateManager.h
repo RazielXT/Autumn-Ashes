@@ -42,6 +42,11 @@ public:
 
     std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
 
+	void addDebugKey(std::string name, float* target, float step = 0.2f)
+	{
+		dbg.debugVars.push_back(DebugVar(name, target, step));
+	}
+
 private:
 
     struct LevelInfo

@@ -75,12 +75,12 @@ void GameStateManager::switchToLevel(int lvl)
 		Global::player = p;
 	}
 
+	dbg.reloadVariables();
+
 	SceneParser::instance.loadScene(levels[lvl].path);
     levels[lvl].init();
 
     Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
-
-	dbg.reloadVariables();
 }
 
 void GameStateManager::restartLevel()
