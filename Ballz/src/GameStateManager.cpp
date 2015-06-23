@@ -2,6 +2,7 @@
 #include "GameStateManager.h"
 #include "Player.h"
 #include "levelsInit.h"
+#include "DebugKeys.h"
 
 SceneParser SceneParser::instance;
 
@@ -14,7 +15,7 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
 
     LevelInfo info;
     info.path = "../../media/menu/menu.scene";
-	info.init = createMenuLevel;
+    info.init = createMenuLevel;
     levels[0] = info;
 
     info.path = "../../media/park/park.scene";
@@ -33,28 +34,30 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
     info.init = createTestLevel;
     levels[4] = info;
 
-	dbg.registerInputListening();
+    dbg = new DebugKeys();
+    dbg->registerInputListening();
 }
 
 GameStateManager::~GameStateManager()
 {
+    delete dbg;
     delete myMenu;
 }
 
 void GameStateManager::switchToMainMenu()
 {
-	switchToLevel(0);
+    switchToLevel(0);
 }
 
 void GameStateManager::switchToLevel(int lvl)
 {
-	if (lvl == 0)
-		myMenu->setMainMenu();
-	else if (gameState == PAUSE || gameState == MENU)
+    if (lvl == 0)
+        myMenu->setMainMenu();
+    else if (gameState == PAUSE || gameState == MENU)
         myMenu->clearMenu();
-	
+
     lastLVL = lvl;
-	gameState = lvl == 0 ? MENU : GAME;
+    gameState = lvl == 0 ? MENU : GAME;
 
     if (Global::player)
     {
@@ -67,17 +70,18 @@ void GameStateManager::switchToLevel(int lvl)
     Global::mSceneMgr->clearScene();
     Global::mEventsMgr->clear();
     Global::soundEngine->removeAllSoundSources();
-	Global::mPPMgr->resetValues();
+    Global::mPPMgr->resetValues();
 
-	if (gameState == GAME)
-	{
-		Player* p = new Player(wMaterials);
-		Global::player = p;
-	}
+    if (gameState == GAME)
+    {
+        Player* p = new Player(wMaterials);
+        Global::player = p;
+    }
 
-	dbg.reloadVariables();
+    dbg->reloadVariables();
 
-	SceneParser::instance.loadScene(levels[lvl].path);
+    Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
+    SceneParser::instance.loadScene(levels[lvl].path);
     levels[lvl].init();
 
     Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
@@ -136,6 +140,11 @@ void GameStateManager::switchState(int target, float time)
     myMenu->clearMenu();
 }
 
+void GameStateManager::addDebugKey(std::string name, float* target, float step /* = 0.2f */)
+{
+    dbg->debugVars.push_back(DebugVar(name, target, step));
+}
+
 void GameStateManager::updateStateSwitching(float tslf)
 {
     if (switchStateTimer > 0)
@@ -174,8 +183,8 @@ void GameStateManager::update(float tslf)
         switch (gameState)
         {
         case GAME:
-            myMenu->setDebugValue(Global::mWindow->getLastFPS(), Global::debug);
-			myMenu->setDebugValue(Global::mWindow->getLastFPS(), Global::debug);
+            myMenu->setDebugValue(Global::mWindow->getLastFPS(), Global::debug, dbg->debugVars, dbg->debugVarsLine);
+            myMenu->setDebugValue(Global::mWindow->getLastFPS(), Global::debug, dbg->debugVars, dbg->debugVarsLine);
             myMenu->updateIngame(tslf);
             break;
         case PAUSE:

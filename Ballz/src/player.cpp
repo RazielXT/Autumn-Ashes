@@ -4,6 +4,7 @@
 #include "PlayerPostProcess.h"
 #include "PlayerParkour.h"
 #include "MathUtils.h"
+#include "GameStateManager.h"
 
 using namespace Ogre;
 

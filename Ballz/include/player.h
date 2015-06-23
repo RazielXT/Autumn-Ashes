@@ -2,9 +2,6 @@
 #define PLAYER_H
 
 #include "stdafx.h"
-#include <irrKlang.h>
-#include "EventTask.h"
-#include "EventsManager.h"
 #include "SlidesAutoTarget.h"
 #include "PlayerPostProcess.h"
 #include "PlayerClimbing.h"

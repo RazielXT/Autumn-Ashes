@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PostProcessMgr.h"
+#include "GameStateManager.h"
 
 using namespace Ogre;
 

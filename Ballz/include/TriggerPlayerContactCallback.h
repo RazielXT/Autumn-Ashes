@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include "EventsManager.h"
+
+class EventsManager;
 
 class TriggerPlayerContactCallback :
     public OgreNewt::ContactCallback

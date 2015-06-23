@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "EventsManager.h"
 #include "InputListener.h"
+#include "EventTask.h"
+#include "GameStateManager.h"
 
 DelayedTask::DelayedTask(EventTask* r, float timer)
 {

@@ -256,7 +256,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
     mousePointer->background_image("mousepointer");
     mousePointer->yes_background(1);
 
-    fpsCaption = mouseLayer->createCaption(48, 50, 5, "0");
+    fpsCaption = mouseLayer->createCaption(48, 100, 5, "0");
     fpsCaption->size(1500,50);
     fpsCaption->colour(Ogre::ColourValue(0,255,0));
     fpsCaption->align(Gorilla::TextAlign_Right);
@@ -269,13 +269,13 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
         debugCaption[i]->align(Gorilla::TextAlign_Left);
     }
 
-	for (size_t i = 0; i < DEBUG_VARIABLES_COUNT; i++)
-	{
-		debugCaption[i] = mouseLayer->createCaption(48, 1500, 5 + 20 * (float)i, "");
-		debugCaption[i]->size(1500, 50);
-		debugCaption[i]->setScale(0.3f);
-		debugCaption[i]->align(Gorilla::TextAlign_Right);
-	}
+    for (size_t i = 0; i < DEBUG_VARIABLES_COUNT; i++)
+    {
+        debugVarCaption[i] = mouseLayer->createCaption(48, 1450, 150 + 20 * (float)i, "");
+        debugVarCaption[i]->size(500, 50);
+        debugVarCaption[i]->setScale(0.3f);
+        debugVarCaption[i]->align(Gorilla::TextAlign_Left);
+    }
 
     infoTextTimer = 0;
     shownInfoText = false;
@@ -292,7 +292,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
     useTextCaption->align(Gorilla::TextAlign_Centre);
     useTextCaption->vertical_align(Gorilla::VerticalAlign_Middle);
 
-	showDebug(true);
+    showDebug(false);
 }
 
 
@@ -819,34 +819,34 @@ void GuiOverlay::setDebugValue(Ogre::Real value1, std::vector<std::string>& valu
         debugCaption[i]->text("");
     }
 
-	int debugVarPos = debugVarsLine-2;
-	if (debugVarPos < 0) debugVarPos += DEBUG_VARIABLES_COUNT;
+    int debugVarPos = debugVarsLine-2;
+    if (debugVarPos < 0) debugVarPos += debugVars.size();
 
-	for (size_t i = 0; i < values.size() && i < DEBUG_VARIABLES_COUNT; i++)
-	{
-		std::string txt = debugVars[debugVarPos].name + ":  " + std::to_string(*debugVars[debugVarPos].target);
-		debugCaption[i]->text(txt);
-		debugVarsLine = (debugVarsLine + 1) % DEBUG_VARIABLES_COUNT;
-	}
+    for (size_t i = 0; i < values.size() && i < DEBUG_VARIABLES_COUNT; i++)
+    {
+        std::string txt = debugVars[debugVarPos].name + ":  " + std::to_string(*debugVars[debugVarPos].target);
+        debugVarCaption[i]->text(txt);
+        debugVarPos = (debugVarPos + 1) % debugVars.size();
+    }
 }
 
 void GuiOverlay::showDebug(bool show)
 {
-	float alpha = show ? 1 : 0;
+    float alpha = show ? 1.0f : 0.0f;
 
-	fpsCaption->colour(Ogre::ColourValue(0, 1, 0, alpha));
+    fpsCaption->colour(Ogre::ColourValue(1, 1, 0.5f, alpha));
 
-	for (size_t i = 0; i < MAX_DEBUG_LINES; i++)
-	{
-		debugCaption[i]->colour(Ogre::ColourValue(0, 1, 0, alpha));
-	}
+    for (size_t i = 0; i < MAX_DEBUG_LINES; i++)
+    {
+        debugCaption[i]->colour(Ogre::ColourValue(0, 1, 1, alpha));
+    }
 
-	for (size_t i = 0; i < DEBUG_VARIABLES_COUNT; i++)
-	{
-		debugVarCaption[i]->colour(Ogre::ColourValue(0, 1, 0, alpha));
-	}
+    for (size_t i = 0; i < DEBUG_VARIABLES_COUNT; i++)
+    {
+        debugVarCaption[i]->colour(Ogre::ColourValue(1, 1, 1, alpha));
+    }
 
-	debugVarCaption[2]->colour(Ogre::ColourValue(1, 1, 1, alpha));
+    debugVarCaption[3]->colour(Ogre::ColourValue(1, 1, 0, alpha));
 }
 
 void GuiOverlay::updateLevelsMove(Ogre::Real time)

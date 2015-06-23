@@ -1,21 +1,22 @@
 #include "stdafx.h"
 #include "DebugKeys.h"
 #include "CameraShaker.h"
+#include "GameStateManager.h"
 
 void DebugKeys::reloadVariables()
 {
-	debugVars.clear();
-	debugVarsLine = 0;
+    debugVars.clear();
+    debugVarsLine = 0;
 
-	debugVars.push_back(DebugVar("ColorShift R", &Global::mPPMgr->ColouringShift.x, 0.02f));
-	debugVars.push_back(DebugVar("ColorShift G", &Global::mPPMgr->ColouringShift.y, 0.02f));
-	debugVars.push_back(DebugVar("ColorShift B", &Global::mPPMgr->ColouringShift.z, 0.02f));
+    debugVars.push_back(DebugVar("ColorShift R", &Global::mPPMgr->ColouringShift.x, 0.02f));
+    debugVars.push_back(DebugVar("ColorShift G", &Global::mPPMgr->ColouringShift.y, 0.02f));
+    debugVars.push_back(DebugVar("ColorShift B", &Global::mPPMgr->ColouringShift.z, 0.02f));
 
-	debugVars.push_back(DebugVar("Bloom Str", &Global::mPPMgr->bloomStrDep.x, 0.15f));
-	debugVars.push_back(DebugVar("Bloom Depth", &Global::mPPMgr->bloomStrDep.y, 0.15f));
-	debugVars.push_back(DebugVar("Horiz Blur", &Global::mPPMgr->radialHorizBlurVignette.y, 0.1f));
+    debugVars.push_back(DebugVar("Bloom Str", &Global::mPPMgr->bloomStrDep.x, 0.15f));
+    debugVars.push_back(DebugVar("Bloom Depth", &Global::mPPMgr->bloomStrDep.y, 0.15f));
+    debugVars.push_back(DebugVar("Horiz Blur", &Global::mPPMgr->radialHorizBlurVignette.y, 0.1f));
 
-	debugVars.push_back(DebugVar("Timestep", &Global::timestep, 0.1f));
+    debugVars.push_back(DebugVar("Timestep", &Global::timestep, 0.1f));
 }
 
 void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
@@ -25,31 +26,40 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
     switch (arg.key)
     {
 
-	case OIS::KC_MULTIPLY:
-	{
-		auto& var = debugVars[debugVarsLine];
-		*var.target += var.step;
-	}
-	break;
+    case OIS::KC_NUMPAD9:
+    {
+        static bool shownDebug = false;
 
-	case OIS::KC_DIVIDE:
-	{
-		auto& var = debugVars[debugVarsLine];
-		*var.target -= var.step;
-	}
-	break;
+        shownDebug = !shownDebug;
+        Global::gameMgr->myMenu->showDebug(shownDebug);
+    }
+    break;
 
-	case OIS::KC_ADD:
-	{
-		debugVarsLine = (debugVarsLine + 1) % debugVars.size();
-	}
-	break;
+    case OIS::KC_MULTIPLY:
+    {
+        auto& var = debugVars[debugVarsLine];
+        *var.target += var.step;
+    }
+    break;
 
-	case OIS::KC_SUBTRACT:
-	{
-		debugVarsLine = (debugVarsLine - 1) % debugVars.size();
-	}
-	break;
+    case OIS::KC_DIVIDE:
+    {
+        auto& var = debugVars[debugVarsLine];
+        *var.target -= var.step;
+    }
+    break;
+
+    case OIS::KC_ADD:
+    {
+        debugVarsLine = (debugVarsLine + 1) % debugVars.size();
+    }
+    break;
+
+    case OIS::KC_SUBTRACT:
+    {
+        debugVarsLine = (debugVarsLine - 1) % debugVars.size();
+    }
+    break;
 
     case OIS::KC_SLASH:
     {

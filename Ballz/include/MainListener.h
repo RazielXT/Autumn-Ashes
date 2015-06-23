@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "OgreGpuCommandBufferFlush.h"
-#include "InputListener.h"
+#include "GameStateManager.h"
 #include "Tasks.h"
-#include "EventsManager.h"
 #include "GeometryManager.h"
 #include "SceneParser.h"
 #include "DefaultObjectContactCallback.h"
@@ -12,7 +11,6 @@
 #include "lvl_update.h"
 #include "Console.h"
 #include "PostProcessMgr.h"
-#include "GameStateManager.h"
 #include "NewtonListener.h"
 #include "DebugKeys.h"
 

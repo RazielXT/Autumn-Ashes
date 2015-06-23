@@ -1,9 +1,8 @@
 #ifndef EVENTR_H
 #define EVENTR_H
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include <vector>
-#include "GameStateManager.h"
 
 class EventTask
 {

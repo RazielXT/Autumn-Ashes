@@ -2,6 +2,7 @@
 #include "lvl1Tasks.h"
 #include "PostProcessMgr.h"
 #include "Player.h"
+#include "GameStateManager.h"
 
 ParkToDreamReaction::ParkToDreamReaction()
 {

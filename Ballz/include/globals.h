@@ -1,13 +1,14 @@
 #pragma once
 
 class EventsManager;
-class InputListener;
 class Player;
 class GameStateManager;
 class GeometryManager;
 class PostProcessMgr;
 class AudioLibrary;
 class CameraShaker;
+
+enum GameState { GAME, PAUSE, MENU, CONSOLE, UNDEFINED };
 
 namespace Global
 {
@@ -33,7 +34,7 @@ extern std::map<std::string, void*>* globalData;
 extern std::vector<std::string> debug;
 
 #define MAX_DEBUG_LINES 15
-#define DEBUG_VARIABLES_COUNT 5
+#define DEBUG_VARIABLES_COUNT 7
 
 extern void DebugPrint(const std::string line, bool logFile = false);
 

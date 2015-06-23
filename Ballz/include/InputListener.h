@@ -1,8 +1,8 @@
 #pragma once
 
-#include "stdafx.h"
 #include <algorithm>
 #include <vector>
+#include "EventsManager.h"
 
 class InputListener
 {

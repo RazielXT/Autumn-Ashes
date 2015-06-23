@@ -1,7 +1,7 @@
 #ifndef TREVENTR_H
 #define TREVENTR_H
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include <vector>
 #include "EventTask.h"
 

@@ -3,10 +3,9 @@
 #include "stdafx.h"
 #include "WorldMaterials.h"
 #include "GeometryManager.h"
-#include "DebugKeys.h"
 
-
-enum GameState { GAME, PAUSE, MENU, CONSOLE, UNDEFINED };
+class GuiOverlay;
+class DebugKeys;
 
 enum StateSwitching
 {
@@ -42,10 +41,8 @@ public:
 
     std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
 
-	void addDebugKey(std::string name, float* target, float step = 0.2f)
-	{
-		dbg.debugVars.push_back(DebugVar(name, target, step));
-	}
+    void addDebugKey(std::string name, float* target, float step = 0.2f);
+
 
 private:
 
@@ -64,5 +61,5 @@ private:
 
     int lastLVL;
 
-	DebugKeys dbg;
+    DebugKeys* dbg;
 };

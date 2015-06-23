@@ -1,10 +1,11 @@
 #ifndef EVENTMGR_H
 #define EVENTMGR_H
 
-#include "stdafx.h"
 #include <vector>
 #include "EventTask.h"
 #include "BodyUserData.h"
+
+class InputListener;
 
 struct DelayedTask
 {

@@ -1,7 +1,7 @@
 #ifndef BODYUSERDATA_H
 #define BODYUSERDATA_H
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "TriggerInfo.h"
 
 struct ObjectAudio

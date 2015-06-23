@@ -2,6 +2,7 @@
 
 #include "Player.h"
 #include "MathUtils.h"
+#include "GameStateManager.h"
 
 PlayerClimbing::PlayerClimbing(Player* player) : p(player), body(player->body)
 {
