@@ -53,7 +53,7 @@ public:
     void setIngameMenu();
 
     void showDebug(bool show);
-    void setDebugValue(Ogre::Real value1, std::vector<std::string>& values);
+	void setDebugValue(Ogre::Real value1, std::vector<std::string>& values, std::vector<DebugVar>& debugVars, int debugVarsLine);
     void updateMainMenu(Ogre::Real time);
     int mainMenuPressed();
     int pressedKey(const OIS::KeyEvent &arg);
@@ -110,6 +110,7 @@ private:
     Gorilla::Caption*       infoTextCaption;
     Gorilla::Caption*       useTextCaption;
     Gorilla::Caption*       debugCaption[MAX_DEBUG_LINES];
+	Gorilla::Caption*       debugVarCaption[DEBUG_VARIABLES_COUNT];
     Gorilla::Rectangle*     mousePointer;
 
     bool ingamemenu;

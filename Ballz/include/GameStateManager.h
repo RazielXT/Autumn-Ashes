@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "WorldMaterials.h"
 #include "GeometryManager.h"
+#include "DebugKeys.h"
 
 
 enum GameState { GAME, PAUSE, MENU, CONSOLE, UNDEFINED };
@@ -58,4 +59,5 @@ private:
 
     int lastLVL;
 
+	DebugKeys dbg;
 };

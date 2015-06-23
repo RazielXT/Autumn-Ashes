@@ -269,6 +269,13 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
         debugCaption[i]->align(Gorilla::TextAlign_Left);
     }
 
+	for (size_t i = 0; i < DEBUG_VARIABLES_COUNT; i++)
+	{
+		debugCaption[i] = mouseLayer->createCaption(48, 1500, 5 + 20 * (float)i, "");
+		debugCaption[i]->size(1500, 50);
+		debugCaption[i]->setScale(0.3f);
+		debugCaption[i]->align(Gorilla::TextAlign_Right);
+	}
 
     infoTextTimer = 0;
     shownInfoText = false;
@@ -284,6 +291,8 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
     useTextCaption->size(1580,50);
     useTextCaption->align(Gorilla::TextAlign_Centre);
     useTextCaption->vertical_align(Gorilla::VerticalAlign_Middle);
+
+	showDebug(true);
 }
 
 
@@ -796,7 +805,7 @@ int GuiOverlay::mainMenuPressed()
     return 0;
 }
 
-void GuiOverlay::setDebugValue(Ogre::Real value1, std::vector<std::string>& values)
+void GuiOverlay::setDebugValue(Ogre::Real value1, std::vector<std::string>& values, std::vector<DebugVar>& debugVars, int debugVarsLine)
 {
     fpsCaption->text(Ogre::StringConverter::toString(value1));
 
@@ -810,28 +819,34 @@ void GuiOverlay::setDebugValue(Ogre::Real value1, std::vector<std::string>& valu
         debugCaption[i]->text("");
     }
 
+	int debugVarPos = debugVarsLine-2;
+	if (debugVarPos < 0) debugVarPos += DEBUG_VARIABLES_COUNT;
+
+	for (size_t i = 0; i < values.size() && i < DEBUG_VARIABLES_COUNT; i++)
+	{
+		std::string txt = debugVars[debugVarPos].name + ":  " + std::to_string(*debugVars[debugVarPos].target);
+		debugCaption[i]->text(txt);
+		debugVarsLine = (debugVarsLine + 1) % DEBUG_VARIABLES_COUNT;
+	}
 }
 
 void GuiOverlay::showDebug(bool show)
 {
-    if(show)
-    {
-        fpsCaption->colour(Ogre::ColourValue(0,255,0,1));
+	float alpha = show ? 1 : 0;
 
-        for (size_t i = 0; i < MAX_DEBUG_LINES; i++)
-        {
-            debugCaption[i]->colour(Ogre::ColourValue(0, 255, 0, 1));
-        }
-    }
-    else
-    {
-        fpsCaption->colour(Ogre::ColourValue(0,255,0,0));
+	fpsCaption->colour(Ogre::ColourValue(0, 1, 0, alpha));
 
-        for (size_t i = 0; i < MAX_DEBUG_LINES; i++)
-        {
-            debugCaption[i]->colour(Ogre::ColourValue(0, 255, 0, 0));
-        }
-    }
+	for (size_t i = 0; i < MAX_DEBUG_LINES; i++)
+	{
+		debugCaption[i]->colour(Ogre::ColourValue(0, 1, 0, alpha));
+	}
+
+	for (size_t i = 0; i < DEBUG_VARIABLES_COUNT; i++)
+	{
+		debugVarCaption[i]->colour(Ogre::ColourValue(0, 1, 0, alpha));
+	}
+
+	debugVarCaption[2]->colour(Ogre::ColourValue(1, 1, 1, alpha));
 }
 
 void GuiOverlay::updateLevelsMove(Ogre::Real time)

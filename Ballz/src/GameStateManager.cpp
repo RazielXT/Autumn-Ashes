@@ -32,6 +32,8 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
     info.path = "../../media/testLvl/test.scene";
     info.init = createTestLevel;
     levels[4] = info;
+
+	dbg.registerInputListening();
 }
 
 GameStateManager::~GameStateManager()
@@ -77,6 +79,8 @@ void GameStateManager::switchToLevel(int lvl)
     levels[lvl].init();
 
     Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
+
+	dbg.reloadVariables();
 }
 
 void GameStateManager::restartLevel()
@@ -171,6 +175,7 @@ void GameStateManager::update(float tslf)
         {
         case GAME:
             myMenu->setDebugValue(Global::mWindow->getLastFPS(), Global::debug);
+			myMenu->setDebugValue(Global::mWindow->getLastFPS(), Global::debug);
             myMenu->updateIngame(tslf);
             break;
         case PAUSE:

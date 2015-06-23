@@ -102,8 +102,6 @@ public:
 
         wMaterials->init(mWorld);
         gameMgr->switchToMainMenu();
-
-        dbg.registerInputListening();
     }
 
     void default_callback(OgreNewt::Body* me, float timeStep, int threadIndex )
@@ -283,7 +281,6 @@ private:
     PostProcessMgr* postProcMgr;
     GameStateManager* gameMgr;
     NewtonListener nListener;
-    DebugKeys dbg;
 };
 
 

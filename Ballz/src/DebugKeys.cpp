@@ -2,23 +2,54 @@
 #include "DebugKeys.h"
 #include "CameraShaker.h"
 
+void DebugKeys::reloadVariables()
+{
+	debugVars.clear();
+	debugVarsLine = 0;
+
+	debugVars.push_back(DebugVar("ColorShift R", &Global::mPPMgr->ColouringShift.x, 0.02f));
+	debugVars.push_back(DebugVar("ColorShift G", &Global::mPPMgr->ColouringShift.y, 0.02f));
+	debugVars.push_back(DebugVar("ColorShift B", &Global::mPPMgr->ColouringShift.z, 0.02f));
+
+	debugVars.push_back(DebugVar("Bloom Str", &Global::mPPMgr->bloomStrDep.x, 0.15f));
+	debugVars.push_back(DebugVar("Bloom Depth", &Global::mPPMgr->bloomStrDep.y, 0.15f));
+	debugVars.push_back(DebugVar("Horiz Blur", &Global::mPPMgr->radialHorizBlurVignette.y, 0.1f));
+
+	debugVars.push_back(DebugVar("Timestep", &Global::timestep, 0.1f));
+}
+
 void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 {
     auto postProcMgr = Global::mPPMgr;
 
     switch (arg.key)
     {
-    case OIS::KC_O:
-    {
-        Global::timestep -= 0.1;
-    }
-    break;
 
-    case OIS::KC_P:
-    {
-        Global::timestep += 0.1;
-    }
-    break;
+	case OIS::KC_MULTIPLY:
+	{
+		auto& var = debugVars[debugVarsLine];
+		*var.target += var.step;
+	}
+	break;
+
+	case OIS::KC_DIVIDE:
+	{
+		auto& var = debugVars[debugVarsLine];
+		*var.target -= var.step;
+	}
+	break;
+
+	case OIS::KC_ADD:
+	{
+		debugVarsLine = (debugVarsLine + 1) % debugVars.size();
+	}
+	break;
+
+	case OIS::KC_SUBTRACT:
+	{
+		debugVarsLine = (debugVarsLine - 1) % debugVars.size();
+	}
+	break;
 
     case OIS::KC_SLASH:
     {
@@ -40,29 +71,6 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
             Global::mEventsMgr->addTask(task);
         break;
     }
-    case OIS::KC_Y:
-        postProcMgr->ColouringShift.x += 0.02;
-        break;
-
-    case OIS::KC_U:
-        postProcMgr->ColouringShift.y += 0.02;
-        break;
-
-    case OIS::KC_I:
-        postProcMgr->ColouringShift.z += 0.02;
-        break;
-
-    case OIS::KC_H:
-        postProcMgr->ColouringShift.x -= 0.02;
-        break;
-
-    case OIS::KC_J:
-        postProcMgr->ColouringShift.y -= 0.02;
-        break;
-
-    case OIS::KC_K:
-        postProcMgr->ColouringShift.z -= 0.02;
-        break;
 
     case OIS::KC_DELETE:
         Global::debug.clear();
@@ -106,30 +114,6 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
         else
             continueExecution = false;
 
-        break;
-
-    case OIS::KC_NUMPAD7:
-        postProcMgr->bloomStrDep.y += 0.25;
-        break;
-
-    case OIS::KC_NUMPAD8:
-        postProcMgr->bloomStrDep.y -= 0.25;
-        break;
-
-    case OIS::KC_NUMPAD4:
-        postProcMgr->bloomStrDep.x += 0.25;
-        break;
-
-    case OIS::KC_NUMPAD5:
-        postProcMgr->bloomStrDep.x -= 0.25;
-        break;
-
-    case OIS::KC_NUMPAD9:
-        postProcMgr->radialHorizBlurVignette.y += 0.1;
-        break;
-
-    case OIS::KC_NUMPAD6:
-        postProcMgr->radialHorizBlurVignette.y -= 0.1;
         break;
 
     case OIS::KC_NUMPAD0:
