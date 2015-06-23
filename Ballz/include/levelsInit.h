@@ -21,7 +21,6 @@ void createMenuLevel()
     postProcMgr->bloomStrDep.x = 0.35;
     postProcMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 
-    SceneParser::instance.loadScene("../../media/menu/menu.scene");
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
     Camera* mCamera=Global::mSceneMgr->getCamera("Camera");
     SceneNode* camRotator=Global::mSceneMgr->getRootSceneNode()->createChildSceneNode("camRotator");
@@ -40,8 +39,6 @@ void createMenuLevel()
 void createLevelTuto()
 {
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBoxToDark");
-    Global::mWorld->setWorldSize(Vector3(-2000,-500,-2000),Vector3(2000,500,2000));
-    SceneParser::instance.loadScene("../../media/park/park.scene");
 
     irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("tokyostreetatnight.ogg").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
     //music->setMinDistance(20);
@@ -248,8 +245,6 @@ void createLevelTuto()
 void createTestLevel()
 {
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
-    Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
-    SceneParser::instance.loadScene("../../media/testLvl/test.scene");
 
     PostProcessMgr* ppMgr = Global::mPPMgr;
     ppMgr->setToScaryBloom();
@@ -268,8 +263,6 @@ void createLevel1_1()
     //Rope* rr=new Rope(mSceneMgr,mWorld,Vector3(13,11,6),10,0.5);
 
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
-    Global::mWorld->setWorldSize(Vector3(-2000,-500,-2000),Vector3(2000,500,2000));
-    SceneParser::instance.loadScene("../../media/caves.scene");
 
     irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
     //music->setMinDistance(20);
@@ -292,9 +285,7 @@ void createLevel1_1()
 void createLevel2()
 {
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
-    Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
 
-    SceneParser::instance.loadScene("../../media/valley/valley.scene");
 
     irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(), true, false, true, irrklang::ESM_AUTO_DETECT, true);
     //music->setMinDistance(20);

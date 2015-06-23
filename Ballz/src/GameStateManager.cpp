@@ -14,7 +14,7 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
 
     LevelInfo info;
     info.path = "../../media/menu/menu.scene";
-    info.init = std::bind(&GameStateManager::switchToMainMenu, this);
+	info.init = createMenuLevel;
     levels[0] = info;
 
     info.path = "../../media/park/park.scene";
@@ -41,30 +41,18 @@ GameStateManager::~GameStateManager()
 
 void GameStateManager::switchToMainMenu()
 {
-    if (Global::player)
-    {
-        delete Global::player;
-        Global::player = NULL;
-    }
-
-    geometryMgr->clear();
-    Global::mWorld->destroyAllBodies();
-    Global::mSceneMgr->clearScene();
-    Global::mEventsMgr->clear();
-    Global::soundEngine->removeAllSoundSources();
-    Global::mPPMgr->resetValues();
-    myMenu->setMainMenu();
-
-    gameState = MENU;
-    createMenuLevel();
+	switchToLevel(0);
 }
 
 void GameStateManager::switchToLevel(int lvl)
 {
-    if (gameState == PAUSE)
+	if (lvl == 0)
+		myMenu->setMainMenu();
+	else if (gameState == PAUSE || gameState == MENU)
         myMenu->clearMenu();
-
+	
     lastLVL = lvl;
+	gameState = lvl == 0 ? MENU : GAME;
 
     if (Global::player)
     {
@@ -72,23 +60,20 @@ void GameStateManager::switchToLevel(int lvl)
         Global::player = NULL;
     }
 
-    if (gameState == MENU)
-        myMenu->clearMenu();
-
-    gameState = GAME;
     geometryMgr->clear();
-
     Global::mWorld->destroyAllBodies();
     Global::mSceneMgr->clearScene();
     Global::mEventsMgr->clear();
     Global::soundEngine->removeAllSoundSources();
+	Global::mPPMgr->resetValues();
 
+	if (gameState == GAME)
+	{
+		Player* p = new Player(wMaterials);
+		Global::player = p;
+	}
 
-    Player* p = new Player(wMaterials);
-    auto postProcMgr = Global::mPPMgr;
-
-    Global::player = p;
-
+	SceneParser::instance.loadScene(levels[lvl].path);
     levels[lvl].init();
 
     Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
