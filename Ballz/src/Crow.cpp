@@ -37,7 +37,7 @@ Crow::~Crow()
 void Crow::updateAnimationState()
 {
     //update model anim
-    if (curModelAnimType != Landing && path.state == Landing && path.getTempTimeLeft() < 0.95f)
+    if (curModelAnimType != Landing && path.state == Landing && path.getTempTimeLeft() < 0.85f)
     {
         animation.fadeTo("landing", 0.15f, false);
         curModelAnimType = Landing;
@@ -49,7 +49,7 @@ void Crow::updateAnimationState()
     }
     else if (curModelAnimType != Lifting && path.state == Lifting && path.getTempTime() < 0.6f)
     {
-        animation.fadeTo("takeoff", 0.05f, false);
+        animation.fadeTo("landing", 0.05f, false);
         curModelAnimType = Lifting;
     }
     else if (curModelAnimType != Standing && path.state == Standing)
@@ -152,7 +152,7 @@ bool Crow::validateFlightChange(Ogre::Animation* flightAnim, float pos)
     track->getInterpolatedKeyFrame(pos, &key0);
 
     //too close
-    if (key0.getTranslate().squaredDistance(path.getPosition()) < 25)
+    if (key0.getTranslate().squaredDistance(path.getPosition()) < 100)
         return false;
 
     Vector3 dir(key0.getTranslate() - path.getPosition());
