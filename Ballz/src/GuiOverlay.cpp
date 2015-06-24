@@ -838,7 +838,7 @@ void GuiOverlay::showDebug(bool show)
 
     for (size_t i = 0; i < MAX_DEBUG_LINES; i++)
     {
-        debugCaption[i]->colour(Ogre::ColourValue(0, 1, 1, alpha));
+        debugCaption[i]->colour(Ogre::ColourValue(1, 1, 1, alpha));
     }
 
     for (size_t i = 0; i < DEBUG_VARIABLES_COUNT; i++)

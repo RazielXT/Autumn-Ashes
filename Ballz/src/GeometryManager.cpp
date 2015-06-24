@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GeometryManager.h"
-#include "RockGeometryPreset.h"
+#include "BasicGeometryPreset.h"
 
 using namespace Ogre;
 
@@ -44,7 +44,7 @@ void GeometryManager::update()
 GeometryPreset* GeometryManager::getPreset(std::string name)
 {
     if (name == "Rocks")
-        return new RockGeometryPreset();
+        return new BasicGeometryPreset();
 
     return nullptr;
 }

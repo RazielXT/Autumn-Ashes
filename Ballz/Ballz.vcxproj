@@ -158,7 +158,6 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\Player_movement.cpp" />
     <ClCompile Include="src\PostProcessMgr.cpp" />
     <ClCompile Include="src\BasicGeometryPreset.cpp" />
-    <ClCompile Include="src\RockGeometryPreset.cpp" />
     <ClCompile Include="src\SlideContactCallback.cpp" />
     <ClCompile Include="src\SlidesAutoTarget.cpp" />
     <ClCompile Include="src\PlayerPostProcess.cpp" />
@@ -207,7 +206,6 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\EventsManager.h" />
     <ClInclude Include="include\GameConfig.h" />
     <ClInclude Include="include\GeometryPreset.h" />
-    <ClInclude Include="include\RockGeometryPreset.h" />
     <ClInclude Include="include\MainListener.h" />
     <ClInclude Include="include\GameStateManager.h" />
     <ClInclude Include="include\globals.h" />

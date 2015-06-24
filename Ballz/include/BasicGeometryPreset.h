@@ -15,8 +15,10 @@ public:
 protected:
 
     virtual void init(GeometryPresetInfo& info);
+    std::vector<std::string> possibleEntities;
+
     virtual bool acceptsWeight(float w) const;
-    virtual void placeObject(Ogre::Vector3 pos, Ogre::Quaternion or, float scale, Ogre::Vector3 color) = 0;
+    void placeObject(Ogre::Vector3 pos, Ogre::Quaternion or, float scale, Ogre::Vector3 color);
 
     void updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color);
     std::map<std::string, Ogre::Material*> materials;
