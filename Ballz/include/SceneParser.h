@@ -780,26 +780,32 @@ private:
 		return maskName.size() > 5 && maskName[4] == ':';
 	}
 
-	void loadCustomGeometryEdit(const XMLElement* rootElement, std::string channel, std::string targetChannel, GeometryPresetCustomEdit& info)
+	bool isNextChannel(const XMLElement* rootElement, std::string maskChannel, std::string targetChannel)
 	{
-		auto strType = getElementValue(rootElement, "Type" + channel);
-
-		bool isNextChannel = false;	
+		bool nextChannel = false;
 		std::string channels[] {"R", "G", "B", "A"};
+
 		bool validNextPosTarget = false;
 		for (int i = 0; i < 4; i++)
 		{
-			if (channels[i] == channel)
+			if (channels[i] == maskChannel)
 				validNextPosTarget = true;
 			else if (validNextPosTarget && channels[i] == targetChannel)
-				isNextChannel = true;
+				nextChannel = true;
 			else if (validNextPosTarget && isEditMask(getElementValue(rootElement, "Type" + channels[i])))
 				validNextPosTarget = true;
 			else
 				validNextPosTarget = false;
 		}
 
-		if (strType == "Mask: Scale" || (isNextChannel && strType == "Mask: Last scale"))
+		return nextChannel;
+	}
+
+	void loadCustomGeometryEdit(const XMLElement* rootElement, std::string channel, std::string targetChannel, GeometryPresetCustomEdit& info)
+	{
+		auto strType = getElementValue(rootElement, "Type" + channel);
+
+		if (strType == "Mask: Scale" || (strType == "Mask: Last scale" && isNextChannel(rootElement, channel, targetChannel)))
 		{
 			info.customMinmaxScale = getElementV2Value(rootElement, "ScaleMinMax" + channel);
 			info.customScaleMask = getChannelMask(channel);
