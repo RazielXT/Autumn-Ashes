@@ -270,7 +270,12 @@ void CrowPath::setLiftingAnim(Ogre::Animation* flightAnim, float timePos)
     animState.mFlightPos = timePos;
     animState.mFlightLenght = animState.mFlightTrack->getKeyFrame(animState.mFlightTrack->getNumKeyFrames() - 1)->getTime();
 
-    if (state == Standing || state == Walking)
+    if (state == None)
+    {
+        Global::DebugPrint("fly");
+        state = Flying;
+    }
+    else
     {
         //create lift anim + init
         Ogre::TransformKeyFrame key(0, 0);
@@ -280,11 +285,7 @@ void CrowPath::setLiftingAnim(Ogre::Animation* flightAnim, float timePos)
         Global::DebugPrint("lift");
         state = Lifting;
     }
-    else
-    {
-        Global::DebugPrint("fly");
-        state = Flying;
-    }
+
 }
 
 void CrowPath::setSwitchFlightAnim(Ogre::Animation* flightAnim, float timePos)

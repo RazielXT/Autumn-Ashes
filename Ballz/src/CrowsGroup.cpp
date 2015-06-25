@@ -235,7 +235,7 @@ void CrowLanding::update(Ogre::Real tslf)
 bool CrowLanding::acceptsLanding() const
 {
     //check if free
-    return (crows.size() < maxCrows);
+    return (crows.size() < (size_t)maxCrows);
 }
 
 void CrowLanding::addCrow(Crow* crow)
