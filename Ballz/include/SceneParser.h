@@ -769,15 +769,76 @@ private:
         }
     }
 
+	Ogre::ColourValue getChannelMask(std::string channel)
+	{
+		return ColourValue(channel == "R" ? 1.0f : 0.0f, channel == "G" ? 1.0f : 0.0f, channel == "B" ? 1.0f : 0.0f, channel == "A" ? 1.0f : 0.0f);
+	}
+
+	bool isEditMask(std::string maskName)
+	{
+		//"Mask: ..."
+		return maskName.size() > 5 && maskName[4] == ':';
+	}
+
+	void loadCustomGeometryEdit(const XMLElement* rootElement, std::string channel, std::string targetChannel, GeometryPresetCustomEdit& info)
+	{
+		auto strType = getElementValue(rootElement, "Type" + channel);
+
+		bool isNextChannel = false;	
+		std::string channels[] {"R", "G", "B", "A"};
+		bool validNextPosTarget = false;
+		for (int i = 0; i < 4; i++)
+		{
+			if (channels[i] == channel)
+				validNextPosTarget = true;
+			else if (validNextPosTarget && channels[i] == targetChannel)
+				isNextChannel = true;
+			else if (validNextPosTarget && isEditMask(getElementValue(rootElement, "Type" + channels[i])))
+				validNextPosTarget = true;
+			else
+				validNextPosTarget = false;
+		}
+
+		if (strType == "Mask: Scale" || (isNextChannel && strType == "Mask: Last scale"))
+		{
+			info.customMinmaxScale = getElementV2Value(rootElement, "ScaleMinMax" + channel);
+			info.customScaleMask = getChannelMask(channel);
+			info.customScaleEnabled = true;
+		}
+		else if (strType == "Mask: VC set" || strType == "Mask: VC mul")
+		{
+			info.customVCMode == (strType == "Mask: VC mul") ? MulVC : SetVC;
+			info.customVCMask = getChannelMask(channel);
+			info.customVCColor = getElementV3Value(rootElement, "Color" + channel);
+		}
+
+	}
+
     void loadDetailGeometryChannel(const XMLElement* rootElement, std::string channel, std::vector<GeometryPresetInfo>& geometries)
     {
         bool enabled = getElementBoolValue(rootElement, channel);
+		auto strType = getElementValue(rootElement, "Type" + channel);
+		
+		bool isEMask = isEditMask(strType);
 
-        if (enabled)
-        {
-            GeometryPresetInfo info;
-            info.weightMask = ColourValue(channel == "R" ? 1.0f : 0.0f, channel == "G" ? 1.0f : 0.0f, channel == "B" ? 1.0f : 0.0f, channel == "A" ? 1.0f : 0.0f);
-            info.name = getElementValue(rootElement, "Geometry" + channel);
+		if (enabled && !isEMask)
+		{
+			GeometryPresetInfo info;
+
+			//find edit masks
+			char* channels[] {"R", "G", "B", "A"};
+			for (int i = 0; i < 4; i++)
+			{
+				std::string c = channels[i];
+
+				if (isEditMask(getElementValue(rootElement, "Type" + c)))
+				{
+					loadCustomGeometryEdit(rootElement, c, channel, info.customEdit);
+				}
+			}
+            
+			info.weightMask = getChannelMask(channel);
+			info.name = strType;
             info.minmaxScale = getElementV2Value(rootElement, "ScaleMinMax" + channel);
             info.color = getElementV3Value(rootElement, "Color" + channel);
             info.density = getElementFloatValue(rootElement, "Density" + channel);

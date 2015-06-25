@@ -28,6 +28,14 @@ void BasicGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
             auto wmasked = (pos.color*info.weightMask);
             float w = wmasked.r + wmasked.g + wmasked.b + wmasked.a;
 
+			float scaleMask = 1.0f;
+			if (info.customEdit.customScaleEnabled)
+			{
+				auto smasked = (pos.color*info.customEdit.customScaleMask);
+				float scaleW = wmasked.r + wmasked.g + wmasked.b + wmasked.a;
+				scaleMask = MathUtils::lerp(info.customEdit.customMinmaxScale.x, info.customEdit.customMinmaxScale.y, scaleW);
+			}
+
             MathUtils::RayInfo ray;
             bool foundRay = false;
 
@@ -38,7 +46,7 @@ void BasicGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 
             if (foundRay && ray.normal.y >= maxSteepY && acceptsWeight(w))
             {
-                float scale = Ogre::Math::RangeRandom(info.minmaxScale.x, info.minmaxScale.y);
+				float scale = scaleMask*Ogre::Math::RangeRandom(info.minmaxScale.x, info.minmaxScale.y);
                 placeObject(ray.pos, MathUtils::quaternionFromNormal(ray.normal), scale, info.color);
             }
         }

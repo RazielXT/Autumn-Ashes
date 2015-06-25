@@ -39,7 +39,7 @@
     <Filter Include="Files\Objects\Slide">
       <UniqueIdentifier>{f51400e4-fdd5-49af-acbb-557cd993ffd6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Files\Core\geometry">
+    <Filter Include="Files\Core\DetailGeometry">
       <UniqueIdentifier>{6009a606-e1a1-4c38-958c-609a987e8828}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -210,7 +210,7 @@
       <Filter>Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\BasicGeometryPreset.cpp">
-      <Filter>Files\Core\geometry</Filter>
+      <Filter>Files\Core\DetailGeometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -428,10 +428,10 @@
       <Filter>Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="include\GeometryPreset.h">
-      <Filter>Files\Core\geometry</Filter>
+      <Filter>Files\Core\DetailGeometry</Filter>
     </ClInclude>
     <ClInclude Include="include\BasicGeometryPreset.h">
-      <Filter>Files\Core\geometry</Filter>
+      <Filter>Files\Core\DetailGeometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

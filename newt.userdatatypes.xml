@@ -297,14 +297,18 @@
 	<data name="Switchtime" displayName="Avg switch time" type="float" defaultValue="5"/>
 </class>
 
-<enum name="DetailGeometries" type="string">
-	   <enumItem name="Rocks" value="Rocks" />
-	   <enumItem name="Moss" value="Moss" />
-       <enumItem name="Grass" value="Grass" />
-	   <enumItem name="HangGrass" value="HangGrass" />
-	   <enumItem name="Wood" value="Wood" />
-	   <enumItem name="Leafs" value="Leafs" />
-	   <enumItem name="Flowers" value="Flowers" />
+<enum name="GeometryMask" type="string">
+		<enumItem name="Mask: Last scale"/>
+		<enumItem name="Mask: Scale"/>
+		<enumItem name="Mask: VC set"/>
+		<enumItem name="Mask: VC mul"/>
+		<enumItem name="Rocks" value="Rocks" />
+		<enumItem name="Moss" value="Moss" />
+		<enumItem name="Grass" value="Grass" />
+		<enumItem name="HangGrass" value="HangGrass" />
+		<enumItem name="Wood" value="Wood" />
+		<enumItem name="Leafs" value="Leafs" />
+		<enumItem name="Flowers" value="Flowers" />
 </enum>
 
 <class name="DetailGeometry" usage="object">
@@ -313,25 +317,25 @@
 	<data name="Target" displayName="Target body" type="string" defaultValue=""/>
 	
 	<data name="R" type="bool" groupName="1" defaultValue="false"/>
-	<data name="GeometryR" type="DetailGeometries" groupName="1" visibilityParentName="R"/>
+	<data name="TypeR" type="GeometryMask" groupName="1" visibilityParentName="R"/>
 	<data name="ScaleMinMaxR" type="float2" groupName="1" defaultValue="0.8,1.2" visibilityParentName="R"/>
 	<data name="DensityR" type="float" groupName="1" defaultValue="1" visibilityParentName="R"/>
 	<data name="ColorR" type="rgb" groupName="1" visibilityParentName="R"/>
 	
 	<data name="G" type="bool" groupName="2" defaultValue="false"/>
-	<data name="GeometryG" type="DetailGeometries" groupName="2" visibilityParentName="G"/>
+	<data name="TypeG" type="GeometryMask" groupName="2" visibilityParentName="G"/>
 	<data name="ScaleMinMaxG" type="float2" groupName="2" defaultValue="0.8,1.2" visibilityParentName="G"/>
 	<data name="DensityG" type="float" groupName="2" defaultValue="1" visibilityParentName="G"/>
 	<data name="ColorG" type="rgb" groupName="2" visibilityParentName="G"/>
 	
 	<data name="B" type="bool" groupName="3" defaultValue="false"/>
-	<data name="GeometryB" type="DetailGeometries" groupName="3" visibilityParentName="B"/>
+	<data name="TypeB" type="GeometryMask" groupName="3" visibilityParentName="B"/>
 	<data name="ScaleMinMaxB" type="float2" groupName="3" defaultValue="0.8,1.2" visibilityParentName="B"/>
 	<data name="DensityB" type="float" groupName="3" defaultValue="1" visibilityParentName="B"/>
 	<data name="ColorB" type="rgb" groupName="3" visibilityParentName="B"/>
 	
 	<data name="A" type="bool" groupName="4" defaultValue="false"/>
-	<data name="GeometryA" type="DetailGeometries" groupName="4" visibilityParentName="A"/>
+	<data name="TypeA" type="GeometryMask" groupName="4" visibilityParentName="A"/>
 	<data name="ScaleMinMaxA" type="float2" groupName="4" defaultValue="0.8,1.2" visibilityParentName="A"/>
 	<data name="DensityA" type="float" groupName="4" defaultValue="1" visibilityParentName="A"/>
 	<data name="ColorA" type="rgb" groupName="4" visibilityParentName="A"/>

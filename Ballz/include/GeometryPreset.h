@@ -18,6 +18,19 @@ struct GeometryMaskInfo
     float rayDistance;
 };
 
+enum VCEditMode { Off, SetVC, MulVC };
+
+struct GeometryPresetCustomEdit
+{
+	VCEditMode customVCMode = Off;
+	Ogre::ColourValue customVCMask;
+	Ogre::Vector3 customVCColor;
+
+	bool customScaleEnabled = false;
+	Ogre::ColourValue customScaleMask;
+	Ogre::Vector2 customMinmaxScale;
+};
+
 struct GeometryPresetInfo
 {
     std::string name;
@@ -25,6 +38,8 @@ struct GeometryPresetInfo
     Ogre::Vector3 color;
     Ogre::Vector2 minmaxScale;
     float density;
+
+	GeometryPresetCustomEdit customEdit;
 };
 
 class GeometryPreset
