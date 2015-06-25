@@ -15,8 +15,15 @@ void AnimationBlender::fadeTo(std::string animName, float fadeTime, bool loop)
 
     if (currentState)
     {
-        fadingStates.push_back(currentState);
-        fadingStatesStartWeight.push_back(currentState->getWeight());
+        if (currentState == animState)
+        {
+            currentState->setTimePosition(0);
+        }
+        else
+        {
+            fadingStates.push_back(currentState);
+            fadingStatesStartWeight.push_back(currentState->getWeight());
+        }
     }
 
     blendTargetTime = fadeTime;

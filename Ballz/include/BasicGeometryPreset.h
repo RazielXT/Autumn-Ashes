@@ -23,7 +23,7 @@ protected:
     void updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color);
     std::map<std::string, Ogre::Material*> materials;
 
-    std::vector<Ogre::Entity*> entities;
+    Ogre::StaticGeometry* sg = nullptr;
 
     Ogre::Vector2 stepSize;
     float maxSteepY;

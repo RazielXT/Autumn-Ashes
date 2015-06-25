@@ -18,6 +18,13 @@ void BasicGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
     float yEnd = gridInfo.size.y;
     float yStep = stepSize.y / info.density;
 
+    static int sgCount = 0;
+    float staticEntitiesGridSize = 50;
+    sg = Global::mSceneMgr->createStaticGeometry("basicDG" + std::to_string(sgCount++));
+    sg->setRegionDimensions(Ogre::Vector3(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize));
+    sg->setOrigin(Ogre::Vector3(0, 0, 0));
+    sg->setCastShadows(true);
+
     for (float x = xStart; x <= xEnd; x+=xStep)
         for (float y = yStart; y <= yEnd; y += yStep)
         {
@@ -28,13 +35,13 @@ void BasicGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
             auto wmasked = (pos.color*info.weightMask);
             float w = wmasked.r + wmasked.g + wmasked.b + wmasked.a;
 
-			float scaleMask = 1.0f;
-			if (info.customEdit.customScaleEnabled)
-			{
-				auto smasked = (pos.color*info.customEdit.customScaleMask);
-				float scaleW = wmasked.r + wmasked.g + wmasked.b + wmasked.a;
-				scaleMask = MathUtils::lerp(info.customEdit.customMinmaxScale.x, info.customEdit.customMinmaxScale.y, scaleW);
-			}
+            float scaleMask = 1.0f;
+            if (info.customEdit.customScaleEnabled)
+            {
+                auto smasked = (pos.color*info.customEdit.customScaleMask);
+                float scaleW = wmasked.r + wmasked.g + wmasked.b + wmasked.a;
+                scaleMask = MathUtils::lerp(info.customEdit.customMinmaxScale.x, info.customEdit.customMinmaxScale.y, scaleW);
+            }
 
             MathUtils::RayInfo ray;
             bool foundRay = false;
@@ -46,22 +53,26 @@ void BasicGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 
             if (foundRay && ray.normal.y >= maxSteepY && acceptsWeight(w))
             {
-				float scale = scaleMask*Ogre::Math::RangeRandom(info.minmaxScale.x, info.minmaxScale.y);
+                float scale = scaleMask*Ogre::Math::RangeRandom(info.minmaxScale.x, info.minmaxScale.y);
                 placeObject(ray.pos, MathUtils::quaternionFromNormal(ray.normal), scale, info.color);
             }
         }
+
+    sg->build();
 }
 
 void BasicGeometryPreset::clear()
 {
-    for (auto e : entities)
+    /*for (auto e : entities)
     {
         auto node = e->getParentSceneNode();
         node->detachAllObjects();
 
         Global::mSceneMgr->destroySceneNode(node);
         Global::mSceneMgr->destroyEntity(e);
-    }
+    }*/
+
+    Global::mSceneMgr->destroyStaticGeometry(sg);
 }
 
 bool BasicGeometryPreset::acceptsWeight(float w) const
@@ -91,10 +102,10 @@ void BasicGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, V
 {
     Quaternion randomYaw(Degree(Math::RangeRandom(0, 360)), Vector3(0, 1, 0));
     String meshName = possibleEntities[(int)Math::RangeRandom(0, possibleEntities.size()-0.01f)];
-    auto node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(pos, randomYaw*or);
+    //auto node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(pos, randomYaw*or);
     auto ent = Global::mSceneMgr->createEntity(meshName);
-    node->attachObject(ent);
-    node->setScale(Vector3(scale, scale, scale));
+    //node->attachObject(ent);
+    //node->setScale(Vector3(scale, scale, scale));
 
     updateMaterial(ent, color);
 
@@ -108,7 +119,7 @@ void BasicGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, V
     body->setCenterOfMass(offset);
     body->setPositionOrientation(node->_getDerivedPosition(), node->_getDerivedOrientation());*/
 
-    entities.push_back(ent);
+    sg->addEntity(ent, pos, or, Vector3(scale));
 }
 
 void BasicGeometryPreset::updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color)
