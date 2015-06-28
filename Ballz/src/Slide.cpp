@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Slide.h"
 #include "Player.h"
-#include "MathUtils.h"
+#include "MUtils.h"
 #include "SlidesAutoTarget.h"
 
 using namespace Ogre;
@@ -264,7 +264,7 @@ bool Slide::placePointOnLine(Vector3& point)
 
     for (size_t id = 1; id < slidePoints.size(); id++)
     {
-        auto state = MathUtils::getProjectedState(point, slidePoints[id - 1].pos, slidePoints[id].pos);
+        auto state = MUtils::getProjectedState(point, slidePoints[id - 1].pos, slidePoints[id].pos);
 
         //log->logMessage(std::to_string(id) + ". state: " + Ogre::StringConverter::toString(state.projPos) + " distance " + Ogre::StringConverter::toString(state.sqMinDistance), Ogre::LML_NORMAL);
         //log->logMessage(std::to_string(id) + ". line: " + Ogre::StringConverter::toString(slidePoints[id - 1].pos) + " to " + Ogre::StringConverter::toString(slidePoints[id].pos), Ogre::LML_NORMAL);
@@ -371,7 +371,7 @@ void Slide::updateJumpToSlide(float time)
     auto tDist = headArrival.pos.distance(headArrival.posTarget);
     auto hd = hDiff / tDist;
 
-    auto pos = MathUtils::lerp(headArrival.pos, headArrival.posTarget, w);
+    auto pos = MUtils::lerp(headArrival.pos, headArrival.posTarget, w);
     auto dir = Quaternion::nlerp(w, headArrival.dir, headArrival.dirTarget, true);
 
     auto maxH = tDist;// / 2.0f;
@@ -526,8 +526,8 @@ void Slide::attach(bool retainDirection)
 
         if (retainDirection)
         {
-            headState.pitch = MathUtils::getYawBetween(pDir, slDir);
-            headState.yaw = MathUtils::getPitchBetween(pDir, slDir);
+            headState.pitch = MUtils::getYawBetween(pDir, slDir);
+            headState.yaw = MUtils::getPitchBetween(pDir, slDir);
         }
         else
         {

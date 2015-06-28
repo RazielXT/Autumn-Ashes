@@ -9,6 +9,7 @@ class GeometryManager
 {
 public:
 
+    void forgetPagedGeometry(Forests::PagedGeometry *g);
     void addPagedGeometry(Forests::PagedGeometry *g);
     void clear();
     void update();

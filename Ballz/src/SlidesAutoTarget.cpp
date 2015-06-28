@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SlidesAutoTarget.h"
-#include "MathUtils.h"
+#include "MUtils.h"
 
 
 SlidesAutoTargetAsync::SlidesAutoTargetAsync()
@@ -62,7 +62,7 @@ bool SlidesAutoTargetAsync::getTargetSlideRay(Vector3 pos, Vector3 dir, float ra
             auto s0 = s->slidePoints[i - 1].pos;
             auto s1 = s->slidePoints[i].pos;
 
-            auto r = MathUtils::getSegmentsDistanceInfo(rayStart, rayTarget, s0, s1);
+            auto r = MUtils::getSegmentsDistanceInfo(rayStart, rayTarget, s0, s1);
             float minCompDist = minRayRadiusW*r.s1Pos;
 
             if (r.sqMinDistance < minCompDist && r.sqMinDistance < closest)
@@ -104,7 +104,7 @@ bool SlidesAutoTargetAsync::getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide*
             auto s0 = s->slidePoints[i - 1].pos;
             auto s1 = s->slidePoints[i].pos;
 
-            auto r = MathUtils::getProjectedState(pos, s0, s1);
+            auto r = MUtils::getProjectedState(pos, s0, s1);
 
             if (r.sqMinDistance < closest)
             {

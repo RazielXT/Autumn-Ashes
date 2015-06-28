@@ -12,6 +12,7 @@ using MaskGrid = std::vector < std::vector<GeometryMaskPoint> > ;
 
 struct GeometryMaskInfo
 {
+    GeometryManager* parent;
     Ogre::Vector2 size;
     Ogre::SceneNode* node;
     OgreNewt::Body* target;
@@ -88,6 +89,9 @@ protected:
 
             rowStart++;
         }
+
+        rowStart = std::max(rowStart, 0);
+        colStart = std::max(colStart, 0);
 
         float rowDifSize = grid[rowStart][colStart].pos.z - grid[rowStart + 1][colStart].pos.z;
         float colDifSize = grid[rowStart][colStart + 1].pos.x - grid[rowStart][colStart].pos.x;

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PlayerParkour.h"
 #include "Player.h"
-#include "MathUtils.h"
+#include "MUtils.h"
 
 PlayerParkour::PlayerParkour(Player* player) : p(player), body(player->body)
 {
@@ -56,7 +56,7 @@ bool PlayerParkour::spacePressed()
                 //Global::DebugPrint("Normal jump");
 
                 jumpDir.y = 1;
-            jumpDir = MathUtils::lerp(jumpDir * 8, wall_normal * 4, dotJump);
+            jumpDir = MUtils::lerp(jumpDir * 8, wall_normal * 4, dotJump);
 
             reattachFixTimer = 0.5f + dotJump*0.5f;
             //Global::DebugPrint("reattachFixTimer set to " + std::to_string(reattachFixTimer));

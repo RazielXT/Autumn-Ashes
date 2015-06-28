@@ -4,8 +4,25 @@
 
 using namespace Ogre;
 
-namespace MathUtils
+namespace MUtils
 {
+
+inline std::string strtok_str(std::string& txt, char delim)
+{
+    auto dPos = txt.find_first_of(delim);
+    std::string ret = txt;
+
+    if (dPos != std::string::npos)
+    {
+        ret.erase(dPos, std::string::npos);
+        txt.erase(0, dPos + 1);
+    }
+    else
+        txt.clear();
+
+    return ret;
+}
+
 inline float getYawBetween(Quaternion& q1, Quaternion& q2)
 {
     auto yaw = q1.getYaw().valueDegrees();

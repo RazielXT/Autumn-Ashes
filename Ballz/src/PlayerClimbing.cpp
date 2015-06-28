@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "Player.h"
-#include "MathUtils.h"
+#include "MUtils.h"
 #include "GameStateManager.h"
 
 PlayerClimbing::PlayerClimbing(Player* player) : p(player), body(player->body)
@@ -80,7 +80,7 @@ void PlayerClimbing::pressedC()
 
 void PlayerClimbing::forcePullup(Vector3 climbNormal, float startOffset)
 {
-    pullupSide = (MathUtils::getSideDotProduct(p->getFacingDirection(), climbNormal) < 0) ? -1.0f : 1.0f;
+    pullupSide = (MUtils::getSideDotProduct(p->getFacingDirection(), climbNormal) < 0) ? -1.0f : 1.0f;
     Global::shaker->startShaking(1.5, 0.5, 0.5, 1, 1, 0.7, 0.25, 0.75, true);
 
     startClimbing(Climb_Pullup);

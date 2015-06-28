@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CrowPath.h"
-#include "MathUtils.h"
+#include "MUtils.h"
 #include "Player.h"
 #include "TrackBuilder.h"
 
@@ -38,7 +38,7 @@ void CrowPathAnimations::refresh()
                 mFlightTrack->getInterpolatedKeyFrame(mFlightPos, &key1);
 
             lastOr = Quaternion::Slerp(animWeight, key0.getRotation(), key1.getRotation(), true);
-            lastPos = MathUtils::lerp(key0.getTranslate(), key1.getTranslate(), animWeight);
+            lastPos = MUtils::lerp(key0.getTranslate(), key1.getTranslate(), animWeight);
         }
     }
 }
@@ -343,7 +343,7 @@ void CrowPath::createWalkAnimation(Ogre::Vector3 endPos)
     builder.init(2 / animSpeed);
 
     Vector3 walkDir(endPos - animState.lastPos);
-    Quaternion walkOr = MathUtils::crowQuaternionFromDirNoPitch(walkDir);
+    Quaternion walkOr = MUtils::crowQuaternionFromDirNoPitch(walkDir);
 
     builder.addKey(0, animState.lastPos, animState.lastOr);
 
@@ -372,15 +372,15 @@ void CrowPath::createSwitchFlightAnimation(Ogre::Vector3 endPos, Ogre::Quaternio
 
     //+side offset
     Vector3 flyDir(endPos - animState.lastPos);
-    auto rot = MathUtils::crowQuaternionFromDir(flyDir);
+    auto rot = MUtils::crowQuaternionFromDir(flyDir);
     Vector3 p1(animState.lastPos + flyDir / 3.0f);
     builder.addKey(animSpeed * (1 / 4.0f), p1, rot);
 
-    rot = MathUtils::crowQuaternionFromDir(flyDir);
+    rot = MUtils::crowQuaternionFromDir(flyDir);
     Vector3 p2(animState.lastPos + flyDir * (2.0f/ 3.0f));
     builder.addKey(animSpeed * (3 / 4.0f), p2, rot);
 
-    rot = MathUtils::crowQuaternionFromDir(flyDir);
+    rot = MUtils::crowQuaternionFromDir(flyDir);
     builder.addKey(animSpeed, endPos, rot);
 
     animState.mTempTrack = builder.track;
@@ -404,11 +404,11 @@ void CrowPath::createLandAnimation(Vector3 startPos, Ogre::Quaternion startOr, V
     Vector3 landDir(end - startPos);
     landDir.normalise();
     Vector3 landPrepPos = end - landDir*5 + Vector3(0, 0.5f, 0);
-    Vector3 halfPos = MathUtils::lerp(startPos, landPrepPos, 0.6f) - Vector3(0, 1, 0);
-    Quaternion neutralDir = MathUtils::crowQuaternionFromDirNoPitch(landDir);
+    Vector3 halfPos = MUtils::lerp(startPos, landPrepPos, 0.6f) - Vector3(0, 1, 0);
+    Quaternion neutralDir = MUtils::crowQuaternionFromDirNoPitch(landDir);
     builder.addKey(0, startPos, startOr);
 
-    builder.addKey(animLen / 2.0f, halfPos, MathUtils::crowQuaternionFromDir(landPrepPos - startPos));
+    builder.addKey(animLen / 2.0f, halfPos, MUtils::crowQuaternionFromDir(landPrepPos - startPos));
 
     builder.addKey(animLen, landPrepPos, neutralDir);
 
@@ -436,12 +436,12 @@ void CrowPath::createLiftAnimation(Vector3 start, Vector3 endPos, Ogre::Quaterni
     Vector3 flightDir(endPos - start);
     flightDir.normalise();
     Vector3 jumpPos = start + flightDir + Vector3(0, 2.5f, 0);
-    Vector3 halfPos = MathUtils::lerp(jumpPos,endPos,0.4f) - Vector3(0, 1, 0);
-    Quaternion liftOr = MathUtils::crowQuaternionFromDir(endPos - halfPos);
+    Vector3 halfPos = MUtils::lerp(jumpPos,endPos,0.4f) - Vector3(0, 1, 0);
+    Quaternion liftOr = MUtils::crowQuaternionFromDir(endPos - halfPos);
 
     builder.addKey(0, start, animState.lastOr);
 
-    builder.addKey(liftTime, jumpPos, MathUtils::crowQuaternionFromDir(halfPos - jumpPos));
+    builder.addKey(liftTime, jumpPos, MUtils::crowQuaternionFromDir(halfPos - jumpPos));
 
     builder.addKey(liftTime + animLen / 2.0f, halfPos, liftOr);
 

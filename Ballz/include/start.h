@@ -46,7 +46,7 @@ void Application::setupScene()
     cam->setPosition(Vector3(0,0,0));
     cam->lookAt(Vector3(0,0,0));
 
-    mSceneMgr->setAmbientLight(ColourValue(0.6, 0.6, 0.6));
+    mSceneMgr->setAmbientLight(ColourValue(0.35f, 0.35f, 0.35f));
     mSceneMgr->setShadowTechnique(SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
     mSceneMgr->setShadowTextureCountPerLightType(Ogre::Light::LT_DIRECTIONAL, 4);
     mSceneMgr->setShadowTextureSettings(512,4, PF_FLOAT32_R);

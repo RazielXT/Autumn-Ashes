@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ZipLineSlide.h"
-#include "MathUtils.h"
+#include "MUtils.h"
 
 ZipLineSlide::ZipLineSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, float speed) : Slide(zipName, looped, speed)
 {
@@ -38,7 +38,7 @@ void ZipLineSlide::updateTurningRoll(float time)
     }
 
     //force to side, faster speed means more turn
-    auto yaw = MathUtils::getYawBetween(q, turnRollState.lastOr)*Math::PI/180.0f;
+    auto yaw = MUtils::getYawBetween(q, turnRollState.lastOr)*Math::PI/180.0f;
     auto force = yaw*time*currentSpeed*turnForce;
 
     auto& headRoll = turnRollState.curHeadRoll;

@@ -1,8 +1,17 @@
 #include "stdafx.h"
 #include "GeometryManager.h"
 #include "BasicGeometryPreset.h"
+#include "PgGeometryPreset.h"
 
 using namespace Ogre;
+
+void GeometryManager::forgetPagedGeometry(Forests::PagedGeometry *g)
+{
+    auto it = std::find(pagedGeometries.begin(), pagedGeometries.end(), g);
+
+    if (it != pagedGeometries.end())
+        pagedGeometries.erase(it);
+}
 
 void GeometryManager::addPagedGeometry(Forests::PagedGeometry *g)
 {
@@ -43,7 +52,9 @@ void GeometryManager::update()
 
 GeometryPreset* GeometryManager::getPreset(std::string name)
 {
-    if (name == "Rocks")
+    //if ()
+    //   return new PgGeometryPreset();
+    if (name == "Rocks" || name == "TreesAspen" || name == "Bush")
         return new BasicGeometryPreset();
 
     return nullptr;
@@ -68,6 +79,7 @@ void GeometryManager::addDetailGeometry(Ogre::Entity* maskEnt, std::vector<Geome
     info.rayDistance = rayDistance;
     info.target = targetarget;
     info.node = maskEnt->getParentSceneNode();
+    info.parent = this;
 
     generateGeometryMask(maskEnt, posGrid, info.size);
 
@@ -173,7 +185,13 @@ void GeometryManager::generateGeometryMask(Ogre::Entity* maskEnt, MaskGrid& posG
             firstCol = false;
         }
 
+        if (m->vertexData->vertexCount == 6)
+        {
+            posGrid.push_back(firstRow);
+        }
+
         posGrid.push_back(loadedRow);
+
 
         size.x = temp[2].pos.x - posGrid[0][0].pos.x;
         size.y = posGrid[0][0].pos.z - temp[2].pos.z;

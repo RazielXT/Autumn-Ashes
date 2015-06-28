@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "BasicGeometryPreset.h"
-#include "MathUtils.h"
+#include "MUtils.h"
 
 using namespace Ogre;
 
@@ -19,11 +19,16 @@ void BasicGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
     float yStep = stepSize.y / info.density;
 
     static int sgCount = 0;
-    float staticEntitiesGridSize = 50;
+
     sg = Global::mSceneMgr->createStaticGeometry("basicDG" + std::to_string(sgCount++));
-    sg->setRegionDimensions(Ogre::Vector3(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize));
-    sg->setOrigin(Ogre::Vector3(0, 0, 0));
     sg->setCastShadows(true);
+
+    float staticEntitiesGridSize = 25;
+    Ogre::Vector3 gridRegion(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize);
+    sg->setRegionDimensions(gridRegion);
+    sg->setOrigin(gridRegion / 2.0f + gridInfo.node->getPosition());
+    sg->setRenderingDistance(50);
+    int bgc = 0;
 
     for (float x = xStart; x <= xEnd; x+=xStep)
         for (float y = yStart; y <= yEnd; y += yStep)
@@ -40,21 +45,24 @@ void BasicGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
             {
                 auto smasked = (pos.color*info.customEdit.customScaleMask);
                 float scaleW = wmasked.r + wmasked.g + wmasked.b + wmasked.a;
-                scaleMask = MathUtils::lerp(info.customEdit.customMinmaxScale.x, info.customEdit.customMinmaxScale.y, scaleW);
+                scaleMask = MUtils::lerp(info.customEdit.customMinmaxScale.x, info.customEdit.customMinmaxScale.y, scaleW);
             }
 
-            MathUtils::RayInfo ray;
+            MUtils::RayInfo ray;
             bool foundRay = false;
 
             if (gridInfo.target)
-                foundRay = MathUtils::getRayFilteredInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray, gridInfo.target);
+                foundRay = MUtils::getRayFilteredInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray, gridInfo.target);
             else
-                foundRay = MathUtils::getRayInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray);
+                foundRay = MUtils::getRayInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray);
 
             if (foundRay && ray.normal.y >= maxSteepY && acceptsWeight(w))
             {
-                float scale = scaleMask*Ogre::Math::RangeRandom(info.minmaxScale.x, info.minmaxScale.y);
-                placeObject(ray.pos, MathUtils::quaternionFromNormal(ray.normal), scale, info.color);
+                float scale = generalScale*scaleMask*Ogre::Math::RangeRandom(info.minmaxScale.x, info.minmaxScale.y);
+                placeObject(ray.pos, MUtils::quaternionFromNormal(ray.normal), scale, info.color);
+
+
+                bgc++;
             }
         }
 
@@ -82,13 +90,29 @@ bool BasicGeometryPreset::acceptsWeight(float w) const
 
 void BasicGeometryPreset::init(GeometryPresetInfo& info)
 {
-    stepSize.x = 1;
-    stepSize.y = 1;
-
     maxSteepY = 0;
 
-    if (info.name == "Rocks")
+    if (info.name == "TreesAspen")
     {
+        stepSize.x = 5;
+        stepSize.y = 5;
+        generalScale = 0.25f;
+
+        possibleEntities.push_back("aspenLeafs.mesh;aspenTrunk.mesh");
+    }
+    else if (info.name == "Bush")
+    {
+        stepSize.x = 1;
+        stepSize.y = 1;
+        generalScale = 5.25f;
+
+        possibleEntities.push_back("bush1.mesh");
+    }
+    else //if (info.name == "Rocks")
+    {
+        stepSize.x = 1;
+        stepSize.y = 1;
+
         possibleEntities.push_back("Rock1.mesh");
         possibleEntities.push_back("Rock2.mesh");
         possibleEntities.push_back("Rock3.mesh");
@@ -103,11 +127,17 @@ void BasicGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, V
     Quaternion randomYaw(Degree(Math::RangeRandom(0, 360)), Vector3(0, 1, 0));
     String meshName = possibleEntities[(int)Math::RangeRandom(0, possibleEntities.size()-0.01f)];
     //auto node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(pos, randomYaw*or);
-    auto ent = Global::mSceneMgr->createEntity(meshName);
-    //node->attachObject(ent);
     //node->setScale(Vector3(scale, scale, scale));
 
-    updateMaterial(ent, color);
+    while (!meshName.empty())
+    {
+        auto name = MUtils::strtok_str(meshName, ';');
+        auto ent = Global::mSceneMgr->createEntity(name);
+        //node->attachObject(ent);
+
+        //updateMaterial(ent, color);
+        sg->addEntity(ent, pos, randomYaw, Vector3(scale));
+    }
 
     /*OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::mWorld, ent, 0));
     auto body = new OgreNewt::Body(Global::mWorld, col);
@@ -118,8 +148,6 @@ void BasicGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, V
     body->setMassMatrix(0, inertia);
     body->setCenterOfMass(offset);
     body->setPositionOrientation(node->_getDerivedPosition(), node->_getDerivedOrientation());*/
-
-    sg->addEntity(ent, pos, or, Vector3(scale));
 }
 
 void BasicGeometryPreset::updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color)

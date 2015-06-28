@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <fstream>
 #include "PostProcessMgr.h"
+#include "MUtils.h"
 
 using namespace Ogre;
 
@@ -142,22 +143,6 @@ int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
     return 0;
 }
 
-std::string strtok_str(std::string& txt, char delim)
-{
-    auto dPos = txt.find_first_of(delim);
-    std::string ret = txt;
-
-    if (dPos != std::string::npos)
-    {
-        ret.erase(dPos, std::string::npos);
-        txt.erase(0, dPos + 1);
-    }
-    else
-        txt.clear();
-
-    return ret;
-}
-
 GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs, irrklang::ISoundEngine* eng)
 {
     engine=eng;
@@ -183,9 +168,9 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
     resolutionsLoop= new ListLoop<resolution>();
     std::string s=mFoundResolutions.at(0);
 
-    std::string s1=strtok_str(s,' ');
-    strtok_str(s, ' ');
-    std::string s2 = strtok_str(s, ' ');
+    std::string s1=MUtils::strtok_str(s,' ');
+    MUtils::strtok_str(s, ' ');
+    std::string s2 = MUtils::strtok_str(s, ' ');
     std::string res=s1+"x"+s2;
     resolutionsLoop->value.res = res;
     resolutionsLoop->value.w = Ogre::StringConverter::parseInt(s1);
@@ -195,9 +180,9 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
     {
         std::string s=mFoundResolutions.at(o);
 
-        std::string s1 = strtok_str(s, ' ');
-        strtok_str(s, ' ');
-        std::string s2 = strtok_str(s, ' ');
+        std::string s1 = MUtils::strtok_str(s, ' ');
+        MUtils::strtok_str(s, ' ');
+        std::string s2 = MUtils::strtok_str(s, ' ');
         std::string res=s1+"x"+s2;
         resolution trLoopN;
         trLoopN.w=Ogre::StringConverter::parseInt(s1);
@@ -819,7 +804,7 @@ void GuiOverlay::setDebugValue(Ogre::Real value1, std::vector<std::string>& valu
         debugCaption[i]->text("");
     }
 
-    int debugVarPos = debugVarsLine-2;
+    int debugVarPos = debugVarsLine-3;
     if (debugVarPos < 0) debugVarPos += debugVars.size();
 
     for (size_t i = 0; i < values.size() && i < DEBUG_VARIABLES_COUNT; i++)

@@ -212,6 +212,9 @@
     <ClCompile Include="src\BasicGeometryPreset.cpp">
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClCompile>
+    <ClCompile Include="src\PgGeometryPreset.cpp">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -322,9 +325,6 @@
     <ClInclude Include="include\MainListener.h">
       <Filter>Files\Listeners</Filter>
     </ClInclude>
-    <ClInclude Include="include\MathUtils.h">
-      <Filter>Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="include\NewtonListener.h">
       <Filter>Files\Physics</Filter>
     </ClInclude>
@@ -432,6 +432,12 @@
     </ClInclude>
     <ClInclude Include="include\BasicGeometryPreset.h">
       <Filter>Files\Core\DetailGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PgGeometryPreset.h">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MUtils.h">
+      <Filter>Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

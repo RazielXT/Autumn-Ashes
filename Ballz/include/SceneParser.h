@@ -11,6 +11,7 @@
 #include "ZipLineSlide.h"
 #include "player.h"
 #include "Crows.h"
+#include "MUtils.h"
 
 
 using namespace Ogre;
@@ -398,22 +399,6 @@ private:
             return txt;
     }
 
-    std::string strtok_str(std::string& txt, char delim)
-    {
-        auto dPos = txt.find_first_of(delim);
-        std::string ret = txt;
-
-        if (dPos != std::string::npos)
-        {
-            ret.erase(dPos, std::string::npos);
-            txt.erase(0, dPos + 1);
-        }
-        else
-            txt.clear();
-
-        return ret;
-    }
-
     void LoadLightAttenuation(const XMLElement* objectElement, Light* light)
     {
 
@@ -706,14 +691,14 @@ private:
         if (!actionsStr.empty())
         {
             int i = 0;
-            auto aID = strtok_str(actionsStr, ';');
+            auto aID = MUtils::strtok_str(actionsStr, ';');
             while (!aID.empty() && i < 4)
             {
                 //add action
                 userD->actions[i] = stoi(aID);
                 myLog->logMessage("loaded aID " + Ogre::String(aID), LML_NORMAL);
                 i++;
-                aID = strtok_str(actionsStr, ';');
+                aID = MUtils::strtok_str(actionsStr, ';');
             }
             body->setMaterialGroupID(action_mat);
         }
@@ -733,7 +718,7 @@ private:
                 separator = '\n';
             }
 
-            auto react = strtok_str(startupTasks, separator);
+            auto react = MUtils::strtok_str(startupTasks, separator);
             while (!react.empty())
             {
                 Ogre::String taskStr = Ogre::String(react);
@@ -764,7 +749,7 @@ private:
                     mEventMgr->addTask(r);
                 }
 
-                react = strtok_str(startupTasks, separator);
+                react = MUtils::strtok_str(startupTasks, separator);
             }
         }
     }
@@ -782,20 +767,21 @@ private:
 
     bool isNextChannel(const XMLElement* rootElement, std::string maskChannel, std::string targetChannel)
     {
-        bool nextChannel = false;
         std::string channels[] {"R", "G", "B", "A"};
 
+        bool nextChannel = false;
         bool validNextPosTarget = false;
         for (int i = 0; i < 4; i++)
         {
-            if (channels[i] == maskChannel)
+            if (channels[i] == targetChannel)
                 validNextPosTarget = true;
-            else if (validNextPosTarget && channels[i] == targetChannel)
+            else if (validNextPosTarget && channels[i] == maskChannel)
                 nextChannel = true;
-            else if (validNextPosTarget && isEditMask(getElementValue(rootElement, "Type" + channels[i])))
-                validNextPosTarget = true;
-            else
-                validNextPosTarget = false;
+            else if (validNextPosTarget)
+            {
+                auto t = getElementValue(rootElement, "Type" + channels[i]);
+                validNextPosTarget = (t.empty() || isEditMask(t));
+            }
         }
 
         return nextChannel;
@@ -955,16 +941,16 @@ private:
 
         for (int i = 0; i < layersNum; i++)
         {
-            String curMat = strtok_str(materials, delim);
-            Real curMinSizeW = Ogre::StringConverter::parseReal(strtok_str(minSizesW, delim));
-            Real curMinSizeH = Ogre::StringConverter::parseReal(strtok_str(minSizesH, delim));
-            Real curMaxSizeW = Ogre::StringConverter::parseReal(strtok_str(maxSizesW, delim));
-            Real curMaxSizeH = Ogre::StringConverter::parseReal(strtok_str(maxSizesH, delim));
+            String curMat = MUtils::strtok_str(materials, delim);
+            Real curMinSizeW = Ogre::StringConverter::parseReal(MUtils::strtok_str(minSizesW, delim));
+            Real curMinSizeH = Ogre::StringConverter::parseReal(MUtils::strtok_str(minSizesH, delim));
+            Real curMaxSizeW = Ogre::StringConverter::parseReal(MUtils::strtok_str(maxSizesW, delim));
+            Real curMaxSizeH = Ogre::StringConverter::parseReal(MUtils::strtok_str(maxSizesH, delim));
 
-            Real curSwayDistr = Ogre::StringConverter::parseReal(strtok_str(SwayDistributions, delim));
-            Real curSwayLen = Ogre::StringConverter::parseReal(strtok_str(SwayLengths, delim));
-            Real curSwaySpeed = Ogre::StringConverter::parseReal(strtok_str(SwaySpeeds, delim));
-            Real curDensity = Ogre::StringConverter::parseReal(strtok_str(densities, delim));
+            Real curSwayDistr = Ogre::StringConverter::parseReal(MUtils::strtok_str(SwayDistributions, delim));
+            Real curSwayLen = Ogre::StringConverter::parseReal(MUtils::strtok_str(SwayLengths, delim));
+            Real curSwaySpeed = Ogre::StringConverter::parseReal(MUtils::strtok_str(SwaySpeeds, delim));
+            Real curDensity = Ogre::StringConverter::parseReal(MUtils::strtok_str(densities, delim));
 
             Forests::GrassLayer *layer = grassLoader->addLayer(curMat);
             layer->setMaterial(curMat);
@@ -979,14 +965,14 @@ private:
 
             if (usesDensityMap)
             {
-                String curDenMat = strtok_str(densityMaps, delim);
+                String curDenMat = MUtils::strtok_str(densityMaps, delim);
                 layer->setDensityMap(curDenMat);
                 myLog->logMessage("Grass Area loaded density map " + curDenMat, LML_NORMAL);
             }
 
             if (usesColorMap)
             {
-                String curColMat = strtok_str(colorMaps, delim);
+                String curColMat = MUtils::strtok_str(colorMaps, delim);
                 layer->setColorMap(curColMat);
                 myLog->logMessage("Grass Area loaded color map " + curColMat, LML_NORMAL);
             }
@@ -1481,9 +1467,9 @@ private:
         auto children = getElementText(element);
         auto parents = getElementText(pElement);
 
-        auto child = strtok_str(children,';');
+        auto child = MUtils::strtok_str(children,';');
         element = element->NextSiblingElement();
-        auto parent = strtok_str(parents, ';');
+        auto parent = MUtils::strtok_str(parents, ';');
 
         const XMLElement* typeElement = pElement->NextSiblingElement();
         char type = 0;
@@ -1505,8 +1491,8 @@ private:
             loadedJoints.push_back(info);
 
             //next
-            child = strtok_str(children, ';');
-            parent = strtok_str(parents, ';');
+            child = MUtils::strtok_str(children, ';');
+            parent = MUtils::strtok_str(parents, ';');
 
             Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Joint - child:" + info.body0 + " and parent:" + info.body1, LML_NORMAL);
         }
@@ -1522,11 +1508,11 @@ private:
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Making BM", LML_NORMAL);
         Ogre::Vector3 target;
         auto posText = getElementText(element);
-        auto val = strtok_str(posText, ',');
+        auto val = MUtils::strtok_str(posText, ',');
         target.x = Ogre::StringConverter::parseReal(val);
-        val = strtok_str(posText, ',');
+        val = MUtils::strtok_str(posText, ',');
         target.z = -Ogre::StringConverter::parseReal(val);
-        val = strtok_str(posText, ',');
+        val = MUtils::strtok_str(posText, ',');
         target.y = Ogre::StringConverter::parseReal(val);
         element = element->NextSiblingElement();
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Making BM", LML_NORMAL);
@@ -1635,14 +1621,14 @@ private:
         if (!actions.empty())
         {
             int i = 0;
-            auto aID = strtok_str(actions, ';');
+            auto aID = MUtils::strtok_str(actions, ';');
             while (!aID.empty() && i < 4)
             {
                 //add action
                 myLog->logMessage("Trigger ID " + Ogre::String(aID), LML_NORMAL);
                 trig.ids.push_back(stoi(aID));
                 i++;
-                aID = strtok_str(actions, ';');
+                aID = MUtils::strtok_str(actions, ';');
             }
         }
 
@@ -1696,13 +1682,13 @@ private:
         bool newForm = false;
         if (tasks.empty())
         {
-            fID = strtok_str(functions, '\n');
+            fID = MUtils::strtok_str(functions, '\n');
             newForm = true;
         }
         else
         {
-            aID = strtok_str(tasks, ';');
-            fID = strtok_str(functions, ';');
+            aID = MUtils::strtok_str(tasks, ';');
+            fID = MUtils::strtok_str(functions, ';');
         }
 
         while (!fID.empty() && (!aID.empty() || newForm))
@@ -1747,12 +1733,12 @@ private:
             //next
             if (newForm)
             {
-                fID = strtok_str(functions, '\n');
+                fID = MUtils::strtok_str(functions, '\n');
             }
             else
             {
-                aID = strtok_str(tasks, ';');
-                fID = strtok_str(functions, ';');
+                aID = MUtils::strtok_str(tasks, ';');
+                fID = MUtils::strtok_str(functions, ';');
             }
 
         }

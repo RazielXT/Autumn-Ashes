@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CameraShaker.h"
-#include "MathUtils.h"
+#include "MUtils.h"
 
 using namespace Ogre;
 
@@ -36,7 +36,7 @@ void CameraShaker::update(float time)
 
 void CameraShaker::makeNextTarget(bool first)
 {
-    float timerWeight = permanent ? initPwrW : MathUtils::lerp(initPwrW, endPwrW, 1.0f - camShakeTimeLeft / shakingDuration);
+    float timerWeight = permanent ? initPwrW : MUtils::lerp(initPwrW, endPwrW, 1.0f - camShakeTimeLeft / shakingDuration);
 
     float targetX = timerWeight * Ogre::Math::RangeRandom(0.5f, 1.0f) *shakeSizeX;
     float targetY = timerWeight * Ogre::Math::RangeRandom(0.5f, 1.0f) *shakeSizeY;
