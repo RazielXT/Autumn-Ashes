@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "BasicGeometryPreset.h"
 #include "MUtils.h"
+#include "GameStateManager.h"
 
 using namespace Ogre;
 
@@ -27,7 +28,7 @@ void BasicGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
     Ogre::Vector3 gridRegion(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize);
     sg->setRegionDimensions(gridRegion);
     sg->setOrigin(gridRegion / 2.0f + gridInfo.node->getPosition());
-    sg->setRenderingDistance(50);
+	sg->setRenderingDistance(maxDistance);
     int bgc = 0;
 
     for (float x = xStart; x <= xEnd; x+=xStep)
@@ -80,6 +81,7 @@ void BasicGeometryPreset::clear()
         Global::mSceneMgr->destroyEntity(e);
     }*/
 
+    darkenVCMeshesDone.clear();
     Global::mSceneMgr->destroyStaticGeometry(sg);
 }
 
@@ -91,14 +93,24 @@ bool BasicGeometryPreset::acceptsWeight(float w) const
 void BasicGeometryPreset::init(GeometryPresetInfo& info)
 {
     maxSteepY = 0;
+	maxDistance = 50;
+
+    if (darkenVCMeshes.empty())
+    {
+        darkenVCMeshes.push_back("aspenLeafs.mesh");
+        darkenVCMeshes.push_back("aspen2Leafs.mesh");
+        darkenVCMeshes.push_back("bush1.mesh");
+    }
 
     if (info.name == "TreesAspen")
     {
         stepSize.x = 5;
         stepSize.y = 5;
         generalScale = 0.25f;
+		maxDistance = 150;
 
         possibleEntities.push_back("aspenLeafs.mesh;aspenTrunk.mesh");
+        possibleEntities.push_back("aspen2Leafs.mesh;aspen2Trunk.mesh");
     }
     else if (info.name == "Bush")
     {
@@ -135,7 +147,7 @@ void BasicGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, V
         auto ent = Global::mSceneMgr->createEntity(name);
         //node->attachObject(ent);
 
-        //updateMaterial(ent, color);
+        updateMaterial(ent, color);
         sg->addEntity(ent, pos, randomYaw, Vector3(scale));
     }
 
@@ -150,8 +162,33 @@ void BasicGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, V
     body->setPositionOrientation(node->_getDerivedPosition(), node->_getDerivedOrientation());*/
 }
 
+std::vector<std::string> BasicGeometryPreset::darkenVCMeshes;
+std::vector<std::string> BasicGeometryPreset::darkenVCMeshesDone;
+
 void BasicGeometryPreset::updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color)
 {
+    if (std::find(darkenVCMeshes.begin(), darkenVCMeshes.end(), ent->getMesh()->getName()) != darkenVCMeshes.end())
+    {
+        if (std::find(darkenVCMeshesDone.begin(), darkenVCMeshesDone.end(), ent->getMesh()->getName()) == darkenVCMeshesDone.end())
+        {
+            auto darken = [](Entity* e, float* pos, float*, Ogre::RGBA* color)
+            {
+                if (!color)
+                    return;
+
+                float size = e->getBoundingBox().getHalfSize().x;
+                Vector3 vpos(pos[0], 0, pos[2]);
+                *color = Ogre::ColourValue(0, 0, 0, 0.25f + 0.75f*std::max<float>(0.0f, vpos.length() / size)).getAsARGB();
+            };
+
+            Global::gameMgr->geometryMgr->modifyVertexBuffer(ent, darken);
+
+            darkenVCMeshesDone.push_back(ent->getMesh()->getName());
+        }
+
+    }
+
+
     if (color.x != 1 || color.y != 1 || color.z != 1)
     {
         auto name = ent->getSubEntity(0)->getMaterialName();

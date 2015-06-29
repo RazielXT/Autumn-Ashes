@@ -369,6 +369,7 @@ shadowing = shadowSmooth(shadowMap3, IN.LightPosition3,0.0000002,shTex);
 //diffuse*=shadowing;
 //specular*=shadowing;
 
+shadowing = min(shadowing,diffuse.x);
 /*
 float3 vecL=IN.wp.xyz-float3(-5,-3,0);
 float3 plVec = -1*normalize(vecL);

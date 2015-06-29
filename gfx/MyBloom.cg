@@ -40,6 +40,8 @@ return  sharp;
 
 #define BLUR_RADIUS 3
 
+#define SMOKE_BLUR_RADIUS 0.005
+
 static const float samplesSmoke[10] =
 {//stddev=2.0
 0.03122447,
@@ -54,18 +56,18 @@ static const float samplesSmoke[10] =
 0.03122447
 };
 
-static const float2 posYSmoke[10] =
+static const float posSmoke[10] =
 {
-0, -2.2,
-0, -1.4,
-0, -0.8,
-0, -0.4,
-0, -0.25,
-0, 0.25,
-0, 0.4,
-0, 0.8,
-0, 1.4,
-0, 2.2
+-1.8,
+-1.2,
+-0.7,
+-0.4,
+-0.25,
+ 0.25,
+ 0.4,
+ 0.7,
+ 1.2,
+ 1.8
 };
 
 static const float samples0[11] =
@@ -137,12 +139,12 @@ float4 MySmokeBloomX_fp
 
    for (int i = 0; i < 10; i++)
    {
-	float4 t=tex2Dlod(scene, float4(uv+ posYSmoke[i]*0.01,0,0)) * samplesSmoke[i];
+	float4 t=tex2Dlod(scene, float4(uv + float2(0,posSmoke[i]*SMOKE_BLUR_RADIUS),0,0)) * samplesSmoke[i];
 
       sum +=t;
    }
 
-   if(ini.a>sum.a) sum=(ini+sum)/2; 
+   //if(ini.a>sum.a) sum=(ini+sum)/2; 
    return sum;
 }
 
@@ -161,20 +163,6 @@ static const float samples[11] =
 0.05359061,
 0.03383468,
 0.01122447
-};
-
-static const float2 posXSmoke[10] =
-{
--2.2, 0,
--1.4, 0,
--0.8, 0,
--0.4, 0,
--0.25, 0,
- 0.25, 0,
- 0.4, 0,
- 0.8, 0,
- 1.4, 0,
- 2.2, 0,
 };
 
 static const float2 pos[11] =
@@ -227,12 +215,12 @@ float4 MySmokeBloomY_fp
 
    for (int i = 0; i < 10; i++)
    {
-      float4 t=tex2Dlod(blurX, float4(uv+ posXSmoke[i]*0.01,0,0)) * samplesSmoke[i];
+      float4 t=tex2Dlod(blurX, float4(uv+ float2(posSmoke[i]*SMOKE_BLUR_RADIUS,0),0,0)) * samplesSmoke[i];
 
 	sum +=t;
    }
 
-   if(ini.a>sum.a) sum=(ini+sum)/2; 
+   //if(ini.a>sum.a) sum=(ini+sum)/2; 
 
    return sum;
 }

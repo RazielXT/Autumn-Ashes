@@ -104,6 +104,25 @@ texture dof_rt target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8
             }
         }
 
+	  /*target smoke_rt2
+        {
+            input none
+            pass render_quad
+            {
+                material MySmokeBloomY
+                input 0 smoke_rt
+            }
+        }
+
+	  target smoke_rt
+        {
+            input none
+            pass render_quad
+            {
+                material MySmokeBloomX
+                input 0 smoke_rt2
+            }
+        }*/
 		target rtT
 		{
 	     input none

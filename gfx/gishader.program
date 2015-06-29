@@ -1,0 +1,62 @@
+vertex_program givs_vs cg
+{
+    source gishader.cg
+    profiles vs_3_0
+    entry_point givs_vs
+
+default_params
+    {
+        param_named_auto wmat worldviewproj_matrix
+    }
+
+}
+
+vertex_program myvs_vs cg
+{
+    source gishader.cg
+    profiles vs_3_0
+    entry_point myvs_vs
+
+default_params
+    {
+        param_named_auto wmat worldviewproj_matrix
+    }
+
+}
+
+vertex_program myvs_Leafvs cg
+{
+    source gishader.cg
+    profiles vs_3_0
+    entry_point myvs_Leafvs
+
+default_params
+    {
+        param_named_auto wvpmat worldviewproj_matrix
+	  param_named_auto wMat world_matrix
+        param_named_auto time time
+	  param_named_auto camPos camera_position
+       param_named_auto speed shadow_colour
+    }
+
+}
+
+fragment_program myps_ps cg
+{
+    source gishader.cg
+    profiles ps_3_0
+    entry_point myps_ps
+	
+	default_params
+    {
+        param_named alphaTest 0.5
+    }
+}
+
+fragment_program myps2_ps cg
+{
+    source gishader.cg
+    profiles ps_3_0
+    entry_point myps2_ps
+
+}

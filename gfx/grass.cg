@@ -9,8 +9,8 @@ void main_vp(
 			uniform float time,
 			uniform float frequency,
 			uniform float4 direction,
-				uniform float4x4 worldViewProj,
-				uniform float3 camPos,
+			uniform float4x4 worldViewProj,
+			uniform float3 camPos,
 			uniform float fadeRange,
 			// shadows
 			out float4 oLightPosition0	: TEXCOORD1,
@@ -20,7 +20,9 @@ void main_vp(
 			uniform float4x4 texWorldViewProjMatrix0,
 			uniform float4x4 texWorldViewProjMatrix1,
 			uniform float4x4 texWorldViewProjMatrix2,
-			uniform float4x4 texWorldViewProjMatrix3)
+			uniform float4x4 texWorldViewProjMatrix3,
+			uniform float4 fogColor,
+			uniform float4 fogParams)
 {
 	float4 position = iPosition;
 	float dist = distance(camPos.xz, position.xz);
@@ -34,7 +36,11 @@ void main_vp(
 		position += direction * offset;
 	}
 	
-	oColor.rgb = iColor.rgb;//1 + saturate(-offset);
+	//distance fog
+	float insideFog = saturate((dist - fogParams.y) / fogParams.z)*fogColor.a;
+	float3 atmFog = fogColor.rgb;
+	oColor.rgb = lerp(iColor.rgb, atmFog, insideFog);
+	
 	oPosition = mul(worldViewProj, position);
 	oUV.xy = iUV.xy;
 	oUV.zw = oPosition.zw;
@@ -44,8 +50,7 @@ void main_vp(
 	oLightPosition0 = mul(texWorldViewProjMatrix0, position);
 	oLightPosition1 = mul(texWorldViewProjMatrix1, position);
 	oLightPosition2 = mul(texWorldViewProjMatrix2, position);
-     oLightPosition3 = mul(texWorldViewProjMatrix3, position);
-
+    oLightPosition3 = mul(texWorldViewProjMatrix3, position);
 }
 /*
 float t=fmod(3.14 + time + oldposx * frequency,6.28)-3.14;
@@ -72,14 +77,16 @@ if(tex2Dlod(shadowMap, float4(vTapCoord.x,vTapCoord.y+0.003,0,0)).x+ bl >= shado
 if(tex2Dlod(shadowMap, float4(vTapCoord.x+0.003,vTapCoord.y,0,0)).x+ bl >= shadowMapPos.z) cSampleAccum+=1;
 
 cSampleAccum=cSampleAccum/4;
-if (cSampleAccum<0.3) cSampleAccum=0.3;
+//if (cSampleAccum<0.3) cSampleAccum=0.3;
 return cSampleAccum;
 }
 
 ///
 void main_fp(float4 uv			: TEXCOORD0, 
 			 float2 pos			: TEXCOORD5,
-
+			 
+			uniform float3 ambientColor,
+			
 			float4 iColor    : COLOR,
 
 			float4 LightPosition0	: TEXCOORD1,
@@ -116,13 +123,12 @@ void main_fp(float4 uv			: TEXCOORD0,
 { 
 
 	float4 diffTex = tex2D(diffuseMap, uv.xy);
-	float4 noiseTex = tex2D(noiseMap, pos.xy/1000+0.5);
-	float3 diffClr = diffTex.rgb;//*noiseTex.rgb;//float3(pos.xy,0);
+	//float4 noiseTex = tex2D(noiseMap, pos.xy/1000+0.5);
 
+	if(diffTex.a<0.45) discard;
+	
 	// calculate shadow
 	float shadowing = 1.0f;
-
-//shadowing = shadowPDF16(shadowMap0, IN.LightPosition0,0.0000015*adder,randomC,screenSpace.xy,2);
 
 	if (uv.z <= 15)
 	{
@@ -140,18 +146,14 @@ void main_fp(float4 uv			: TEXCOORD0,
 	{
 		shadowing = shadowPCF(shadowMap3, LightPosition3, invShadowMapSize2.xy,0.0000003 ); //2
 	}
-
-
-	shadowing/=1.25;
-	shadowing+=0.185;
-	//if(shadowing>0.4) shadowing=1;
 	
-if(diffTex.a<0.45) discard;
+	float3 lighting = saturate(ambientColor + shadowing);
+	//lighting/=1.25;
 
-float3 clr = diffClr * (shadowing);
+	float3 clr = diffTex.rgb * lighting;
 
-oColor = float4(clr, diffTex.a)*iColor;
-oColor1= float4(0.5,0.5,0.3,0);
-oColor2= float4(0,0,0,diffTex.a);
-oColor3= float4(uv.z/uv.w,uv.z,0,0);
+	oColor = float4(clr, diffTex.a)*iColor;
+	oColor1= float4(0.5,0.5,0.3,0);
+	oColor2= float4(0,0,0,diffTex.a);
+	oColor3= float4(uv.z/uv.w,uv.z,0,0);
 }

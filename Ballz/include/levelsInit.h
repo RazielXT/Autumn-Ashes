@@ -12,6 +12,8 @@ using namespace Ogre;
 
 void createMenuLevel()
 {
+    Global::mSceneMgr->setAmbientLight(ColourValue(0.35f, 0.35f, 0.35f));
+
     PostProcessMgr* postProcMgr = Global::mPPMgr;
     postProcMgr->ColouringShift = Ogre::Vector4(1.08, 1.12, 1.16, postProcMgr->ColouringShift.w);
     postProcMgr->fadeIn(Vector3(0, 0, 0), 2);
@@ -244,6 +246,8 @@ void createLevelTuto()
 
 void createTestLevel()
 {
+    Global::mSceneMgr->setAmbientLight(ColourValue(0.25f, 0.35f, 0.4f));
+
     Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
 
     PostProcessMgr* ppMgr = Global::mPPMgr;

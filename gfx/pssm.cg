@@ -25,10 +25,10 @@ void shadow_caster_ps(
    float2 depth      : TEXCOORD0,
    float2 uv : TEXCOORD1, // get UV of material's texture from vertex shader
    uniform sampler2D    pDiffuseMap    : register(s0), // get material texture
-
+   uniform float alphaTest,
    out float4 oColour   : COLOR)
 {
-   if (tex2D(pDiffuseMap, uv).a < 0.5) // check for alpha value of material's texture and discard of pixel is transparent
+   if (tex2D(pDiffuseMap, uv).a < alphaTest) // check for alpha value of material's texture and discard of pixel is transparent
    {
       discard;
    }

@@ -12,7 +12,7 @@ fragment_program SSAO/GBuffer_fp hlsl
     target ps_3_0 
 }
 
-material 1tAT_material_static
+material 2t_material_static
 {
     set $diffuseCol "1 1 1"
 	set $specular2Weight "1"
@@ -21,8 +21,9 @@ material 1tAT_material_static
     set $brightness "0.5"  
 
 	set $uvScale "1"
-	set $detailScale "5" 
-	set $alphaTest "0.95" 
+	set $uvSpreadScale "0.5" 
+	set $uv2Scale "1" 
+	set $uvMinMaxDetailScale "3.7 0.15" 
 	
     technique
     {
@@ -33,36 +34,25 @@ material 1tAT_material_static
 			colour_write off
 
 			vertex_program_ref myvs_vs
-		    {
-		    }
+		   {
+		   }
 
-		    fragment_program_ref myps_ps
-            {
-			 	param_named alphaTest float $alphaTest
-            }
-
-			texture_unit diffuseMap
-            {
-			// filtering anisotropic
-			// max_anisotropy 8
-
-                texture white.bmp
-            }
 		}
 
         pass
         {
 
 			depth_write off
-            vertex_program_ref diffuse_vs_1texAT
+            vertex_program_ref diffuse_vs_2tex
             {
             }
 
-            fragment_program_ref diffuse_ps_1texAT
+            fragment_program_ref diffuse_ps_2tex
             {
 				param_named uvScale float $uvScale
-				param_named detailScale float $detailScale
-				param_named alphaTest float $alphaTest
+				param_named uvSpreadScale float $uvSpreadScale
+				param_named uv2Scale float $uv2Scale
+				param_named uvMinMaxDetailScale float2 $uvMinMaxDetailScale
 				
 				param_named specular2Weight float $specular2Weight
             }
@@ -79,6 +69,30 @@ material 1tAT_material_static
             }
   
             texture_unit normalMap
+            {
+//filtering trilinear
+		     texture flat_n.png
+            }
+
+		  texture_unit dispMap
+            {
+//filtering trilinear
+		     texture gray.bmp
+            }
+
+	       texture_unit spreadMap
+            {
+//filtering trilinear
+		     texture gray.bmp
+            }
+
+            texture_unit diffuseMap2
+            {
+		//filtering trilinear
+                texture white.bmp
+            }
+
+            texture_unit normalMap2
             {
 //filtering trilinear
 		     texture flat_n.png

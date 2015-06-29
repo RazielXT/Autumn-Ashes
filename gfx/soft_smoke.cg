@@ -1,14 +1,16 @@
+
 void softsmoke_vs(uniform float4x4 wpmat,
     uniform float4x4 wmat,
     in float4 inPos : POSITION,
-	in float2 uvIn : TEXCOORD0,
-	in float4 vC : COLOR,
-	
+	in float4 inN : NORMAL,
+
     out float4 pos : POSITION,
     out float3 uvOut : TEXCOORD0,
 	out float4 dOut : TEXCOORD1,
-	out float3 wpos : TEXCOORD2	
-)
+	out float3 wpos : TEXCOORD2,
+	
+	in float2 uvIn : TEXCOORD0,
+	in float4 vC : COLOR)
 {
     pos = mul(wpmat, inPos);
 
@@ -25,6 +27,7 @@ void softsmoke_ps(
 	uniform float3 camPos,
 	uniform sampler2D material: register(s0),
 	uniform sampler2D depth: register(s1),
+	float2 screenSpace : WPOS,
 	in float3 uv : TEXCOORD0,
 	in float4 d : TEXCOORD1,
 	in float3 wpos : TEXCOORD2,
@@ -35,11 +38,12 @@ void softsmoke_ps(
 	discard;
 		
 	float depthCloudZ=d.z;
-	d/=d.w;
  
 	float depthSides = 30;
 	float sideW = abs(uv.xy*2 - 1);
 	depthCloudZ += (sideW*sideW)*depthSides; 
+	
+	d/=d.w;
 	
 	float depthCloud = distance(wpos.xyz,camPos);
 	
@@ -55,6 +59,11 @@ void softsmoke_ps(
 	float camScale=3;
 	float scale=10;
 
+	/*float roz=saturate(abs(depthCloud-depthEnv)/scale);
+	roz*=0.8;
+
+	roz *= uv.z;*/
+	
 	float objBlend = saturate((depthEnv-depthCloudZ)/scale);
 	float camBlend = saturate(depthCloud/camScale);
 	

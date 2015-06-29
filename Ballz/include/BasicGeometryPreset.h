@@ -22,11 +22,13 @@ protected:
 
     void updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color);
     std::map<std::string, Ogre::Material*> materials;
+    static std::vector<std::string> darkenVCMeshes;
+    static std::vector<std::string> darkenVCMeshesDone;
 
     Ogre::StaticGeometry* sg = nullptr;
 
     Ogre::Vector2 stepSize;
     float generalScale = 1;
     float maxSteepY;
-
+    float maxDistance;
 };

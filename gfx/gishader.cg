@@ -1,0 +1,91 @@
+void givs_vs(uniform float4x4 wmat,
+    in float4 inPos : POSITION,
+    out float4 pos : POSITION,
+    out float2 uv0 : TEXCOORD0)
+{
+    // Use standardise transform, so work accord with render system specific (RS depth, requires texture flipping, etc)
+    pos = mul(wmat, inPos);
+
+    // The input positions adjusted by texel offsets, so clean up inaccuracies
+    inPos.xy = sign(inPos.xy);
+
+    // Convert to image-space
+    uv0.xy = (float2(inPos.x, -inPos.y) + 1.0f) * 0.5f;
+}
+
+
+
+void myvs_vs(uniform float4x4 wmat,
+    in float4 inPos : POSITION,
+    out float4 pos : POSITION,
+    in float2 uv : TEXCOORD0,
+    out float2 oDepth : TEXCOORD0,
+    out float2 uv0 : TEXCOORD1)
+{
+
+    pos = mul(wmat, inPos);
+
+    oDepth.x = pos.z;
+   oDepth.y = pos.w;
+
+    uv0 = uv;
+}
+
+void myvs_Leafvs(uniform float4x4 wvpmat,
+	uniform float4x4 wMat,
+    in float4 inPos : POSITION,
+    out float4 pos : POSITION,
+    in float4 c: COLOR,
+    in float2 uv : TEXCOORD0,
+    out float2 oDepth : TEXCOORD0,
+    out float2 uv0 : TEXCOORD1,
+    uniform float time,
+    uniform float speed,
+    uniform float3 camPos)
+{
+
+speed = saturate(speed/3);
+   float3 wpos = mul(wMat, inPos).xyz;
+   float add = max((3-length(wpos-camPos))/3,0)*speed;
+
+   	float animScale = 10;
+
+    float var = sin(time+inPos.x*animScale)*(add+0.2)/3;
+    float var2 = sin(time*1.5+inPos.z*animScale)*(add+0.2)/4;
+float var3 = speed*sin(time*3+inPos.y*animScale+var)*add;
+float var4 = speed*sin(time*5+inPos.y*animScale)/2*add;
+
+	
+   inPos.x+=(var+var3)*c.w;
+   inPos.z+=(var2+var3)*c.w;
+
+    pos = mul(wvpmat, inPos);
+
+    oDepth.x = pos.z;
+   oDepth.y = pos.w;
+
+    uv0 = uv;
+}
+
+float4 myps_ps(uniform sampler2D material: register(s0),
+			in float2 uv : TEXCOORD1,
+			uniform float alphaTest
+			): COLOR0
+{
+	float4 color=tex2D(material, uv);
+	if(color.a<alphaTest)
+		discard;
+
+	return color;
+}
+
+float4 myps2_ps(uniform sampler2D material: register(s0),
+			in float2 uv : TEXCOORD1
+			): COLOR0
+{
+	float4 color=tex2D(material, uv);
+	if(color.a<0.8)
+		discard;
+
+	return color;
+}

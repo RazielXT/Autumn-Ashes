@@ -163,6 +163,7 @@ void diffuse_ps(
 	uniform float3 camPos,
 	uniform float4 fogColor,
 	uniform float4 fogParams,
+	uniform float3 ambientColor,
 	uniform float specular2Weight,
 	uniform float4x4 iTWMat,
 	float2 screenSpace : WPOS,
@@ -268,8 +269,7 @@ void diffuse_ps(
 
 	}
 
-	float ambient = 0.5;
-	float3 vertexLight = float3(ambient,ambient,ambient);
+	float3 vertexLight = ambientColor;
 	
 	//slight gi normal mapping
 	diffuseLight = abs(max(diffuseLight,diffuseLight/2));

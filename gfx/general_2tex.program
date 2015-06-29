@@ -1,6 +1,6 @@
-vertex_program diffuse_vs_1texAT cg
+vertex_program diffuse_vs_2tex cg
 {
-    source general_1texAT.cg
+    source general_2tex.cg
 	profiles vs_3_0 arbvp1
     entry_point diffuse_vs
  
@@ -18,9 +18,9 @@ vertex_program diffuse_vs_1texAT cg
     }
 }
 
-fragment_program diffuse_ps_1texAT cg
+fragment_program diffuse_ps_2tex cg
 {
-    source general_1texAT.cg
+    source general_2tex.cg
     profiles ps_3_0 arbfp1
     entry_point diffuse_ps
  

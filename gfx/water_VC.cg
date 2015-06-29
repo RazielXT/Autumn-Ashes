@@ -51,7 +51,8 @@ VOut wdiffuse_vs_op(VIn IN,
 	float waveSpeed = waveSeedSizeSpeed.z;
 	
 	float vertexId = fmod(wpos.x,5*waveSeed) + fmod(wpos.z,3*waveSeed);
-	float add = sin(vertexId+time*waveSpeed)*waveSize;
+	float vertexId2 = fmod(wpos.x*3.5,5*waveSeed) + fmod(wpos.z*3.5,3*waveSeed);
+	float add = sin(vertexId+vertexId2+time*waveSpeed)*waveSize;
 	wpos.y += add;
 	OUT.p = mul(vpMat, wpos);
 	

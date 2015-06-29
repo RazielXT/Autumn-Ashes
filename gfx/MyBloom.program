@@ -1,0 +1,281 @@
+fragment_program MyBloom_fp cg
+{
+	source  MyBloom.cg
+	entry_point  MyBloom_fp
+
+	profiles ps_2_0 arbfp1
+}
+
+fragment_program Brightcheck_fp cg
+{
+	source  MyBloom.cg
+	entry_point  Brightcheck_fp
+
+	profiles ps_2_0 arbfp1
+}
+
+fragment_program MySmokeBloomX_fp cg
+{
+	source  MyBloom.cg
+	entry_point  MySmokeBloomX_fp
+
+	profiles ps_3_0
+
+	 default_params
+        {
+           // param_named_auto invTexSize inverse_texture_size 0 
+        }
+
+}
+
+fragment_program MySmokeBloomY_fp cg
+{
+	source  MyBloom.cg
+	entry_point  MySmokeBloomY_fp
+
+	profiles ps_3_0
+
+	 default_params
+        {
+            //param_named_auto invTexSize inverse_texture_size 0
+        }
+
+}
+
+fragment_program MyBloomX_fp cg
+{
+	source  MyBloom.cg
+	entry_point  MyBloomX_fp
+
+	profiles ps_2_0 arbfp1
+
+	 default_params
+        {
+           // param_named_auto invTexSize inverse_texture_size 0
+		 
+        }
+
+}
+
+fragment_program MyBloomY_fp cg
+{
+	source  MyBloom.cg
+	entry_point  MyBloomY_fp
+
+	profiles ps_2_0 arbfp1
+
+	 default_params
+        {
+            //param_named_auto invTexSize inverse_texture_size 0
+		 
+        }
+
+}
+
+
+fragment_program MyBloomYF_fp cg
+{
+	source  MyBloom.cg
+	entry_point  MyBloomYF_fp
+
+	profiles ps_2_0 arbfp1
+
+	 default_params
+        {
+           // param_named_auto invTexSize inverse_texture_size 0
+		 
+        }
+
+}
+
+
+material BloomMy
+{
+	technique
+	{
+		pass
+		{
+
+                        fragment_program_ref  MyBloom_fp 
+                        {
+                        }
+
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering none
+                        }
+
+				
+
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering trilinear
+                        }
+                }
+        }
+}
+
+
+material MySmokeBloomX
+{
+	technique
+	{
+		pass
+		{
+
+					
+				vertex_program_ref givs_vs 
+                        {
+                        }
+                        fragment_program_ref  MySmokeBloomX_fp 
+                        {
+                        }
+
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp  
+								filtering anisotropic
+								max_anisotropy 8
+                        }
+
+                }
+        }
+}
+
+material MySmokeBloomY
+{
+	technique
+	{
+		pass
+		{
+									
+				vertex_program_ref givs_vs 
+                        {
+                        }
+
+                        fragment_program_ref  MySmokeBloomY_fp 
+                        {
+                        }
+
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering anisotropic
+						max_anisotropy 8
+                        }
+
+                }
+        }
+}
+
+material MyBloomX
+{
+	technique
+	{
+		pass
+		{
+
+                        fragment_program_ref  MyBloomX_fp 
+                        {
+                        }
+
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering trilinear
+                        }
+
+                }
+        }
+}
+
+
+material MyBloomY
+{
+	technique
+	{
+		pass
+		{
+
+                        fragment_program_ref  MyBloomY_fp 
+                        {
+                        }
+
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering trilinear
+                        }
+
+                }
+        }
+}
+
+material MyBloomYF
+{
+	technique
+	{
+		pass
+		{
+
+                        fragment_program_ref  MyBloomYF_fp 
+                        {
+                        }
+
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering trilinear
+                        }
+
+
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering none
+                        }
+
+                }
+        }
+}
+
+
+material Brightcheck
+{
+	technique
+	{
+		pass
+		{
+
+                        fragment_program_ref  Brightcheck_fp 
+                        {
+                        }
+
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering trilinear
+                        }
+
+				 texture_unit map2
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering trilinear
+                        }
+
+
+                }
+        }
+}

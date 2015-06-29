@@ -300,6 +300,8 @@ float3 col = tex2D(scene, texUV + toCenter*ColouringShift.w).rgb;
 col.g = tex2D(scene, texUV ).g;	
 col.b = tex2D(scene, texUV - toCenter*ColouringShift.w).b;
 
+float bright=(col.r+col.g+col.b)/3;
+
 if(ContSatuSharpNoise.b>0)
 {
   float2 ps = invTexSize.xy*(ContSatuSharpNoise.b+1);
@@ -318,11 +320,11 @@ blurom  += tex2D(bloomp,float2(uv.x,uv.y+ps));
 blurom  += tex2D(bloomp,float2(uv.x,uv.y-ps));
 blurom = saturate(blurom/5);
 
-//float bright=(blurom.r+blurom.g+blurom.b)/3;
-blurom+=blurom*b*b*3*bloomStrDep.y;
+
+blurom+=blurom*b*b*(1 + (1-bright)*2)*bloomStrDep.y;
 blurom*=bloomStrDep.x;
 
-col=col*clamp(b+b*b*b,0.81,2);
+col=col*clamp(b+b*b*b,0.81,1.5);
 
 float sat=saturate(1-hurtCoef/8)-ContSatuSharpNoise.g;
 float contr=1.35+ContSatuSharpNoise.r;

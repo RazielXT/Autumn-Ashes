@@ -113,40 +113,40 @@ void loadPoint(float* pReal, Ogre::RGBA pCReal, GeometryMaskPoint& out, SceneNod
 
 bool GeometryManager::modifyVertexBuffer(Entity* ent, std::function<void(Entity*, float*, float*, Ogre::RGBA*)> editFunc)
 {
-	auto node = ent->getParentSceneNode();
-	auto m = ent->getMesh().get()->getSubMesh(0);
+    auto node = ent->getParentSceneNode();
+    auto m = ent->getMesh().get()->getSubMesh(0);
 
-	const Ogre::VertexElement* posElem = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_POSITION);
-	const Ogre::VertexElement* posElemCol = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_DIFFUSE);
-	const Ogre::VertexElement* posElemTC = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_TEXTURE_COORDINATES);
+    const Ogre::VertexElement* posElem = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_POSITION);
+    const Ogre::VertexElement* posElemCol = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_DIFFUSE);
+    const Ogre::VertexElement* posElemTC = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_TEXTURE_COORDINATES);
 
-	if (posElem == nullptr)
-		return false;
+    if (posElem == nullptr)
+        return false;
 
-	Ogre::HardwareVertexBufferSharedPtr vbuf = m->vertexData->vertexBufferBinding->getBuffer(posElem->getSource());
-	unsigned char* vertex = static_cast<unsigned char*>(vbuf->lock(Ogre::HardwareBuffer::HBL_NORMAL));
-	Ogre::Real* pReal;
-	Ogre::Real* pTCReal = nullptr;
-	Ogre::RGBA* pCReal = nullptr;
+    Ogre::HardwareVertexBufferSharedPtr vbuf = m->vertexData->vertexBufferBinding->getBuffer(posElem->getSource());
+    unsigned char* vertex = static_cast<unsigned char*>(vbuf->lock(Ogre::HardwareBuffer::HBL_NORMAL));
+    Ogre::Real* pReal;
+    Ogre::Real* pTCReal = nullptr;
+    Ogre::RGBA* pCReal = nullptr;
 
-	for (size_t j = 0; j < m->vertexData->vertexCount; j ++)
-	{
-		posElem->baseVertexPointerToElement(vertex, &pReal);
+    for (size_t j = 0; j < m->vertexData->vertexCount; j ++)
+    {
+        posElem->baseVertexPointerToElement(vertex, &pReal);
 
-		if (posElemCol)
-			posElemCol->baseVertexPointerToElement(vertex, &pCReal);
+        if (posElemCol)
+            posElemCol->baseVertexPointerToElement(vertex, &pCReal);
 
-		if (posElemTC)
-			posElemTC->baseVertexPointerToElement(vertex, &pTCReal);
+        if (posElemTC)
+            posElemTC->baseVertexPointerToElement(vertex, &pTCReal);
 
-		editFunc(ent, pReal, pTCReal, pCReal);
+        editFunc(ent, pReal, pTCReal, pCReal);
 
-		vertex += vbuf->getVertexSize();
-	}
+        vertex += vbuf->getVertexSize();
+    }
 
-	vbuf->unlock();
+    vbuf->unlock();
 
-	return true;
+    return true;
 }
 
 void GeometryManager::generateGeometryMask(Ogre::Entity* maskEnt, MaskGrid& posGrid, Vector2& size)
