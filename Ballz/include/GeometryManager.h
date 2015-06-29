@@ -18,6 +18,9 @@ public:
 
     void resetDetailGeometries();
 
+	//editFunc = (entity*, pos*, tc*, vc*)
+	bool modifyVertexBuffer(Entity* ent, std::function<void(Entity*, float*, float*, Ogre::RGBA*)> editFunc);
+
 private:
 
     std::vector<GeometryPreset *> detailGeometries;
