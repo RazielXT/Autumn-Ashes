@@ -44,16 +44,18 @@ void myvs_Leafvs(uniform float4x4 wvpmat,
     uniform float3 camPos)
 {
 
-speed = saturate(speed/3);
+	speed = saturate(speed/3);
    float3 wpos = mul(wMat, inPos).xyz;
    float add = max((3-length(wpos-camPos))/3,0)*speed;
 
-   	float animScale = 10;
+	float animSpeed = 3;
+   	float animScale = 0.5;
+	float animSize = 5;
+	
+    float var = animSize*sin(time+inPos.x*animScale*3)*(add+0.2)/6;
+    float var2 = animSize*sin(time*animSpeed+(inPos.z + inPos.y + inPos.x)*animScale)*(add+0.2)/3;
+	float var3 = speed*sin(time*3+inPos.y*animScale+var)*add;
 
-    float var = sin(time+inPos.x*animScale)*(add+0.2)/3;
-    float var2 = sin(time*1.5+inPos.z*animScale)*(add+0.2)/4;
-float var3 = speed*sin(time*3+inPos.y*animScale+var)*add;
-float var4 = speed*sin(time*5+inPos.y*animScale)/2*add;
 
 	
    inPos.x+=(var+var3)*c.w;

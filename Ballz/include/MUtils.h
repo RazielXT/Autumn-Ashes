@@ -113,24 +113,24 @@ inline bool getRayFilteredInfo(Vector3 start, Vector3 end, RayInfo& minfo, OgreN
 
 inline Ogre::Vector3 getMinimum(Vector3 v1, Vector3 v2)
 {
-	Vector3 out = v1;
+    Vector3 out = v1;
 
-	if (v2.x < out.x) out.x = v2.x;
-	if (v2.y < out.y) out.y = v2.y;
-	if (v2.z < out.z) out.z = v2.z;
+    if (v2.x < out.x) out.x = v2.x;
+    if (v2.y < out.y) out.y = v2.y;
+    if (v2.z < out.z) out.z = v2.z;
 
-	return out;
+    return out;
 }
 
 inline Ogre::Vector3 getMaximum(Vector3 v1, Vector3 v2)
 {
-	Vector3 out = v1;
+    Vector3 out = v1;
 
-	if (v2.x > out.x) out.x = v2.x;
-	if (v2.y > out.y) out.y = v2.y;
-	if (v2.z > out.z) out.z = v2.z;
+    if (v2.x > out.x) out.x = v2.x;
+    if (v2.y > out.y) out.y = v2.y;
+    if (v2.z > out.z) out.z = v2.z;
 
-	return out;
+    return out;
 }
 
 inline bool getRayFilteredInfo(Vector3 start, Vector3 dir, float len, RayInfo& minfo, OgreNewt::Body* target)

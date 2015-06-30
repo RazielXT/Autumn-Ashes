@@ -29,7 +29,7 @@ fragment_program diffuse_ps_bopLeaf cg
  
     default_params
     {
-		param_named_auto lightDiffuse derived_light_diffuse_colour 0
+		param_named_auto diffuseColor surface_diffuse_colour 0
         param_named_auto lightDif0 light_diffuse_colour 0
         param_named_auto matSpec0 surface_specular_colour 0
         param_named_auto camPos camera_position

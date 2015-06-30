@@ -28,7 +28,7 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
     Ogre::Vector3 gridRegion(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize);
     sg->setRegionDimensions(gridRegion);
     sg->setOrigin(gridRegion / 2.0f + gridInfo.node->getPosition());
-	sg->setRenderingDistance(maxDistance);
+    sg->setRenderingDistance(maxDistance);
     int bgc = 0;
 
     for (float x = xStart; x <= xEnd; x+=xStep)
@@ -93,7 +93,7 @@ bool BasicDetailGeometry::acceptsWeight(float w) const
 void BasicDetailGeometry::init(DetailGeometryInfo& info)
 {
     maxSteepY = 0;
-	maxDistance = 50;
+    maxDistance = 50;
 
     if (darkenVCMeshes.empty())
     {
@@ -107,7 +107,7 @@ void BasicDetailGeometry::init(DetailGeometryInfo& info)
         stepSize.x = 5;
         stepSize.y = 5;
         generalScale = 0.25f;
-		maxDistance = 150;
+        maxDistance = 150;
 
         possibleEntities.push_back("aspenLeafs.mesh;aspenTrunk.mesh");
         possibleEntities.push_back("aspen2Leafs.mesh;aspen2Trunk.mesh");

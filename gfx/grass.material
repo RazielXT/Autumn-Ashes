@@ -206,6 +206,8 @@ vertex_program grassVP cg
 
 	default_params
 	{ 
+		param_named_auto lightDir light_direction 0 
+		
 		param_named_auto camPos  camera_position_object_space
 		param_named_auto worldViewProj worldviewproj_matrix 
 
@@ -213,15 +215,7 @@ vertex_program grassVP cg
 		param_named frequency float 1
 		param_named direction float4 0 1 0 0
 
-		//param_named grassHeight float 1
 		param_named fadeRange float 1
-
-		//objSpaceLight ACT_LIGHT_POSITION_OBJECT_SPACE
-		//lightDiffuse ACT_DERIVED_LIGHT_DIFFUSE_COLOUR
-		//lightAmbient ACT_DERIVED_AMBIENT_LIGHT_COLOUR
-
-		//param_named_auto lightPos light_position_object_space 0 
-		//param_named_auto lightDir light_direction_object_space 0 
 
 		param_named_auto texWorldViewProjMatrix0  texture_worldviewproj_matrix 0
 		param_named_auto texWorldViewProjMatrix1  texture_worldviewproj_matrix 1
@@ -329,6 +323,12 @@ material grassHop
 
 }
 
+
+material  grassBase: grassHop
+{
+	set_texture_alias diffuseMap bush_a.dds
+	set_texture_alias normalMap bush_a_NORM.tga
+}
 
 
 //  grass

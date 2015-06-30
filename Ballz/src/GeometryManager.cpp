@@ -57,8 +57,8 @@ DetailGeometry* GeometryManager::getInstance(std::string name)
     //   return new PgGeometryPreset();
     if (name == "Rocks" || name == "TreesAspen" || name == "Bush")
         return new BasicDetailGeometry();
-	if (name == "Grass")
-		return new GrassDetailGeometry();
+    if (name == "Grass")
+        return new GrassDetailGeometry();
 
     return nullptr;
 }

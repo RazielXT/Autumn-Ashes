@@ -28,8 +28,8 @@ material cheap_material_dynamic_opLeaf
     set $diffuseCol "1 1 1 1"
     set $specularCol "1 1 1"
     set $shininess "32"
-    set $brightness "0.5"
-	set $alphaTest "0.4" 
+    set $brightness "0.05"
+	set $alphaTest "0.37" 
 	set $enlighten "1.0"
 
     technique
@@ -73,6 +73,10 @@ material cheap_material_dynamic_opLeaf
 			depth_write off
 			cull_hardware none
 
+            diffuse $diffuseCol
+            specular $specularCol $brightness $shininess
+            ambient 0 0 0 0
+			
             vertex_program_ref diffuse_vs_bopLeaf
             {
             }
@@ -82,11 +86,6 @@ material cheap_material_dynamic_opLeaf
 				param_named alphaTest float $alphaTest
 				param_named enlighten float $enlighten
             }
-
-
-            diffuse $diffuseCol
-            specular $specularCol $brightness $shininess
-            ambient 0 0 0 0
 
             texture_unit diffuseMap
             {
