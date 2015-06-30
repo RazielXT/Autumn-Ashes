@@ -15,6 +15,8 @@ public:
 
 protected:
 
+	std::vector<Ogre::Entity*> entities;
+
 	virtual void init(DetailGeometryInfo& info);
 
 	virtual bool acceptsWeight(float w) const;
@@ -36,6 +38,7 @@ protected:
 	std::string material;
 	float stepDeviation = 1;
 	float generalScale = 1;
+	float minSteepY;
 	float maxSteepY;
 	float maxDistance;
 };

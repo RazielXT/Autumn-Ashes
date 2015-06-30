@@ -46,6 +46,7 @@ void GrassDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 			}
 		}
 
+
 	auto mesh = makeMesh();
 
 	Entity *entity = Global::mSceneMgr->createEntity(mesh->getName());
@@ -54,18 +55,20 @@ void GrassDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 
 	SceneNode *node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
 	node->attachObject(entity);
+
+	entities.push_back(entity);
 }
 
 void GrassDetailGeometry::clear()
 {
-	/*for (auto e : entities)
+	for (auto e : entities)
 	{
-	auto node = e->getParentSceneNode();
-	node->detachAllObjects();
+		auto node = e->getParentSceneNode();
+		node->detachAllObjects();
 
-	Global::mSceneMgr->destroySceneNode(node);
-	Global::mSceneMgr->destroyEntity(e);
-	}*/
+		Global::mSceneMgr->destroySceneNode(node);
+		Global::mSceneMgr->destroyEntity(e);
+	}
 }
 
 bool GrassDetailGeometry::acceptsWeight(float w) const
@@ -77,7 +80,9 @@ void GrassDetailGeometry::init(DetailGeometryInfo& info)
 {
 	grassBuffer.clear();
 
+	minSteepY = 1.0f;
 	maxSteepY = 0.25f;
+
 	maxDistance = 50;
 
 	//if (info.name == "TreesAspen")
@@ -111,7 +116,7 @@ bool GrassDetailGeometry::placeObject(GeometryMaskInfo& gridInfo, Vector3 pos, f
 		foundRay = foundRay && MUtils::getRayInfo(pos2, rayOr*Vector3(0, -1, 0), gridInfo.rayDistance, ray);
 	}
 
-	if (foundRay && ray.normal.y >= maxSteepY && ray2.normal.y >= maxSteepY)
+	if (foundRay && ray.normal.y >= maxSteepY && ray.normal.y <= minSteepY && ray2.normal.y >= maxSteepY && ray2.normal.y <= minSteepY)
 	{
 		GrassDefinition grass;
 		grass.height = scale;
