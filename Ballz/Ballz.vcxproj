@@ -146,7 +146,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\EventTask.cpp" />
     <ClCompile Include="src\GameStateManager.cpp" />
     <ClCompile Include="src\Gorilla.cpp" />
-    <ClCompile Include="src\GrassGeometryPreset.cpp" />
+    <ClCompile Include="src\GrassDetailGeometry.cpp" />
     <ClCompile Include="src\HandGripReaction.cpp" />
     <ClCompile Include="src\LoadNextPart.cpp" />
     <ClCompile Include="src\lvl1Reactions.cpp" />
@@ -208,7 +208,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\EventsManager.h" />
     <ClInclude Include="include\GameConfig.h" />
     <ClInclude Include="include\DetailGeometry.h" />
-    <ClInclude Include="include\GrassGeometryPreset.h" />
+    <ClInclude Include="include\GrassDetailGeometry.h" />
     <ClInclude Include="include\MainListener.h" />
     <ClInclude Include="include\GameStateManager.h" />
     <ClInclude Include="include\globals.h" />

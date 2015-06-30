@@ -47,6 +47,13 @@ void GrassDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 		}
 
 	auto mesh = makeMesh();
+
+	Entity *entity = Global::mSceneMgr->createEntity(mesh->getName());
+	entity->setCastShadows(false);
+	entity->setRenderingDistance(maxDistance);
+
+	SceneNode *node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	node->attachObject(entity);
 }
 
 void GrassDetailGeometry::clear()
