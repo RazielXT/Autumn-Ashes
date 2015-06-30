@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include <vector>
-#include "GeometryPreset.h"
+#include "DetailGeometry.h"
 
 
 class GeometryManager
@@ -14,7 +14,7 @@ public:
     void clear();
     void update();
 
-    void addDetailGeometry(Ogre::Entity* maskEnt, std::vector<GeometryPresetInfo>& geometries, OgreNewt::Body* targetarget, float rayDistance);
+    void addDetailGeometry(Ogre::Entity* maskEnt, std::vector<DetailGeometryInfo>& geometries, OgreNewt::Body* targetarget, float rayDistance);
 
     void resetDetailGeometries();
 
@@ -23,8 +23,8 @@ public:
 
 private:
 
-    std::vector<GeometryPreset *> detailGeometries;
-    GeometryPreset* getPreset(std::string name);
+    std::vector<DetailGeometry *> detailGeometries;
+    DetailGeometry* getInstance(std::string name);
 
     void generateGeometryMask(Ogre::Entity* maskEnt, MaskGrid& grid, Ogre::Vector2& size);
 

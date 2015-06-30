@@ -1,20 +1,20 @@
 #pragma once
 
 #include "stdafx.h"
-#include "GeometryPreset.h"
+#include "DetailGeometry.h"
 
-class PgGeometryPreset : public GeometryPreset
+class PgDetailGeometry : public DetailGeometry
 {
 public:
 
-    virtual ~PgGeometryPreset() {}
+    virtual ~PgDetailGeometry() {}
 
-    virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, GeometryPresetInfo& info);
+    virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryInfo& info);
     virtual void clear();
 
 protected:
 
-    virtual void init(GeometryPresetInfo& info);
+    virtual void init(DetailGeometryInfo& info);
     std::vector<std::string> possibleEntities;
 
     virtual bool acceptsWeight(float w) const;

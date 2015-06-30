@@ -21,7 +21,7 @@ struct GeometryMaskInfo
 
 enum VCEditMode { Off, SetVC, MulVC };
 
-struct GeometryPresetCustomEdit
+struct DetailGeometryCustomEdit
 {
     VCEditMode customVCMode = Off;
     Ogre::ColourValue customVCMask;
@@ -32,7 +32,7 @@ struct GeometryPresetCustomEdit
     Ogre::Vector2 customMinmaxScale;
 };
 
-struct GeometryPresetInfo
+struct DetailGeometryInfo
 {
     std::string name;
     Ogre::ColourValue weightMask;
@@ -40,16 +40,16 @@ struct GeometryPresetInfo
     Ogre::Vector2 minmaxScale;
     float density;
 
-    GeometryPresetCustomEdit customEdit;
+    DetailGeometryCustomEdit customEdit;
 };
 
-class GeometryPreset
+class DetailGeometry
 {
 public:
 
-    virtual ~GeometryPreset() {}
+    virtual ~DetailGeometry() {}
 
-    virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, GeometryPresetInfo& info) = 0;
+    virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryInfo& info) = 0;
     virtual void clear() = 0;
 
 protected:

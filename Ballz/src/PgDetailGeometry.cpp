@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "PgGeometryPreset.h"
+#include "PgDetailGeometry.h"
 #include "GeometryManager.h"
 #include "MUtils.h"
 
 using namespace Ogre;
 
-void PgGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, GeometryPresetInfo& info)
+void PgDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryInfo& info)
 {
     init(info);
 
@@ -73,7 +73,7 @@ void PgGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, G
     parent->addPagedGeometry(trees);
 }
 
-void PgGeometryPreset::clear()
+void PgDetailGeometry::clear()
 {
     parent->forgetPagedGeometry(trees);
 
@@ -81,12 +81,12 @@ void PgGeometryPreset::clear()
     delete trees;
 }
 
-bool PgGeometryPreset::acceptsWeight(float w) const
+bool PgDetailGeometry::acceptsWeight(float w) const
 {
     return w >= Ogre::Math::RangeRandom(0, 1);
 }
 
-void PgGeometryPreset::init(GeometryPresetInfo& info)
+void PgDetailGeometry::init(DetailGeometryInfo& info)
 {
     stepSize.x = 1;
     stepSize.y = 1;
@@ -104,7 +104,7 @@ void PgGeometryPreset::init(GeometryPresetInfo& info)
     }
 }
 
-void PgGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, Vector3 color, Forests::TreeLoader3D *treeLoader)
+void PgDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, Vector3 color, Forests::TreeLoader3D *treeLoader)
 {
     Quaternion randomYaw(Degree(Math::RangeRandom(0, 360)), Vector3(0, 1, 0));
     String meshName = possibleEntities[(int)Math::RangeRandom(0, possibleEntities.size() - 0.01f)];
@@ -116,7 +116,7 @@ void PgGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, Vect
     treeLoader->addTree(myTree, pos, or.getYaw(), scale);
 }
 
-void PgGeometryPreset::updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color)
+void PgDetailGeometry::updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color)
 {
     if (color.x != 1 || color.y != 1 || color.z != 1)
     {

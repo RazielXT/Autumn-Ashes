@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "GeometryManager.h"
-#include "BasicGeometryPreset.h"
-#include "PgGeometryPreset.h"
+#include "BasicDetailGeometry.h"
+#include "PgDetailGeometry.h"
 
 using namespace Ogre;
 
@@ -50,12 +50,12 @@ void GeometryManager::update()
     }
 }
 
-GeometryPreset* GeometryManager::getPreset(std::string name)
+DetailGeometry* GeometryManager::getInstance(std::string name)
 {
     //if ()
     //   return new PgGeometryPreset();
     if (name == "Rocks" || name == "TreesAspen" || name == "Bush")
-        return new BasicGeometryPreset();
+        return new BasicDetailGeometry();
 
     return nullptr;
 }
@@ -72,7 +72,7 @@ void GeometryManager::resetDetailGeometries()
     detailGeometries.clear();
 }
 
-void GeometryManager::addDetailGeometry(Ogre::Entity* maskEnt, std::vector<GeometryPresetInfo>& geometries, OgreNewt::Body* targetarget, float rayDistance)
+void GeometryManager::addDetailGeometry(Ogre::Entity* maskEnt, std::vector<DetailGeometryInfo>& geometries, OgreNewt::Body* targetarget, float rayDistance)
 {
     MaskGrid posGrid;
     GeometryMaskInfo info;
@@ -85,7 +85,7 @@ void GeometryManager::addDetailGeometry(Ogre::Entity* maskEnt, std::vector<Geome
 
     for (auto g : geometries)
     {
-        auto p = getPreset(g.name);
+        auto p = getInstance(g.name);
 
         if (p)
         {

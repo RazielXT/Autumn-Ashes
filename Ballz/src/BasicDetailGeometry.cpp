@@ -1,13 +1,13 @@
 #include "stdafx.h"
-#include "BasicGeometryPreset.h"
+#include "BasicDetailGeometry.h"
 #include "MUtils.h"
 #include "GameStateManager.h"
 
 using namespace Ogre;
 
-int GeometryPreset::matID = 0;
+int DetailGeometry::matID = 0;
 
-void BasicGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, GeometryPresetInfo& info)
+void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryInfo& info)
 {
     init(info);
 
@@ -70,7 +70,7 @@ void BasicGeometryPreset::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
     sg->build();
 }
 
-void BasicGeometryPreset::clear()
+void BasicDetailGeometry::clear()
 {
     /*for (auto e : entities)
     {
@@ -85,12 +85,12 @@ void BasicGeometryPreset::clear()
     Global::mSceneMgr->destroyStaticGeometry(sg);
 }
 
-bool BasicGeometryPreset::acceptsWeight(float w) const
+bool BasicDetailGeometry::acceptsWeight(float w) const
 {
     return w >= Ogre::Math::RangeRandom(0, 1);
 }
 
-void BasicGeometryPreset::init(GeometryPresetInfo& info)
+void BasicDetailGeometry::init(DetailGeometryInfo& info)
 {
     maxSteepY = 0;
 	maxDistance = 50;
@@ -134,7 +134,7 @@ void BasicGeometryPreset::init(GeometryPresetInfo& info)
     }
 }
 
-void BasicGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, Vector3 color)
+void BasicDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, Vector3 color)
 {
     Quaternion randomYaw(Degree(Math::RangeRandom(0, 360)), Vector3(0, 1, 0));
     String meshName = possibleEntities[(int)Math::RangeRandom(0, possibleEntities.size()-0.01f)];
@@ -162,10 +162,10 @@ void BasicGeometryPreset::placeObject(Vector3 pos, Quaternion or, float scale, V
     body->setPositionOrientation(node->_getDerivedPosition(), node->_getDerivedOrientation());*/
 }
 
-std::vector<std::string> BasicGeometryPreset::darkenVCMeshes;
-std::vector<std::string> BasicGeometryPreset::darkenVCMeshesDone;
+std::vector<std::string> BasicDetailGeometry::darkenVCMeshes;
+std::vector<std::string> BasicDetailGeometry::darkenVCMeshesDone;
 
-void BasicGeometryPreset::updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color)
+void BasicDetailGeometry::updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color)
 {
     if (std::find(darkenVCMeshes.begin(), darkenVCMeshes.end(), ent->getMesh()->getName()) != darkenVCMeshes.end())
     {

@@ -787,7 +787,7 @@ private:
         return nextChannel;
     }
 
-    void loadCustomGeometryEdit(const XMLElement* rootElement, std::string channel, std::string targetChannel, GeometryPresetCustomEdit& info)
+    void loadCustomGeometryEdit(const XMLElement* rootElement, std::string channel, std::string targetChannel, DetailGeometryCustomEdit& info)
     {
         auto strType = getElementValue(rootElement, "Type" + channel);
 
@@ -806,7 +806,7 @@ private:
 
     }
 
-    void loadDetailGeometryChannel(const XMLElement* rootElement, std::string channel, std::vector<GeometryPresetInfo>& geometries)
+    void loadDetailGeometryChannel(const XMLElement* rootElement, std::string channel, std::vector<DetailGeometryInfo>& geometries)
     {
         bool enabled = getElementBoolValue(rootElement, channel);
         auto strType = getElementValue(rootElement, "Type" + channel);
@@ -815,7 +815,7 @@ private:
 
         if (enabled && !isEMask)
         {
-            GeometryPresetInfo info;
+            DetailGeometryInfo info;
 
             //find edit masks
             char* channels[] {"R", "G", "B", "A"};
@@ -847,7 +847,7 @@ private:
         auto targetBodyIt = loadedBodies.find(targetName);
         auto body = targetBodyIt == loadedBodies.end() ? nullptr : targetBodyIt->second;
 
-        std::vector<GeometryPresetInfo> geometries;
+        std::vector<DetailGeometryInfo> geometries;
         loadDetailGeometryChannel(rootElement, "R", geometries);
         loadDetailGeometryChannel(rootElement, "G", geometries);
         loadDetailGeometryChannel(rootElement, "B", geometries);

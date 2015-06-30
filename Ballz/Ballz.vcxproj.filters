@@ -209,10 +209,13 @@
     <ClCompile Include="src\GeometryManager.cpp">
       <Filter>Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\BasicGeometryPreset.cpp">
+    <ClCompile Include="src\GrassGeometryPreset.cpp">
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClCompile>
-    <ClCompile Include="src\PgGeometryPreset.cpp">
+    <ClCompile Include="src\PgDetailGeometry.cpp">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BasicDetailGeometry.cpp">
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClCompile>
   </ItemGroup>
@@ -427,17 +430,20 @@
     <ClInclude Include="include\GeometryManager.h">
       <Filter>Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="include\GeometryPreset.h">
-      <Filter>Files\Core\DetailGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="include\BasicGeometryPreset.h">
-      <Filter>Files\Core\DetailGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PgGeometryPreset.h">
-      <Filter>Files\Core\DetailGeometry</Filter>
-    </ClInclude>
     <ClInclude Include="include\MUtils.h">
       <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GrassGeometryPreset.h">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DetailGeometry.h">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PgDetailGeometry.h">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BasicDetailGeometry.h">
+      <Filter>Files\Core\DetailGeometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
