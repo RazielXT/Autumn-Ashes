@@ -14,7 +14,7 @@ public:
     void clear();
     void update();
 
-    void addDetailGeometry(Ogre::Entity* maskEnt, std::vector<DetailGeometryInfo>& geometries, OgreNewt::Body* targetarget, float rayDistance);
+    void addDetailGeometry(Ogre::Entity* maskEnt, std::vector<DetailGeometryInfo>& geometries, OgreNewt::Body* target, float rayDistance);
 
     void resetDetailGeometries();
 

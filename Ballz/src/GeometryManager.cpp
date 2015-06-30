@@ -2,6 +2,7 @@
 #include "GeometryManager.h"
 #include "BasicDetailGeometry.h"
 #include "PgDetailGeometry.h"
+#include "GrassDetailGeometry.h"
 
 using namespace Ogre;
 
@@ -56,6 +57,8 @@ DetailGeometry* GeometryManager::getInstance(std::string name)
     //   return new PgGeometryPreset();
     if (name == "Rocks" || name == "TreesAspen" || name == "Bush")
         return new BasicDetailGeometry();
+	if (name == "Grass")
+		return new GrassDetailGeometry();
 
     return nullptr;
 }
@@ -72,12 +75,12 @@ void GeometryManager::resetDetailGeometries()
     detailGeometries.clear();
 }
 
-void GeometryManager::addDetailGeometry(Ogre::Entity* maskEnt, std::vector<DetailGeometryInfo>& geometries, OgreNewt::Body* targetarget, float rayDistance)
+void GeometryManager::addDetailGeometry(Ogre::Entity* maskEnt, std::vector<DetailGeometryInfo>& geometries, OgreNewt::Body* target, float rayDistance)
 {
     MaskGrid posGrid;
     GeometryMaskInfo info;
     info.rayDistance = rayDistance;
-    info.target = targetarget;
+    info.target = target;
     info.node = maskEnt->getParentSceneNode();
     info.parent = this;
 
