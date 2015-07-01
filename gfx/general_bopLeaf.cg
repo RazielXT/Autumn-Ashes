@@ -118,6 +118,38 @@ float shadowBilinear(sampler2D shadowMapSampler, float4 shadowMapPos,float offse
 	return fShadowTerm;                                 
 }
 
+float shadowLinear(sampler2D shadowMapSampler, float4 shadowMapPos,float offset,float texRes)
+{
+	shadowMapPos.xy = shadowMapPos.xy / shadowMapPos.w;
+	float4 vTexCoord=float4(shadowMapPos.xy,1,1);
+
+	float fLightDepth=shadowMapPos.z;
+	float smDepth = tex2Dlod(shadowMapSampler, vTexCoord).x * shadowMapPos.w;
+	
+	float fShadowTerm = (smDepth < fLightDepth) ? 0.0f: 1.0f;  
+	return fShadowTerm;                                 
+}
+
+float shadowLinearEx(sampler2D shadowMapSampler, float4 shadowMapPos,float offset,float texRes)
+{
+	shadowMapPos.xy = shadowMapPos.xy / shadowMapPos.w;
+	float4 vTexCoord=float4(shadowMapPos.xy,1,1);
+
+	float fLightDepth=shadowMapPos.z;
+	float smDepth = tex2Dlod(shadowMapSampler, vTexCoord).x * shadowMapPos.w;
+	
+	float fShadowTerm = 0;
+	if(smDepth > fLightDepth)
+		fShadowTerm = 1;
+	else
+	{
+		float dist = 5;
+		fShadowTerm = min(0, 1 - (fLightDepth - smDepth)/dist);  
+	}
+	
+	return fShadowTerm;                                 
+}
+
 float shadowSmooth(sampler2D shadowMap, float4 shadowMapPos,float blur,float texRes)
 {
 	shadowMapPos = shadowMapPos / shadowMapPos.w;
