@@ -16,6 +16,10 @@ void DebugKeys::reloadVariables()
     debugVars.push_back(DebugVar("Bloom Depth", &Global::mPPMgr->bloomStrDep.y, 0.15f));
     debugVars.push_back(DebugVar("Horiz Blur", &Global::mPPMgr->radialHorizBlurVignette.y, 0.1f));
 
+    debugVars.push_back(DebugVar("Contrast", &Global::mPPMgr->ContSatuSharpNoise.x, 0.05f));
+    debugVars.push_back(DebugVar("Saturation", &Global::mPPMgr->ContSatuSharpNoise.y, 0.05f));
+    debugVars.push_back(DebugVar("Sharpness", &Global::mPPMgr->ContSatuSharpNoise.z, 0.05f));
+
     debugVars.push_back(DebugVar("Timestep", &Global::timestep, 0.1f));
 }
 
@@ -106,20 +110,10 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
         Global::shaker->startShaking(1.2, 1.5, 10, 1, 1, 0.1, 0.35, 1, true);
         break;
 
-    case OIS::KC_L:
-        if (Global::gameMgr->gameState == MENU)
-        {
-            Global::gameMgr->switchToLevel(3);
-        }
-        else
-            continueExecution = false;
-
-        break;
-
     case OIS::KC_NUMPAD3:
         if (Global::gameMgr->gameState == MENU)
         {
-            Global::gameMgr->switchToLevel(4);
+            Global::gameMgr->switchToLevel(5);
         }
         else
             continueExecution = false;

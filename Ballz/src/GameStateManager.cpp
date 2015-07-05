@@ -34,6 +34,10 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
     info.init = createTestLevel;
     levels[4] = info;
 
+    info.path = "../../media/testLvl2/test.scene";
+    info.init = createTestLevel2;
+    levels[5] = info;
+
     dbg = new DebugKeys();
     dbg->registerInputListening();
 }

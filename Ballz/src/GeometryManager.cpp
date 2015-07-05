@@ -3,8 +3,12 @@
 #include "BasicDetailGeometry.h"
 #include "PgDetailGeometry.h"
 #include "GrassDetailGeometry.h"
+#include "ManualDetailGeometry.h"
 
 using namespace Ogre;
+
+std::vector<std::string> DetailGeometryMaterial::darkenVCMeshes;
+std::vector<std::string> DetailGeometryMaterial::darkenVCMeshesDone;
 
 void GeometryManager::forgetPagedGeometry(Forests::PagedGeometry *g)
 {
@@ -38,6 +42,13 @@ void GeometryManager::clear()
     }
 
     detailGeometries.clear();
+
+    DetailGeometryMaterial::reset();
+}
+
+void GeometryManager::postLoad()
+{
+    ManualDetailGeometry::finish();
 }
 
 void GeometryManager::update()
@@ -64,7 +75,7 @@ DetailGeometry* GeometryManager::getInstance(std::string name)
 }
 
 
-void GeometryManager::resetDetailGeometries()
+void GeometryManager::resetMaskedDetailGeometries()
 {
     for (auto g : detailGeometries)
     {
@@ -75,7 +86,13 @@ void GeometryManager::resetDetailGeometries()
     detailGeometries.clear();
 }
 
-void GeometryManager::addDetailGeometry(Ogre::Entity* maskEnt, std::vector<DetailGeometryInfo>& geometries, OgreNewt::Body* target, float rayDistance)
+void GeometryManager::addDetailGeometryEntity(int id, Ogre::SceneNode* node, std::string type, bool keepMesh, Vector3 color)
+{
+    auto pg = ManualDetailGeometry::get(id);
+    pg->addObject(node, type, keepMesh, color);
+}
+
+void GeometryManager::addDetailGeometryMask(Ogre::Entity* maskEnt, std::vector<DetailGeometryParams>& geometries, OgreNewt::Body* target, float rayDistance)
 {
     MaskGrid posGrid;
     GeometryMaskInfo info;
@@ -97,8 +114,6 @@ void GeometryManager::addDetailGeometry(Ogre::Entity* maskEnt, std::vector<Detai
             p->addGeometry(posGrid, info, g);
         }
     }
-
-
 }
 
 void loadPoint(float* pReal, Ogre::RGBA pCReal, GeometryMaskPoint& out, SceneNode* node)

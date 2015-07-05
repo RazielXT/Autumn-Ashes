@@ -806,7 +806,7 @@ private:
 
     }
 
-    void loadDetailGeometryChannel(const XMLElement* rootElement, std::string channel, std::vector<DetailGeometryInfo>& geometries)
+    void loadDetailGeometryChannel(const XMLElement* rootElement, std::string channel, std::vector<DetailGeometryParams>& geometries)
     {
         bool enabled = getElementBoolValue(rootElement, channel);
         auto strType = getElementValue(rootElement, "Type" + channel);
@@ -815,7 +815,7 @@ private:
 
         if (enabled && !isEMask)
         {
-            DetailGeometryInfo info;
+            DetailGeometryParams info;
 
             //find edit masks
             char* channels[] {"R", "G", "B", "A"};
@@ -839,7 +839,7 @@ private:
         }
     }
 
-    void loadDetailGeometry(const XMLElement* rootElement, Entity* ent)
+    void loadDetailGeometryMask(const XMLElement* rootElement, Entity* ent)
     {
         float ray = getElementFloatValue(rootElement, "Ray");
 
@@ -847,18 +847,32 @@ private:
         auto targetBodyIt = loadedBodies.find(targetName);
         auto body = targetBodyIt == loadedBodies.end() ? nullptr : targetBodyIt->second;
 
-        std::vector<DetailGeometryInfo> geometries;
+        std::vector<DetailGeometryParams> geometries;
         loadDetailGeometryChannel(rootElement, "R", geometries);
         loadDetailGeometryChannel(rootElement, "G", geometries);
         loadDetailGeometryChannel(rootElement, "B", geometries);
         loadDetailGeometryChannel(rootElement, "A", geometries);
 
-        Global::gameMgr->geometryMgr->addDetailGeometry(ent, geometries, body, ray);
+        Global::gameMgr->geometryMgr->addDetailGeometryMask(ent, geometries, body, ray);
 
         auto node = ent->getParentSceneNode();
 
         node->detachObject(ent);
         Global::mSceneMgr->destroyEntity(ent);
+        Global::mSceneMgr->destroySceneNode(node);
+    }
+
+    void loadDetailGeometry(const XMLElement* rootElement, Entity* ent)
+    {
+        int id = getElementIntValue(rootElement, "ID");
+        auto type = getElementValue(rootElement, "Type");
+        auto keepMesh = getElementBoolValue(rootElement, "KeepMesh");
+        auto color = getElementV3Value(rootElement, "Color");
+        auto node = ent->getParentSceneNode();
+
+        Global::gameMgr->geometryMgr->addDetailGeometryEntity(id, node, type, keepMesh, color);
+
+        node->detachObject(ent);
         Global::mSceneMgr->destroySceneNode(node);
     }
 
@@ -1906,6 +1920,10 @@ private:
                     {
                         loadGrassArea(element, ent, node, mSceneMgr);
                     }
+                    else if (rootTag == "DetailGeometryMask")
+                    {
+                        loadDetailGeometryMask(root, ent);
+                    }
                     else if (rootTag == "DetailGeometry")
                     {
                         loadDetailGeometry(root, ent);
@@ -2464,7 +2482,7 @@ public:
     {
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("RELOADING SCENE :: filename \"" + filename + "\"", LML_NORMAL);
 
-        Global::gameMgr->geometryMgr->resetDetailGeometries();
+        Global::gameMgr->geometryMgr->resetMaskedDetailGeometries();
 
         XMLDocument document;
         document.LoadFile(filename.c_str());
@@ -2547,6 +2565,7 @@ public:
 
         connectSlideParts();
         optimizeEntities();
+        Global::gameMgr->geometryMgr->postLoad();
 
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("LOADING COMPLETED :: filename \"" + filename + "\"", LML_NORMAL);
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("-----------------------------------------------------------", LML_NORMAL);

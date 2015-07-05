@@ -153,6 +153,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\lvl_update.cpp" />
     <ClCompile Include="src\GuiOverlay.cpp" />
     <ClCompile Include="src\GeometryManager.cpp" />
+    <ClCompile Include="src\ManualDetailGeometry.cpp" />
     <ClCompile Include="src\PgDetailGeometry.cpp" />
     <ClCompile Include="src\PlayerClimbing.cpp" />
     <ClCompile Include="src\PlayerGrab.cpp" />
@@ -203,6 +204,8 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\DebugKeys.h" />
     <ClInclude Include="include\DefaultObjectContactCallback.h" />
     <ClInclude Include="include\DefShadowCamera.h" />
+    <ClInclude Include="include\DetailGeometryInfo.h" />
+    <ClInclude Include="include\DetailGeometryMaterial.h" />
     <ClInclude Include="include\EffectsTasks.h" />
     <ClInclude Include="include\EntityMovementTask.h" />
     <ClInclude Include="include\EventsManager.h" />
@@ -223,6 +226,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\lvl1Tasks.h" />
     <ClInclude Include="include\lvl_update.h" />
     <ClInclude Include="include\GuiOverlay.h" />
+    <ClInclude Include="include\ManualDetailGeometry.h" />
     <ClInclude Include="include\MUtils.h" />
     <ClInclude Include="include\NewtonListener.h" />
     <ClInclude Include="include\GeometryManager.h" />

@@ -261,6 +261,23 @@ void createTestLevel()
     new CrowWatch();
 }
 
+void createTestLevel2()
+{
+    Global::mSceneMgr->setAmbientLight(ColourValue(0.2f, 0.2f, 0.1f));
+
+    Global::mSceneMgr->setSkyBox(true, "CloundyNoonSkyBox");
+
+    PostProcessMgr* ppMgr = Global::mPPMgr;
+    ppMgr->setToScaryBloom();
+    ppMgr->ContSatuSharpNoise = 0.0;
+    ppMgr->radialHorizBlurVignette = 0.0;
+    ppMgr->ColouringShift = Ogre::Vector4(0.9f, 1.0f, 1.05f, 0);
+
+    ppMgr->setAutoGodraySunDirection();
+
+    new CrowWatch();
+}
+
 void createLevel1_1()
 {
 

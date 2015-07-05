@@ -2,33 +2,34 @@
 #include "BasicDetailGeometry.h"
 #include "MUtils.h"
 #include "GameStateManager.h"
+#include "DetailGeometryMaterial.h"
 
 using namespace Ogre;
 
 int DetailGeometry::matID = 0;
 
-void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryInfo& info)
+void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryParams& params)
 {
-    init(info);
+    init(params);
 
     float xStart = 0;
     float xEnd = gridInfo.size.x;
-    float xStep = stepSize.x / info.density;
+    float xStep = info.stepSize.x / params.density;
 
     float yStart = 0;
     float yEnd = gridInfo.size.y;
-    float yStep = stepSize.y / info.density;
+    float yStep = info.stepSize.y / params.density;
 
     static int sgCount = 0;
 
     sg = Global::mSceneMgr->createStaticGeometry("basicDG" + std::to_string(sgCount++));
     sg->setCastShadows(true);
 
-    float staticEntitiesGridSize = 25;
+    float staticEntitiesGridSize = info.gridSize;
     Ogre::Vector3 gridRegion(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize);
     sg->setRegionDimensions(gridRegion);
     sg->setOrigin(gridRegion / 2.0f + gridInfo.node->getPosition());
-    sg->setRenderingDistance(maxDistance);
+    sg->setRenderingDistance(info.maxDistance);
     int bgc = 0;
 
     for (float x = xStart; x <= xEnd; x+=xStep)
@@ -38,15 +39,15 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
             float yOffset = Ogre::Math::RangeRandom(-yStep, yStep) / 2.0f;
             auto pos = getMaskAt(grid, gridInfo, x + xOffset, y + yOffset);
 
-            auto wmasked = (pos.color*info.weightMask);
+            auto wmasked = (pos.color*params.weightMask);
             float w = wmasked.r + wmasked.g + wmasked.b + wmasked.a;
 
             float scaleMask = 1.0f;
-            if (info.customEdit.customScaleEnabled)
+            if (params.customEdit.customScaleEnabled)
             {
-                auto smasked = (pos.color*info.customEdit.customScaleMask);
+                auto smasked = (pos.color*params.customEdit.customScaleMask);
                 float scaleW = wmasked.r + wmasked.g + wmasked.b + wmasked.a;
-                scaleMask = MUtils::lerp(info.customEdit.customMinmaxScale.x, info.customEdit.customMinmaxScale.y, scaleW);
+                scaleMask = MUtils::lerp(params.customEdit.customMinmaxScale.x, params.customEdit.customMinmaxScale.y, scaleW);
             }
 
             MUtils::RayInfo ray;
@@ -57,10 +58,10 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
             else
                 foundRay = MUtils::getRayInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray);
 
-            if (foundRay && ray.normal.y >= maxSteepY && acceptsWeight(w))
+            if (foundRay && ray.normal.y >= info.maxSteepY && acceptsWeight(w))
             {
-                float scale = generalScale*scaleMask*Ogre::Math::RangeRandom(info.minmaxScale.x, info.minmaxScale.y);
-                placeObject(ray.pos, MUtils::quaternionFromNormal(ray.normal), scale, info.color);
+                float scale = info.generalScale*scaleMask*Ogre::Math::RangeRandom(params.minmaxScale.x, params.minmaxScale.y);
+                placeObject(ray.pos, MUtils::quaternionFromNormal(ray.normal), scale, params.color);
 
 
                 bgc++;
@@ -81,7 +82,7 @@ void BasicDetailGeometry::clear()
         Global::mSceneMgr->destroyEntity(e);
     }*/
 
-    darkenVCMeshesDone.clear();
+    mats.reset();
     Global::mSceneMgr->destroyStaticGeometry(sg);
 }
 
@@ -90,54 +91,15 @@ bool BasicDetailGeometry::acceptsWeight(float w) const
     return w >= Ogre::Math::RangeRandom(0, 1);
 }
 
-void BasicDetailGeometry::init(DetailGeometryInfo& info)
+void BasicDetailGeometry::init(DetailGeometryParams& param)
 {
-    maxSteepY = 0;
-    maxDistance = 50;
-
-    if (darkenVCMeshes.empty())
-    {
-        darkenVCMeshes.push_back("aspenLeafs.mesh");
-        darkenVCMeshes.push_back("aspen2Leafs.mesh");
-        darkenVCMeshes.push_back("bush1.mesh");
-    }
-
-    if (info.name == "TreesAspen")
-    {
-        stepSize.x = 5;
-        stepSize.y = 5;
-        generalScale = 0.25f;
-        maxDistance = 150;
-
-        possibleEntities.push_back("aspenLeafs.mesh;aspenTrunk.mesh");
-        possibleEntities.push_back("aspen2Leafs.mesh;aspen2Trunk.mesh");
-    }
-    else if (info.name == "Bush")
-    {
-        stepSize.x = 1;
-        stepSize.y = 1;
-        generalScale = 5.25f;
-
-        possibleEntities.push_back("bush1.mesh");
-    }
-    else //if (info.name == "Rocks")
-    {
-        stepSize.x = 1;
-        stepSize.y = 1;
-
-        possibleEntities.push_back("Rock1.mesh");
-        possibleEntities.push_back("Rock2.mesh");
-        possibleEntities.push_back("Rock3.mesh");
-        possibleEntities.push_back("Rock4.mesh");
-        possibleEntities.push_back("Rock5.mesh");
-        possibleEntities.push_back("Rock6.mesh");
-    }
+    info = DetailGeometryInfo::get(param.name);
 }
 
 void BasicDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, Vector3 color)
 {
     Quaternion randomYaw(Degree(Math::RangeRandom(0, 360)), Vector3(0, 1, 0));
-    String meshName = possibleEntities[(int)Math::RangeRandom(0, possibleEntities.size()-0.01f)];
+    String meshName = info.possibleEntities[(int)Math::RangeRandom(0, info.possibleEntities.size() - 0.01f)];
     //auto node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(pos, randomYaw*or);
     //node->setScale(Vector3(scale, scale, scale));
 
@@ -147,7 +109,7 @@ void BasicDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, V
         auto ent = Global::mSceneMgr->createEntity(name);
         //node->attachObject(ent);
 
-        updateMaterial(ent, color);
+        mats.updateMaterial(ent, color,info);
         sg->addEntity(ent, pos, randomYaw, Vector3(scale));
     }
 
@@ -162,47 +124,3 @@ void BasicDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, V
     body->setPositionOrientation(node->_getDerivedPosition(), node->_getDerivedOrientation());*/
 }
 
-std::vector<std::string> BasicDetailGeometry::darkenVCMeshes;
-std::vector<std::string> BasicDetailGeometry::darkenVCMeshesDone;
-
-void BasicDetailGeometry::updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color)
-{
-    if (std::find(darkenVCMeshes.begin(), darkenVCMeshes.end(), ent->getMesh()->getName()) != darkenVCMeshes.end())
-    {
-        if (std::find(darkenVCMeshesDone.begin(), darkenVCMeshesDone.end(), ent->getMesh()->getName()) == darkenVCMeshesDone.end())
-        {
-            auto darken = [](Entity* e, float* pos, float*, Ogre::RGBA* color)
-            {
-                if (!color)
-                    return;
-
-                float size = e->getBoundingBox().getHalfSize().x;
-                Vector3 vpos(pos[0], 0, pos[2]);
-                *color = Ogre::ColourValue(0, 0, 0, 0.25f + 0.75f*std::max<float>(0.0f, vpos.length() / size)).getAsARGB();
-            };
-
-            Global::gameMgr->geometryMgr->modifyVertexBuffer(ent, darken);
-
-            darkenVCMeshesDone.push_back(ent->getMesh()->getName());
-        }
-
-    }
-
-
-    if (color.x != 1 || color.y != 1 || color.z != 1)
-    {
-        auto name = ent->getSubEntity(0)->getMaterialName();
-
-        if (materials.find(name) == materials.end())
-        {
-            auto mat = (Ogre::Material*)MaterialManager::getSingleton().getByName(name).get();
-            auto newMat = mat->clone(mat->getName() + "Gen" + std::to_string(++matID)).get();
-            newMat->setDiffuse(ColourValue(color.x, color.y, color.z, 1));
-
-            materials[name] = newMat;
-        }
-
-        auto mat = materials[name];
-        ent->getSubEntity(0)->setMaterialName(mat->getName());
-    }
-}

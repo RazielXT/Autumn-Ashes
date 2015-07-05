@@ -32,7 +32,7 @@ struct DetailGeometryCustomEdit
     Ogre::Vector2 customMinmaxScale;
 };
 
-struct DetailGeometryInfo
+struct DetailGeometryParams
 {
     std::string name;
     Ogre::ColourValue weightMask;
@@ -49,7 +49,7 @@ public:
 
     virtual ~DetailGeometry() {}
 
-    virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryInfo& info) = 0;
+    virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryParams& info) = 0;
     virtual void clear() = 0;
 
 protected:

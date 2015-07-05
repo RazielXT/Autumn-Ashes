@@ -313,9 +313,9 @@
 		<enumItem name="Flowers" value="Flowers" />
 </enum>
 
-<class name="DetailGeometry" usage="object">
+<class name="DetailGeometryMask" usage="object">
 
-	<data name="Ray" displayName="Ray length" type="float" defaultValue="10"/>
+	<data name="Ray" displayName="Ray length" type="float" defaultValue="10" maxValue="1000"/>
 	<data name="Target" displayName="Target body" type="string" defaultValue=""/>
 	
 	<data name="R" type="bool" groupName="1" defaultValue="false"/>
@@ -344,6 +344,15 @@
 	
 </class>
 
+<class name="DetailGeometry" usage="object">
+
+	<data name="ID" type="int" defaultValue="0"/>
+	<data name="Type" type="GeometryMask" defaultValue="TreesAspen"/>
+	<data name="KeepMesh" type="bool" defaultValue="false"/>
+	
+	<data name="Color" type="rgb"/>	
+	
+</class>
 
 <class name="Rope" usage="object">
 </class>

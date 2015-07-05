@@ -10,14 +10,14 @@ public:
 
     virtual ~GrassDetailGeometry() {}
 
-    virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryInfo& info);
+    virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryParams& info);
     virtual void clear();
 
 protected:
 
     std::vector<Ogre::Entity*> entities;
 
-    virtual void init(DetailGeometryInfo& info);
+    virtual void init(DetailGeometryParams& info);
 
     virtual bool acceptsWeight(float w) const;
 

@@ -5,7 +5,7 @@
 
 using namespace Ogre;
 
-void GrassDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryInfo& info)
+void GrassDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryParams& info)
 {
     init(info);
 
@@ -80,7 +80,7 @@ bool GrassDetailGeometry::acceptsWeight(float w) const
     return w >= Ogre::Math::RangeRandom(0, 1);
 }
 
-void GrassDetailGeometry::init(DetailGeometryInfo& info)
+void GrassDetailGeometry::init(DetailGeometryParams& info)
 {
     grassBuffer.clear();
 

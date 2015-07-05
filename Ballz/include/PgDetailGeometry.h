@@ -9,12 +9,12 @@ public:
 
     virtual ~PgDetailGeometry() {}
 
-    virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryInfo& info);
+    virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryParams& info);
     virtual void clear();
 
 protected:
 
-    virtual void init(DetailGeometryInfo& info);
+    virtual void init(DetailGeometryParams& info);
     std::vector<std::string> possibleEntities;
 
     virtual bool acceptsWeight(float w) const;

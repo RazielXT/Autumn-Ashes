@@ -218,6 +218,9 @@
     <ClCompile Include="src\GrassDetailGeometry.cpp">
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClCompile>
+    <ClCompile Include="src\ManualDetailGeometry.cpp">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -443,6 +446,15 @@
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClInclude>
     <ClInclude Include="include\GrassDetailGeometry.h">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ManualDetailGeometry.h">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DetailGeometryInfo.h">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DetailGeometryMaterial.h">
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClInclude>
   </ItemGroup>

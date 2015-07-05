@@ -5,7 +5,7 @@
 
 using namespace Ogre;
 
-void PgDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryInfo& info)
+void PgDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryParams& info)
 {
     init(info);
 
@@ -86,7 +86,7 @@ bool PgDetailGeometry::acceptsWeight(float w) const
     return w >= Ogre::Math::RangeRandom(0, 1);
 }
 
-void PgDetailGeometry::init(DetailGeometryInfo& info)
+void PgDetailGeometry::init(DetailGeometryParams& info)
 {
     stepSize.x = 1;
     stepSize.y = 1;
