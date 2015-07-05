@@ -17,7 +17,7 @@ vertex_program myvs_vs cg
     profiles vs_3_0
     entry_point myvs_vs
 
-default_params
+	default_params
     {
         param_named_auto wmat worldviewproj_matrix
     }
@@ -30,14 +30,16 @@ vertex_program myvs_Leafvs cg
     profiles vs_3_0
     entry_point myvs_Leafvs
 
-default_params
-    {
-        param_named_auto wvpmat worldviewproj_matrix
-	  param_named_auto wMat world_matrix
-        param_named_auto time time
-	  param_named_auto camPos camera_position
-       param_named_auto speed shadow_colour
-    }
+	default_params
+	{
+		param_named_auto vpmat viewproj_matrix
+		param_named_auto wMat world_matrix
+		param_named_auto time time
+		param_named_auto camPos camera_position
+		param_named_auto speed shadow_colour
+
+		param_named_auto depthRange			scene_depth_range
+	}
 
 }
 

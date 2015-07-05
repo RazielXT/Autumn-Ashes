@@ -24,6 +24,23 @@ import 1tAT_material_static from "general_1texAT.material"
 import 1t_material_static from "general_1tex.material" 
 
 
+material grassMat : 1t_material_static 
+{
+	set_texture_alias diffuseMap terr_dirt-grass.jpg
+	set_texture_alias normalMap grass_diffuse_NORM.tga
+
+	set $difUV "2 2"
+
+	set $diffuseCol "0.58015 0.58015 0.58015"
+	// specular colour multiplier (for example, red-ish)
+
+	set $specularCol "0.00005 0.00005 0.00005"
+	set $brightness "0.005"
+	// specular power (shininess) (the higher, the sharper the highlights)
+	set $shininess "16"
+
+}
+
 material crow1 : 1tAT_material_static
 {
 	set_texture_alias diffuseMap vorona_256.tif
@@ -38,28 +55,92 @@ material crow1 : 1tAT_material_static
 
 material  branch_summerpng: cheap_material_dynamic_opLeaf
 {
-	set_texture_alias diffuseMap bush_a.dds
+	set_texture_alias diffuseMap bush_a.tga
 	set_texture_alias normalMap bush_a_NORM.tga
 
-	set $enlighten "1.5"
-	set $diffuseCol "1.15 0.9 0.9"
+	set $enlighten "1.8"
+	set $diffuseCol "2.0 1.0 0.5"
+	set $specularCol "1 1 0.5"
+}
+
+material  bushMat: cheap_material_dynamic_opLeaf
+{
+	set_texture_alias diffuseMap bush_a.tga
+	set_texture_alias normalMap bush_a_NORM.tga
+
+	set $vcWeight "0.5"
+	//set $enlighten "0.8"
+	//set $diffuseCol "1.5 1.0 0.2"
 	set $specularCol "1 1 0.5"
 }
 
 material  branch_summer2png: cheap_material_dynamic_opLeaf
 {
-	set_texture_alias diffuseMap bush_a.dds
+	set_texture_alias diffuseMap bush_a.tga
 	set_texture_alias normalMap bush_a_NORM.tga
 	
-	set $enlighten "1.5"
-	set $diffuseCol "1 1 1"
+	set $diffuseCol "2.0 1.0 0.5"
+	set $enlighten "1"
 	set $specularCol "0.1046281215 0.13446281215 0.10546281215"
 }
 
+material wood03png : 1t_material_static 
+{
+	set_texture_alias diffuseMap bark_deciduous.dds
+	set_texture_alias normalMap wood_NORM.tga
+
+	set $difUV "1 1"
+	set $diffuseCol "1 1 1"
+	set $brightness "0.05"
+	set $specularCol "0.1036 0.101 0.152"
+	set $shininess "32"
+}
+
+material wood07png : 1t_material_static 
+{
+	set_texture_alias diffuseMap wood.png
+	set_texture_alias normalMap wood_NORM.tga
+
+	set $difUV "1 1"
+	set $diffuseCol "1 1 1"
+	set $brightness "0.05"
+	set $specularCol "0.1036 0.101 0.152"
+	set $shininess "32"
+}
+
+material terrainGrassRock : 2t_material_static
+{
+	set $uvScale "4"
+	set $uv2Scale "2"
+	
+	set $uvSpreadScale "2"
+	
+	set_texture_alias diffuseMap grass_diffuse.png
+	set_texture_alias normalMap grass_diffuse_NORM.tga
+
+	set_texture_alias diffuseMap2 rock2.png
+	set_texture_alias normalMap2 rock2_NORM.tga
+	set_texture_alias normalDetailMap rock3_NORM_NORM.tga
+	set_texture_alias dispMap rock2_DISP.png
+	set_texture_alias spreadMap spread.png
+
+	set $diffuseCol "1 1 1"
+	// specular colour multiplier (for example, red-ish)
+
+	set $specularCol "0.106281215 0.106281215 0.15081215"
+	set $specular2Weight "0"
+	
+	set $brightness "0.015"
+	// specular power (shininess) (the higher, the sharper the highlights)
+	set $shininess "64"
+
+}
 
 material terrainRock : 2t_material_static
 {
-
+	set $uvScale "2"
+	set $uv2Scale "2"
+	
 	//set_texture_alias diffuseMap ConcreteNew0007_2_S.bmp
 	//set_texture_alias normalMap ConcreteNew0007_2_S_NORM.tga
 
@@ -83,6 +164,7 @@ material terrainRock : 2t_material_static
 	set $shininess "64"
 
 }
+
 
 material building4Mat : cheap_material_dynamic_sop
 {
@@ -157,17 +239,6 @@ material wood1Mat : cheap_material_dynamic_op
 	set $shininess "32"
 }
 
-material wood07png : 1t_material_static 
-{
-	set_texture_alias diffuseMap wood.png
-	set_texture_alias normalMap wood_NORM.tga
-
-	set $difUV "1 1"
-	set $diffuseCol "1 1 1"
-	set $brightness "0.05"
-	set $specularCol "0.1036 0.101 0.152"
-	set $shininess "32"
-}
 
 material glassMat1 : glass_material_dynamic_op 
 {
@@ -741,7 +812,7 @@ material woodPlateMatVC : cheap_material_dynamic_opAlmvc
 
 }
 
-material BushMat: cheap_material_dynamic_opLeaf
+material BushMat0: cheap_material_dynamic_opLeaf
 {
 	set_texture_alias diffuseMap bush13.tga
 	set_texture_alias normalMap ConcreteNew0007_2_S_NORM.tga
@@ -974,22 +1045,6 @@ material buildingLow2Mat : cheap_material_dynamic_sop
 	set $shininess "64"
 }
 
-material grassMat : 1t_material_static 
-{
-	set_texture_alias diffuseMap grass_diffuse.png
-	set_texture_alias normalMap grass_diffuse_NORM.tga
-
-	set $difUV "2 2"
-
-	set $diffuseCol "0.58015 0.58015 0.58015"
-	// specular colour multiplier (for example, red-ish)
-
-	set $specularCol "0.00005 0.00005 0.00005"
-	set $brightness "0.005"
-	// specular power (shininess) (the higher, the sharper the highlights)
-	set $shininess "16"
-
-}
 
 material  mMat : pmf2s_material_dynamic_op 
 {

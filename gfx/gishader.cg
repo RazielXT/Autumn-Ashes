@@ -31,7 +31,7 @@ void myvs_vs(uniform float4x4 wmat,
     uv0 = uv;
 }
 
-void myvs_Leafvs(uniform float4x4 wvpmat,
+void myvs_Leafvs(uniform float4x4 vpmat,
 	uniform float4x4 wMat,
     in float4 inPos : POSITION,
     out float4 pos : POSITION,
@@ -41,32 +41,38 @@ void myvs_Leafvs(uniform float4x4 wvpmat,
     out float2 uv0 : TEXCOORD1,
     uniform float time,
     uniform float speed,
-    uniform float3 camPos)
+    uniform float3 camPos,
+	uniform float4 depthRange)
 {
 
 	speed = saturate(speed/3);
-   float3 wpos = mul(wMat, inPos).xyz;
+	float4 wpos = mul(wMat, inPos);
+
+	/*float3 plVector = wpos.xyz-camPos;
+	float playerDist = 3;
+	float plTouchW = max(0,1 - length(plVector)/playerDist);
+	wpos.y += -2*plTouchW*speed;
+*/
    float add = max((3-length(wpos-camPos))/3,0)*speed;
 
 	float animSpeed = 3;
-   	float animScale = 0.5;
-	float animSize = 5;
-	
-    float var = animSize*sin(time+inPos.x*animScale*3)*(add+0.2)/6;
-    float var2 = animSize*sin(time*animSpeed+(inPos.z + inPos.y + inPos.x)*animScale)*(add+0.2)/3;
-	float var3 = speed*sin(time*3+inPos.y*animScale+var)*add;
+	float animScale = 2.5;
+	float animSize = 3;
+
+	float var = animSize*sin(time+inPos.x*animScale*3)*(add+0.2)/6;
+	float var2 = animSize*sin(time*animSpeed+(inPos.z + inPos.y + inPos.x)*animScale)*(add+0.2)/3;
+	float var3 = sin(time*3+inPos.y*animScale+var + var2)*add;
 
 
-	
-   inPos.x+=(var+var3)*c.w;
-   inPos.z+=(var2+var3)*c.w;
+	wpos.x+=(var-var2)*c.w;
+	wpos.z+=(var2+var3)*c.w;
 
-    pos = mul(wvpmat, inPos);
+	pos = mul(vpmat, wpos);
 
-    oDepth.x = pos.z;
-   oDepth.y = pos.w;
+	oDepth.x = pos.z;
+	oDepth.y = pos.w;
 
-    uv0 = uv;
+	uv0 = uv;
 }
 
 float4 myps_ps(uniform sampler2D material: register(s0),
@@ -86,7 +92,7 @@ float4 myps2_ps(uniform sampler2D material: register(s0),
 			): COLOR0
 {
 	float4 color=tex2D(material, uv);
-	if(color.a<0.8)
+	if(color.a<0.5)
 		discard;
 
 	return color;

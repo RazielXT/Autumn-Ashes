@@ -28,7 +28,7 @@ void shadow_caster_ps(
    uniform float alphaTest,
    out float4 oColour   : COLOR)
 {
-   if (tex2D(pDiffuseMap, uv).a < alphaTest) // check for alpha value of material's texture and discard of pixel is transparent
+   if (tex2D(pDiffuseMap, uv).a < 0.35) // check for alpha value of material's texture and discard of pixel is transparent
    {
       discard;
    }

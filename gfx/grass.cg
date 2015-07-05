@@ -28,32 +28,35 @@ void main_vp(
 {
 	float4 position = iPosition;
 	float dist = distance(camPos.xz, position.xz);
-	oColor.a = saturate(2.0f - (2.0f * dist / (fadeRange+110)));
+	oColor.a = saturate(2.0f - (2.0f * dist / (fadeRange+110)));	
+	
 	float oldposx = position.z;
 	float offset = 0;
 	
 	//distance fog
 	float insideFog = saturate((dist - fogParams.y) / fogParams.z)*fogColor.a;
 	float3 atmFog = fogColor.rgb;
-	oColor.rgb = lerp(iColor.rgb, atmFog, insideFog);
+	oColor.rgb = lerp(float3(0.45,0.5,0.21), atmFog, insideFog)*tNormal.y;
 	
 	if (iUV.y == 0.0f)
 	{
 		offset = sin(time + oldposx * frequency);
 		position += direction * offset;
 	}
-	//else
+	else
 	{	
-		float diffuse = saturate(dot(-float3(0.35,-0.527,-0.77), float3(0,1,0)));
+		float diffuse = saturate(dot(-lightDir,tNormal.xyz));
 		
-		if(diffuse<0.4)
-			oColor.rgb *= 0;
+
+		oColor.rgb *= lerp(0.35,1,diffuse);
 	}
-	
+
 	oPosition = mul(worldViewProj, position);
 	oUV.xy = iUV.xy;
 	oUV.zw = oPosition.zw;
 	oPos.xy = iColor.xy;
+	
+	oColor.a = oColor.a*0.0001 + 1 - saturate((oUV.z-50)/20);
 	
 	// Calculate the position of vertex in light space
 	oLightPosition0 = mul(texWorldViewProjMatrix0, position);

@@ -12,7 +12,7 @@ vertex_program PSSM/shadow_caster_vs cg
 	{
 		param_named_auto wvpMat worldviewproj_matrix
 		// this is the scene's depth range
-		//param_named_auto depthRange			scene_depth_range
+		param_named_auto depthRange			scene_depth_range
 		//param_named_auto optimalAdustFactor	custom 0
 	}
 }

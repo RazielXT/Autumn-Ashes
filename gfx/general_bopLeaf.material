@@ -31,7 +31,8 @@ material cheap_material_dynamic_opLeaf
     set $brightness "0.05"
 	set $alphaTest "0.37" 
 	set $enlighten "1.0"
-
+	set $vcWeight "0.7"
+	
     technique
     {
         
@@ -85,6 +86,7 @@ material cheap_material_dynamic_opLeaf
             {
 				param_named alphaTest float $alphaTest
 				param_named enlighten float $enlighten
+				param_named vcWeight float $vcWeight
             }
 
             texture_unit diffuseMap

@@ -202,7 +202,13 @@ void diffuse_ps(
 	//pm offset
 	float height = tex2D(dispMap, IN.uv.xy * uvScale).x;
 	float3 vVec = float3(IN.t.w, IN.b.w, IN.n.w);
-	float2 texCoordDisp = IN.uv.xy + (0.05 * height - 0.025) * normalize(vVec).xy;
+	float2 texCoordDispOffset = (0.05 * height - 0.025) * normalize(vVec).xy;
+	
+	float2 texCoordBase = IN.uv.xy * uvScale + texCoordDispOffset;
+	float2 texCoordBase2 = IN.uv.xy * uv2Scale + texCoordDispOffset;
+	float2 texCoordMax = IN.uv.xy * uvMaxScale + texCoordDispOffset;
+	float2 texCoordDetail = IN.uv.xy * uvDetailScale + texCoordDispOffset;
+	float2 texCoordSpread = IN.uv.xy * uvSpreadScale + texCoordDispOffset;
 	
 	//spread
 	//////////////////////////////////////////////////
@@ -212,8 +218,8 @@ void diffuse_ps(
 
 	//inside=pow(inside,1);
 
-	float spread0=tex2D(spreadMap,texCoordDisp*uvSpreadScale).g;
-	float spread1=tex2D(spreadMap, texCoordDisp*uvSpreadScale*3).g;
+	float spread0=tex2D(spreadMap,texCoordSpread).g;
+	float spread1=tex2D(spreadMap, texCoordSpread*3).g;
 
 	spread0+=inside;
 	spread0=pow(spread0,1+spreadVC);
@@ -229,16 +235,16 @@ void diffuse_ps(
 
 	
 	//base normal+detail
-	float3 normalTex = tex2D(normalMap, texCoordDisp*uvScale).rgb;
-	float3 normalTex2 = tex2D(normalDetailMap, texCoordDisp*uvDetailScale).rgb;
+	float3 normalTex = tex2D(normalMap, texCoordBase).rgb;
+	float3 normalTex2 = tex2D(normalDetailMap, texCoordDetail).rgb;
 	normalTex = color_blend(normalTex,normalTex2).rgb;
 	
 	//lerp with 2. normal
-	normalTex2 = tex2D(normalMap2, texCoordDisp * uv2Scale).rgb;
+	normalTex2 = tex2D(normalMap2, texCoordBase2).rgb;
 	normalTex = lerp(normalTex2, normalTex, inter);
 
 	//blend with max detail normal
-	normalTex2 = tex2D(normalDetailMap, texCoordDisp*uvMaxScale).rgb;
+	normalTex2 = tex2D(normalDetailMap, texCoordMax).rgb;
 	normalTex.rgb = lerp(normalTex.rgb, color_blend(normalTex,normalTex2).rgb, IN.wp.w);
 	
 	//lighting
@@ -250,7 +256,7 @@ void diffuse_ps(
 	float dist = length(eyeDir);
 	eyeDir = normalize(eyeDir);
 
-	float4 diffuseTex = lerp(tex2D(diffuseMap2, texCoordDisp * uv2Scale), tex2D(diffuseMap, texCoordDisp * uvScale), inter);
+	float4 diffuseTex = lerp(tex2D(diffuseMap2, texCoordBase2), tex2D(diffuseMap, texCoordBase), inter);
 	float diffuseLight = dot(lightDir, normal);
 
 	float3 camDir = normalize(camPos - IN.wp.xyz);
