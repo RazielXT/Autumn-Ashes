@@ -2350,7 +2350,7 @@ private:
         EventTaskAndID eri;
         int countAll = 0;
 
-        Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("\nBEGGINING OF TRIGGERS ::", LML_NORMAL);
+        Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("BEGGINING OF TRIGGERS ::", LML_NORMAL);
 
         //for all triggers
         for (unsigned int i = 0; i < loadedTriggers.size(); i++)
@@ -2500,7 +2500,7 @@ public:
             {
                 auto type = getUserDataType(childElement);
 
-                if (type == "DetailGeometry")
+                if (type == "DetailGeometryMask")
                     loadNode(childElement);
             }
         }
