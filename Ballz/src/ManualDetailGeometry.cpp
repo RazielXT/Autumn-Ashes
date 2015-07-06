@@ -13,6 +13,13 @@ void ManualDetailGeometry::build()
         return;
 
     sg->build();
+
+	for (auto e : usedEntities)
+	{
+		Global::mSceneMgr->destroyEntity(e);
+	}
+
+	usedEntities.clear();
 }
 
 void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bool keepMesh, Vector3 color)
@@ -46,6 +53,7 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
 
             mats.updateMaterial(ent, color, info);
             sg->addEntity(ent, node->getPosition(), node->getOrientation()*qCorrect, info.generalScale*node->getScale());
+			usedEntities.push_back(ent);
         }
     }
     else
@@ -55,5 +63,6 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
 
         mats.updateMaterial(ent, color,info);
         sg->addEntity(ent, node->getPosition(), node->getOrientation()*qCorrect, node->getScale());
+		usedEntities.push_back(ent);
     }
 }

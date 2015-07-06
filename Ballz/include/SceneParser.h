@@ -872,8 +872,11 @@ private:
 
         Global::gameMgr->geometryMgr->addDetailGeometryEntity(id, node, type, keepMesh, color);
 
-        node->detachObject(ent);
-        Global::mSceneMgr->destroySceneNode(node);
+		node->detachObject(ent);
+		Global::mSceneMgr->destroySceneNode(node);
+
+		if (!keepMesh)
+			Global::mSceneMgr->destroyEntity(ent);
     }
 
     void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre::SceneManager *mSceneMgr)

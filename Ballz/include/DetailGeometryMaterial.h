@@ -8,55 +8,56 @@ class DetailGeometryMaterial
 {
     std::map<std::string, Ogre::Material*> materials;
 
-    static std::vector<std::string> darkenVCMeshes;
-    static std::vector<std::string> darkenVCMeshesDone;
+	static std::map<std::string, VCEditFunc> editVCMeshes;
+	static std::vector<std::string> editVCMeshesDone;
 
 public:
 
     static void reset()
     {
-        darkenVCMeshesDone.clear();
+		editVCMeshesDone.clear();
     }
 
     DetailGeometryMaterial()
     {
-        if (darkenVCMeshes.empty())
+		if (editVCMeshes.empty())
         {
-            darkenVCMeshes.push_back("aspenLeafs.mesh");
-            darkenVCMeshes.push_back("aspen2Leafs.mesh");
-            darkenVCMeshes.push_back("treeBunchLeafs.mesh");
-            darkenVCMeshes.push_back("treeBunchBigLeafs.mesh");
-            darkenVCMeshes.push_back("bush1.mesh");
+			auto darkenCenter = [](Ogre::Entity* e, float* pos, float*, Ogre::RGBA* color)
+			{
+				if (!color)
+					return;
+
+				float sideSize = std::max(e->getBoundingBox().getHalfSize().z, e->getBoundingBox().getHalfSize().x);
+				float ySize = e->getBoundingBox().getHalfSize().y;
+				float yCenter = e->getBoundingBox().getCenter().y;
+
+				Ogre::Vector3 vpos(pos[0], 0, pos[2]);
+				float topLight = pos[1] < yCenter ? 0.0f : std::max<float>(0.0f, (pos[1] - yCenter) / ySize);
+				float centerDark = vpos.length() / sideSize;
+
+				float dark = std::max(topLight, centerDark);
+				dark = Ogre::Math::Clamp<float>(dark, 0.0f, 1.0f);
+				*color = Ogre::ColourValue(0, 0, 0, dark).getAsARGB();
+			};
+
+			editVCMeshes["aspenLeafs.mesh"] = darkenCenter;
+			editVCMeshes["aspen2Leafs.mesh"] = darkenCenter;
+			editVCMeshes["treeBunchLeafs.mesh"] = darkenCenter;
+			editVCMeshes["treeBunchBigLeafs.mesh"] = darkenCenter;
+			editVCMeshes["bush1.mesh"] = darkenCenter;
         }
     }
 
     void updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color, DetailGeometryInfo& info)
     {
-        if (std::find(darkenVCMeshes.begin(), darkenVCMeshes.end(), ent->getMesh()->getName()) != darkenVCMeshes.end())
+		if (std::find(editVCMeshes.begin(), editVCMeshes.end(), ent->getMesh()->getName()) != editVCMeshes.end())
         {
-            if (std::find(darkenVCMeshesDone.begin(), darkenVCMeshesDone.end(), ent->getMesh()->getName()) == darkenVCMeshesDone.end())
+			if (std::find(editVCMeshesDone.begin(), editVCMeshesDone.end(), ent->getMesh()->getName()) == editVCMeshesDone.end())
             {
-                auto darken = [](Ogre::Entity* e, float* pos, float*, Ogre::RGBA* color)
-                {
-                    if (!color)
-                        return;
+				auto& edit = editVCMeshes[ent->getMesh()->getName()];
+                Global::gameMgr->geometryMgr->modifyVertexBuffer(ent, edit);
 
-                    float sideSize = std::max(e->getBoundingBox().getHalfSize().z, e->getBoundingBox().getHalfSize().x);
-                    float ySize = e->getBoundingBox().getHalfSize().y;
-                    float yCenter = e->getBoundingBox().getCenter().y;
-
-                    Ogre::Vector3 vpos(pos[0], 0, pos[2]);
-                    float topLight = pos[1] < yCenter ? 0.0f : std::max<float>(0.0f, (pos[1] - yCenter) / ySize);
-                    float centerDark = vpos.length() / sideSize;
-
-                    float dark = std::max(topLight, centerDark);
-                    dark = Ogre::Math::Clamp<float>(dark, 0.0f, 1.0f);
-                    *color = Ogre::ColourValue(0, 0, 0, dark).getAsARGB();
-                };
-
-                Global::gameMgr->geometryMgr->modifyVertexBuffer(ent, darken);
-
-                darkenVCMeshesDone.push_back(ent->getMesh()->getName());
+				editVCMeshesDone.push_back(ent->getMesh()->getName());
             }
         }
 
