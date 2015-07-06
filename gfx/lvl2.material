@@ -18,7 +18,7 @@ import pmf2s_material_dynamic_op from "general_pmf2tsop.material"
 import cheap_2normals_material_dynamic_op from "general_2n_bop.material"
 import glass_material_dynamic_op from "general_glass.material"
 import glass_material_dynamic_op from "general_glass.material"
-import vc2t_material_static from "general_vc2tex.material"
+import 2t_vc_material_static from "general_2tex_vc.material"
 import 2t_material_static from "general_2tex.material"
 import 1tAT_material_static from "general_1texAT.material" 
 import 1t_material_static from "general_1tex.material" 
@@ -29,9 +29,9 @@ material grassMat : 1t_material_static
 	set_texture_alias diffuseMap terr_dirt-grass.jpg
 	set_texture_alias normalMap grass_diffuse_NORM.tga
 
-	set $difUV "2 2"
+	set $difUV "10 10"
 
-	set $diffuseCol "0.58015 0.58015 0.58015"
+	set $diffuseCol "1 1 1"
 	// specular colour multiplier (for example, red-ish)
 
 	set $specularCol "0.00005 0.00005 0.00005"
@@ -58,8 +58,7 @@ material  branch_summerpng: cheap_material_dynamic_opLeaf
 	set_texture_alias diffuseMap bush_a.tga
 	set_texture_alias normalMap bush_a_NORM.tga
 
-	set $enlighten "1.8"
-	set $diffuseCol "2.0 1.0 0.5"
+	set $enlighten "1.4"
 	set $specularCol "1 1 0.5"
 }
 
@@ -68,7 +67,9 @@ material  bushMat: cheap_material_dynamic_opLeaf
 	set_texture_alias diffuseMap bush_a.tga
 	set_texture_alias normalMap bush_a_NORM.tga
 
-	set $vcWeight "0.5"
+	set $enlighten "1.8"
+	set $diffuseCol "1.5 1.0 0.5"
+	set $vcWeight "0.2"
 	//set $enlighten "0.8"
 	//set $diffuseCol "1.5 1.0 0.2"
 	set $specularCol "1 1 0.5"
@@ -84,7 +85,27 @@ material  branch_summer2png: cheap_material_dynamic_opLeaf
 	set $specularCol "0.1046281215 0.13446281215 0.10546281215"
 }
 
-material wood03png : 1t_material_static 
+material wood03png : 2t_vc_material_static
+{
+	set $uvScale "1"
+	set $uvSpreadScale "0.5" 
+	set $uv2Scale "1" 
+	set $uvMinMaxDetailScale "3.7 0.15" 
+
+	set_texture_alias dispMap wood0_DISP.png
+	set_texture_alias spreadMap wood0_DISP.png
+	
+	set_texture_alias diffuseMap bark_deciduous.dds
+	set_texture_alias normalMap wood_NORM.tga
+	
+	set_texture_alias diffuseMap2 grass_diffuse.png
+	set_texture_alias normalMap2 grass_diffuse_NORM.tga
+
+	set $diffuseCol "1 1 1"
+	set $specularCol "0.1 0.1 0.05"
+}
+
+material wood03png2 : 1t_material_static 
 {
 	set_texture_alias diffuseMap bark_deciduous.dds
 	set_texture_alias normalMap wood_NORM.tga
@@ -559,7 +580,7 @@ material terrainRock2 : pm2tVC_material_dynamic_op
 }
 
 
-material woodWallVC : vc2t_material_static
+material woodWallVC : 2t_vc_material_static
 {
 	set $uvScale "0.5"
 	set $uvSpreadScale "0.5" 

@@ -12,7 +12,7 @@ fragment_program SSAO/GBuffer_fp hlsl
     target ps_3_0 
 }
 
-material 1t_material_static
+material 2t_vc_material_static
 {
     set $diffuseCol "1 1 1"
 	set $specular2Weight "1"
@@ -21,7 +21,9 @@ material 1t_material_static
     set $brightness "0.5"  
 
 	set $uvScale "1"
-	set $detailScale "5" 
+	set $uvSpreadScale "0.5" 
+	set $uv2Scale "1" 
+	set $uvMinMaxDetailScale "3.7 0.15" 
 	
     technique
     {
@@ -41,17 +43,20 @@ material 1t_material_static
         {
 
 			depth_write off
-            vertex_program_ref diffuse_vs_1tex
+            vertex_program_ref diffuse_vs_vc2tex
             {
             }
 
-            fragment_program_ref diffuse_ps_1tex
+            fragment_program_ref diffuse_ps_vc2tex
             {
 				param_named uvScale float $uvScale
-				param_named detailScale float $detailScale
+				param_named uvSpreadScale float $uvSpreadScale
+				param_named uv2Scale float $uv2Scale
+				param_named uvMinMaxDetailScale float2 $uvMinMaxDetailScale
 				
 				param_named specular2Weight float $specular2Weight
             }
+
 
             diffuse $diffuseCol
             specular $specularCol $brightness $shininess
@@ -73,6 +78,24 @@ material 1t_material_static
             {
 //filtering trilinear
 		     texture gray.bmp
+            }
+
+	       texture_unit spreadMap
+            {
+//filtering trilinear
+		     texture gray.bmp
+            }
+
+            texture_unit diffuseMap2
+            {
+		//filtering trilinear
+                texture white.bmp
+            }
+
+            texture_unit normalMap2
+            {
+//filtering trilinear
+		     texture flat_n.png
             }
 
 		 texture_unit shadow_tex0
