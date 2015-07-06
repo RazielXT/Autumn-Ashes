@@ -13,6 +13,7 @@
 #include "PostProcessMgr.h"
 #include "NewtonListener.h"
 #include "DebugKeys.h"
+#include <vector>
 
 using namespace Ogre;
 
@@ -20,8 +21,23 @@ class MainListener : public FrameListener, public OIS::MouseListener, public OIS
 {
 public:
 
+
     void reloadShaders()
     {
+		std::string matsFile("lvl2.material");
+
+		std::vector<std::string> reloadedMats;
+        auto mit = MaterialManager::getSingleton().getResourceIterator();
+
+        while (mit.hasMoreElements())
+        {
+			MaterialPtr mat = mit.getNext();
+            mat->reload();
+
+			if (mat->getOrigin() == matsFile)
+				reloadedMats.push_back(mat->getName());
+        }
+
         auto it = HighLevelGpuProgramManager::getSingleton().getResourceIterator();
 
         while (it.hasMoreElements())
@@ -29,6 +45,25 @@ public:
             HighLevelGpuProgramPtr gpuProgram = it.getNext();
             gpuProgram->reload();
         }
+
+		Ogre::SceneManager::MovableObjectIterator mIterator = Global::mSceneMgr->getMovableObjectIterator("Entity");
+		while (mIterator.hasMoreElements())
+		{
+			auto e = (Entity*)mIterator.getNext();
+
+			if (e->getNumSubEntities() > 0)
+			{
+				auto sub = e->getSubEntity(0);
+				auto mat = sub->getMaterialName();
+
+				if (std::find(reloadedMats.begin(), reloadedMats.end(), mat) != reloadedMats.end())
+				{
+					sub->setMaterialName("BaseWhite");
+					sub->setMaterialName(mat);
+				}
+			}
+		}
+
     }
 
     ~MainListener()

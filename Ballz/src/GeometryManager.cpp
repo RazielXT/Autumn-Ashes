@@ -129,7 +129,7 @@ void loadPoint(float* pReal, Ogre::RGBA pCReal, GeometryMaskPoint& out, SceneNod
     out.color.setAsARGB(pCReal);
 }
 
-bool GeometryManager::modifyVertexBuffer(Entity* ent, std::function<void(Entity*, float*, float*, Ogre::RGBA*)> editFunc)
+bool GeometryManager::modifyVertexBuffer(Entity* ent, VCEditFunc editFunc, void* data)
 {
     auto node = ent->getParentSceneNode();
     auto m = ent->getMesh().get()->getSubMesh(0);
@@ -157,7 +157,7 @@ bool GeometryManager::modifyVertexBuffer(Entity* ent, std::function<void(Entity*
         if (posElemTC)
             posElemTC->baseVertexPointerToElement(vertex, &pTCReal);
 
-        editFunc(ent, pReal, pTCReal, pCReal);
+		editFunc(ent, pReal, pTCReal, pCReal, data);
 
         vertex += vbuf->getVertexSize();
     }
