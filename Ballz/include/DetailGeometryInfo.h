@@ -38,6 +38,8 @@ struct DetailGeometryInfo
             info.stepSize.x = 1;
             info.stepSize.y = 1;
             info.generalScale = 5.25f;
+            info.maxDistance = 100;
+            info.gridSize = 35;
 
             info.possibleEntities.push_back("bush1.mesh");
         }

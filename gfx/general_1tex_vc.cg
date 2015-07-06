@@ -6,9 +6,8 @@ struct VIn
 	float4 p : POSITION;
 	float3 n : NORMAL;
 	float3 t : TANGENT;
-	float4 c : COLOR;
+	float3 c : COLOR;
 	float2 uv : TEXCOORD0;
-	float2 uv2 : TEXCOORD1;
 };
 
 struct VOut
@@ -19,11 +18,11 @@ struct VOut
 	float4 n : TEXCOORD2;
 	float4 t : TEXCOORD3;
 	float4 b : TEXCOORD4;
-	float4 vc : TEXCOORD5;
-	float4 oLightPosition0 : TEXCOORD6;
-	float4 oLightPosition1 : TEXCOORD7;
-	float4 oLightPosition2 : TEXCOORD8;
-	float4 oLightPosition3 : TEXCOORD9;
+	float4 oLightPosition0 : TEXCOORD5;
+	float4 oLightPosition1 : TEXCOORD6;
+	float4 oLightPosition2 : TEXCOORD7;
+	float4 oLightPosition3 : TEXCOORD8;
+	float3 c : TEXCOORD9;
 };
 
 struct PIn
@@ -33,11 +32,10 @@ struct PIn
 	float4 n : TEXCOORD2;
 	float4 t : TEXCOORD3;
 	float4 b : TEXCOORD4;
-	float4 vc : TEXCOORD5;
-	float4 LightPosition0 : TEXCOORD6;
-	float4 LightPosition1 : TEXCOORD7;
-	float4 LightPosition2 : TEXCOORD8;
-	float4 LightPosition3 : TEXCOORD9;
+	float4 LightPosition0 : TEXCOORD5;
+	float4 LightPosition1 : TEXCOORD6;
+	float4 LightPosition2 : TEXCOORD7;
+	float4 LightPosition3 : TEXCOORD8;
 };
 
 
@@ -54,11 +52,10 @@ VOut diffuse_vs(VIn IN,
 {
 	VOut OUT;
 	OUT.wp.xyz = mul(wMat, IN.p).xyz;
-	OUT.wp.w = 1-IN.uv2.x;
 	
 	OUT.p = mul(wvpMat, IN.p);
-	OUT.vc = IN.c;
-
+	OUT.c = IN.c;
+	
 	OUT.uv.xy = IN.uv.xy;
 	OUT.uv.zw = OUT.p.zw;
 
@@ -159,41 +156,36 @@ float3 color_blend(float3 normalTex, float3 normalTex2)
 
 void diffuse_ps(
 	PIn IN,
+	uniform float3 diffuseColor,
 	uniform float4 lightDif0,
 	uniform float4 lightPos0,
 	uniform float4 matSpec0,
 	uniform float matShininess,	
 	uniform float uvScale,
-	uniform float uvSpreadScale,
-	uniform float uv2Scale,
-	uniform float2 uvMinMaxDetailScale,
-	uniform float specular2Weight,
+	uniform float detailScale,
 	uniform float3 camPos,
-	uniform float ambientWeight,
-	uniform float3 ambientColor,
 	uniform float4 fogColor,
 	uniform float4 fogParams,
+	uniform float ambientWeight,
+	uniform float3 ambientColor,
+	uniform float specular2Weight,
 	uniform float4x4 iTWMat,
 	float2 screenSpace : WPOS,
 	uniform sampler2D diffuseMap : register(s0),
 	uniform sampler2D normalMap : register(s1),
 	uniform sampler2D dispMap : register(s2),
-	uniform sampler2D spreadMap : register(s3),
-	uniform sampler2D diffuseMap2 : register(s4),
-	uniform sampler2D normalMap2 : register(s5),
-	uniform sampler2D shadowMap0 : register(s6),
-	uniform sampler2D shadowMap1 : register(s7),
-	uniform sampler2D shadowMap2 : register(s8),
-	uniform sampler2D shadowMap3 : register(s9),
-	uniform sampler2D normalDetailMap : register(s10),
+	uniform sampler2D shadowMap0 : register(s3),
+	uniform sampler2D shadowMap1 : register(s4),
+	uniform sampler2D shadowMap2 : register(s5),
+	uniform sampler2D shadowMap3 : register(s6),
+	uniform sampler2D normalDetailMap : register(s7),
 	out float4 color0 : COLOR0,
 	out float4 color1 : COLOR1,
 	out float4 color2 : COLOR2,
 	out float4 color3 : COLOR3
 	)
 {
-	float uvDetailScale = uvScale*uvMinMaxDetailScale.x;
-	float uvMaxScale = uvScale*uvMinMaxDetailScale.y;
+	float uvDetailScale = uvScale*detailScale;
 	
 	// direction
 	float3 lightDir = normalize(lightPos0.xyz - (lightPos0.w * IN.wp.xyz));
@@ -202,43 +194,11 @@ void diffuse_ps(
 	float height = tex2D(dispMap, IN.uv.xy * uvScale).x;
 	float3 vVec = float3(IN.t.w, IN.b.w, IN.n.w);
 	float2 texCoordDisp = IN.uv.xy + (0.05 * height - 0.025) * normalize(vVec).xy;
-	
-	//spread
-	//////////////////////////////////////////////////
-	float spreadVC = IN.vc.w;
-	float inside=smoothstep(0.25,1,spreadVC);
-	//inside+=smoothstep(0.381385,1,spreadVC);
-
-	//inside=pow(inside,1);
-
-	float spread0=tex2D(spreadMap,texCoordDisp*uvSpreadScale).g;
-	float spread1=tex2D(spreadMap, texCoordDisp*uvSpreadScale*3).g;
-
-	spread0+=inside;
-	spread0=pow(spread0,1+spreadVC);
-
-	spread1-=(1-spreadVC)/2;
-	spread1=pow(spread1,1+spreadVC);	
-
-	spread0*=inside+spread1;
-	spread0=smoothstep(0.121,0.3450,spread0);
-	spreadVC=smoothstep(0.01,0.125,spreadVC);
-	float inter=saturate(spread0*spreadVC+inside);
-	///////////////////////////////////////////////////////
-
-	
+		
 	//base normal+detail
 	float3 normalTex = tex2D(normalMap, texCoordDisp*uvScale).rgb;
 	float3 normalTex2 = tex2D(normalDetailMap, texCoordDisp*uvDetailScale).rgb;
 	normalTex = color_blend(normalTex,normalTex2).rgb;
-	
-	//lerp with 2. normal
-	normalTex2 = tex2D(normalMap2, texCoordDisp * uv2Scale).rgb;
-	normalTex = lerp(normalTex2, normalTex, inter);
-
-	//blend with max detail normal
-	normalTex2 = tex2D(normalDetailMap, texCoordDisp*uvMaxScale).rgb;
-	normalTex.rgb = lerp(normalTex.rgb, color_blend(normalTex,normalTex2).rgb, IN.wp.w);
 	
 	//lighting
 	float3x3 tbn = float3x3(IN.t.xyz, IN.b.xyz, IN.n.xyz);
@@ -246,16 +206,17 @@ void diffuse_ps(
 	normal = normalize(mul((float3x3)iTWMat, normal));
 
 	float3 eyeDir = IN.wp.xyz - camPos.xyz;
-	float dist = length(eyeDir);
+	float distance = length(eyeDir);
 	eyeDir = normalize(eyeDir);
 
-	float4 diffuseTex = lerp(tex2D(diffuseMap2, texCoordDisp * uv2Scale), tex2D(diffuseMap, texCoordDisp * uvScale), inter);
+	float4 diffuseTex = tex2D(diffuseMap, texCoordDisp * uvScale);
+	diffuseTex.rgb *= diffuseColor;
+	
 	float diffuseLight = dot(lightDir, normal);
 
 	float3 camDir = normalize(camPos - IN.wp.xyz);
 	float3 halfVec = normalize(lightDir + camDir);
 	float3 specular = pow(max(dot(normal, halfVec), 0), matShininess);
-
 	
 	//indirect specular
 	tbn = transpose(tbn);
@@ -320,7 +281,7 @@ void diffuse_ps(
 	diffuseLight = abs(max(diffuseLight,diffuseLight/2));
 
 	float3 diffuseContrib = saturate(diffuseLight* lightDif0.rgb + vertexLight);
-	float specWeight = lerp(specular2Weight, 1, inter);
+	float specWeight = specular2Weight;
 	float3 specularContrib = ((specular + specular2*3) * matSpec0.rgb*specWeight );
 	float3 rawColor = (diffuseContrib + specularContrib);
 	
@@ -331,7 +292,7 @@ void diffuse_ps(
 	float4 output = float4(rawColor*diffuseTex*lerp(ambientLight, max(directLight,vertexLight),darkness),1);
 	
 	//distance fog
-	float insideFog = saturate((dist - fogParams.y) / fogParams.z)*fogColor.a;
+	float insideFog = saturate((distance - fogParams.y) / fogParams.z)*fogColor.a;
 	float3 atmFog = fogColor.rgb;
 	output.rgb = lerp(output.rgb, atmFog, insideFog);
 

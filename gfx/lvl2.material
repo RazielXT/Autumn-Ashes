@@ -64,12 +64,12 @@ material  branch_summerpng: cheap_material_dynamic_opLeaf
 
 material  bushMat: cheap_material_dynamic_opLeaf
 {
-	set_texture_alias diffuseMap bush_a.tga
-	set_texture_alias normalMap bush_a_NORM.tga
+	set_texture_alias diffuseMap bush.dds
+	set_texture_alias normalMap bush_NORM.tga
 
-	set $enlighten "1.8"
+	set $enlighten "1.5"
 	set $diffuseCol "1.5 1.0 0.5"
-	set $vcWeight "0.2"
+	set $vcWeight "0.5"
 	//set $enlighten "0.8"
 	//set $diffuseCol "1.5 1.0 0.2"
 	set $specularCol "1 1 0.5"
