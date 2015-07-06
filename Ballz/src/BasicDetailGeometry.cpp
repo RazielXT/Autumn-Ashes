@@ -69,6 +69,11 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
         }
 
     sg->build();
+
+    for (auto e : temps)
+        Global::mSceneMgr->destroyEntity(e);
+
+    temps.clear();
 }
 
 void BasicDetailGeometry::clear()
@@ -111,6 +116,8 @@ void BasicDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, V
 
         mats.updateMaterial(ent, color,info);
         sg->addEntity(ent, pos, randomYaw, Vector3(scale));
+
+        temps.push_back(ent);
     }
 
     /*OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::mWorld, ent, 0));

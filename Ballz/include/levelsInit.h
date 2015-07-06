@@ -265,7 +265,7 @@ void createTestLevel2()
 {
     Global::mSceneMgr->setAmbientLight(ColourValue(0.2f, 0.2f, 0.1f));
 
-    Global::mSceneMgr->setSkyBox(true, "CloundyNoonSkyBox");
+    Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
 
     PostProcessMgr* ppMgr = Global::mPPMgr;
     ppMgr->setToScaryBloom();

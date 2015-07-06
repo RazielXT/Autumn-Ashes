@@ -21,6 +21,7 @@ protected:
     virtual bool acceptsWeight(float w) const;
     void placeObject(Ogre::Vector3 pos, Ogre::Quaternion or, float scale, Ogre::Vector3 color);
 
+    std::vector<Ogre::Entity*> temps;
     Ogre::StaticGeometry* sg = nullptr;
     DetailGeometryInfo info;
     DetailGeometryMaterial mats;

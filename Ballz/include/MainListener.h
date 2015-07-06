@@ -24,20 +24,51 @@ public:
 
     void reloadShaders()
     {
-		std::string matsFile("lvl2.material");
+        //std::string matsFile("lvl2.material");
 
-		std::vector<std::string> reloadedMats;
+        /*std::vector<std::string> reloadedMats;
         auto mit = MaterialManager::getSingleton().getResourceIterator();
 
         while (mit.hasMoreElements())
         {
-			MaterialPtr mat = mit.getNext();
+        	MaterialPtr mat = mit.getNext();
             mat->reload();
 
-			if (mat->getOrigin() == matsFile)
-				reloadedMats.push_back(mat->getName());
+        	if (mat->getOrigin() == matsFile)
+        		reloadedMats.push_back(mat->getName());
+        }*/
+        /*
+        Ogre::SceneManager::MovableObjectIterator mIterator = Global::mSceneMgr->getMovableObjectIterator("Entity");
+        std::vector<std::pair<Ogre::Entity*, std::string>> ents;
+
+        while (mIterator.hasMoreElements())
+        {
+            auto e = (Ogre::Entity*)mIterator.getNext();
+
+            if (e->getNumSubEntities() > 0)
+            {
+                auto sub = e->getSubEntity(0);
+                auto matName = sub->getMaterialName();
+                auto mat = sub->getMaterial();
+
+                //if (std::find(reloadedMats.begin(), reloadedMats.end(), mat) != reloadedMats.end())
+                if (mat->getOrigin() == matsFile)
+                {
+                    sub->setMaterialName("BaseWhite");
+                    mat->unload();
+
+                    ents.push_back(std::make_pair(e, matName));
+                }
+            }
         }
 
+        MaterialManager::getSingleton().parseScript(Ogre::ResourceGroupManager::getSingleton().openResource(matsFile), "General");
+
+        for (auto& p : ents)
+        {
+            p.first->setMaterialName(p.second);
+        }
+        */
         auto it = HighLevelGpuProgramManager::getSingleton().getResourceIterator();
 
         while (it.hasMoreElements())
@@ -45,25 +76,6 @@ public:
             HighLevelGpuProgramPtr gpuProgram = it.getNext();
             gpuProgram->reload();
         }
-
-		Ogre::SceneManager::MovableObjectIterator mIterator = Global::mSceneMgr->getMovableObjectIterator("Entity");
-		while (mIterator.hasMoreElements())
-		{
-			auto e = (Entity*)mIterator.getNext();
-
-			if (e->getNumSubEntities() > 0)
-			{
-				auto sub = e->getSubEntity(0);
-				auto mat = sub->getMaterialName();
-
-				if (std::find(reloadedMats.begin(), reloadedMats.end(), mat) != reloadedMats.end())
-				{
-					sub->setMaterialName("BaseWhite");
-					sub->setMaterialName(mat);
-				}
-			}
-		}
-
     }
 
     ~MainListener()

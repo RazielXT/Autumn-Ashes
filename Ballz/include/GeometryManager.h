@@ -4,7 +4,7 @@
 #include <vector>
 #include "DetailGeometry.h"
 
-using VCEditFunc = std::function<void(Entity*, float*, float*, Ogre::RGBA*, void* userData)>;
+using VCEditFunc = std::function<void(Ogre::Entity*, float*, float*, Ogre::RGBA*, void* userData)>;
 
 class GeometryManager
 {
@@ -22,7 +22,7 @@ public:
     void resetMaskedDetailGeometries();
 
     //editFunc = (entity*, pos*, tc*, vc*)
-	bool modifyVertexBuffer(Ogre::Entity* ent, VCEditFunc editFunc, void* data = nullptr);
+    bool modifyVertexBuffer(Ogre::Entity* ent, VCEditFunc editFunc, void* data = nullptr);
 
 private:
 

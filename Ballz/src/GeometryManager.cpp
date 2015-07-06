@@ -7,8 +7,8 @@
 
 using namespace Ogre;
 
-std::vector<std::string> DetailGeometryMaterial::darkenVCMeshes;
-std::vector<std::string> DetailGeometryMaterial::darkenVCMeshesDone;
+std::map<std::string, VCEditFunc> DetailGeometryMaterial::editVCMeshes;
+std::vector<std::string> DetailGeometryMaterial::editVCMeshesDone;
 
 void GeometryManager::forgetPagedGeometry(Forests::PagedGeometry *g)
 {
@@ -157,7 +157,7 @@ bool GeometryManager::modifyVertexBuffer(Entity* ent, VCEditFunc editFunc, void*
         if (posElemTC)
             posElemTC->baseVertexPointerToElement(vertex, &pTCReal);
 
-		editFunc(ent, pReal, pTCReal, pCReal, data);
+        editFunc(ent, pReal, pTCReal, pCReal, data);
 
         vertex += vbuf->getVertexSize();
     }

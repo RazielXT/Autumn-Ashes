@@ -11,7 +11,7 @@ protected:
 
     DetailGeometryMaterial mats;
 
-	std::vector<Ogre::Entity*> usedEntities;
+    std::vector<Ogre::Entity*> usedEntities;
     Ogre::StaticGeometry* sg = nullptr;
     void build();
 
