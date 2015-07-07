@@ -32,7 +32,6 @@ fragment_program diffuse_ps_1texAT cg
         param_named_auto camPos camera_position
         param_named_auto matShininess surface_shininess
         param_named_auto lightPos0 light_position 0
-        param_named_auto lightAtt0 light_attenuation 0
         param_named_auto iTWMat inverse_transpose_world_matrix
         param_named_auto fogColor fog_colour
 		param_named_auto fogParams fog_params

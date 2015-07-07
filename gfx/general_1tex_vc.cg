@@ -193,11 +193,14 @@ void diffuse_ps(
 	//pm offset
 	float height = tex2D(dispMap, IN.uv.xy * uvScale).x;
 	float3 vVec = float3(IN.t.w, IN.b.w, IN.n.w);
-	float2 texCoordDisp = IN.uv.xy + (0.05 * height - 0.025) * normalize(vVec).xy;
-		
+	float2 texCoordDispOffset = (0.05 * height - 0.025) * normalize(vVec).xy;
+	
+	float2 texCoordBase = IN.uv.xy * uvScale + texCoordDispOffset;
+	float2 texCoordDetail = IN.uv.xy * uvDetailScale + texCoordDispOffset;
+	
 	//base normal+detail
-	float3 normalTex = tex2D(normalMap, texCoordDisp*uvScale).rgb;
-	float3 normalTex2 = tex2D(normalDetailMap, texCoordDisp*uvDetailScale).rgb;
+	float3 normalTex = tex2D(normalMap, texCoordBase).rgb;
+	float3 normalTex2 = tex2D(normalDetailMap, texCoordDetail).rgb;
 	normalTex = color_blend(normalTex,normalTex2).rgb;
 	
 	//lighting
@@ -209,7 +212,7 @@ void diffuse_ps(
 	float distance = length(eyeDir);
 	eyeDir = normalize(eyeDir);
 
-	float4 diffuseTex = tex2D(diffuseMap, texCoordDisp * uvScale);
+	float4 diffuseTex = tex2D(diffuseMap, texCoordBase);
 	diffuseTex.rgb *= diffuseColor;
 	
 	float diffuseLight = dot(lightDir, normal);

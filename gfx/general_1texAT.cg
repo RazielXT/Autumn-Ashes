@@ -149,7 +149,6 @@ void diffuse_ps(
 	PIn IN,
 	uniform float4 lightDif0,
 	uniform float4 lightPos0,
-	uniform float4 lightAtt0,
 	uniform float4 matSpec0,
 	uniform float matShininess,	
 	uniform float uvScale,
