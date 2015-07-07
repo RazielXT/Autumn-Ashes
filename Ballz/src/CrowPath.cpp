@@ -116,7 +116,7 @@ bool CrowPath::update(Ogre::Real tslf, Ogre::SceneNode* mNode, Ogre::Quaternion&
         if (animState.mTempPos == animState.mTempLenght)
         {
             animState.clearTemp();
-            Global::DebugPrint("fly");
+            DEGUB_CROWS("fly");
             state = Flying;
             return true;
         }
@@ -126,7 +126,7 @@ bool CrowPath::update(Ogre::Real tslf, Ogre::SceneNode* mNode, Ogre::Quaternion&
         if (animState.mTempPos == animState.mTempLenght)
         {
             animState.clear();
-            Global::DebugPrint("ground");
+            DEGUB_CROWS("ground");
             state = Standing;
             return true;
         }
@@ -136,7 +136,7 @@ bool CrowPath::update(Ogre::Real tslf, Ogre::SceneNode* mNode, Ogre::Quaternion&
         if (animState.mTempPos == animState.mTempLenght)
         {
             animState.clearTemp();
-            Global::DebugPrint("fly");
+            DEGUB_CROWS("fly");
             state = Flying;
             return true;
         }
@@ -146,7 +146,7 @@ bool CrowPath::update(Ogre::Real tslf, Ogre::SceneNode* mNode, Ogre::Quaternion&
         if (animState.mFlightPos == animState.mFlightLenght)
         {
             animState.clearManuallyFlight();
-            Global::DebugPrint("endWalk");
+            DEGUB_CROWS("endWalk");
             state = Standing;
             return true;
         }
@@ -221,7 +221,7 @@ void CrowPath::updateAnimState(Ogre::Real tslf)
             animState.animWeight = 0;
     }
 
-    //Global::DebugPrint("state: " + std::to_string(state) + ",fl: " + std::to_string(animState.mFlightTrack != nullptr) + ",t: " + std::to_string(animState.mTempTrack != nullptr) + ",o: " + std::to_string(animState.mOldFlightTrack != nullptr) + ",w: " + std::to_string(animState.animWeight) + ",l: " + std::to_string(animState.mTempLenght), true);
+    //DEGUB_CROWS("state: " + std::to_string(state) + ",fl: " + std::to_string(animState.mFlightTrack != nullptr) + ",t: " + std::to_string(animState.mTempTrack != nullptr) + ",o: " + std::to_string(animState.mOldFlightTrack != nullptr) + ",w: " + std::to_string(animState.animWeight) + ",l: " + std::to_string(animState.mTempLenght), true);
 }
 
 void CrowPath::setWalkingAnim(Ogre::Vector3 pos)
@@ -230,14 +230,14 @@ void CrowPath::setWalkingAnim(Ogre::Vector3 pos)
     {
         //create land anim + init
         createWalkAnimation(pos);
-        Global::DebugPrint("walk");
+        DEGUB_CROWS("walk");
         state = Walking;
     }
     else
     {
         animState.lastPos = pos;
         animState.lastOr = Quaternion(Degree(Math::RangeRandom(0, 360)), Vector3(0, 1, 0));
-        Global::DebugPrint("ground");
+        DEGUB_CROWS("ground");
 
         state = Standing;
     }
@@ -249,14 +249,14 @@ void CrowPath::setLandingAnim(Ogre::Vector3 pos)
     {
         //create land anim + init
         createLandAnimation(animState.lastPos, animState.lastOr, pos);
-        Global::DebugPrint("land");
+        DEGUB_CROWS("land");
         state = Landing;
     }
     else
     {
         animState.lastPos = pos;
         animState.lastOr = Quaternion(Degree(Math::RangeRandom(0, 360)), Vector3(0, 1, 0));
-        Global::DebugPrint("ground");
+        DEGUB_CROWS("ground");
 
         state = Standing;
     }
@@ -272,7 +272,7 @@ void CrowPath::setLiftingAnim(Ogre::Animation* flightAnim, float timePos)
 
     if (state == None)
     {
-        Global::DebugPrint("fly");
+        DEGUB_CROWS("fly");
         state = Flying;
     }
     else
@@ -282,7 +282,7 @@ void CrowPath::setLiftingAnim(Ogre::Animation* flightAnim, float timePos)
         animState.mFlightTrack->getInterpolatedKeyFrame(timePos, &key);
 
         createLiftAnimation(animState.lastPos, key.getTranslate(), key.getRotation());
-        Global::DebugPrint("lift");
+        DEGUB_CROWS("lift");
         state = Lifting;
     }
 
@@ -305,12 +305,12 @@ void CrowPath::setSwitchFlightAnim(Ogre::Animation* flightAnim, float timePos)
         animState.mFlightTrack->getInterpolatedKeyFrame(timePos, &key);
 
         createSwitchFlightAnimation(key.getTranslate(), key.getRotation());
-        Global::DebugPrint("switch");
+        DEGUB_CROWS("switch");
         state = SwitchFlying;
     }
     else
     {
-        Global::DebugPrint("fly");
+        DEGUB_CROWS("fly");
         state = Flying;
     }
 }

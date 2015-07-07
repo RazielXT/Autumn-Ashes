@@ -9,7 +9,7 @@ Crow::Crow(bool onGround)
 {
     //init entity+node
     mEntity = Global::mSceneMgr->createEntity("AnimatedCrow.mesh");
-    mEntity->setMaterialName("crow1");
+    //mEntity->setMaterialName("crow1");
     mNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
     mNode->attachObject(mEntity);
     mNode->setScale(0.4f, 0.4f, 0.4f);
@@ -62,7 +62,6 @@ void Crow::updateAnimationState()
         animation.fadeTo("walking", 0.1f);
         curModelAnimType = Walking;
     }
-    //Global::DebugPrint(std::to_string(curAnimType), true);
 }
 
 void Crow::update(Ogre::Real tslf)

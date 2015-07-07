@@ -2,6 +2,9 @@
 
 #include "stdafx.h"
 
+#define DEGUB_CROWS(x) Global::DebugPrint(x)
+//#define DEGUB_CROWS(x)
+
 enum CrowState { Standing, Walking, Flying, SwitchFlying, Landing, Lifting, None };
 
 struct CrowPathAnimations

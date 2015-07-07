@@ -4,6 +4,7 @@
 #include "CrowPath.h"
 #include "AnimationBlender.h"
 
+
 class CrowsPack;
 
 class Crow
