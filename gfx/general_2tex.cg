@@ -196,7 +196,6 @@ void diffuse_ps(
 	
 	// direction
 	float3 lightDir = normalize(lightPos0.xyz - (lightPos0.w * IN.wp.xyz));
-	half lightDist = length(lightPos0.xyz - IN.wp.xyz) / lightAtt0.r;
 
 	//pm offset
 	float height = tex2D(dispMap, IN.uv.xy * uvScale).x;
@@ -255,7 +254,7 @@ void diffuse_ps(
 	float dist = length(eyeDir);
 	eyeDir = normalize(eyeDir);
 
-	float4 diffuseTex = lerp(tex2D(diffuseMap2, texCoordBase2), tex2D(diffuseMap, texCoordBase), inter);
+	float4 diffuseTex = lerp(tex2D(diffuseMap2, texCoordBase2), tex2D(diffuseMap, texCoordBase), inter);	
 	float diffuseLight = dot(lightDir, normal);
 
 	float3 camDir = normalize(camPos - IN.wp.xyz);

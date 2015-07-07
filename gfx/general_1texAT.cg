@@ -178,7 +178,6 @@ void diffuse_ps(
 	
 	// direction
 	float3 lightDir = normalize(lightPos0.xyz - (lightPos0.w * IN.wp.xyz));
-	half lightDist = length(lightPos0.xyz - IN.wp.xyz) / lightAtt0.r;
 
 	float2 texCoord = IN.uv.xy;
 		
@@ -276,7 +275,7 @@ void diffuse_ps(
 	
 	float3 darkness = max(shadowing.xxx,vertexLight);
 	float3 ambientLight = (vertexLight);
-	float4 output = float4(rawColor*diffuseTex*lerp(ambientLight, max(directLight,vertexLight),darkness),1);
+	float4 output = float4(rawColor*diffuseTex.rgb*lerp(ambientLight, max(directLight,vertexLight),darkness),1);
 	
 	//distance fog
 	float insideFog = saturate((distance - fogParams.y) / fogParams.z)*fogColor.a;

@@ -13,7 +13,6 @@ vertex_program diffuse_vs_vc2tex cg
 
         param_named_auto wMat world_matrix
         param_named_auto wvpMat worldviewproj_matrix
-        param_named_auto spotlightDir light_direction_object_space 0
 		param_named_auto camPos camera_position_object_space
     }
 }
@@ -26,7 +25,6 @@ fragment_program diffuse_ps_vc2tex cg
  
     default_params
     {
-		param_named_auto lightDiffuse derived_light_diffuse_colour 0
         param_named_auto lightDif0 light_diffuse_colour 0
         param_named_auto matSpec0 surface_specular_colour 0
         param_named_auto camPos camera_position

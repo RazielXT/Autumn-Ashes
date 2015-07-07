@@ -4,7 +4,7 @@ vertex_program givs_vs cg
     profiles vs_3_0
     entry_point givs_vs
 
-default_params
+	default_params
     {
         param_named_auto wmat worldviewproj_matrix
     }
@@ -37,10 +37,7 @@ vertex_program myvs_Leafvs cg
 		param_named_auto time time
 		param_named_auto camPos camera_position
 		param_named_auto speed shadow_colour
-
-		param_named_auto depthRange			scene_depth_range
 	}
-
 }
 
 fragment_program myps_ps cg
@@ -51,7 +48,7 @@ fragment_program myps_ps cg
 	
 	default_params
     {
-        param_named alphaTest 0.5
+        param_named alphaTest float 0.5
     }
 }
 

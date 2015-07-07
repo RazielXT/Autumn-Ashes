@@ -236,10 +236,6 @@ fragment_program grassFP cg
 	default_params
 	{ 
 		param_named_auto ambientColor	ambient_light_colour
-		
-		param_named_auto lightDiffuse  derived_light_diffuse_colour 0 
-		param_named_auto lightSpecular derived_light_specular_colour 0 
-		param_named_auto matShininess surface_shininess
 
 	}
 }
