@@ -33,6 +33,7 @@ struct PIn
 VOut diffuse_vs_bop(VIn IN,
 uniform float4x4 wMat,
 uniform float4x4 vpMat,
+uniform float3 camPos,
 uniform float4x4 texWorldViewProjMatrix0,
 uniform float4x4 texWorldViewProjMatrix1,
 uniform float4x4 texWorldViewProjMatrix2,
@@ -46,7 +47,7 @@ uniform float4x4 texWorldViewProjMatrix3
 	OUT.wp.w = IN.c.w;
 	
 	OUT.p = mul(vpMat, wpos);
-
+	
 	OUT.uv.xy = IN.uv.xy;
 	OUT.uv.zw = OUT.p.zw;
 	
@@ -55,6 +56,32 @@ uniform float4x4 texWorldViewProjMatrix3
 	OUT.oLightPosition2 = mul(texWorldViewProjMatrix2, IN.p);
 	OUT.oLightPosition3 = mul(texWorldViewProjMatrix3, IN.p);
 
+	/*
+	float viewDot = dot(normalize(wpos.xz - camPos.xz), float2(0,1));
+	float viewDot2 = dot(normalize(wpos.xz - camPos.xz), float2(1,0));
+	
+	float angleW = 0;
+	
+	if(viewDot >= 0 && viewDot2 >= 0)
+	{
+		angleW = viewDot2/4;
+	}
+	else if(viewDot <= 0 && viewDot2 >= 0)
+	{
+		angleW = 0.25 + viewDot/-4;
+	}
+	else if(viewDot2 <= 0)
+	{
+		angleW = 0.5 + viewDot2/-4;
+	}
+	else
+	{
+		angleW = 0.75 + viewDot/4;
+	}
+	
+	OUT.uv.x = OUT.uv.x + angleW;*/
+
+	
 	return OUT;
 }
 
@@ -66,7 +93,7 @@ float shadowBilinear(sampler2D shadowMapSampler, float4 shadowMapPos,float offse
 	float fLightDepth=shadowMapPos.z;
 
 	// transform to texel space
-	float2 vShadowMapCoord = texRes * vTexCoord;    
+	float2 vShadowMapCoord = texRes * vTexCoord.xy;    
 	// Determine the lerp amounts           
 	float2 vLerps = frac(vShadowMapCoord);
 
@@ -95,10 +122,10 @@ void diffuse_ps_bop(
 	uniform float enlighten,
 	uniform float3 diffuseColor,
 	uniform sampler2D diffuseMap : register(s0),
-	uniform sampler2D shadowMap0: register(s2),
-	uniform sampler2D shadowMap1: register(s3),
-	uniform sampler2D shadowMap2: register(s4), 
-	uniform sampler2D shadowMap3: register(s5), 
+	uniform sampler2D shadowMap0: register(s1),
+	uniform sampler2D shadowMap1: register(s2),
+	uniform sampler2D shadowMap2: register(s3), 
+	uniform sampler2D shadowMap3: register(s4), 
 	out float4 color0 : COLOR0,
 	out float4 color1 : COLOR1,
 	out float4 color2 : COLOR2,
@@ -109,7 +136,7 @@ void diffuse_ps_bop(
 
 	float3 eyeDir = IN.wp.xyz - camPos.xyz;
 	float distance = length(eyeDir);
-
+	
 	float4 diffuseTex = tex2D(diffuseMap, texCoord);
 	diffuseTex.rgb += 0.1;
 	diffuseTex.rgb *= enlighten;
@@ -120,9 +147,6 @@ void diffuse_ps_bop(
 
 	float shadowing = 1.0f;
 
-	if(norm<0)
-		shadowing=0;
-	else
 	{
 		float adder=1;
 
@@ -151,7 +175,7 @@ void diffuse_ps_bop(
 	output.rgb = lerp(output.rgb, atmFog, insideFog);
 
 	color0=output;
-	color1=float4(0.5,0.5,saturate(matSpec0.a+specular.r/2),1);
+	color1=float4(0.5,0.5,0,1);
 	color2=float4(0,0,0,1);
 	color3=float4(IN.uv.z/IN.uv.w,IN.uv.z,0,1);
 }

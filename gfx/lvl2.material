@@ -7,7 +7,12 @@ import 1tAT_material_static from "general_1texAT.material"
 import 1t_material_static from "general_1tex.material" 
 import 1t_vc_material_static from "general_1tex_vc.material" 
 import leaf_material_dynamic_op from "general_Leaf.material"
+import billboard_material_op from "general_Billboard.material"
 
+material  billboardTest: billboard_material_op
+{
+	set_texture_alias diffuseMap hackberry_tree.png
+}
 
 material grassMat : 1t_material_static 
 {

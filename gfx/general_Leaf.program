@@ -17,6 +17,7 @@ vertex_program diffuse_vs_bopLeaf cg
 		param_named_auto vpMat viewproj_matrix
 		param_named_auto time time
 		param_named_auto speed shadow_colour
+		param_named_auto camPos camera_position
     }
 }
   

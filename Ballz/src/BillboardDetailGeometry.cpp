@@ -51,7 +51,6 @@ void BillboardDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& grid
                 float scale = info.generalScale*scaleMask*Ogre::Math::RangeRandom(params.minmaxScale.x, params.minmaxScale.y);
                 placeObject(ray.pos, MUtils::quaternionFromNormal(ray.normal), scale, params.color);
 
-
                 bgc++;
             }
         }
@@ -71,6 +70,8 @@ void BillboardDetailGeometry::init(DetailGeometryParams& param)
     info = DetailGeometryInfo::get(param.name);
 }
 
+float sizeY = 8;
+
 void BillboardDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, Vector3 color)
 {
     Quaternion randomYaw(Degree(Math::RangeRandom(0, 360)), Vector3(0, 1, 0));
@@ -81,6 +82,7 @@ void BillboardDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scal
         auto name = MUtils::strtok_str(meshName, ';');
 
         auto set = getSet(name);
+        pos.y += sizeY*0.5f;
         auto bb = set->createBillboard(pos);
     }
 }
@@ -91,9 +93,12 @@ BillboardSet* BillboardDetailGeometry::getSet(std::string name)
     {
         static int billboardSet = 0;
         auto mySet = Global::mSceneMgr->createBillboardSet("genBBS" + Ogre::StringConverter::toString(++billboardSet));
-        //mySet->setMaterialName(ent->getSubEntity(0)->getMaterialName());
-        mySet->setBillboardType(Ogre::BillboardType::BBT_ORIENTED_COMMON);
-        mySet->setCommonDirection(Ogre::Vector3(0, 1, 0));
+        mySet->setMaterialName("billboardTest");
+        mySet->setBillboardType(Ogre::BillboardType::BBT_POINT);
+        //mySet->setCommonDirection(Ogre::Vector3(0, 1, 0));
+        mySet->setDefaultDimensions(sizeY*0.7f, sizeY);
+        mySet->setTextureStacksAndSlices(1, 1);
+        Global::mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(mySet);
 
         mySets[name] = mySet;
     }

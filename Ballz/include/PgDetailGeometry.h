@@ -2,6 +2,8 @@
 
 #include "stdafx.h"
 #include "DetailGeometry.h"
+#include "DetailGeometryInfo.h"
+#include "DetailGeometryMaterial.h"
 
 class PgDetailGeometry : public DetailGeometry
 {
@@ -15,18 +17,15 @@ public:
 protected:
 
     virtual void init(DetailGeometryParams& info);
-    std::vector<std::string> possibleEntities;
+    DetailGeometryInfo info;
+    DetailGeometryMaterial mats;
 
     virtual bool acceptsWeight(float w) const;
     void placeObject(Ogre::Vector3 pos, Ogre::Quaternion or, float scale, Ogre::Vector3 color, Forests::TreeLoader3D *treeLoader);
 
-    void updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color);
-    std::map<std::string, Ogre::Material*> materials;
 
     GeometryManager* parent;
     Forests::PagedGeometry *trees = nullptr;
-
-    Ogre::Vector2 stepSize;
-    float maxSteepY;
+    std::vector<Ogre::Entity*> temps;
 
 };

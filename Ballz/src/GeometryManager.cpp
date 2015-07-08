@@ -4,6 +4,7 @@
 #include "PgDetailGeometry.h"
 #include "GrassDetailGeometry.h"
 #include "ManualDetailGeometry.h"
+#include "BillboardDetailGeometry.h"
 
 using namespace Ogre;
 
@@ -64,8 +65,9 @@ void GeometryManager::update()
 
 DetailGeometry* GeometryManager::getInstance(std::string name)
 {
-    //if ()
-    //   return new PgGeometryPreset();
+    if (name == "RocksPG")
+        //return new BillboardDetailGeometry();
+        return new PgDetailGeometry();
     if (name == "Rocks" || name == "TreesAspen" || name == "Bush")
         return new BasicDetailGeometry();
     if (name == "Grass")

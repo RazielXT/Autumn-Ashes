@@ -303,6 +303,7 @@
 		<enumItem name="MaskVCset" displayName="Mask: VC set" value="Mask: VC set"/>
 		<enumItem name="MaskVCmul" displayName="Mask: VC mul" value="Mask: VC mul"/>
 		<enumItem name="Rocks" value="Rocks" />
+		<enumItem name="RocksPG" value="RocksPG" />
 		<enumItem name="TreesAspen" value="TreesAspen" />
 		<enumItem name="Moss" value="Moss" />
 		<enumItem name="Bush" value="Bush" />

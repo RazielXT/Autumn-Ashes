@@ -6,7 +6,6 @@ vertex_program diffuse_vs_billboard cg
  
     default_params
     {
-
 		param_named_auto texWorldViewProjMatrix0	texture_worldviewproj_matrix 0
 		param_named_auto texWorldViewProjMatrix1	texture_worldviewproj_matrix 1
 		param_named_auto texWorldViewProjMatrix2	texture_worldviewproj_matrix 2
@@ -14,6 +13,7 @@ vertex_program diffuse_vs_billboard cg
 
 		param_named_auto wMat world_matrix
 		param_named_auto vpMat viewproj_matrix
+		param_named_auto camPos camera_position
     }
 }
   

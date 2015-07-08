@@ -1,5 +1,6 @@
 material billboard_material_op
 {
+    set $diffuseCol "1 1 1"
 	set $alphaTest "0.37" 
 	set $enlighten "1.0" 
 
@@ -7,34 +8,25 @@ material billboard_material_op
     {    
 		pass
 		{
+			lighting off
 			colour_write off
-			cull_hardware none
-		
-			alpha_rejection greater_equal 50
-						
-			vertex_program_ref myvs_Leafvs 
-			{
-			}
-			fragment_program_ref myps_ps
-			{
-				param_named alphaTest float $alphaTest
-			}
 
-			shadow_caster_vertex_program_ref myvs_Leafvs 
-			{
-			}		
-			shadow_caster_fragment_program_ref PSSM/shadow_caster_ps
-			{
-				//param_named alphaTest float $alphaTest
-			}	
-			
+			vertex_program_ref myvs_vs
+		    {
+		    }
+
+		    fragment_program_ref myps_ps
+            {
+			 	param_named alphaTest float $alphaTest
+            }
+
 			texture_unit diffuseMap
-			{
-				filtering anisotropic
-				max_anisotropy 8
+            {
+			// filtering anisotropic
+			// max_anisotropy 8
 
-				texture white.bmp
-			}
+                texture white.bmp
+            }
 		}
 
 
@@ -43,6 +35,8 @@ material billboard_material_op
 			depth_write off
 			cull_hardware none
 
+			diffuse $diffuseCol
+						
             vertex_program_ref diffuse_vs_billboard
             {
             }
@@ -60,6 +54,8 @@ material billboard_material_op
 				max_anisotropy 8
 
 				texture white.bmp
+				
+				tex_address_mode clamp
 			}
 
 			 texture_unit shadow_tex0

@@ -55,6 +55,14 @@ struct DetailGeometryInfo
             info.possibleEntities.push_back("Rock5.mesh");
             info.possibleEntities.push_back("Rock6.mesh");
         }
+        else if (name == "RocksPG")
+        {
+            info.stepSize.x = 3;
+            info.stepSize.y = 3;
+            info.generalScale = 0.05f;
+
+            info.possibleEntities.push_back("fir06_30.mesh");
+        }
 
         return info;
     }
