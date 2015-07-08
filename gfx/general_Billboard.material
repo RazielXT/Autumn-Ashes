@@ -1,0 +1,95 @@
+material billboard_material_op
+{
+	set $alphaTest "0.37" 
+	set $enlighten "1.0" 
+
+    technique
+    {    
+		pass
+		{
+			colour_write off
+			cull_hardware none
+		
+			alpha_rejection greater_equal 50
+						
+			vertex_program_ref myvs_Leafvs 
+			{
+			}
+			fragment_program_ref myps_ps
+			{
+				param_named alphaTest float $alphaTest
+			}
+
+			shadow_caster_vertex_program_ref myvs_Leafvs 
+			{
+			}		
+			shadow_caster_fragment_program_ref PSSM/shadow_caster_ps
+			{
+				//param_named alphaTest float $alphaTest
+			}	
+			
+			texture_unit diffuseMap
+			{
+				filtering anisotropic
+				max_anisotropy 8
+
+				texture white.bmp
+			}
+		}
+
+
+        pass
+        {
+			depth_write off
+			cull_hardware none
+
+            vertex_program_ref diffuse_vs_billboard
+            {
+            }
+
+            fragment_program_ref diffuse_ps_billboard
+            {
+				param_named alphaTest float $alphaTest
+				param_named enlighten float $enlighten
+            }
+
+			texture_unit diffuseMap
+			{
+				//filtering trilinear
+				filtering anisotropic
+				max_anisotropy 8
+
+				texture white.bmp
+			}
+
+			 texture_unit shadow_tex0
+			 {
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			 }
+
+			texture_unit shadow_tex1
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+
+			texture_unit shadow_tex2
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+
+			texture_unit shadow_tex3
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+        }		
+    }
+}
+
