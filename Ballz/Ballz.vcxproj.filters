@@ -221,6 +221,9 @@
     <ClCompile Include="src\ManualDetailGeometry.cpp">
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClCompile>
+    <ClCompile Include="src\BillboardDetailGeometry.cpp">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -455,6 +458,9 @@
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClInclude>
     <ClInclude Include="include\DetailGeometryMaterial.h">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BillboardDetailGeometry.h">
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClInclude>
   </ItemGroup>
