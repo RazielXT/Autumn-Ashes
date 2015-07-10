@@ -149,6 +149,8 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\Gorilla.cpp" />
     <ClCompile Include="src\GrassDetailGeometry.cpp" />
     <ClCompile Include="src\HandGripReaction.cpp" />
+    <ClCompile Include="src\ImpostorRenderer.cpp" />
+    <ClCompile Include="src\ImpostorTexture.cpp" />
     <ClCompile Include="src\LoadNextPart.cpp" />
     <ClCompile Include="src\lvl1Reactions.cpp" />
     <ClCompile Include="src\lvl_update.cpp" />
@@ -214,6 +216,8 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\GameConfig.h" />
     <ClInclude Include="include\DetailGeometry.h" />
     <ClInclude Include="include\GrassDetailGeometry.h" />
+    <ClInclude Include="include\ImpostorRenderer.h" />
+    <ClInclude Include="include\ImpostorTexture.h" />
     <ClInclude Include="include\MainListener.h" />
     <ClInclude Include="include\GameStateManager.h" />
     <ClInclude Include="include\globals.h" />
@@ -269,6 +273,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\Tasks.h" />
     <ClInclude Include="include\TestTask.h" />
     <ClInclude Include="include\TriggerInfo.h" />
+    <ClInclude Include="VolumeDetection.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AutumnAshes.rc" />

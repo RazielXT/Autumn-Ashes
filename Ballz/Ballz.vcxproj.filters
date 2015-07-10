@@ -224,6 +224,12 @@
     <ClCompile Include="src\BillboardDetailGeometry.cpp">
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClCompile>
+    <ClCompile Include="src\ImpostorTexture.cpp">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImpostorRenderer.cpp">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -462,6 +468,15 @@
     </ClInclude>
     <ClInclude Include="include\BillboardDetailGeometry.h">
       <Filter>Files\Core\DetailGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImpostorTexture.h">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImpostorRenderer.h">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeDetection.h">
+      <Filter>Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
