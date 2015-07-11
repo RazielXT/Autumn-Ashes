@@ -1,6 +1,8 @@
 import refl_material_dynamic_op from "general_refl.material"
 import glass_material_dynamic_op from "general_glass.material"
 
+import material_water_dynamic from "water_dynamic.material"
+
 import 2t_vc_material_static from "general_2tex_vc.material"
 import 2t_material_static from "general_2tex.material"
 import 1tAT_material_static from "general_1texAT.material" 
@@ -12,6 +14,27 @@ import billboard_material_op from "general_Billboard.material"
 material  billboardTest: billboard_material_op
 {
 	set_texture_alias diffuseMap hackberry_tree.png
+}
+
+material waterWaves : material_water_dynamic
+{
+	set_texture_alias wavesMap waves.jpg
+	set_texture_alias wavesNormalMap waves_NORM.tga
+	
+	set_texture_alias diffuseMap water.png
+	//set_texture_alias diffuseMap 05_DIFFUSE.jpg
+	set_texture_alias groundMap foam.png
+	set_texture_alias normalMap 05_NORMAL.jpg
+
+	set $difUV "1.0 1.0"
+	set $diffuseCol "0.5 0.5 0.6"
+	// specular colour multiplier (for example, red-ish)
+
+	set $specularCol "10.967 10.97 10.98"
+	// specular power (shininess) (the higher, the sharper the highlights)
+	set $shininess "128"
+
+	set $waveSeedSizeSpeed "1 0.25 1.5"
 }
 
 material grassMat : 1t_material_static 

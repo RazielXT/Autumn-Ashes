@@ -42,7 +42,7 @@ texture dof_rt target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8
 
         }
 
-	//Fetch scene contents.
+		//Fetch scene contents.
         target rt0
         {
            input none  
@@ -52,12 +52,17 @@ texture dof_rt target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8
 		 
          pass render_scene
          {
-			last_render_queue 89
+			last_render_queue 79
          }
     
+	      pass render_scene
+         {
+			first_render_queue 80
+			last_render_queue 89
+         }
         }
 
-
+		
 		target rtD
 		{
 			input none
@@ -80,7 +85,7 @@ texture dof_rt target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8
          }         
          pass render_scene
          {
-		first_render_queue 90
+			first_render_queue 90
          }
         }
 
