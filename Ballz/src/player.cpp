@@ -3,6 +3,7 @@
 #include "PostProcessMgr.h"
 #include "PlayerPostProcess.h"
 #include "PlayerParkour.h"
+#include "PlayerSwimming.h"
 #include "MUtils.h"
 #include "GameStateManager.h"
 
@@ -10,6 +11,7 @@ using namespace Ogre;
 
 Player::Player(WorldMaterials* wMaterials)
 {
+    gravity = Ogre::Vector3(0, -9.0f, 0);
     tslf=0;
     bodySpeedAccum=0;
     slowingDown=1;
@@ -66,6 +68,7 @@ Player::Player(WorldMaterials* wMaterials)
     pClimbing = new PlayerClimbing(this);
     pGrabbing = new PlayerGrab(this);
     pParkour = new PlayerParkour(this);
+    pSwimming = new PlayerSwimming(this);
 
     slidesAutoTarget = new SlidesAutoTargetAsync();
 }
@@ -410,6 +413,8 @@ void Player::rotateCamera(Real hybX,Real hybY)
 
 void Player::update(Real time)
 {
+    pSwimming->update();
+
     tslf = time*Global::timestep;
     facingDir = mCamera->getDerivedOrientation()*Ogre::Vector3(0, 0, -1);
 
@@ -503,6 +508,11 @@ void Player::updateUseGui()
             }
         }
     }
+}
+
+Vector3 Player::getCameraPosition() const
+{
+    return camnode->_getDerivedPosition();
 }
 
 void Player::startCameraShake(float time,float power,float impulse)

@@ -11,11 +11,34 @@ material material_water_dynamic
     technique
     {
         
+		pass
+		{
+			lighting off
+			colour_write off
+
+			vertex_program_ref water_d_vs
+			{
+				param_named waveSeedSizeSpeed float3 $waveSeedSizeSpeed
+			}
+			
+			texture_unit wavesMap
+			{
+				texture water_DISP.jpg
+				binding_type vertex 
+			}
+			
+			texture_unit wavesNormalMap
+			{
+				texture flat_n.png
+				binding_type vertex 
+			}
+		}
+		
         pass
         {
 			cull_hardware none
 			scene_blend alpha_blend
-			//depth_write off
+			//depth_write on
 
             vertex_program_ref water_d_vs
             {
@@ -59,7 +82,7 @@ material material_water_dynamic
             }
 
 		
-            texture_unit groundMap
+            texture_unit foamMap
             {
                 texture white.bmp
 
@@ -71,9 +94,43 @@ material material_water_dynamic
 				 texture ANGMAP11.JPG
             }
 
+			texture_unit depthMap
+            {
+				content_type compositor ScaryBloomNoSSAO rt0 3
+            }
 
         }		
 
     }
 
+	
+	technique
+    {
+		scheme WaterDepth
+
+		pass
+        {	 
+            vertex_program_ref water_d_vs
+            {
+				param_named waveSeedSizeSpeed float3 $waveSeedSizeSpeed
+            }
+ 
+            fragment_program_ref water_depthCheck_ps
+            {
+            }
+
+			texture_unit wavesMap
+			{
+				texture water_DISP.jpg
+				binding_type vertex 
+			}
+			
+			texture_unit wavesNormalMap
+			{
+				texture flat_n.png
+				binding_type vertex 
+			}
+
+        }
+    }
 }

@@ -54,7 +54,7 @@ bool ReflectionTask::start()
         (Real)window->getViewport(0)->getActualWidth() /
         (Real)window->getViewport(0)->getActualHeight());
     mReflectCam->setFOVy(Global::mSceneMgr->getCamera("Camera")->getFOVy());
-
+    //mReflectCam->setVisibilityFlags(2);
     Viewport *v = rttTex->addViewport(mReflectCam);
     v->setClearEveryFrame(true);
     v->setBackgroundColour(ColourValue::Black);
@@ -65,7 +65,7 @@ bool ReflectionTask::start()
 
     if (t == nullptr)
     {
-        mat = MaterialManager::getSingleton().getByName("waterMatVC");
+        mat = MaterialManager::getSingleton().getByName("material_water_dynamic");
     }
 
     mat = mat->clone(mat->getName() + idString);

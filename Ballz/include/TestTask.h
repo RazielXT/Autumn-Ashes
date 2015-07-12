@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "EventTask.h"
+#include "VolumeDetection.h"
 
 class TestReaction : public EventTask
 {
@@ -14,14 +15,10 @@ public:
     void setUserData(void* data);
     bool start();
     bool update(Ogre::Real tslf);
-    void reaction();
 
 private:
 
-    OgreNewt::Body* mBody;
-    bool running;
-    float timer;
-
+    VolumeDetection volume;
 };
 
 #endif //TEVENTR_H

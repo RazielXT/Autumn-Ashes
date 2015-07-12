@@ -12,7 +12,6 @@ vertex_program water_d_vs cg
         param_named_auto wMat world_matrix
         param_named_auto vpMat viewproj_matrix
 		param_named_auto camPos camera_position_object_space
-		param_named_auto texWorldViewProjMatrix3	texture_worldviewproj_matrix 3
     }
 }
   
@@ -25,15 +24,21 @@ fragment_program water_d_ps cg
     default_params
     {
 		param_named_auto scrollTime time
-        param_named_auto lightDif0 light_diffuse_colour 0
-        param_named_auto lightSpec0 light_specular_colour 0
         param_named_auto camPos camera_position
-        param_named_auto matDiffuse surface_diffuse_colour 
         param_named_auto lightPos0 light_position 0
         param_named_auto iTWMat inverse_transpose_world_matrix
-        param_named_auto lightSpec0 light_specular_colour 0
-        param_named_auto matShininess surface_shininess
 		//param_named_auto playerSpeed shadow_colour
 
+    }
+}
+
+fragment_program water_depthCheck_ps cg
+{
+    source water_dynamic.cg
+    profiles ps_3_0 arbfp1
+    entry_point wDepth_ps_op
+ 
+    default_params
+    {
     }
 }

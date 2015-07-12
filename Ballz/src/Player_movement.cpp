@@ -31,7 +31,7 @@ void Player::enableMovement(bool enable)
 
 void Player::move_callback(OgreNewt::Body* me, float timeStep, int threadIndex)
 {
-    me->addForce(Ogre::Vector3(0, -9.0f, 0));
+    me->addForce(gravity);
     me->addForce(forceDirection);
 }
 

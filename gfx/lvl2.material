@@ -23,7 +23,7 @@ material waterWaves : material_water_dynamic
 	
 	set_texture_alias diffuseMap water.png
 	//set_texture_alias diffuseMap 05_DIFFUSE.jpg
-	set_texture_alias groundMap foam.png
+	set_texture_alias foamMap foam.png
 	set_texture_alias normalMap 05_NORMAL.jpg
 
 	set $difUV "1.0 1.0"

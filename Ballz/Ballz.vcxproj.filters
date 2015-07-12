@@ -230,6 +230,9 @@
     <ClCompile Include="src\ImpostorRenderer.cpp">
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClCompile>
+    <ClCompile Include="src\PlayerSwimming.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -475,8 +478,11 @@
     <ClInclude Include="include\ImpostorRenderer.h">
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClInclude>
-    <ClInclude Include="VolumeDetection.h">
+    <ClInclude Include="include\VolumeDetection.h">
       <Filter>Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerSwimming.h">
+      <Filter>Files\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

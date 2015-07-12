@@ -68,6 +68,8 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
             }
         }
 
+    sg->setVisibilityFlags(1);
+
     sg->build();
 
     for (auto e : temps)

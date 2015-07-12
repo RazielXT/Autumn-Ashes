@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "TestTask.h"
+#include "Player.h"
 
 TestReaction::TestReaction()
 {
-    running=false;
 }
 
 TestReaction::~TestReaction()
@@ -12,42 +12,34 @@ TestReaction::~TestReaction()
 
 void TestReaction::setUserData(void* data)
 {
-    //get stuff
-    mBody = (OgreNewt::Body*) data;
+    auto ent = (Ogre::Entity*) data;
+
+    volume.fromBox(ent);
 }
 
 bool TestReaction::start()
 {
-    if(running)
-        return 0;
-
-    timer=0;
-    running=true;
-    update(0);
-    return 1;
+    return true;
 }
-/*Ogre::Any any1 = body1->getUserData();
-	if(any0.isEmpty() || any1.isEmpty())
-	return;
 
-	bodyUserData* a0=Ogre::any_cast<bodyUserData*>(any0);*/
 bool TestReaction::update(Ogre::Real tslf)
 {
+    auto pos = Global::mSceneMgr->getCamera("Camera")->getDerivedPosition();
+    pos.y -= 6;
 
-    timer+=tslf;
-    if(timer>1)
+    auto close = volume.isInside(pos);
+
+    if (close)
     {
-        reaction();
-        running=false;
-        Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("JUMP!",Ogre::LML_NORMAL);
-        return 0;
+        Global::player->body->setLinearDamping(0.5f);
+        Global::player->gravity = Ogre::Vector3(10.0f, 5.0f, 0);
+    }
+    else
+    {
+        Global::player->body->setLinearDamping(0);
+        Global::player->gravity = Ogre::Vector3(0, -9.0f, 0);
     }
 
-    return 1;
-}
 
-void TestReaction::reaction()
-{
-    //stuff
-    mBody->setVelocity(Ogre::Vector3(0,10,0));
+    return true;
 }

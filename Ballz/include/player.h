@@ -36,6 +36,7 @@ class Player
     friend class PlayerClimbing;
     friend class PlayerGrab;
     friend class PlayerParkour;
+    friend class PlayerSwimming;
 
     struct CamArrivalInfo
     {
@@ -50,6 +51,7 @@ public:
     Player(WorldMaterials* wMaterials);
     ~Player ();
 
+    Ogre::Vector3 gravity;
     void move_callback(OgreNewt::Body* me, float timeStep, int threadIndex );
     void move_callback_nothing(OgreNewt::Body* me, float timeStep, int threadIndex );
     void default_callback(OgreNewt::Body* me, float timeStep, int threadIndex );
@@ -74,6 +76,7 @@ public:
     /*	power-0.1 weak, 0.5 strong;
     impulse-0.1 slow,0.4 strong  */
     void startCameraShake(float time,float power,float impulse);
+    Vector3 getCameraPosition() const;
 
     OgreNewt::Body* body = nullptr;
 
@@ -106,7 +109,7 @@ public:
     PlayerClimbing* pClimbing;
     PlayerGrab* pGrabbing;
     PlayerParkour* pParkour;
-
+    PlayerSwimming* pSwimming;
 
 private:
 

@@ -13,7 +13,7 @@ vertex_program diffuse_vs_billboard cg
 
 		param_named_auto wMat world_matrix
 		param_named_auto vpMat viewproj_matrix
-		param_named_auto camPos camera_position
+		//param_named_auto camPos camera_position
     }
 }
   

@@ -64,7 +64,7 @@ VOut wdiffuse_vs_op(VIn IN,
 	
 	float3 wMapNormal = tex2D(normMap, uv).rgb;
 	
-	float3 splashPoint = float3(-221,-9,133);
+	float3 splashPoint = float3(-221,-9,130);
 	float splashDist = 10;
 	float splashPower = 10;
 	float waveW = IN.c.r;
@@ -97,7 +97,7 @@ VOut wdiffuse_vs_op(VIn IN,
 	float3 eyeDir = normalize(IN.p.xyz - camPos.xyz);
 	OUT.vVec.w = pow(1+dot(eyeDir, wMapNormal), 1.5);
 	
-	OUT.wp.w = max((wMapSmall.x + wMapBig.x)/2,foamDirect);//OUT.vVec.w*add*IN.c.r/(waveSize*1.5);
+	OUT.wp.w = max((wMapSmall.x + wMapBig.x)/4,foamDirect);//OUT.vVec.w*add*IN.c.r/(waveSize*1.5);
 	
     return OUT;
 }
@@ -126,8 +126,10 @@ void wdiffuse_ps_op(
 	uniform float4x4 iTWMat,
 	uniform sampler2D diffuseMap : register(s2),
 	uniform sampler2D normalMap : register(s3),
-	uniform sampler2D groundMap : register(s4),
+	uniform sampler2D foamMap : register(s4),
 	uniform sampler2D reflMap : register(s5),
+	uniform sampler2D depthMap : register(s6),
+	float2 screenSpace : WPOS,
 	out float4 color0 : COLOR0,
 	out float4 color1 : COLOR1,
 	out float4 color2 : COLOR2,
@@ -178,11 +180,11 @@ void wdiffuse_ps_op(
     
     texCoord.y += scrollTime * speedUV;
     
-    float3 foamTex = tex2D(groundMap, texCoord*scaleDiff*foamScale).rgb*foamTerm;
+    float3 foamTex = tex2D(foamMap, texCoord*scaleDiff*foamScale/2).rgb*foamTerm;
 	texCoord.y += scrollTime * speedUV * 0.5;
     texCoord.x += 0.25;
 	
-    foamTex += tex2D(groundMap, texCoord*scaleDiff*foamScale).rgb*foamTerm;
+    foamTex += tex2D(foamMap, texCoord*scaleDiff*foamScale).rgb*foamTerm;
 	foamTex/=2;
 	
 	float3 camDir = normalize(camPos - IN.wp.xyz);
@@ -195,7 +197,7 @@ void wdiffuse_ps_op(
 	float2 reflUV = float2(Rr.x/m + 0.5, Rr.y/m + 0.5);
 	float3 reflectionTex = tex2D(reflMap,reflUV).rgb;
 	
-	float fresnel = pow(1 - dot(camDir, normal), 3);
+	float fresnel = pow(1 - abs(dot(camDir, normal)), 3);
 	
     float3 diffuseContrib = (diffuse * lightDif0);
     diffuseContrib = reflectionTex*2;
@@ -205,13 +207,26 @@ void wdiffuse_ps_op(
    //float3 def=lerp(diffTex.rgb,foamTex.rgb,foamTerm)*2;
     float3 def=lerp(diffTex.rgb,foamTex.rgb,foamTerm)*diffuse;
 	
-	float alpha = (diffTex.a*0.5 + foamTerm + fresnel);
+	float2 depthTexCoord=screenSpace/float2(1280.0f,768.0f);
+	float3 depthEnv=tex2D(depthMap,depthTexCoord).rgb;  
+	float depth = saturate((depthEnv.g - IN.uv.z)/5);
+	float alpha = (diffTex.a*0.75*depth + foamTerm*foamTex.r + fresnel);
+	
     color0=float4(def*light0C,alpha);
 	
-    float2 normalOut = normalTex.rg;//lerp(float2(0.5,0.5),normalTex.rg,saturate(speed)*clamp((15-IN.uv.z)/15,0.65,1));
+    float2 normalOut = float2(0.5,0.5);//IN.waveNormal.xy*clamp((15-IN.uv.z)/15,0.5,1);//normalTex.rg;//lerp(float2(0.5,0.5),normalTex.rg,saturate(speed)*);
 	
-	float shine = reflectionTex.r*fresnel;
-    color1=float4(normalOut,0 ,1);
+	float shine = reflectionTex.r*fresnel*0.5;
+    color1=float4(normalOut,0.2 ,1);
     color2=pow(color0*3,5);
-    color3=float4(IN.uv.z/IN.uv.w,IN.uv.z,0,1);
+    color3=float4(IN.uv.z/IN.uv.w,IN.uv.z,0,0);
+}
+
+
+void wDepth_ps_op(
+	PIn IN,
+	out float4 color : COLOR
+)
+{
+    color.rgb = IN.wp.yxz;
 }

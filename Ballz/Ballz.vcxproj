@@ -80,7 +80,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AdditionalOptions>-Zm210 %(AdditionalOptions)</AdditionalOptions>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -161,6 +161,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\PlayerClimbing.cpp" />
     <ClCompile Include="src\PlayerGrab.cpp" />
     <ClCompile Include="src\PlayerParkour.cpp" />
+    <ClCompile Include="src\PlayerSwimming.cpp" />
     <ClCompile Include="src\Player_movement.cpp" />
     <ClCompile Include="src\PostProcessMgr.cpp" />
     <ClCompile Include="src\BasicDetailGeometry.cpp" />
@@ -243,6 +244,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\PlayerPostProcess.h" />
     <ClInclude Include="include\DynamicRope.h" />
     <ClInclude Include="include\BasicDetailGeometry.h" />
+    <ClInclude Include="include\PlayerSwimming.h" />
     <ClInclude Include="include\ScaryPPListener.h" />
     <ClInclude Include="include\PSSMCamera.h" />
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h" />
@@ -257,6 +259,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\TopSlide.h" />
     <ClInclude Include="include\TrackBuilder.h" />
     <ClInclude Include="include\TransformationTaskTemplate.h" />
+    <ClInclude Include="include\VolumeDetection.h" />
     <ClInclude Include="include\WaterArea.h" />
     <ClInclude Include="include\WorldMaterials.h" />
     <ClInclude Include="include\Slide.h" />
@@ -273,7 +276,6 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\Tasks.h" />
     <ClInclude Include="include\TestTask.h" />
     <ClInclude Include="include\TriggerInfo.h" />
-    <ClInclude Include="VolumeDetection.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AutumnAshes.rc" />

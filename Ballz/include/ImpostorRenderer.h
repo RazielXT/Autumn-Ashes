@@ -8,16 +8,16 @@ class ImpostorRenderer
 {
 public:
 
-	static ImpostorRenderer instance;
+    static ImpostorRenderer instance;
 
-	void addGeometry(Ogre::Entity* ent);
-	void clear();
+    void addGeometry(Ogre::Entity* ent);
+    void clear();
 
 protected:
 
-	ImpostorRenderer() {}
-	~ImpostorRenderer() {}
+    ImpostorRenderer() {}
+    ~ImpostorRenderer() {}
 
-	std::map<Ogre::Entity*, ImpostorTexture*> textures;
+    std::map<Ogre::Entity*, ImpostorTexture*> textures;
 
 };

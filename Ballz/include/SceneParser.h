@@ -576,13 +576,15 @@ private:
 
     void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
     {
+        return;
+
         static int partID = 0;
         Ogre::String name = getElementValue(rootElement, "Name");
         int rGroup = getElementIntValue(rootElement, "RenderQroup", 91);
 
         Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem("Particle" + std::to_string(partID++), name);
         ps->setRenderQueueGroup(rGroup);
-
+        ps->setVisibilityFlags(8);
         if (getElementBoolValue(rootElement, "EditParams"))
         {
             auto mat = getElementValue(rootElement, "Material");
@@ -1849,14 +1851,24 @@ private:
         Ogre::uint8 renderQueue = ParseRenderQueue(GetStringAttribute(entityElement, "renderQueue"));
         ent->setRenderQueueGroup(renderQueue);
 
+        bool waterFlag = false;
         const XMLElement* subentityElement = entityElement->FirstChildElement("subentities");
         const XMLElement* childElement = 0;
         while (childElement = IterateChildElements(subentityElement, childElement))
         {
             int index = GetIntAttribute(childElement, "index", 0);
             ent->getSubEntity(index)->setMaterialName(GetStringAttribute(childElement, "materialName"));
+
+            auto matPtr = ent->getSubEntity(index)->getMaterial();
+
+            for (int i = 0; i < matPtr->getNumTechniques() && !waterFlag; i++)
+            {
+                waterFlag = (matPtr->getTechnique(i)->getSchemeName() == "WaterDepth");
+            }
         }
 
+        if (waterFlag)
+            ent->setVisibilityFlags(ent->getVisibilityFlags() | 16);
 
         const XMLElement* userdataElement = entityElement->FirstChildElement("userData");
 
