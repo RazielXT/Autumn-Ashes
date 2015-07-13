@@ -8,14 +8,14 @@ class WaterArea : public EventTask
 {
 public:
 
-	WaterArea();
-	~WaterArea();
+    WaterArea();
+    ~WaterArea();
 
-	void setUserData(void* data);
-	bool start();
-	bool update(Ogre::Real tslf);
+    void setUserData(void* data);
+    bool start();
+    bool update(Ogre::Real tslf);
 
 private:
 
-	VolumeDetection volume;
+    VolumeDetection volume;
 };

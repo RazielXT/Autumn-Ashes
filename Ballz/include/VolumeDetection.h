@@ -16,15 +16,15 @@ public:
         return (volumeType == Sphere) ? true : isInsideBox(point);
     }
 
-	bool isInside(Ogre::Vector3& point, float& sqDistance)
-	{
-		sqDistance = position.squaredDistance(point);
+    bool isInside(Ogre::Vector3& point, float& sqDistance)
+    {
+        sqDistance = position.squaredDistance(point);
 
-		if (sqDistance > sqRadius)
-			return false;
+        if (sqDistance > sqRadius)
+            return false;
 
-		return (volumeType == Sphere) ? true : isInsideBox(point);
-	}
+        return (volumeType == Sphere) ? true : isInsideBox(point);
+    }
 
     void fromSphere(Ogre::Entity* ent)
     {

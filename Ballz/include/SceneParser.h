@@ -556,8 +556,6 @@ private:
 
     void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
     {
-        return;
-
         static int partID = 0;
         Ogre::String name = getElementValue(rootElement, "Name");
         int rGroup = getElementIntValue(rootElement, "RenderQroup", 91);
