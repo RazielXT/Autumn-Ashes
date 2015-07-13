@@ -2,20 +2,20 @@
 
 #include "stdafx.h"
 #include "EventTask.h"
+#include "VolumeDetection.h"
 
 class WaterArea : public EventTask
 {
 public:
 
-    WaterArea();
-    ~WaterArea();
+	WaterArea();
+	~WaterArea();
 
-    bool update(Ogre::Real tslf);
-
-    void init(Ogre::Entity* water);
+	void setUserData(void* data);
+	bool start();
+	bool update(Ogre::Real tslf);
 
 private:
-    Ogre::AxisAlignedBox b;
-    bool inside = false;
-    Player* p;
+
+	VolumeDetection volume;
 };

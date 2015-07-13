@@ -244,14 +244,6 @@
 	<data name="Mask" displayName="Visibility mask" type="int" groupName="Reflection" defaultValue="1"/>
 </class>
 
-<class name="Water" usage="object">
-	<data name="Identifier" displayName="Identifier" groupName="Modifier" type="int" defaultValue="0"/>
-	<data name="ObjectModifier" displayName="Object Modifier" type="mtype" groupName="Modifier" defaultValue="Regular"/>
-	
-	<data name="Reflection" displayName="Reflection enabled" type="bool" groupName="Reflection" defaultValue="true"/>
-	<data name="Mask" displayName="Visibility mask" type="int" groupName="Reflection" defaultValue="1"/>	
-</class>
-
 <enum name="emitterType" type="string">
 	   <enumItem name="Default" value="Default" />
 	   <enumItem name="Point" value="Point" />
@@ -353,6 +345,13 @@
 	
 	<data name="Color" type="rgb"/>	
 	
+</class>
+
+
+<class name="DeathVolume" usage="object">
+</class>
+
+<class name="WaterArea" usage="object">
 </class>
 
 <class name="Rope" usage="object">

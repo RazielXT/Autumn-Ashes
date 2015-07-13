@@ -16,6 +16,16 @@ public:
         return (volumeType == Sphere) ? true : isInsideBox(point);
     }
 
+	bool isInside(Ogre::Vector3& point, float& sqDistance)
+	{
+		sqDistance = position.squaredDistance(point);
+
+		if (sqDistance > sqRadius)
+			return false;
+
+		return (volumeType == Sphere) ? true : isInsideBox(point);
+	}
+
     void fromSphere(Ogre::Entity* ent)
     {
         auto scale = ent->getParentSceneNode()->getScale();
@@ -81,4 +91,5 @@ protected:
 
         return xp <= hSize.x && yp <= hSize.y && zp <= hSize.z;
     }
+
 };

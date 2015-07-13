@@ -12,23 +12,36 @@ WaterArea::~WaterArea()
 {
 }
 
-void WaterArea::init(Ogre::Entity* water)
+void WaterArea::setUserData(void* data)
 {
-    inside = false;
-    b = water->getBoundingBox();
-    p = Global::player;
+	auto ent = (Ogre::Entity*) data;
+
+	volume.fromBox(ent);
+}
+
+bool WaterArea::start()
+{
+	return true;
 }
 
 bool WaterArea::update(Ogre::Real tslf)
 {
-    bool now = b.contains(p->bodyPosition);
+	auto pos = Global::mSceneMgr->getCamera("Camera")->getDerivedPosition();
+	pos.y -= 6;
 
-    if (!inside && now)
-    {
-        //splash
-    }
-    else
-        inside = now;
+	auto close = volume.isInside(pos);
 
-    return 1;
+	if (close)
+	{
+		Global::player->body->setLinearDamping(0.5f);
+		Global::player->gravity = Ogre::Vector3(10.0f, 5.0f, 0);
+	}
+	else
+	{
+		Global::player->body->setLinearDamping(0);
+		Global::player->gravity = Ogre::Vector3(0, -9.0f, 0);
+	}
+
+
+	return true;
 }
