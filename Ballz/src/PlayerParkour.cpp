@@ -144,7 +144,7 @@ bool PlayerParkour::tryWallClimb()
     if (info.mBody && info.mBody->getMass()==0)
     {
         auto id = info.mBody->getMaterialGroupID();
-        if (id != p->wmaterials->playerIgnore_mat && id != p->wmaterials->slide_mat)
+        if (id != p->wmaterials->playerIgnore_mat && id != p->wmaterials->plBlock_mat)
         {
             wall_normal = info.mNormal;
             w1 = true;
@@ -155,7 +155,7 @@ bool PlayerParkour::tryWallClimb()
     if (info.mBody && info.mBody->getMass() == 0)
     {
         auto id = info.mBody->getMaterialGroupID();
-        if (id != p->wmaterials->playerIgnore_mat && id != p->wmaterials->slide_mat)
+        if (id != p->wmaterials->playerIgnore_mat && id != p->wmaterials->plBlock_mat)
         {
             wall_normal = info.mNormal;
             w2 = true;
@@ -166,7 +166,7 @@ bool PlayerParkour::tryWallClimb()
     if (info.mBody && info.mBody->getMass() == 0)
     {
         auto id = info.mBody->getMaterialGroupID();
-        if (id != p->wmaterials->playerIgnore_mat && id != p->wmaterials->slide_mat)
+        if (id != p->wmaterials->playerIgnore_mat && id != p->wmaterials->plBlock_mat)
         {
             w3 = true;
         }
@@ -229,7 +229,7 @@ void PlayerParkour::doRoll()
 
 void PlayerParkour::updateRolling(float tslf)
 {
-    body->setMaterialGroupID(p->wmaterials->ide_mat);
+    body->setMaterialGroupID(p->wmaterials->plMove_mat);
     p->moving = true;
 
     auto dirVec = p->necknode->_getDerivedOrientation()*Vector3(0, 0, -1);
@@ -286,12 +286,12 @@ bool PlayerParkour::tryWallrun()
         hbody->setMassMatrix(mass, mass*inertia);
         hbody->setCenterOfMass(offset);
         //hbody->attachNode(node);
-        hbody->setMaterialGroupID(p->wmaterials->flag_mat);
+        hbody->setMaterialGroupID(p->wmaterials->noCollide_mat);
         hbody->setCustomForceAndTorqueCallback<PlayerParkour>(&PlayerParkour::wallrun_callback, this);
         hbody->setPositionOrientation(p->bodyPosition + Vector3(0, 5, 0), Ogre::Quaternion::IDENTITY);
         body->setCustomForceAndTorqueCallback<Player>(&Player::move_callback_nothing, p);
         wallrunJoint = new OgreNewt::BallAndSocket(hbody, body, p->bodyPosition + Vector3(0, 5, 0), 0);
-        hbody->setMaterialGroupID(p->wmaterials->stoji_mat);
+        hbody->setMaterialGroupID(p->wmaterials->plNoMove_mat);
 
         p->wallrunning = true;
 
@@ -313,7 +313,7 @@ bool PlayerParkour::getWallrunInfo(float side, Vector3 frontDir, float testDegre
     if (info.mBody && info.mBody->getMass() == 0)
     {
         auto id = info.mBody->getMaterialGroupID();
-        if (id != p->wmaterials->playerIgnore_mat && id != p->wmaterials->slide_mat)
+        if (id != p->wmaterials->playerIgnore_mat && id != p->wmaterials->plBlock_mat)
         {
             wall_normal = info.mNormal;
 

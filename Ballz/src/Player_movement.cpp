@@ -43,7 +43,7 @@ void Player::updateDirectionForce()
     {
         if (!moving)
         {
-            body->setMaterialGroupID(wmaterials->stoji_mat);
+            body->setMaterialGroupID(wmaterials->plNoMove_mat);
             startMoveBoost = 1;
         }
         else
@@ -155,7 +155,7 @@ void Player::updateMovement()
         if (startMoveBoost < 0) startMoveBoost = 0;
     }
 
-    body->setMaterialGroupID(wmaterials->ide_mat);
+    body->setMaterialGroupID(wmaterials->plMove_mat);
 
     Vector3 movedDir = Vector3::ZERO;
     if (forw_key) movedDir.z--;
@@ -370,7 +370,7 @@ void Player::updateGroundStats()
     if (info.mBody)
     {
         auto id = info.mBody->getMaterialGroupID();
-        if (id == wmaterials->playerIgnore_mat || id == wmaterials->slide_mat)
+        if (id == wmaterials->playerIgnore_mat || id == wmaterials->plBlock_mat)
         {
             if (info.mBody->getType() == TopSlidePart)
             {
@@ -390,7 +390,7 @@ void Player::updateGroundStats()
         if (infoc.mBody)
         {
             auto id = infoc.mBody->getMaterialGroupID();
-            if (id == wmaterials->playerIgnore_mat || id == wmaterials->slide_mat)
+            if (id == wmaterials->playerIgnore_mat || id == wmaterials->plBlock_mat)
             {
                 if (infoc.mBody->getType() == TopSlidePart)
                 {

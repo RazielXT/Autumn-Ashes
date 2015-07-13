@@ -47,7 +47,7 @@ void PlayerClimbing::startPullup()
     mHelpBody->setPositionOrientation(p->bodyPosition, Ogre::Quaternion::IDENTITY);
     mHelpBody->setMassMatrix(0.5, Ogre::Vector3(20, 20, 20));
     mHelpBody->setCustomForceAndTorqueCallback<Player>(&Player::default_callback, p);
-    mHelpBody->setMaterialGroupID(Global::gameMgr->wMaterials->flag_mat);
+    mHelpBody->setMaterialGroupID(Global::gameMgr->wMaterials->noCollide_mat);
     climbJoint = new OgreNewt::BallAndSocket(mHelpBody, Gbody, p->bodyPosition, 0);
 
     climb_normal.normalise();
@@ -140,7 +140,7 @@ void PlayerClimbing::updateClimbMovement(float tslf)
 {
     if (!p->moving && !climb_move_side && !climb_move_vert && !climb_pullup)
     {
-        body->setMaterialGroupID(p->wmaterials->stoji_mat);
+        body->setMaterialGroupID(p->wmaterials->plNoMove_mat);
     }
     else
         p->moving = true;
@@ -150,7 +150,7 @@ void PlayerClimbing::updateClimbMovement(float tslf)
     //already on move to side
     if (climb_move_side)
     {
-        body->setMaterialGroupID(p->wmaterials->ide_mat);
+        body->setMaterialGroupID(p->wmaterials->plMove_mat);
 
         Vector3 dir = body->getVelocity();
         dir.y = 0;
@@ -171,14 +171,14 @@ void PlayerClimbing::updateClimbMovement(float tslf)
             else
             {
                 climbDir = Ogre::Vector3::ZERO;
-                body->setMaterialGroupID(wmaterials->stoji_mat);
+                body->setMaterialGroupID(wmaterials->plNoMove_mat);
             }
 
             climb_move_side -= tslf * 3;
             if (climb_move_side <= 0)
             {
                 climb_move_side = 0;
-                body->setMaterialGroupID(wmaterials->stoji_mat);
+                body->setMaterialGroupID(wmaterials->plNoMove_mat);
             }
 
             p->camnode->setPosition((1 - abs(climb_move_side - 1)) / 2.0f, 0, 0);
@@ -200,14 +200,14 @@ void PlayerClimbing::updateClimbMovement(float tslf)
                 else
                 {
                     climbDir = Ogre::Vector3::ZERO;
-                    body->setMaterialGroupID(wmaterials->stoji_mat);
+                    body->setMaterialGroupID(wmaterials->plNoMove_mat);
                 }
 
                 climb_move_side += tslf * 3;
                 if (climb_move_side >= 0)
                 {
                     climb_move_side = 0;
-                    body->setMaterialGroupID(wmaterials->stoji_mat);
+                    body->setMaterialGroupID(wmaterials->plNoMove_mat);
                 }
                 p->camnode->setPosition((abs(climb_move_side + 1) - 1) / 2, 0, 0);
                 p->headnode->setOrientation(Quaternion(Ogre::Radian((1 - abs(-climb_move_side - 1)) / 20), Vector3(1, 0, 0)));
@@ -216,14 +216,14 @@ void PlayerClimbing::updateClimbMovement(float tslf)
     //already on move vertically
     else if (climb_move_vert)
     {
-        body->setMaterialGroupID(wmaterials->ide_mat);
+        body->setMaterialGroupID(wmaterials->plMove_mat);
 
         if (climbDir.y >= 0)
         {
             if (!canClimb(Up))
             {
                 climbDir = Vector3::ZERO;
-                body->setMaterialGroupID(wmaterials->stoji_mat);
+                body->setMaterialGroupID(wmaterials->plNoMove_mat);
             }
         }
         else
@@ -231,7 +231,7 @@ void PlayerClimbing::updateClimbMovement(float tslf)
             if (!canClimb(Down))
             {
                 climbDir = Vector3::ZERO;
-                body->setMaterialGroupID(wmaterials->stoji_mat);
+                body->setMaterialGroupID(wmaterials->plNoMove_mat);
             }
             else
             {
@@ -287,10 +287,10 @@ void PlayerClimbing::updateClimbMovement(float tslf)
                 {
                     climbDir = Vector3(0, 2, 0);
                     climb_move_vert = 2;
-                    body->setMaterialGroupID(wmaterials->ide_mat);
+                    body->setMaterialGroupID(wmaterials->plMove_mat);
                 }
                 else
-                    body->setMaterialGroupID(wmaterials->stoji_mat);
+                    body->setMaterialGroupID(wmaterials->plNoMove_mat);
             }
             else
             {
@@ -305,10 +305,10 @@ void PlayerClimbing::updateClimbMovement(float tslf)
                     climbDir.normalise();
                     climbDir *= 2;
                     climb_move_vert = -2;
-                    body->setMaterialGroupID(wmaterials->ide_mat);
+                    body->setMaterialGroupID(wmaterials->plMove_mat);
                 }
                 else
-                    body->setMaterialGroupID(wmaterials->stoji_mat);
+                    body->setMaterialGroupID(wmaterials->plNoMove_mat);
             }
         }
         else if (p->left_key)
@@ -371,7 +371,7 @@ void PlayerClimbing::updateVerticalClimb(bool leftPhase)
             if (canClimb(Up, true, false, leftPhase))
             {
                 climbDir = Vector3(0, 1.5, 0);
-                body->setMaterialGroupID(wmaterials->ide_mat);
+                body->setMaterialGroupID(wmaterials->plMove_mat);
                 con = true;
             }
         }
@@ -380,7 +380,7 @@ void PlayerClimbing::updateVerticalClimb(bool leftPhase)
             if (canClimb(Down, true, false, leftPhase))
             {
                 climbDir = Vector3(0, -1.5, 0);
-                body->setMaterialGroupID(wmaterials->ide_mat);
+                body->setMaterialGroupID(wmaterials->plMove_mat);
                 con = true;
             }
         }
@@ -390,13 +390,13 @@ void PlayerClimbing::updateVerticalClimb(bool leftPhase)
             climb_move_vert = diff*-2.0f - climb_move_vert;
             p->camnode->setOrientation(Quaternion(Ogre::Radian(diff*(-1 + abs(climb_move_vert + diff)) / 20), Vector3(diff*-0.5f, 0, 1)));
         }
-        else body->setMaterialGroupID(wmaterials->stoji_mat);
+        else body->setMaterialGroupID(wmaterials->plNoMove_mat);
     }
     else
     {
         climb_move_vert = 0;
         p->camnode->setOrientation(Quaternion(Ogre::Radian(diff*(1 - abs(climb_move_vert - diff)) / 20), Vector3(diff*0.5f, 0, 1)));
-        body->setMaterialGroupID(wmaterials->stoji_mat);
+        body->setMaterialGroupID(wmaterials->plNoMove_mat);
     }
 }
 
@@ -406,7 +406,7 @@ void PlayerClimbing::tryClimbToSide(Direction dir)
 
     if (canClimb(dir, true, true))
     {
-        body->setMaterialGroupID(p->wmaterials->ide_mat);
+        body->setMaterialGroupID(p->wmaterials->plMove_mat);
         climbDir = climb_normal;
         climbDir.y = 0;
         climbDir.normalise();
@@ -421,7 +421,7 @@ void PlayerClimbing::tryClimbToSide(Direction dir)
             climb_move_side = f * -2;
     }
     else
-        body->setMaterialGroupID(p->wmaterials->stoji_mat);
+        body->setMaterialGroupID(p->wmaterials->plNoMove_mat);
 }
 
 
@@ -654,12 +654,12 @@ void PlayerClimbing::startClimbing(char type)
     hbody->setMassMatrix(mass, mass*inertia);
     hbody->setCenterOfMass(offset);
     hbody->attachNode(node);
-    hbody->setMaterialGroupID(p->wmaterials->flag_mat);
+    hbody->setMaterialGroupID(p->wmaterials->noCollide_mat);
     hbody->setCustomForceAndTorqueCallback<PlayerClimbing>(&PlayerClimbing::climb_callback, this);
     hbody->setPositionOrientation(p->bodyPosition + Vector3(0, 5, 0), Ogre::Quaternion::IDENTITY);
     body->setCustomForceAndTorqueCallback<Player>(&Player::move_callback_nothing, p);
     climbJoint = new OgreNewt::BallAndSocket(hbody, body, p->bodyPosition + Vector3(0, 5, 0), 0);
-    hbody->setMaterialGroupID(p->wmaterials->stoji_mat);
+    hbody->setMaterialGroupID(p->wmaterials->plNoMove_mat);
 
     p->climbing = type;
 
@@ -686,7 +686,7 @@ void PlayerClimbing::stopClimbing()
 
 void PlayerClimbing::updatePullup(float tslf)
 {
-    body->setMaterialGroupID(p->wmaterials->ide_mat);
+    body->setMaterialGroupID(p->wmaterials->plMove_mat);
 
     if (climb_pullup > 0)
     {

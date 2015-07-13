@@ -110,9 +110,6 @@
     <ClCompile Include="src\SlidesAutoTarget.cpp">
       <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
-    <ClCompile Include="src\SlideContactCallback.cpp">
-      <Filter>Files\Objects\Slide</Filter>
-    </ClCompile>
     <ClCompile Include="src\Slide.cpp">
       <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
@@ -404,9 +401,6 @@
       <Filter>Files\Physics</Filter>
     </ClInclude>
     <ClInclude Include="include\SlidesAutoTarget.h">
-      <Filter>Files\Objects\Slide</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SlideContactCallback.h">
       <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
     <ClInclude Include="include\tinyxml2.h">

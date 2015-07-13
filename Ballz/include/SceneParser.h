@@ -72,7 +72,6 @@ private:
     std::vector<LoadedJointInfo> loadedJoints;
     std::map<Ogre::String, OgreNewt::Body*> loadedBodies;
     std::map<Ogre::String, Slide*> loadedSlides;
-    std::map<Ogre::String, std::vector<bodyUserData*>> loadedSlideParts;
     std::map<int, Ogre::BillboardSet*> loadedBillboardSets;
     std::map<Ogre::String, std::vector<CompoundBodyInfo>> compoundBodiesParts;
     std::vector<LoadedInstanceForests> loadedForests;
@@ -193,25 +192,6 @@ private:
         myLog->logMessage("End of optimizing entities", LML_NORMAL);
 
         loadedOptimizableEntities.clear();
-    }
-
-    void connectSlideParts()
-    {
-        for (auto it : loadedSlideParts)
-        {
-            auto slideName = it.first;
-            auto slideParts = it.second;
-
-            Slide* s = loadedSlides[slideName];
-
-            for (auto p : slideParts)
-            {
-                p->customData = s;
-            }
-        }
-
-        loadedSlides.clear();
-        loadedSlideParts.clear();
     }
 
     String getElementValue(const XMLElement* rootElement, String elementName, String defaultValue = "")
@@ -1084,55 +1064,6 @@ private:
 
     }
 
-    void loadSlidePart(const XMLElement* element, Ogre::Entity* ent, SceneNode* node, WorldMaterials* wMaterials, OgreNewt::World* mWorld)
-    {
-        String typeName = getElementValue(element, "BodyType");
-        auto top = StringConverter::parseBool(getElementValue(element, "Top"));
-
-        OgreNewt::Body* body = nullptr;
-
-        if (typeName == "tree")
-        {
-
-            OgreNewt::CollisionPtr col = OgreNewt::CollisionPtr(new OgreNewt::CollisionPrimitives::TreeCollision(mWorld, ent, false, 0));
-            body = new OgreNewt::Body(mWorld, col);
-
-        }
-        else //if (typeName == "conv")
-        {
-            OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld, ent, 0));
-            body = new OgreNewt::Body(mWorld, col);
-
-            body->setMassMatrix(0, Vector3::ZERO);
-        }
-
-        body->setPositionOrientation(node->_getDerivedPosition(), node->_getDerivedOrientation());
-
-        //if (!physicsOnly)
-        body->attachNode(node);
-
-        if (top)
-            body->setType(TopSlidePart);
-        else
-            body->setType(ZipLinePart);
-
-        body->setMaterialGroupID(wMaterials->slide_mat);
-
-        bodyUserData* userD = new bodyUserData();
-        userD->material = 0;
-
-        String slideTrackName = getElementValue(element, "Track");
-
-        if (loadedSlideParts.find(slideTrackName) == loadedSlideParts.end())
-            loadedSlideParts[slideTrackName] = std::vector<bodyUserData*>();
-
-        loadedSlideParts[slideTrackName].push_back(userD);
-
-        body->setUserData(Ogre::Any(userD));
-
-        loadedBodies[ent->getName()] = body;
-    }
-
     void loadSlideTrack(const XMLElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
     {
         std::vector<Ogre::Vector3> points;
@@ -1323,7 +1254,7 @@ private:
 
             loadedBodies[ent->getName()] = body;
 
-            loadActions(rootElement, mEventMgr, body, userD, wMaterials->action_mat);
+            loadActions(rootElement, mEventMgr, body, userD, wMaterials->actionMaker_mat);
 
         }
         else if (typeName == "comp" && compoundBodiesParts.find(node->getName()) != compoundBodiesParts.end())
@@ -1393,7 +1324,7 @@ private:
                 body->setType(typeID);
 
             if (typeID == Pullup_old || typeID == Climb || typeID == Climb_Pullup || typeID == Dynamic_Pullup)
-                body->setMaterialGroupID(wMaterials->flag_mat);
+                body->setMaterialGroupID(wMaterials->noCollide_mat);
 
             body->setCenterOfMass(offset);
             body->setLinearDamping(0.3);
@@ -1402,7 +1333,7 @@ private:
 
             loadedBodies[ent->getName()] = body;
 
-            loadActions(rootElement, mEventMgr, body, userD, wMaterials->action_mat);
+            loadActions(rootElement, mEventMgr, body, userD, wMaterials->actionMaker_mat);
 
             body->setStandardForceCallback();
 
@@ -1443,7 +1374,7 @@ private:
                 body->setType(typeID);
 
             if (typeID == Pullup_old || typeID == Climb || typeID == Climb_Pullup || typeID == Dynamic_Pullup)
-                body->setMaterialGroupID(wMaterials->flag_mat);
+                body->setMaterialGroupID(wMaterials->noCollide_mat);
 
             body->setCenterOfMass(offset);
             body->setLinearDamping(0.3);
@@ -1454,7 +1385,7 @@ private:
 
             loadedBodies[ent->getName()] = body;
 
-            loadActions(rootElement, mEventMgr, body, userD, wMaterials->action_mat);
+            loadActions(rootElement, mEventMgr, body, userD, wMaterials->actionMaker_mat);
 
             body->setStandardForceCallback();
 
@@ -1958,10 +1889,6 @@ private:
                     else if (rootTag == "SlideTrack")
                     {
                         loadSlideTrack(root, ent, node, mSceneMgr);
-                    }
-                    else if (rootTag == "SlideBodyPart")
-                    {
-                        loadSlidePart(root, ent, node, wMaterials, mWorld);
                     }
                     else if (rootTag == "PhysicalBodyTrigger")
                     {
@@ -2542,7 +2469,6 @@ public:
         loadedBillboardSets.clear();
         loadedForests.clear();
         loadedSlides.clear();
-        loadedSlideParts.clear();
 
         Global::gameMgr->loadedBodies = &loadedBodies;
 
@@ -2578,7 +2504,6 @@ public:
         compoundBodiesParts.clear();
         loadedForests.clear();
 
-        connectSlideParts();
         optimizeEntities();
         Global::gameMgr->geometryMgr->postLoad();
 

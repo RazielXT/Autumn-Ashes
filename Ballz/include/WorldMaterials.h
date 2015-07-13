@@ -5,14 +5,14 @@ struct WorldMaterials
     ~WorldMaterials();
     void init(OgreNewt::World* mWorld);
 
-    OgreNewt::MaterialID* stoji_mat = NULL;
-    OgreNewt::MaterialID* ide_mat;
-    OgreNewt::MaterialID* flag_mat;
+    OgreNewt::MaterialID* plNoMove_mat = NULL;
+    OgreNewt::MaterialID* plMove_mat;
+    OgreNewt::MaterialID* noCollide_mat;
     OgreNewt::MaterialID* playerIgnore_mat;
     OgreNewt::MaterialID* trig_mat;
-    OgreNewt::MaterialID* action_mat;
+    OgreNewt::MaterialID* actionMaker_mat;
     OgreNewt::MaterialID* selfIgnore_mat;
-    OgreNewt::MaterialID* slide_mat;
+    OgreNewt::MaterialID* plBlock_mat;
 
     void initCollisions(OgreNewt::World* mWorld);
 };
