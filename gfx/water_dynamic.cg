@@ -30,6 +30,32 @@ struct PIn
 	float3 waveNormal : TEXCOORD7;
 };
 
+float4 waveFunc(float2 waveSizeSpeed, float time, float hole, sampler2D dispMap, float2 inUv)
+{
+	float waveScale = 4;
+	float waveScale2 = 7;
+    float waveSize = waveSizeSpeed.x*10;
+	float waveSpeed = waveSizeSpeed.y/15;
+	
+	float2 uv = inUv/waveScale;
+	uv.y += time*waveSpeed/4.5;
+	uv.x*=2;
+	float4 wMapSmall = tex2D(dispMap, uv);
+
+	uv = inUv/waveScale2;
+	uv.y += time*waveSpeed/2.0;
+	uv.x*=1;
+	float4 wMapBig = tex2D(dispMap, uv);
+	
+	float splashDist = 10;
+	float splashPower = 10;
+	float waveW = hole;
+	
+	float add = (wMapSmall.r+wMapBig.r*2)*waveSize;
+	add -= waveW*splashPower;
+	
+	return float4(uv, add, wMapSmall.x + wMapBig.x);
+}
 
 VOut wdiffuse_vs_op(VIn IN,
 	uniform float4x4 wMat,
@@ -45,35 +71,16 @@ VOut wdiffuse_vs_op(VIn IN,
     float4 wpos = mul(wMat, IN.p);
 	float4 wnor = mul(wMat, IN.n);
 	
-	float waveScale = 4;
-	float waveScale2 = 7;
-    float waveSize = waveSeedSizeSpeed.y*10;
-	float waveSpeed = waveSeedSizeSpeed.z/15;
+	//xy = wave map uv, z = add height, w = direct height map 
+	float4 waveParams = waveFunc(waveSeedSizeSpeed.yz, time, IN.c.r, dispMap, IN.uv.xy); 
+
+	wpos.y += waveParams.z;
+	float3 wMapNormal = tex2D(normMap, waveParams.xy).rgb;
 	
 	float foamDirect = saturate(3*IN.c.g + IN.c.b*2);
-	
-	float2 uv = IN.uv.xy/waveScale;
-	uv.y += time*waveSpeed/4.5;
-	uv.x*=2;
-	float4 wMapSmall = tex2D(dispMap, uv);
-
-	uv = IN.uv.xy/waveScale2;
-	uv.y += time*waveSpeed/2.0;
-	uv.x*=1;
-	float4 wMapBig = tex2D(dispMap, uv);
-	
-	float3 wMapNormal = tex2D(normMap, uv).rgb;
-	
-	float3 splashPoint = float3(-221,-9,130);
-	float splashDist = 10;
-	float splashPower = 10;
 	float waveW = IN.c.r;
 	foamDirect += waveW;
 	
-	float add = (wMapSmall.r+wMapBig.r*2)*waveSize;
-	add -= waveW*splashPower;
-	wpos.y += add;	
-
 	OUT.p = mul(vpMat, wpos);
 
 	OUT.wp.xyz=wpos.xyz;
@@ -97,7 +104,7 @@ VOut wdiffuse_vs_op(VIn IN,
 	float3 eyeDir = normalize(IN.p.xyz - camPos.xyz);
 	OUT.vVec.w = pow(1+dot(eyeDir, wMapNormal), 1.5);
 	
-	OUT.wp.w = max((wMapSmall.x + wMapBig.x)/4,foamDirect);//OUT.vVec.w*add*IN.c.r/(waveSize*1.5);
+	OUT.wp.w = max(waveParams.w/4,foamDirect);//OUT.vVec.w*add*IN.c.r/(waveSize*1.5);
 	
     return OUT;
 }
@@ -222,9 +229,41 @@ void wdiffuse_ps_op(
     color3=float4(IN.uv.z/IN.uv.w,IN.uv.z,0,0);
 }
 
+struct VOutLite
+{
+    float4 p : POSITION;
+    float4 wp  : TEXCOORD0;
+};
+
+struct PInLite
+{
+    float4 wp  : TEXCOORD0;
+};
+
+VOutLite wdiffuseLite_vs_op(VIn IN,
+	uniform float4x4 wMat,
+	uniform float4x4 vpMat,
+	uniform float time,
+	uniform float3 waveSeedSizeSpeed,
+	uniform sampler2D dispMap : register(s0)
+)
+{
+    VOutLite OUT;
+    float4 wpos = mul(wMat, IN.p);
+	
+	//xy = wave map uv, z = add height, w = direct height map 
+	float4 waveParams = waveFunc(waveSeedSizeSpeed.yz, time, IN.c.r, dispMap, IN.uv.xy); 
+
+	wpos.y += waveParams.z;
+	
+	OUT.p = mul(vpMat, wpos);
+	OUT.wp.xyz=wpos.xyz;
+    
+    return OUT;
+}
 
 void wDepth_ps_op(
-	PIn IN,
+	PInLite IN,
 	out float4 color : COLOR
 )
 {

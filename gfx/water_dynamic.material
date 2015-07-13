@@ -110,7 +110,7 @@ material material_water_dynamic
 
 		pass
         {	 
-            vertex_program_ref water_d_vs
+            vertex_program_ref water_dLite_vs
             {
 				param_named waveSeedSizeSpeed float3 $waveSeedSizeSpeed
             }
@@ -124,13 +124,6 @@ material material_water_dynamic
 				texture water_DISP.jpg
 				binding_type vertex 
 			}
-			
-			texture_unit wavesNormalMap
-			{
-				texture flat_n.png
-				binding_type vertex 
-			}
-
         }
     }
 }

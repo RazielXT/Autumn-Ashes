@@ -32,6 +32,22 @@ fragment_program water_d_ps cg
     }
 }
 
+vertex_program water_dLite_vs cg
+{
+    source water_dynamic.cg
+	profiles vs_3_0 arbvp1
+    entry_point wdiffuseLite_vs_op
+ 
+	uses_vertex_texture_fetch true
+	
+    default_params
+    {
+		param_named_auto time time
+        param_named_auto wMat world_matrix
+        param_named_auto vpMat viewproj_matrix
+    }
+}
+
 fragment_program water_depthCheck_ps cg
 {
     source water_dynamic.cg
