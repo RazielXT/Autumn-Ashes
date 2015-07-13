@@ -3,13 +3,12 @@ compositor ScaryBloomNoSSAO
     technique
     {
 		texture rt0 target_width target_height PF_R8G8B8A8 PF_R8G8B8A8 PF_R8G8B8A8 PF_FLOAT16_GR
-
 		texture rtTran target_width target_height PF_R8G8B8A8 PF_R8G8B8A8 PF_R8G8B8A8 PF_FLOAT16_GR
 		
 		texture smoke_rt target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8A8
 		texture smoke_rt2 target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8A8
 		
-		texture rtCombined target_width target_height PF_R8G8B8A8 PF_R8G8B8A8
+		texture rtCombined target_width target_height PF_R8G8B8A8
 		texture rt1 target_width target_height PF_FLOAT16_RGBA
 		texture rtD target_width target_height PF_FLOAT16_GR
 
@@ -120,11 +119,11 @@ compositor ScaryBloomNoSSAO
             {
                 material ModThrough
                 input 0 rt0 0
-				input 1 rt0 1
+				input 1 rt0 3
 				input 2 smoke_rt 0
 				input 3 rtTran 0
 				input 4 rtTran 1
-				input 5 rtTran 2
+				input 5 rtTran 3
             }
 		}
 
@@ -254,8 +253,9 @@ compositor ScaryBloomNoSSAO
 			
             pass render_quad
             {
-                material PutThrough
-                input 0 rtCombined 2
+                material PutThrough2
+                input 0 rt0 2
+				input 1 rtTran 2
             }
 		}
 
