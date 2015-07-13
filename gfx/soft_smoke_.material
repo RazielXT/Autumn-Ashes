@@ -1,0 +1,93 @@
+material Particles/Crow
+{
+	technique
+	{
+		pass
+		{
+
+			lighting off
+			depth_write off
+            
+  			scene_blend alpha_blend
+            
+  		    cull_hardware none
+              cull_software none
+
+
+
+			texture_unit
+			{
+				texture crow.png
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+/*
+
+vertex_program softsmoke_vs_ cg
+{
+    source soft_smoke.cg
+    profiles vs_3_0
+    entry_point softsmoke_vs
+
+	default_params
+    {
+		param_named_auto wpmat 	worldviewproj_matrix
+		param_named_auto wmat 	world_matrix
+    }
+
+}
+
+fragment_program softsmoke_ps_ cg
+{
+    source soft_smoke.cg
+    profiles ps_3_0
+    entry_point softsmoke_ps
+
+	default_params
+    {
+		param_named_auto camPos	camera_position
+    }
+
+}
+*/
+
+material smokeMat_
+{
+
+    technique
+    {
+        pass
+        {
+
+		//scene_blend colour_blend
+		scene_blend one one_minus_src_alpha
+		depth_write off
+		cull_hardware none
+		lighting off
+
+            vertex_program_ref softsmoke_vs
+            {
+            }
+
+            fragment_program_ref softsmoke_ps
+            {
+            }
+
+            texture_unit
+            {
+                texture particle_cloud.png
+            }
+
+			texture_unit
+            {
+				filtering none
+				content_type compositor ScaryBloomNoSSAO rt0 3
+            }
+
+        }
+    }
+
+}

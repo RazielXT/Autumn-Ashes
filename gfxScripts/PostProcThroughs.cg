@@ -1,21 +1,20 @@
+float4 combineSmoke(float4 scene, float4 smoke)
+{
+	return float4(lerp(scene.rgb,clamp(smoke.rgb,0,1),saturate(smoke.a)),smoke.a);
+}
+
 float4 ModThrough_fp
     (
          float2 uv: TEXCOORD0,
-         uniform sampler2D scene: register(s0),
+         uniform sampler2D sceneMap: register(s0),
 	    uniform sampler2D adder: register(s1)
     ) : COLOR
 {   
-    float4 add=tex2D(adder, uv);
-//return float4(lerp(tex2D(scene, uv).rgb,clamp(add.rgb,0.8,1),add.rgb*2+clamp(add.rgb,0,0.1)*3),add.r*1.1);
+    float4 smoke=tex2D(adder, uv);
+	float4 scene = tex2D(sceneMap, uv);
 
-float plus=0;
-//if(add.a<0.8) plus=saturate(0.8-add.a);
-
-return float4(lerp(tex2D(scene, uv).rgb,clamp(add.rgb,0,1),saturate(add.a+plus*add.a)),add.a);
-//add.rgb=clamp(add.rgb,0,0.5);
-//	return tex2D(scene, uv)+add;
+	return combineSmoke(scene,smoke);
 }
-
 
 float4 AddThrough_fp
     (
@@ -24,15 +23,9 @@ float4 AddThrough_fp
 	    uniform sampler2D adder: register(s1)
     ) : COLOR
 {   
-
     float4 add=tex2D(adder, uv);
-	/*add+=tex2D(adder, uv+float2(1/400,0));
-	add+=tex2D(adder, uv+float2(0,1/300));
-	add+=tex2D(adder, uv+float2(-1/400,0));
-	add+=tex2D(adder, uv+float2(0,-1/300));
-	add/=5;*/
-return tex2D(scene, uv)+float4(add.rgb,0);
 
+	return tex2D(scene, uv)+float4(add.rgb,0);
 }
 
 float4 MulThrough_fp
@@ -42,15 +35,22 @@ float4 MulThrough_fp
 	    uniform sampler2D muller: register(s1)
     ) : COLOR
 {   
-
     float4 mul=tex2D(muller, uv);
-	/* mul+=tex2D(muller, uv+float2(1/400,0));
-	 mul+=tex2D(muller, uv+float2(0,1/300));
-	 mul+=tex2D(muller, uv+float2(-1/400,0));
-	 mul+=tex2D(muller, uv+float2(0,-1/300));
-	 mul/=5;*/
-return tex2D(scene, uv)*float4(mul.rgb,1);
 
+	return tex2D(scene, uv)*float4(mul.rgb,1);
+}
+
+float4 MinThrough_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D t1: register(s0),
+	    uniform sampler2D t2: register(s1)
+    ) : COLOR
+{   
+    float v1=tex2D(t1, uv);
+	float v2=tex2D(t2, uv);
+
+	return (v2==0) ? v1 : min(v1,v2);
 }
 
 float4 PutThrough_fp
@@ -59,8 +59,44 @@ float4 PutThrough_fp
          uniform sampler2D scene: register(s0)
     ) : COLOR
 {   
+    float4 o=tex2D(scene, uv);
+	return o;
+}
 
-    float4 ro=tex2D(scene, uv);
-return ro;
+float4 PutThrough2_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D map: register(s0),
+		 uniform sampler2D map2: register(s1)
+    ) : COLOR
+{   
+    float4 o = tex2D(map, uv) + tex2D(map2, uv);
+	return o;
+}
 
+float4 CombineScene_fp
+    (
+        float2 uv: TEXCOORD0,
+        uniform sampler2D sceneMap: register(s0),
+	    uniform sampler2D depth: register(s1),
+		uniform sampler2D smokeMap: register(s2),
+	    uniform sampler2D waterMap: register(s3),
+		uniform sampler2D distortion: register(s4),
+	    uniform sampler2D waterDepth: register(s5)
+    ) : COLOR
+{   
+	float2 dist = tex2D(distortion,uv);
+	
+	float2 waterD = tex2D(waterDepth,uv).xy;
+	dist = (waterD.y == 0) ? 0 : 0.3*(dist.xy - 0.5);
+	
+	float4 scene = tex2D(sceneMap, uv+dist);
+	
+	float4 water = tex2D(waterMap,uv);
+	scene = scene*(1-water.a) + water;
+	
+	float4 smoke = tex2D(smokeMap, uv);
+	scene = combineSmoke(scene, smoke);
+	
+	return scene;
 }

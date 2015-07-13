@@ -17,20 +17,99 @@ material PutThrough
 			cull_software none
 			depth_func always_pass
 
-                        fragment_program_ref PutThrough_fp
+			fragment_program_ref PutThrough_fp
+			{
+			}
+
+			texture_unit map
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+					filtering none
+			}
+		}
+	}
+}
+
+fragment_program PutThrough2_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_3_0
+
+	entry_point PutThrough2_fp
+	
+}
+
+material PutThrough2
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			fragment_program_ref PutThrough2_fp
+			{
+			}
+
+			texture_unit map
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering none
+			}
+			
+			texture_unit map2
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering none
+			}
+		}
+	}
+}
+
+fragment_program MinThrough_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_3_0
+
+	entry_point MinThrough_fp
+	
+}
+
+material MinThrough
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+                        fragment_program_ref MinThrough_fp
                         {
                         }
 
-                        texture_unit map
+						texture_unit map
                         {
-                                tex_coord_set 0
-                                tex_address_mode clamp
-                                filtering none
+                            tex_coord_set 0
+                            tex_address_mode clamp
+                            filtering none
+                        }
+						
+						texture_unit map2
+                        {
+                            tex_coord_set 0
+                            tex_address_mode clamp
+                            filtering none
                         }
             }
         }
 }
-
 
 fragment_program ModThrough_fp cg
 {
@@ -145,7 +224,7 @@ material MulThrough
                                 filtering none
                         }
 
-                        texture_unit muller  //lol
+                        texture_unit muller
                         {
                                 tex_coord_set 0
                                 tex_address_mode clamp
@@ -153,4 +232,73 @@ material MulThrough
                         }
             }
         }
+}
+
+fragment_program CombineScene_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_2_x
+
+	entry_point CombineScene_fp
+	
+}
+
+material CombineScene
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			fragment_program_ref CombineScene_fp
+			{
+			}
+
+			texture_unit scene
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+					filtering none
+			}
+
+			texture_unit sceneDepth
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+					filtering none
+			}
+			
+			texture_unit smoke
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+					filtering anisotropic
+					max_anisotropy 8
+			}
+
+			texture_unit sceneTransparent
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+					filtering none
+			}
+			
+			texture_unit sceneDistortion
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+					filtering none
+			}
+			
+			texture_unit sceneTransparentDepth
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+					filtering none
+			}
+        }
+    }
 }

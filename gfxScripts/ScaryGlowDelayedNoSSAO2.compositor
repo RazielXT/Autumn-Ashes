@@ -26,8 +26,6 @@ compositor ScaryBloomNoSSAO
 
 		texture nvm 1 1 PF_FLOAT16_RGB
 
-
-
 		target nvm
         {
 			only_initial on
@@ -57,6 +55,13 @@ compositor ScaryBloomNoSSAO
 		//transparent
         target rtTran
         {
+			shadows off
+					
+			pass clear
+			{
+				buffers colour
+			}
+			
 			pass render_scene
 			{
 				first_render_queue 80
@@ -117,10 +122,11 @@ compositor ScaryBloomNoSSAO
 			
             pass render_quad
             {
-                material ModThrough
+                material CombineScene
+				
                 input 0 rt0 0
 				input 1 rt0 3
-				input 2 smoke_rt 0
+				input 2 smoke_rt
 				input 3 rtTran 0
 				input 4 rtTran 1
 				input 5 rtTran 3
@@ -343,7 +349,7 @@ compositor ScaryBloomNoSSAO
 				identifier 14
 				material MBFinalExtra
 				input 0 rt1
-				input 1 rtD
+				input 1 rt0 3
 			}
 		}
     }

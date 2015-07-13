@@ -219,9 +219,10 @@ void wdiffuse_ps_op(
 	float depth = saturate((depthEnv.g - IN.uv.z)/5);
 	float alpha = (diffTex.a*0.75*depth + foamTerm*foamTex.r + fresnel);
 	
-    color0=float4(def*light0C,alpha);
+    color0=float4(def*light0C*alpha,alpha);
 	
-    float2 normalOut = float2(0.5,0.5);//IN.waveNormal.xy*clamp((15-IN.uv.z)/15,0.5,1);//normalTex.rg;//lerp(float2(0.5,0.5),normalTex.rg,saturate(speed)*);
+	//float2(0.5,0.5);
+    float2 normalOut = IN.waveNormal.xy;//*clamp((15-IN.uv.z)/15,0.5,1);//normalTex.rg;//lerp(float2(0.5,0.5),normalTex.rg,saturate(speed)*);
 	
 	float shine = reflectionTex.r*fresnel*0.5;
     color1=float4(normalOut,0.2 ,1);

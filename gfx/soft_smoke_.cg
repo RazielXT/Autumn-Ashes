@@ -26,8 +26,7 @@ void softsmoke_vs(uniform float4x4 wpmat,
 void softsmoke_ps(
 	uniform float3 camPos,
 	uniform sampler2D material: register(s0),
-	uniform sampler2D depthScene: register(s1),
-	uniform sampler2D depthTrans: register(s2),
+	uniform sampler2D depth: register(s1),
 	float2 screenSpace : WPOS,
 	in float3 uv : TEXCOORD0,
 	in float4 d : TEXCOORD1,
@@ -51,10 +50,7 @@ void softsmoke_ps(
 	float2 depthTexCoord = d.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
 	depthTexCoord+=float2(0.5f/1280.0f,0.5f/768.0f);
 	
-	float depthSc=tex2D(depthScene,depthTexCoord).y;   
-	float depthTr=tex2D(depthTrans,depthTexCoord).y;   	
-	float depthEnv = depthTr==0 ? depthSc : min(depthSc,depthTr);
-	
+	float depthEnv=tex2D(depth,depthTexCoord).y;   
 	if(depthEnv<depthCloudZ) discard;
 
 	float4 color=tex2D(material, uv.xy);
