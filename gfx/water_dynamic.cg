@@ -121,15 +121,11 @@ void wdiffuse_ps_op(
 	uniform float scrollTime,
 	uniform float speed,
 	uniform float2 scaleDiff,
-	uniform float4 lightDiffuse,
-	uniform float3 matDiffuse,
-	uniform float3 lightDif0,
 	uniform float4 lightPos0,
-	uniform float4 lightAtt0,
 	uniform float3 camPos,
 	uniform float playerSpeed,
-	uniform float matShininess,
-	uniform float4 spotlightParams,
+	uniform float4 fogColor,
+	uniform float4 fogParams,
 	uniform float4x4 iTWMat,
 	uniform sampler2D diffuseMap : register(s2),
 	uniform sampler2D normalMap : register(s3),
@@ -156,7 +152,7 @@ void wdiffuse_ps_op(
     
     texCoord.y += scrollTime * speedUV*normalSpeed;
     
-	float3 normalTex = tex2D(normalMap, texCoord*scaleDiff*normalScale*5);
+	float3 normalTex = tex2D(normalMap, texCoord*scaleDiff*normalScale*5).rgb;
 	
 	texCoord.y += scrollTime * speedUV * 0.5;
 	
@@ -172,7 +168,7 @@ void wdiffuse_ps_op(
     
     // Parallax mapping
     //float height = tex2D(dispMap, texCoord.xy*scaleDiff).x;
-    texCoord = IN.uv + saturate(speed)*(0.015 * height - 0.05) * normalize(IN.vVec.xyz).xy;
+    texCoord = IN.uv.xy + saturate(speed)*(0.015 * height - 0.05) * normalize(IN.vVec.xyz).xy;
     
 	float2 diffUV = texCoord;
     diffUV.y += scrollTime * speedUV * 3;
@@ -194,7 +190,9 @@ void wdiffuse_ps_op(
     foamTex += tex2D(foamMap, texCoord*scaleDiff*foamScale).rgb*foamTerm;
 	foamTex/=2;
 	
-	float3 camDir = normalize(camPos - IN.wp.xyz);
+	float3 camDir = camPos - IN.wp.xyz;
+	float dist = length(camDir);
+	camDir = normalize(camDir);
 	
 	float3 Ru = normalize(-camDir);
 	float3 Rn = normalize(normal.xyz);
@@ -206,8 +204,7 @@ void wdiffuse_ps_op(
 	
 	float fresnel = pow(1 - abs(dot(camDir, normal)), 3);
 	
-    float3 diffuseContrib = (diffuse * lightDif0);
-    diffuseContrib = reflectionTex*2;
+    float3 diffuseContrib = reflectionTex*2;
     
     float3 light0C = (diffuseContrib) + foamTex;
     
@@ -220,6 +217,11 @@ void wdiffuse_ps_op(
 	float alpha = (diffTex.a*0.75*depth + foamTerm*foamTex.r + fresnel);
 	
     color0=float4(def*light0C*alpha,alpha);
+	
+	//distance fog
+	float insideFog = saturate((dist - fogParams.y) / fogParams.z)*fogColor.a;
+	float3 atmFog = fogColor.rgb;
+	color0.rgb = lerp(color0.rgb, atmFog, insideFog);
 	
 	//float2(0.5,0.5);
     float2 normalOut = IN.waveNormal.xy;//*clamp((15-IN.uv.z)/15,0.5,1);//normalTex.rg;//lerp(float2(0.5,0.5),normalTex.rg,saturate(speed)*);

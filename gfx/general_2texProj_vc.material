@@ -11,7 +11,10 @@ material 2tProj_vc_material_static
 	set $uvScale "1"
 	set $uvSpreadScale "0.5"
 	set $uv2Scale "1"
+	
 	set $projScale "0.25" 
+	set $projSpeed "1" 
+	set $projDirXY "1 1" 
 	
     technique
     {
@@ -42,6 +45,7 @@ material 2tProj_vc_material_static
 				param_named uvSpreadScale float $uvSpreadScale
 				param_named uv2Scale float $uv2Scale
 				param_named projScale float $projScale
+				param_named projSpeedDirXY float3 $projSpeed $projDirXY
 
 				param_named specular2Weight float $specular2Weight
             }

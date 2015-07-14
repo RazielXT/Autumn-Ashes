@@ -27,6 +27,8 @@ fragment_program water_d_ps cg
         param_named_auto camPos camera_position
         param_named_auto lightPos0 light_position 0
         param_named_auto iTWMat inverse_transpose_world_matrix
+		param_named_auto fogColor fog_colour
+		param_named_auto fogParams fog_params
 		//param_named_auto playerSpeed shadow_colour
 
     }

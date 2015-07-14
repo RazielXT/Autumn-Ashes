@@ -167,6 +167,7 @@ void diffuse_ps(
 	uniform float uvSpreadScale,
 	uniform float uv2Scale,
 	uniform float projScale,
+	uniform float3 projSpeedDirXY,
 	uniform float time,
 	uniform float specular2Weight,
 	uniform float3 camPos,
@@ -300,7 +301,8 @@ void diffuse_ps(
 	ambientColor *= ambientWeight;
 	float3 vertexLight = ambientColor+(1-ambientColor)*IN.vc.r;
 	
-	float3 projection = tex2D(projMap,(IN.wp.xy+time)*projScale).rgb + tex2D(projMap,(IN.wp.xy-time)*projScale).rgb;
+	float2 projOffset = time*projSpeedDirXY.x*projSpeedDirXY.yz;
+	float3 projection = tex2D(projMap,(IN.wp.xy+IN.wp.z+projOffset)*projScale).rgb * tex2D(projMap,(IN.wp.xy+IN.wp.z-projOffset*0.5)*projScale).rgb;
 	vertexLight += projection+IN.vc.g;
 	
 	//slight gi normal mapping
