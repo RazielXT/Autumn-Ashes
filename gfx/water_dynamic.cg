@@ -179,7 +179,7 @@ void wdiffuse_ps_op(
     float3 normal = mul(transpose(tbn), normalTex.xyz * 2 - 1); // to object space
     normal = normalize(mul((float3x3)iTWMat, normal));
     
-    float3 diffuse = dot(ld0, normal)*0.5 + 0.5;//max(, foamTerm);
+    float diffuse = dot(ld0, normal)*0.5 + 0.5;;
     
     texCoord.y += scrollTime * speedUV;
     
@@ -228,7 +228,7 @@ void wdiffuse_ps_op(
 	
 	float shine = reflectionTex.r*fresnel*0.5;
     color1=float4(normalOut,0.2 ,1);
-    color2=pow(color0*3,5);
+    color2=pow(fresnel*1.5,2);
     color3=float4(IN.uv.z/IN.uv.w,IN.uv.z,0,0);
 }
 

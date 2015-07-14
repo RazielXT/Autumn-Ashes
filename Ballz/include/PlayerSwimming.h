@@ -14,20 +14,20 @@ class PlayerSwimming
     Ogre::Camera* mWaterCam;
     Ogre::SceneNode* mWaterCamNode;
 
-	void initWaterDepthReading();
+    void initWaterDepthReading();
     void readWaterDepth();
 
-	Ogre::ParticleSystem* bubbles;
-	Ogre::SceneNode* bubblesNode;
+    Ogre::ParticleSystem* bubbles;
+    Ogre::SceneNode* bubblesNode;
 
-	Ogre::ParticleSystem* splash;
-	Ogre::SceneNode* splashNode;
+    Ogre::ParticleSystem* splash;
+    Ogre::SceneNode* splashNode;
 
-	Ogre::ParticleSystem* dust;
-	Ogre::SceneNode* dustNode;
+    Ogre::ParticleSystem* dust;
+    Ogre::SceneNode* dustNode;
 
-	void enteredWater();
-	void leftWater();
+    void enteredWater();
+    void leftWater();
 
 public:
 

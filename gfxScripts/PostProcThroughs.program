@@ -34,7 +34,7 @@ material PutThrough
 fragment_program PutThrough2_fp cg
 {
 	source PostProcThroughs.cg
-	profiles ps_3_0
+	profiles ps_2_x
 
 	entry_point PutThrough2_fp
 	
@@ -74,7 +74,7 @@ material PutThrough2
 fragment_program MinThrough_fp cg
 {
 	source PostProcThroughs.cg
-	profiles ps_3_0
+	profiles ps_2_x
 
 	entry_point MinThrough_fp
 	
@@ -237,10 +237,14 @@ material MulThrough
 fragment_program CombineScene_fp cg
 {
 	source PostProcThroughs.cg
-	profiles ps_3_0
+	profiles ps_2_x
 
 	entry_point CombineScene_fp
 	
+	default_params
+    {
+		param_named_auto time time
+    }
 }
 
 material CombineScene
@@ -302,9 +306,9 @@ material CombineScene
 			
 			texture_unit ppDistortion
 			{
-					tex_coord_set 0
-					tex_address_mode clamp
-					filtering none
+					filtering trilinear
+					
+					texture underwater_n.tga
 			}
         }
     }
