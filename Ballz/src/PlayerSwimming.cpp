@@ -6,37 +6,49 @@ int size = 1;
 
 PlayerSwimming::PlayerSwimming(Player* player) : p(player)
 {
-    auto sceneMgr = Global::mSceneMgr;
-    auto camera = sceneMgr->getCamera("Camera");
-    auto window = Global::mWindow;
+	initWaterDepthReading();
 
-    texture = TextureManager::getSingleton().createManual("waterDepth",
-              ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D,
-              size, size, 0, PF_FLOAT32_R, TU_RENDERTARGET);
+	bubbles = Global::mSceneMgr->createParticleSystem("WaterBubbles", "WaterBubbles");
+	bubbles->setRenderQueueGroup(91);
+	bubbles->setVisibilityFlags(8);
+	
+	bubblesNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	bubblesNode->attachObject(bubbles);
+}
 
-    rttTex = texture->getBuffer()->getRenderTarget();
+void PlayerSwimming::initWaterDepthReading()
+{
+	auto sceneMgr = Global::mSceneMgr;
+	auto camera = sceneMgr->getCamera("Camera");
+	auto window = Global::mWindow;
 
-    mWaterCam = sceneMgr->createCamera("waterDepthCam");
-    mWaterCam->setNearClipDistance(camera->getNearClipDistance());
-    mWaterCam->setFarClipDistance(camera->getFarClipDistance());
-    mWaterCam->setAspectRatio(1);
+	texture = TextureManager::getSingleton().createManual("waterDepth",
+		ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D,
+		size, size, 0, PF_FLOAT32_R, TU_RENDERTARGET);
 
-    mWaterCam->setProjectionType(PT_ORTHOGRAPHIC);
-    mWaterCam->setOrthoWindow(size, size);
-    mWaterCam->lookAt(0, 0, -1);
-    //mReflectCam->setVisibilityFlags(2);
-    Viewport *v = rttTex->addViewport(mWaterCam);
-    v->setClearEveryFrame(true);
-    v->setBackgroundColour(ColourValue::Black);
-    v->setShadowsEnabled(false);
-    v->setMaterialScheme("WaterDepth");
+	rttTex = texture->getBuffer()->getRenderTarget();
 
-    mWaterCamNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    mWaterCamNode->attachObject(mWaterCam);
-    mWaterCamNode->pitch(Degree(-90));
+	mWaterCam = sceneMgr->createCamera("waterDepthCam");
+	mWaterCam->setNearClipDistance(camera->getNearClipDistance());
+	mWaterCam->setFarClipDistance(camera->getFarClipDistance());
+	mWaterCam->setAspectRatio(1);
 
-    v->setVisibilityMask(16);
-    v->setSkiesEnabled(false);
+	mWaterCam->setProjectionType(PT_ORTHOGRAPHIC);
+	mWaterCam->setOrthoWindow(size, size);
+	mWaterCam->lookAt(0, 0, -1);
+	//mReflectCam->setVisibilityFlags(2);
+	Viewport *v = rttTex->addViewport(mWaterCam);
+	v->setClearEveryFrame(true);
+	v->setBackgroundColour(ColourValue::Black);
+	v->setShadowsEnabled(false);
+	v->setMaterialScheme("WaterDepth");
+
+	mWaterCamNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	mWaterCamNode->attachObject(mWaterCam);
+	mWaterCamNode->pitch(Degree(-90));
+
+	v->setVisibilityMask(16);
+	v->setSkiesEnabled(false);
 }
 
 void PlayerSwimming::readWaterDepth()
@@ -58,7 +70,7 @@ void PlayerSwimming::readWaterDepth()
     {
         if (inWater)
         {
-            Global::mPPMgr->ColouringShift = Ogre::Vector4(1, 1, 1, 0);
+			leftWater();
             inWater = false;
         }
     }
@@ -66,15 +78,25 @@ void PlayerSwimming::readWaterDepth()
     {
         if (!inWater)
         {
-            Global::mPPMgr->ColouringShift = Ogre::Vector4(1.5f, 1.15f, 1.05f, 0);
+			enteredWater();
             inWater = true;
         }
     }
+
+	mWaterCamNode->setPosition(p->bodyPosition + Vector3(0, 20, 0));
+}
+
+void PlayerSwimming::enteredWater()
+{
+	Global::mPPMgr->ColouringShift = Ogre::Vector4(1.5f, 1.15f, 1.05f, 0);
+}
+
+void PlayerSwimming::leftWater()
+{
+	Global::mPPMgr->ColouringShift = Ogre::Vector4(1, 1, 1, 0);
 }
 
 void PlayerSwimming::update()
 {
     readWaterDepth();
-
-    mWaterCamNode->setPosition(p->bodyPosition + Vector3(0, 20, 0));
 }
