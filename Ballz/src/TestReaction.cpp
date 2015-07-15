@@ -31,13 +31,13 @@ bool TestReaction::update(Ogre::Real tslf)
 
     if (close)
     {
-        Global::player->body->setLinearDamping(0.5f);
-        Global::player->gravity = Ogre::Vector3(10.0f, 5.0f, 0);
+        //Global::player->body->setLinearDamping(0.5f);
+        //Global::player->gravity = Ogre::Vector3(10.0f, 5.0f, 0);
     }
     else
     {
-        Global::player->body->setLinearDamping(0);
-        Global::player->gravity = Ogre::Vector3(0, -9.0f, 0);
+        //Global::player->body->setLinearDamping(0);
+        //Global::player->gravity = Ogre::Vector3(0, -9.0f, 0);
     }
 
 

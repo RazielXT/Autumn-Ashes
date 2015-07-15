@@ -9,8 +9,8 @@ using namespace Ogre;
 
 PostProcessMgr::PostProcessMgr(Ogre::Camera* cam)
 {
-	resetValues();
-	setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
+    resetValues();
+    setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 
     camera = cam;
 
@@ -18,7 +18,7 @@ PostProcessMgr::PostProcessMgr(Ogre::Camera* cam)
 
     setToScaryBloom();
 
-	colourOverlaying = 1;
+    colourOverlaying = 1;
     totalBlacktime = currentBlacktime = 0;
 
     fadeIn(Ogre::Vector3(0,0,0),2);
@@ -26,7 +26,7 @@ PostProcessMgr::PostProcessMgr(Ogre::Camera* cam)
 
 PostProcessMgr::~PostProcessMgr()
 {
-	delete scaryList;
+    delete scaryList;
 }
 
 void PostProcessMgr::resetValues()
@@ -38,7 +38,7 @@ void PostProcessMgr::resetValues()
     ContSatuSharpNoise=0;
     radialHorizBlurVignette=0;
     mbAmount=1;
-	ppDistortionIgnore = 1;
+    ppDistortionIgnore = 1;
     ColouringShift=Ogre::Vector4(1,1,1,0);
     bloomStrDep=Ogre::Vector4(1,1,0,0);
 }
@@ -105,11 +105,11 @@ void PostProcessMgr::update(float tslf)
 
 void PostProcessMgr::setToScaryBloom()
 {
-	scaryPP = true;
-	advancedPP = false;
+    scaryPP = true;
+    advancedPP = false;
 
-    Ogre::CompositorManager::getSingleton().removeCompositor(camera->getViewport(), currentCompositor);
-    currentCompositor = "ScaryBloom";
+    //Ogre::CompositorManager::getSingleton().removeCompositor(camera->getViewport(), currentCompositor);
+    currentCompositor = "ScaryBloomNoSSAO";
     Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor);
     bloomCompositor->addListener(scaryList);
     Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor, true);

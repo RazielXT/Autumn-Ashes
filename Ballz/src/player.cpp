@@ -75,6 +75,7 @@ Player::Player(WorldMaterials* wMaterials)
 
 Player::~Player ()
 {
+    delete pSwimming;
     delete pPostProcess;
     delete pClimbing;
     delete pGrabbing;

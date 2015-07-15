@@ -17,7 +17,7 @@ public:
         this->ColouringShift = ColouringShift;
         this->bloomStrDep = bloomStrDepFireOffsetState;
 
-		ppDist = ppDistortion;
+        ppDist = ppDistortion;
     }
 
     virtual void notifyMaterialSetup(Ogre::uint32 pass_id, Ogre::MaterialPtr &mat)
@@ -55,10 +55,10 @@ public:
             mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("den",*godrayEdge);
         }
 
-		if (pass_id == 12)
-		{
-			mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("ppDistortion", *ppDist);
-		}
+        if (pass_id == 12)
+        {
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("ppDistortion", *ppDist);
+        }
         if(pass_id==13)
         {
             mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("hurtCoef",*hurtEffect);
@@ -92,6 +92,6 @@ private:
     Ogre::GpuProgramParametersSharedPtr params2;
     Ogre::GpuProgramParametersSharedPtr params3;
     Ogre::Vector4* ColouringShift;
-	float* ppDist;
+    float* ppDist;
 
 };

@@ -10,7 +10,7 @@ PlayerSwimming::PlayerSwimming(Player* player) : p(player)
 {
     initWaterDepthReading();
 
-	currents = WaterCurrent::get();
+    currents = WaterCurrent::get();
     /*  bubbles = Global::mSceneMgr->createParticleSystem("WaterBubbles", "WaterBubbles");
       bubbles->setRenderQueueGroup(91);
       bubbles->setVisibilityFlags(8);
@@ -21,8 +21,8 @@ PlayerSwimming::PlayerSwimming(Player* player) : p(player)
 
 PlayerSwimming::~PlayerSwimming()
 {
-	currents->reset();
-	Global::mSceneMgr->destroyCamera(mWaterCam);
+    currents->reset();
+    Global::mSceneMgr->destroyCamera(mWaterCam);
 }
 
 void PlayerSwimming::initWaterDepthReading()
@@ -56,7 +56,7 @@ void PlayerSwimming::initWaterDepthReading()
     mWaterCamNode->attachObject(mWaterCam);
     mWaterCamNode->pitch(Degree(-90));
 
-	v->setVisibilityMask(VisibilityFlag_Water);
+    v->setVisibilityMask(VisibilityFlag_Water);
     v->setSkiesEnabled(false);
 }
 
@@ -96,33 +96,36 @@ void PlayerSwimming::readWaterDepth()
 void PlayerSwimming::enteredWater()
 {
     Global::mPPMgr->ColouringShift = Ogre::Vector4(1.5f, 1.15f, 1.05f, 0);
-    Global::mSceneMgr->setFog(FOG_LINEAR, Ogre::ColourValue(0.4, 0.4, 0.5, 0.5f), 1, 5, 25);
+    Global::mSceneMgr->setFog(FOG_LINEAR, Ogre::ColourValue(0.4, 0.4, 0.5, 0.85f), 1, 5, 25);
 
-	Global::player->body->setLinearDamping(0.5f);
-	Global::player->gravity = Ogre::Vector3(0, 5.0f, 0) + currents->findCurrent(p->bodyPosition);
+    Global::player->body->setLinearDamping(0.5f);
+    Global::player->gravity = Ogre::Vector3(0, 0.3f, 0) + currents->findCurrent(p->bodyPosition);
 }
 
 void PlayerSwimming::leftWater()
 {
-	auto lvlInfo = Global::gameMgr->getCurrentLvlInfo();
+    auto lvlInfo = Global::gameMgr->getCurrentLvlInfo();
 
-	Global::mPPMgr->ColouringShift = lvlInfo->ColorShift;
-	Global::mSceneMgr->setFog(FOG_LINEAR, lvlInfo->fogColor, 1, lvlInfo->fogStartDistance, lvlInfo->fogEndDistance);
+    Global::mPPMgr->ColouringShift = lvlInfo->ColorShift;
+    Global::mSceneMgr->setFog(FOG_LINEAR, lvlInfo->fogColor, 1, lvlInfo->fogStartDistance, lvlInfo->fogEndDistance);
 
-	Global::player->body->setLinearDamping(0);
-	Global::player->gravity = Ogre::Vector3(0, -9.0f, 0);
+    Global::player->body->setLinearDamping(0);
+    Global::player->gravity = Ogre::Vector3(0, -9.0f, 0);
 }
 
 void PlayerSwimming::update(float tslf)
 {
     readWaterDepth();
 
-	if (!inWater)
-	{
-		outOfWaterTimer += tslf;
-	}
-	else
-		outOfWaterTimer = 0;
+    if (!inWater)
+    {
+        outOfWaterTimer += tslf;
+    }
+    else
+        outOfWaterTimer = 0;
 
-	Global::mPPMgr->ppDistortionIgnore = std::min(outOfWaterTimer/3.0f, 1.0f);
+
+    float outOfWaterEffect = std::min(outOfWaterTimer / 2.0f, 1.0f);
+    Global::mPPMgr->ppDistortionIgnore = outOfWaterEffect;
+    Global::mPPMgr->ColouringShift.w = 1 - outOfWaterEffect;
 }

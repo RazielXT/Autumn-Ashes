@@ -10,7 +10,7 @@ class PlayerSwimming
     friend class Player;
 
     Player* p;
-	WaterCurrent* currents;
+    WaterCurrent* currents;
 
     Ogre::RenderTarget *rttTex;
     Ogre::TexturePtr texture;
@@ -31,12 +31,13 @@ class PlayerSwimming
 
     void enteredWater();
     void leftWater();
-	float outOfWaterTimer;
+    float outOfWaterTimer;
 
 public:
 
-	bool inWater = false;
+    bool inWater = false;
     PlayerSwimming(Player* player);
+    ~PlayerSwimming();
 
-	void update(float tslf);
+    void update(float tslf);
 };

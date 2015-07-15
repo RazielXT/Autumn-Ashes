@@ -34,7 +34,7 @@ public:
     Ogre::Vector3 radialHorizBlurVignette;
     Ogre::Vector4 ContSatuSharpNoise,ColouringShift, bloomStrDep;
     Ogre::Real mbAmount;
-	Ogre::Real ppDistortionIgnore;
+    Ogre::Real ppDistortionIgnore;
 
     Ogre::Camera* camera;
 

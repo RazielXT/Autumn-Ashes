@@ -30,22 +30,22 @@ void createMenuLevel()
 
 void createTestLevel()
 {
-	PostProcessMgr* ppMgr = Global::mPPMgr;
-	ppMgr->radialHorizBlurVignette = 0.0;
+    PostProcessMgr* ppMgr = Global::mPPMgr;
+    ppMgr->radialHorizBlurVignette = 0.0;
 
-	ppMgr->setAutoGodraySunDirection();
+    ppMgr->setAutoGodraySunDirection();
 
-	new CrowWatch();
+    new CrowWatch();
 }
 
 void createTestLevel2()
 {
-	PostProcessMgr* ppMgr = Global::mPPMgr;
-	ppMgr->radialHorizBlurVignette = 0.0;
+    PostProcessMgr* ppMgr = Global::mPPMgr;
+    ppMgr->radialHorizBlurVignette = 0.0;
 
-	ppMgr->setAutoGodraySunDirection();
+    ppMgr->setAutoGodraySunDirection();
 
-	new CrowWatch();
+    new CrowWatch();
 }
 
 void createLevelTuto()

@@ -7,32 +7,35 @@ class WaterCurrent
 {
 public:
 
-	static WaterCurrent* get()
-	{
-		if (!instance)
-			instance = new WaterCurrent();
+    static WaterCurrent* get()
+    {
+        if (!instance)
+            instance = new WaterCurrent();
 
-		return instance;
-	}
+        return instance;
+    }
 
-	void addCurrent(Ogre::Vector3 start, Ogre::Vector3 end, float power, float minWidth);
-	Ogre::Vector3 findCurrent(Ogre::Vector3 pos);
+    void addCurrent(Ogre::Vector3 start, Ogre::Vector3 end, float power, float minWidth);
+    Ogre::Vector3 findCurrent(Ogre::Vector3 pos);
 
-	void reset()
-	{
-		currents.clear();
-	}
+    void reset()
+    {
+        currents.clear();
+    }
 
 private:
 
-	static WaterCurrent* instance;
+    WaterCurrent();
+    ~WaterCurrent();
 
-	struct WCurrent
-	{
-		Ogre::Vector3 pos;
-		float sqRad;
-		Ogre::Vector3 dir;
-	};
+    static WaterCurrent* instance;
 
-	std::vector<WCurrent> currents;
+    struct WCurrent
+    {
+        Ogre::Vector3 pos;
+        float sqRad;
+        Ogre::Vector3 dir;
+    };
+
+    std::vector<WCurrent> currents;
 };

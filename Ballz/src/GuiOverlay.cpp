@@ -730,13 +730,11 @@ int GuiOverlay::mainMenuPressed()
                     if(gConfig->ssao)
                     {
                         cOptionButtonA->value->text("Off");
-                        (Global::mPPMgr)->setSSAO(false);
                         gConfig->ssao = false;
                     }
                     else
                     {
                         cOptionButtonA->value->text("On");
-                        (Global::mPPMgr)->setSSAO(true);
                         gConfig->ssao = true;
                     }
 
