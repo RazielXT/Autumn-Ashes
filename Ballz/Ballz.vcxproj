@@ -186,7 +186,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\CommonTasks.cpp" />
     <ClCompile Include="src\Reflection.cpp" />
     <ClCompile Include="src\TriggerPlayerContactCallback.cpp" />
-    <ClCompile Include="src\WaterArea.cpp" />
+    <ClCompile Include="src\WaterCurrent.cpp" />
     <ClCompile Include="src\WorldMaterials.cpp" />
     <ClCompile Include="src\Slide.cpp" />
     <ClCompile Include="src\ZipLineSlide.cpp" />
@@ -258,7 +258,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\TrackBuilder.h" />
     <ClInclude Include="include\TransformationTaskTemplate.h" />
     <ClInclude Include="include\VolumeDetection.h" />
-    <ClInclude Include="include\WaterArea.h" />
+    <ClInclude Include="include\WaterCurrent.h" />
     <ClInclude Include="include\WorldMaterials.h" />
     <ClInclude Include="include\Slide.h" />
     <ClInclude Include="include\ZipLineSlide.h" />

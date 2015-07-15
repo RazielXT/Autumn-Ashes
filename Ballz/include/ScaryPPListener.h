@@ -4,7 +4,7 @@ class AaPostProcessListener : public Ogre::CompositorInstance::Listener
 {
 public:
 
-    AaPostProcessListener(Ogre::Vector4* SunScreenSpacePosition, Ogre::Matrix4* ivp,	Ogre::Matrix4* pvp,	Ogre::Real* hurtEffect,	Ogre::Real* godrayEdge, Ogre::Vector4* colourOverlaying, Ogre::Vector4* ContSatuSharpNoise, Ogre::Vector3* radialHorizBlurVignette, Ogre::Vector4* ColouringShift, Ogre::Vector4* bloomStrDepFireOffsetState )
+    AaPostProcessListener(Ogre::Vector4* SunScreenSpacePosition, Ogre::Matrix4* ivp,	Ogre::Matrix4* pvp,	Ogre::Real* hurtEffect,	Ogre::Real* godrayEdge, Ogre::Vector4* colourOverlaying, Ogre::Vector4* ContSatuSharpNoise, Ogre::Vector3* radialHorizBlurVignette, Ogre::Vector4* ColouringShift, Ogre::Vector4* bloomStrDepFireOffsetState, float* ppDistortion )
     {
         this->SunScreenSpacePosition = SunScreenSpacePosition;
         this->ivp = ivp;
@@ -16,6 +16,8 @@ public:
         this->radialHorizBlurVignette = radialHorizBlurVignette;
         this->ColouringShift = ColouringShift;
         this->bloomStrDep = bloomStrDepFireOffsetState;
+
+		ppDist = ppDistortion;
     }
 
     virtual void notifyMaterialSetup(Ogre::uint32 pass_id, Ogre::MaterialPtr &mat)
@@ -37,8 +39,6 @@ public:
 
     virtual void notifyMaterialRender(Ogre::uint32 pass_id, Ogre::MaterialPtr &mat)
     {
-
-
         if (pass_id == 1)
         {
             params1->setNamedConstant("lightPosition", *SunScreenSpacePosition);
@@ -55,6 +55,10 @@ public:
             mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("den",*godrayEdge);
         }
 
+		if (pass_id == 12)
+		{
+			mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("ppDistortion", *ppDist);
+		}
         if(pass_id==13)
         {
             mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("hurtCoef",*hurtEffect);
@@ -88,5 +92,6 @@ private:
     Ogre::GpuProgramParametersSharedPtr params2;
     Ogre::GpuProgramParametersSharedPtr params3;
     Ogre::Vector4* ColouringShift;
+	float* ppDist;
 
 };

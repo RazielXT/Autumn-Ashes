@@ -122,6 +122,8 @@ compositor ScaryBloomNoSSAO
 			
             pass render_quad
             {
+				identifier 12
+								
                 material CombineScene
 				
                 input 0 rt0 0

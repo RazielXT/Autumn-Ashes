@@ -78,6 +78,7 @@ float4 CombineScene_fp
     (
         float2 uv: TEXCOORD0,
 		uniform float time,
+		uniform float ppDistortion,
         uniform sampler2D sceneMap: register(s0),
 	    uniform sampler2D depth: register(s1),
 		uniform sampler2D smokeMap: register(s2),
@@ -94,7 +95,7 @@ float4 CombineScene_fp
 
 	float4 distPP = tex2D(ppDistortion,distUV);
 	
-	float heightEnd = 0;//fmod(time,3)/3;
+	float heightEnd = ppDistortion;//fmod(time,3)/3;
 	float w = saturate(distPP.a-heightEnd);
 	
 	if(w >0 && w < 0.2)

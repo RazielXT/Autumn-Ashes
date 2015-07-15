@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "PlayerSwimming.h"
 #include "Player.h"
+#include "WaterCurrent.h"
 
 int size = 1;
 
@@ -8,6 +9,7 @@ PlayerSwimming::PlayerSwimming(Player* player) : p(player)
 {
     initWaterDepthReading();
 
+	currents = WaterCurrent::get();
     /*  bubbles = Global::mSceneMgr->createParticleSystem("WaterBubbles", "WaterBubbles");
       bubbles->setRenderQueueGroup(91);
       bubbles->setVisibilityFlags(8);
@@ -64,8 +66,6 @@ void PlayerSwimming::readWaterDepth()
 
     float playerDepth = p->getCameraPosition().y - 0.2f;
 
-    static bool inWater = false;
-
     if (depth == 0 || playerDepth > depth)
     {
         if (inWater)
@@ -90,15 +90,30 @@ void PlayerSwimming::enteredWater()
 {
     Global::mPPMgr->ColouringShift = Ogre::Vector4(1.5f, 1.15f, 1.05f, 0);
     Global::mSceneMgr->setFog(FOG_LINEAR, Ogre::ColourValue(0.4, 0.4, 0.5, 0.5f), 1, 5, 25);
+
+	Global::player->body->setLinearDamping(0.5f);
+	Global::player->gravity = Ogre::Vector3(0, 5.0f, 0) + currents->findCurrent(p->bodyPosition);
 }
 
 void PlayerSwimming::leftWater()
 {
     Global::mPPMgr->ColouringShift = Ogre::Vector4(1, 1, 1, 0);
     Global::mSceneMgr->setFog(FOG_LINEAR, Ogre::ColourValue(0.5, 0.55, 0.65, 0.5f), 1, 80, 150);
+
+	Global::player->body->setLinearDamping(0);
+	Global::player->gravity = Ogre::Vector3(0, -9.0f, 0);
 }
 
-void PlayerSwimming::update()
+void PlayerSwimming::update(float tslf)
 {
     readWaterDepth();
+
+	if (!inWater)
+	{
+		outOfWaterTimer += tslf;
+	}
+	else
+		outOfWaterTimer = 0;
+
+	Global::mPPMgr->ppDistortionIgnore = std::min(outOfWaterTimer/3.0f, 1.0f);
 }

@@ -3,12 +3,15 @@
 #include "stdafx.h"
 
 class Player;
+class WaterCurrent;
 
 class PlayerSwimming
 {
     friend class Player;
 
     Player* p;
+	WaterCurrent* currents;
+
     Ogre::RenderTarget *rttTex;
     Ogre::TexturePtr texture;
     Ogre::Camera* mWaterCam;
@@ -28,10 +31,12 @@ class PlayerSwimming
 
     void enteredWater();
     void leftWater();
+	float outOfWaterTimer;
 
 public:
 
+	bool inWater = false;
     PlayerSwimming(Player* player);
 
-    void update();
+	void update(float tslf);
 };

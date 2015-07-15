@@ -35,17 +35,16 @@ public:
     Ogre::Vector3 radialHorizBlurVignette;
     Ogre::Vector4 ContSatuSharpNoise,ColouringShift, bloomStrDep;
     Ogre::Real mbAmount;
+	Ogre::Real ppDistortionIgnore;
 
     Ogre::Camera* camera;
 
 private:
 
     bool skipFadeFrame = false;
-    bool dirty;
     float totalBlacktime,currentBlacktime;
     bool basicPP,scaryPP,advancedPP,ssaoEnabled;
 
-    BasicPostProcessListener* basicList;
     AaPostProcessListener* scaryList;
     Ogre::Vector4 colourOverlaying;
 

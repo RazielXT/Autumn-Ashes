@@ -12,6 +12,7 @@
 #include "player.h"
 #include "Crows.h"
 #include "MUtils.h"
+#include "WaterCurrent.h"
 
 
 using namespace Ogre;
@@ -1062,6 +1063,48 @@ private:
 
     }
 
+	void loadWaterCurrent(const XMLElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
+	{
+		std::vector<Ogre::Vector3> points;
+
+		auto power = Ogre::StringConverter::parseReal(getElementValue(element, "Power"));
+		auto minWidth = Ogre::StringConverter::parseReal(getElementValue(element, "MinWidth"));
+
+		auto m = ent->getMesh().get()->getSubMesh(0);
+		const Ogre::VertexElement* posElem = m->vertexData->vertexDeclaration->findElementBySemantic(Ogre::VES_POSITION);
+		Ogre::HardwareVertexBufferSharedPtr vbuf = m->vertexData->vertexBufferBinding->getBuffer(posElem->getSource());
+		unsigned char* vertex = static_cast<unsigned char*>(vbuf->lock(Ogre::HardwareBuffer::HBL_READ_ONLY));
+		Ogre::Real* pReal;
+
+		for (size_t j = 0; j < m->vertexData->vertexCount; ++j, vertex += vbuf->getVertexSize())
+		{
+			posElem->baseVertexPointerToElement(vertex, &pReal);
+
+			Vector3 pt;
+
+			pt.x = (*pReal++);
+			pt.y = (*pReal++);
+			pt.z = (*pReal++);
+
+			pt *= node->getScale();
+			pt += node->getPosition();
+			pt = node->getOrientation()*pt;
+
+			if (j == 0 || j % 2 == 1)
+				points.push_back(pt);
+		}
+		vbuf->unlock();
+
+		for (size_t i = 1; i < points.size(); i++)
+		{
+			WaterCurrent::get()->addCurrent(points[i - 1], points[i], power, minWidth);
+		}
+		
+		node->detachAllObjects();
+		mSceneMgr->destroyEntity(ent);
+		mSceneMgr->destroySceneNode(node);
+	}
+
     void loadSlideTrack(const XMLElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
     {
         std::vector<Ogre::Vector3> points;
@@ -1888,6 +1931,10 @@ private:
                     {
                         loadSlideTrack(root, ent, node, mSceneMgr);
                     }
+					else if (rootTag == "WaterCurrent")
+					{
+						loadWaterCurrent(root, ent, node, mSceneMgr);
+					}
                     else if (rootTag == "PhysicalBodyTrigger")
                     {
                         setModifierStart(root, &ent, &node, mSceneMgr);
