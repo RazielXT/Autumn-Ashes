@@ -18,6 +18,11 @@ public:
 	void addCurrent(Ogre::Vector3 start, Ogre::Vector3 end, float power, float minWidth);
 	Ogre::Vector3 findCurrent(Ogre::Vector3 pos);
 
+	void reset()
+	{
+		currents.clear();
+	}
+
 private:
 
 	static WaterCurrent* instance;

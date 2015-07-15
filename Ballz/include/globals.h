@@ -9,6 +9,8 @@ class AudioLibrary;
 class CameraShaker;
 
 enum GameState { GAME, PAUSE, MENU, CONSOLE, UNDEFINED };
+enum VisibilityFlag { VisibilityFlag_Water = 16 };
+enum RenderQueueID { RenderQueue_Transparent = 81, RenderQueue_Particles = 91 };
 
 namespace Global
 {
@@ -37,7 +39,6 @@ extern std::vector<std::string> debug;
 #define DEBUG_VARIABLES_COUNT 7
 
 extern void DebugPrint(const std::string line, bool logFile = false);
-
 };
 
 extern bool continueExecution;

@@ -2,6 +2,7 @@
 #include "PlayerSwimming.h"
 #include "Player.h"
 #include "WaterCurrent.h"
+#include "GameStateManager.h"
 
 int size = 1;
 
@@ -16,6 +17,12 @@ PlayerSwimming::PlayerSwimming(Player* player) : p(player)
 
       bubblesNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
       bubblesNode->attachObject(bubbles);*/
+}
+
+PlayerSwimming::~PlayerSwimming()
+{
+	currents->reset();
+	Global::mSceneMgr->destroyCamera(mWaterCam);
 }
 
 void PlayerSwimming::initWaterDepthReading()
@@ -49,7 +56,7 @@ void PlayerSwimming::initWaterDepthReading()
     mWaterCamNode->attachObject(mWaterCam);
     mWaterCamNode->pitch(Degree(-90));
 
-    v->setVisibilityMask(16);
+	v->setVisibilityMask(VisibilityFlag_Water);
     v->setSkiesEnabled(false);
 }
 
@@ -97,8 +104,10 @@ void PlayerSwimming::enteredWater()
 
 void PlayerSwimming::leftWater()
 {
-    Global::mPPMgr->ColouringShift = Ogre::Vector4(1, 1, 1, 0);
-    Global::mSceneMgr->setFog(FOG_LINEAR, Ogre::ColourValue(0.5, 0.55, 0.65, 0.5f), 1, 80, 150);
+	auto lvlInfo = Global::gameMgr->getCurrentLvlInfo();
+
+	Global::mPPMgr->ColouringShift = lvlInfo->ColorShift;
+	Global::mSceneMgr->setFog(FOG_LINEAR, lvlInfo->fogColor, 1, lvlInfo->fogStartDistance, lvlInfo->fogEndDistance);
 
 	Global::player->body->setLinearDamping(0);
 	Global::player->gravity = Ogre::Vector3(0, -9.0f, 0);

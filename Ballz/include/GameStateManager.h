@@ -13,12 +13,33 @@ enum StateSwitching
     SS_RESTART = -2
 };
 
+struct LevelInfo
+{
+	std::string path;
+	std::function<void()> init;
+
+	std::string skyboxName;
+
+	Ogre::ColourValue fogColor;
+	float fogStartDistance;
+	float fogEndDistance;
+
+	Ogre::ColourValue ambientColor;
+
+	Ogre::Vector4 ContSatuSharpNoise;
+	Ogre::Vector4 ColorShift;
+	float bloomStr;
+	float bloomDepth;
+};
+
 class GameStateManager
 {
 public:
 
     GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, WorldMaterials* wMaterials);
     ~GameStateManager();
+
+	LevelInfo* getCurrentLvlInfo();
 
     void switchToMainMenu();
     void switchToLevel(int lvl);
@@ -45,12 +66,6 @@ public:
 
 
 private:
-
-    struct LevelInfo
-    {
-        std::string path;
-        std::function<void()> init;
-    };
 
     std::map<int, LevelInfo> levels;
 

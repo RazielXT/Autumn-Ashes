@@ -16,10 +16,20 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
     LevelInfo info;
     info.path = "../../media/menu/menu.scene";
     info.init = createMenuLevel;
+	info.fogColor = Ogre::ColourValue(0.5f, 0.55f, 0.65f, 0.5f);
+	info.fogStartDistance = 80;
+	info.fogEndDistance = 150;
+	info.ColorShift = Ogre::Vector4(1.08f, 1.12f, 1.16f, 1);
+	info.ContSatuSharpNoise = 0;
+	info.ambientColor = ColourValue(0.35f, 0.35f, 0.35f);
+	info.skyboxName = "TCENoonSkyBox";
+	info.bloomStr = 10;
+	info.bloomDepth = 0.35f;
     levels[0] = info;
 
     info.path = "../../media/park/park.scene";
     info.init = createLevelTuto;
+	info.bloomStr = info.bloomDepth = 1;
     levels[1] = info;
 
     info.path = "../../media/caves.scene";
@@ -32,10 +42,13 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
 
     info.path = "../../media/testLvl/test.scene";
     info.init = createTestLevel;
+	info.ambientColor = ColourValue(0.25f, 0.35f, 0.4f);
+	info.ColorShift = Ogre::Vector4(0.9f, 1.0f, 1.05f, 0);
     levels[4] = info;
 
     info.path = "../../media/testLvl2/test.scene";
     info.init = createTestLevel2;
+	info.ambientColor = ColourValue(0.2f, 0.2f, 0.1f);
     levels[5] = info;
 
     dbg = new DebugKeys();
@@ -51,6 +64,11 @@ GameStateManager::~GameStateManager()
 void GameStateManager::switchToMainMenu()
 {
     switchToLevel(0);
+}
+
+LevelInfo* GameStateManager::getCurrentLvlInfo()
+{
+	return &levels[lastLVL];
 }
 
 void GameStateManager::switchToLevel(int lvl)
@@ -84,9 +102,21 @@ void GameStateManager::switchToLevel(int lvl)
 
     dbg->reloadVariables();
 
+	auto& lvlInfo = levels[lvl];
+
     Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
-    SceneParser::instance.loadScene(levels[lvl].path);
-    levels[lvl].init();
+	Global::mSceneMgr->setAmbientLight(lvlInfo.ambientColor);
+	PostProcessMgr* postProcMgr = Global::mPPMgr;
+	postProcMgr->ColouringShift = lvlInfo.ColorShift;
+	postProcMgr->ContSatuSharpNoise = lvlInfo.ContSatuSharpNoise;
+	postProcMgr->bloomStrDep.y = lvlInfo.bloomStr;
+	postProcMgr->bloomStrDep.x = lvlInfo.bloomDepth;
+	Global::mSceneMgr->setSkyBox(true, lvlInfo.skyboxName);
+	Global::mSceneMgr->setFog(FOG_LINEAR, lvlInfo.fogColor, 1, lvlInfo.fogStartDistance, lvlInfo.fogEndDistance);
+
+	SceneParser::instance.loadScene(lvlInfo.path);
+
+	lvlInfo.init();
 
     Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
 }

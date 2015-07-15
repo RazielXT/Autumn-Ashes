@@ -22,7 +22,6 @@ public:
     void setToBasicBloom();
     void setToScaryBloom();
     void setToAdvancedBloom();
-    void setSSAO(bool enabled);
 
     void setGodraySunPosition(Ogre::Vector3 pos);
     void setGodraySunPositionFar(Ogre::Vector3 pos);
@@ -43,7 +42,7 @@ private:
 
     bool skipFadeFrame = false;
     float totalBlacktime,currentBlacktime;
-    bool basicPP,scaryPP,advancedPP,ssaoEnabled;
+    bool scaryPP,advancedPP;
 
     AaPostProcessListener* scaryList;
     Ogre::Vector4 colourOverlaying;

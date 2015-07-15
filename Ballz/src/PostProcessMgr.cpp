@@ -9,23 +9,8 @@ using namespace Ogre;
 
 PostProcessMgr::PostProcessMgr(Ogre::Camera* cam)
 {
-    basicPP = true;
-    scaryPP = false;
-    advancedPP = false;
-    ssaoEnabled = Global::gameMgr->gameConfig.ssao;
-
-    ivp=Ogre::Matrix4::IDENTITY;
-    pvp=Ogre::Matrix4::IDENTITY;
-    hurtEffect=0;
-    godrayEdge=0.2;
-    setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
-    colourOverlaying=1;
-    ContSatuSharpNoise=0;
-    radialHorizBlurVignette=0;
-    bloomStrDep=Ogre::Vector4(1,1,0,0);
-    mbAmount=1;
-	ppDistortionIgnore = 1;
-    ColouringShift=Ogre::Vector4(1,1,1,0);
+	resetValues();
+	setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 
     camera = cam;
 
@@ -33,6 +18,7 @@ PostProcessMgr::PostProcessMgr(Ogre::Camera* cam)
 
     setToScaryBloom();
 
+	colourOverlaying = 1;
     totalBlacktime = currentBlacktime = 0;
 
     fadeIn(Ogre::Vector3(0,0,0),2);
@@ -119,47 +105,18 @@ void PostProcessMgr::update(float tslf)
 
 void PostProcessMgr::setToScaryBloom()
 {
-    basicPP = false;
-    scaryPP = true;
-    advancedPP = false;
+	scaryPP = true;
+	advancedPP = false;
 
-    Ogre::String ssaoName = "";
-    if(!ssaoEnabled)
-    {
-        ssaoName = "NoSSAO";
-    }
-
-    Ogre::CompositorManager::getSingleton().removeCompositor(camera->getViewport(), currentCompositor+ssaoName);
+    Ogre::CompositorManager::getSingleton().removeCompositor(camera->getViewport(), currentCompositor);
     currentCompositor = "ScaryBloom";
-    Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor+ssaoName);
+    Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor);
     bloomCompositor->addListener(scaryList);
-    Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor+ssaoName, true);
+    Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor, true);
 }
 
 void PostProcessMgr::setToAdvancedBloom()
 {
-}
-
-void PostProcessMgr::setSSAO(bool enabled)
-{
-    ssaoEnabled = enabled;
-
-    if(enabled)
-    {
-        Ogre::CompositorManager::getSingleton().removeCompositor(camera->getViewport(), currentCompositor + "NoSSAO");
-        Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor);
-        if(scaryPP)
-            bloomCompositor->addListener(scaryList);
-        Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor, true);
-    }
-    else
-    {
-        Ogre::CompositorManager::getSingleton().removeCompositor(camera->getViewport(), currentCompositor);
-        Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor+"NoSSAO");
-        if(scaryPP)
-            bloomCompositor->addListener(scaryList);
-        Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor+"NoSSAO", true);
-    }
 }
 
 void PostProcessMgr::fadeOut(Ogre::Vector3 colour, float duration, bool skipFrame)

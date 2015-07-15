@@ -559,7 +559,7 @@ private:
     {
         static int partID = 0;
         Ogre::String name = getElementValue(rootElement, "Name");
-        int rGroup = getElementIntValue(rootElement, "RenderQroup", 91);
+		int rGroup = getElementIntValue(rootElement, "RenderQroup", RenderQueue_Particles);
 
         Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem("Particle" + std::to_string(partID++), name);
         ps->setRenderQueueGroup(rGroup);
@@ -1840,7 +1840,7 @@ private:
         }
 
         if (waterFlag)
-            ent->setVisibilityFlags(ent->getVisibilityFlags() | 16);
+			ent->setVisibilityFlags(ent->getVisibilityFlags() | VisibilityFlag_Water);
 
         const XMLElement* userdataElement = entityElement->FirstChildElement("userData");
 

@@ -12,18 +12,10 @@ using namespace Ogre;
 
 void createMenuLevel()
 {
-    Global::mSceneMgr->setAmbientLight(ColourValue(0.35f, 0.35f, 0.35f));
-
     PostProcessMgr* postProcMgr = Global::mPPMgr;
-    postProcMgr->ColouringShift = Ogre::Vector4(1.08, 1.12, 1.16, postProcMgr->ColouringShift.w);
-    postProcMgr->fadeIn(Vector3(0, 0, 0), 2);
     postProcMgr->radialHorizBlurVignette.z = 1.0;
-    postProcMgr->ContSatuSharpNoise = 0.0;
-    postProcMgr->bloomStrDep.y = 10.0;
-    postProcMgr->bloomStrDep.x = 0.35;
     postProcMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 
-    Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
     Camera* mCamera=Global::mSceneMgr->getCamera("Camera");
     SceneNode* camRotator=Global::mSceneMgr->getRootSceneNode()->createChildSceneNode("camRotator");
     camRotator->attachObject(mCamera);
@@ -32,10 +24,28 @@ void createMenuLevel()
     mCamera->lookAt(Vector3(0,15,0));
     camRotator->yaw(Ogre::Degree(-65));
 
-    Global::mSceneMgr->setFog(FOG_LINEAR, Ogre::ColourValue(0.5,0.55,0.65,0.5f), 1, 80, 150);
-
     auto lvlUp= new LvlMenuUpdate(camRotator,NULL);
     Global::mEventsMgr->addTask(lvlUp);
+}
+
+void createTestLevel()
+{
+	PostProcessMgr* ppMgr = Global::mPPMgr;
+	ppMgr->radialHorizBlurVignette = 0.0;
+
+	ppMgr->setAutoGodraySunDirection();
+
+	new CrowWatch();
+}
+
+void createTestLevel2()
+{
+	PostProcessMgr* ppMgr = Global::mPPMgr;
+	ppMgr->radialHorizBlurVignette = 0.0;
+
+	ppMgr->setAutoGodraySunDirection();
+
+	new CrowWatch();
 }
 
 void createLevelTuto()
@@ -48,7 +58,7 @@ void createLevelTuto()
     music->setVolume(0.4);
     (*Global::globalData)["tokyostreetatnight.ogg"] = music;
 
-    Global::mSceneMgr->setVisibilityMask(1);
+    //Global::mSceneMgr->setVisibilityMask(1);
 
     auto ppMgr = Global::mPPMgr;
     ppMgr->setToScaryBloom();
@@ -244,40 +254,6 @@ void createLevelTuto()
 
 }
 
-void createTestLevel()
-{
-    Global::mSceneMgr->setAmbientLight(ColourValue(0.25f, 0.35f, 0.4f));
-
-    Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
-
-    PostProcessMgr* ppMgr = Global::mPPMgr;
-    ppMgr->setToScaryBloom();
-    ppMgr->ContSatuSharpNoise = 0.0;
-    ppMgr->radialHorizBlurVignette = 0.0;
-    ppMgr->ColouringShift = Ogre::Vector4(1, 1.05, 0.9, 0);
-
-    ppMgr->setAutoGodraySunDirection();
-
-    new CrowWatch();
-}
-
-void createTestLevel2()
-{
-    Global::mSceneMgr->setAmbientLight(ColourValue(0.2f, 0.2f, 0.1f));
-
-    Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
-
-    PostProcessMgr* ppMgr = Global::mPPMgr;
-    ppMgr->setToScaryBloom();
-    ppMgr->ContSatuSharpNoise = 0.0;
-    ppMgr->radialHorizBlurVignette = 0.0;
-    ppMgr->ColouringShift = Ogre::Vector4(0.9f, 1.0f, 1.05f, 0);
-
-    ppMgr->setAutoGodraySunDirection();
-
-    new CrowWatch();
-}
-
 void createLevel1_1()
 {
 
@@ -292,7 +268,7 @@ void createLevel1_1()
     music->setVolume(0.4);
     (*Global::globalData)["anton_wind1.wav"] = music;
 
-    Global::mSceneMgr->setVisibilityMask(1);
+    //Global::mSceneMgr->setVisibilityMask(1);
 
     PostProcessMgr* ppMgr = Global::mPPMgr;
     ppMgr->setToScaryBloom();
