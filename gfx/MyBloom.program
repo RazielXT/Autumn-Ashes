@@ -256,26 +256,30 @@ material Brightcheck
 	{
 		pass
 		{
+			fragment_program_ref  Brightcheck_fp 
+			{
+			}
 
-                        fragment_program_ref  Brightcheck_fp 
-                        {
-                        }
+			texture_unit sceneMap
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering trilinear
+			}
 
-                        texture_unit map
-                        {
-                                tex_coord_set 0
-                                tex_address_mode clamp
-                                filtering trilinear
-                        }
+			texture_unit sceneBright
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering trilinear
+			}
 
-				 texture_unit map2
-                        {
-                                tex_coord_set 0
-                                tex_address_mode clamp
-                                filtering trilinear
-                        }
-
-
-                }
-        }
+			texture_unit transBright
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering trilinear
+			}
+		}
+	}
 }

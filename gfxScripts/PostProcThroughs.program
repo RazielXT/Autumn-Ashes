@@ -297,17 +297,9 @@ material CombineScene
 					filtering none
 			}
 			
-			texture_unit sceneTransparentDepth
-			{
-					tex_coord_set 0
-					tex_address_mode clamp
-					filtering none
-			}
-			
 			texture_unit ppDistortion
 			{
-					filtering trilinear
-					
+					filtering trilinear	
 					texture underwater_n.tga
 			}
         }

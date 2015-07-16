@@ -84,11 +84,10 @@ float4 CombineScene_fp
 		uniform sampler2D smokeMap: register(s2),
 	    uniform sampler2D waterMap: register(s3),
 		uniform sampler2D sceneDistortion: register(s4),
-	    uniform sampler2D waterDepth: register(s5),
-		uniform sampler2D ppDistortion: register(s6)
+		uniform sampler2D ppDistortion: register(s5)
     ) : COLOR
 {   
-	float2 dist = tex2D(sceneDistortion,uv);
+	float4 distScene = tex2D(sceneDistortion,uv);
 	
 	float2 distUV = uv*1.5;
 	distUV.y += time*-0.325;
@@ -103,10 +102,8 @@ float4 CombineScene_fp
 	
 	distPP.xy = (distPP.xy- 0.5)*w*0.3; 
 	
-	float2 waterD = tex2D(waterDepth,uv).xy;
-	dist = (waterD.y == 0) ? 0 : (dist.xy - 0.5);
-	
-	dist = (dist + distPP.xy)/2;
+	distScene.xy = (distScene.a==0) ? 0 : (distScene.xy - 0.5);	
+	distScene.xy = (distScene + distPP.xy)/2;
 	
 	float4 scene = tex2D(sceneMap, uv+dist);
 	

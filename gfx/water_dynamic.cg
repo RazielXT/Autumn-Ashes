@@ -227,7 +227,8 @@ void wdiffuse_ps_op(
     float2 normalOut = IN.waveNormal.xy;//*clamp((15-IN.uv.z)/15,0.5,1);//normalTex.rg;//lerp(float2(0.5,0.5),normalTex.rg,saturate(speed)*);
 	
 	float shine = reflectionTex.r*fresnel*0.5;
-    color1=float4(normalOut,0.2 ,1);
+	
+    color1=float4(normalOut,0.2 ,alpha);
     color2=pow(fresnel*1.5,2);
     color3=float4(IN.uv.z/IN.uv.w,IN.uv.z,0,0);
 }

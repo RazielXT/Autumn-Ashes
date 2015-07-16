@@ -1,41 +1,41 @@
 float4 MyBloom_fp
     (
-         float2 uv: TEXCOORD0,
-         uniform sampler2D scene: register(s0),
-	    uniform sampler2D bloomxy: register(s1)	
-         
+        float2 uv: TEXCOORD0,
+        uniform sampler2D scene: register(s0),
+	    uniform sampler2D bloomxy: register(s1)	     
     ) : COLOR
-
 {
-  float4 sharp = tex2D(scene,uv);
+	float4 sharp = tex2D(scene,uv);
 	float4 blur  = tex2D(bloomxy,uv);
 
 	return ( sharp + blur);
-
 }
 
 float4 Brightcheck_fp
-    (
-         float2 uv: TEXCOORD0,
-         uniform sampler2D scene: register(s0),
-	    uniform sampler2D sceneLum: register(s1)	
-         
-    ) : COLOR
-
+	(
+		float2 uv: TEXCOORD0,
+		uniform sampler2D scene: register(s0),
+		uniform sampler2D sceneLum: register(s1),
+		uniform sampler2D transLum: register(s2)
+	) : COLOR
 {
-  float4 sharp = tex2D(scene,uv);
-sharp.rbg-=0.3+sharp.a;
-if(sharp.x<0) sharp.x=0;
-if(sharp.y<0) sharp.y=0;
-if(sharp.z<0) sharp.z=0;
+	float4 sharp = tex2D(scene,uv);
+	sharp.rbg-=0.3+sharp.a;
+	if(sharp.x<0) sharp.x=0;
+	if(sharp.y<0) sharp.y=0;
+	if(sharp.z<0) sharp.z=0;
 
-float matBrightness = tex2D(sceneLum,uv).b;
-//b > 0.8 -> 0.5-10
-matBrightness = max(matBrightness, (matBrightness-0.77)*30);
+	float matBrightness = tex2D(sceneLum,uv).b;
+	float2 transBrightness = tex2D(sceneLum,uv).ba;
+	
+	matBrightness = lerp(matBrightness, transBrightness.x, transBrightness.y);
+	
+	//b > 0.8 -> 0.5-10
+	matBrightness = max(matBrightness, (matBrightness-0.77)*30);
 
-sharp*=2*matBrightness;
+	sharp*=2*matBrightness;
 
-return  sharp;
+	return  sharp;
 }
 
 #define BLUR_RADIUS 3
