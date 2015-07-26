@@ -168,7 +168,8 @@ material TCENoonSkyBox
 			texture_unit
 			{
 				//stormydays.tga 
-				cubic_texture sky8m.jpg separateUV 
+				//amethyst.jpg
+				cubic_texture clouds.png separateUV
 				tex_address_mode clamp
 			}
 

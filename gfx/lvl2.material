@@ -2,7 +2,9 @@ import refl_material_dynamic_op from "general_refl.material"
 import glass_material_dynamic_op from "general_glass.material"
 
 import material_water_dynamic from "water_dynamic.material"
+import material_water_static from "water_static.material"
 
+import 2tProj_vc_material_static from "general_2texProj_vc.material"
 import 2t_vc_material_static from "general_2tex_vc.material"
 import 2t_material_static from "general_2tex.material"
 import 1tAT_material_static from "general_1texAT.material" 
@@ -14,6 +16,28 @@ import billboard_material_op from "general_Billboard.material"
 material  billboardTest: billboard_material_op
 {
 	set_texture_alias diffuseMap hackberry_tree.png
+}
+
+material underwaterSand : 2tProj_vc_material_static
+{
+	set $uvScale "1"
+	set $uvSpreadScale "0.5" 
+	set $uv2Scale "1" 
+
+	//set_texture_alias dispMap wood0_DISP.png
+	set_texture_alias spreadMap spread.png
+	
+	set_texture_alias diffuseMap2 terr_dirt-grass.jpg
+	set_texture_alias normalMap2 grass_diffuse_NORM.tga
+	
+	set_texture_alias diffuseMap marble.png
+	set_texture_alias normalMap marble_NORM.tga
+
+	set_texture_alias projMap Caustics_tex.png
+	
+	set $brightness "0.1"
+	set $diffuseCol "1 1 1"
+	set $specularCol "0.01 0.01 0.005"
 }
 
 material waterWaves : material_water_dynamic
@@ -33,21 +57,49 @@ material waterWaves : material_water_dynamic
 	set $specularCol "10.967 10.97 10.98"
 	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "128"
+	
+    set $speedUV "0.3"
+	set $waveSizeSpeed "0.25 1.5"
+}
 
-	set $waveSeedSizeSpeed "1 0.25 1.5"
+material waterSheer : material_water_static
+{
+	set_texture_alias diffuseMap water.png
+	//set_texture_alias diffuseMap 05_DIFFUSE.jpg
+	set_texture_alias foamMap foam.png
+	set_texture_alias normalMap water_NORM.tga
+
+	set $difUV "1.0 1.0"
+	set $diffuseCol "0.5 0.5 0.6"
+	// specular colour multiplier (for example, red-ish)
+
+	set $specularCol "10.967 10.97 10.98"
+	// specular power (shininess) (the higher, the sharper the highlights)
+	set $shininess "128"
+
+    set $speedUV "2"
+	set $difUV "1 1"
 }
 
 material grassMat : 1t_material_static 
 {
-	set_texture_alias diffuseMap terr_dirt-grass.jpg
-	set_texture_alias normalMap grass_diffuse_NORM.tga
+	//set_texture_alias diffuseMap Moss0162_10_S.jpg
+	//set_texture_alias normalMap Moss0162_10_S_NORM.tga
+	//set_texture_alias dispMap Moss0162_10_S_DISP.bmp
+	//set_texture_alias normalDetailMap SilveryBlue_NORM.tga
 
-	set $difUV "10 10"
-
+	set_texture_alias diffuseMap NZjZrKrvsTA.jpg
+	set_texture_alias normalMap NZjZrKrvsTA_NORM.tga
+	set_texture_alias dispMap NZjZrKrvsTA_DISP.bmp
+	set_texture_alias normalDetailMap SilveryBlue_NORM.tga
+	
+	set $uvScale "0.75"
+	set $detailScale "0.4"
+	
 	set $diffuseCol "1 1 1"
 	// specular colour multiplier (for example, red-ish)
 
-	set $specularCol "0.00005 0.00005 0.00005"
+	set $specularCol "0.02 0.02 0.05"
 	set $brightness "0.005"
 	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "16"

@@ -14,7 +14,6 @@ struct VOut
     float4 wp  : TEXCOORD1;
     float3 n : TEXCOORD2;
     float3 t : TEXCOORD3;
-    float4 vVec : TEXCOORD5;
     float3 b : TEXCOORD6;
 	float3 waveNormal : TEXCOORD7;
 };
@@ -25,7 +24,6 @@ struct PIn
     float4 wp  : TEXCOORD1;
     float4 n : TEXCOORD2;
     float4 t : TEXCOORD3;
-    float4 vVec : TEXCOORD5;
     float3 b : TEXCOORD6;
 	float3 waveNormal : TEXCOORD7;
 };
@@ -62,7 +60,7 @@ VOut wdiffuse_vs_op(VIn IN,
 	uniform float4x4 vpMat,
 	uniform float3 camPos,
 	uniform float time,
-	uniform float3 waveSeedSizeSpeed,
+	uniform float2 waveSizeSpeed,
 	uniform sampler2D dispMap : register(s0),
 	uniform sampler2D normMap : register(s1)
 )
@@ -72,7 +70,7 @@ VOut wdiffuse_vs_op(VIn IN,
 	float4 wnor = mul(wMat, IN.n);
 	
 	//xy = wave map uv, z = add height, w = direct height map 
-	float4 waveParams = waveFunc(waveSeedSizeSpeed.yz, time, IN.c.r, dispMap, IN.uv.xy); 
+	float4 waveParams = waveFunc(waveSizeSpeed, time, IN.c.r, dispMap, IN.uv.xy); 
 
 	wpos.y += waveParams.z;
 	float3 wMapNormal = tex2D(normMap, waveParams.xy).rgb;
@@ -95,16 +93,8 @@ VOut wdiffuse_vs_op(VIn IN,
     OUT.n.xyz = wMapNormal;
     OUT.t.xyz = IN.t;
     OUT.b.xyz = cross(IN.t.xyz, wMapNormal);
-     
-    float3 viewVec = camPos - IN.p.xyz;
-    OUT.vVec.x = dot(viewVec, OUT.t );
-    OUT.vVec.y = dot(viewVec, OUT.b );
-    OUT.vVec.z = dot(viewVec, wMapNormal );
-    
-	float3 eyeDir = normalize(IN.p.xyz - camPos.xyz);
-	OUT.vVec.w = pow(1+dot(eyeDir, wMapNormal), 1.5);
 	
-	OUT.wp.w = max(waveParams.w/4,foamDirect);//OUT.vVec.w*add*IN.c.r/(waveSize*1.5);
+	OUT.wp.w = max(waveParams.w/2.5,foamDirect);//OUT.vVec.w*add*IN.c.r/(waveSize*1.5);
 	
     return OUT;
 }
@@ -147,7 +137,7 @@ void wdiffuse_ps_op(
     float foamTerm=IN.wp.w;//*0.75+0.25;
 	
     // direction
-    float3 ld0 = normalize(lightPos0.xyz - (lightPos0.w * IN.wp.xyz));
+    float3 ld0 = lightPos0.xyz;//normalize(lightPos0.xyz - (lightPos0.w * IN.wp.xyz));
     //ld0.xz = lerp(ld0.xz,-ld0.xz,foamTerm);  
     
     texCoord.y += scrollTime * speedUV*normalSpeed;
@@ -161,25 +151,22 @@ void wdiffuse_ps_op(
 	normalTex /= 2;
 	
     texCoord += float2(0.5,scrollTime * speedUV*normalSpeed);
-    float height = normalTex.z;
-    normalTex.z=1;
-    
+
+    //normalTex.z=1;
     normalTex = color_blend(normalTex,IN.waveNormal);
     
-    // Parallax mapping
-    //float height = tex2D(dispMap, texCoord.xy*scaleDiff).x;
-    texCoord = IN.uv.xy + saturate(speed)*(0.015 * height - 0.05) * normalize(IN.vVec.xyz).xy;
+    texCoord = IN.uv.xy;
     
 	float2 diffUV = texCoord;
     diffUV.y += scrollTime * speedUV * 3;
 	
-	float4 diffTex = tex2D(diffuseMap, diffUV*scaleDiff/3);
+	float3 diffTex = tex2D(diffuseMap, diffUV*scaleDiff/3).rgb;
 	
     float3x3 tbn = float3x3(IN.t.xyz,IN.b.xyz, IN.n.xyz);
     float3 normal = mul(transpose(tbn), normalTex.xyz * 2 - 1); // to object space
     normal = normalize(mul((float3x3)iTWMat, normal));
     
-    float diffuse = dot(ld0, normal)*0.5 + 0.5;;
+    float diffuse = dot(ld0, normal)*0.5 + 0.5;
     
     texCoord.y += scrollTime * speedUV;
     
@@ -203,20 +190,18 @@ void wdiffuse_ps_op(
 	float3 reflectionTex = tex2D(reflMap,reflUV).rgb;
 	
 	float fresnel = pow(1 - abs(dot(camDir, normal)), 3);
-	
-    float3 diffuseContrib = reflectionTex*2;
+
+    float3 waterEffects = reflectionTex + foamTex;
     
-    float3 light0C = (diffuseContrib) + foamTex;
-    
-   //float3 def=lerp(diffTex.rgb,foamTex.rgb,foamTerm)*2;
-    float3 def=lerp(diffTex.rgb,foamTex.rgb,foamTerm)*diffuse;
+    float3 waterDiffuse = lerp(diffTex.rgb,foamTex.rgb,foamTerm)*diffuse;
 	
+	//water depth
 	float2 depthTexCoord=screenSpace/float2(1280.0f,768.0f);
 	float3 depthEnv=tex2D(depthMap,depthTexCoord).rgb;  
-	float depth = saturate((depthEnv.g - IN.uv.z)/5);
-	float alpha = (diffTex.a*0.75*depth + foamTerm*foamTex.r + fresnel);
+	float depth = saturate((depthEnv.g - dist)/15);
+	float alpha = (0.75*depth + foamTerm*foamTex.r + fresnel);
 	
-    color0=float4(def*light0C*alpha,alpha);
+    color0=float4(waterDiffuse*waterEffects*alpha,alpha);
 	
 	//distance fog
 	float insideFog = saturate((dist - fogParams.y) / fogParams.z)*fogColor.a;
@@ -224,13 +209,13 @@ void wdiffuse_ps_op(
 	color0.rgb = lerp(color0.rgb, atmFog, insideFog);
 	
 	//float2(0.5,0.5);
-    float2 normalOut = IN.waveNormal.xy;//*clamp((15-IN.uv.z)/15,0.5,1);//normalTex.rg;//lerp(float2(0.5,0.5),normalTex.rg,saturate(speed)*);
+	float normalDistancing = lerp(0.3,0.05,saturate(IN.uv.z/30));
+    float2 normalOut = normalTex.xy*normalDistancing;	
+	float shine = reflectionTex.r*fresnel*0.2;
 	
-	float shine = reflectionTex.r*fresnel*0.5;
-	
-    color1=float4(normalOut,0.2 ,alpha);
+    color1=float4(normalOut,shine,alpha);
     color2=pow(fresnel*1.5,2);
-    color3=float4(IN.uv.z/IN.uv.w,IN.uv.z,0,0);
+    color3=float4(IN.uv.z/IN.uv.w,dist,0,0);
 }
 
 struct VOutLite
@@ -248,7 +233,7 @@ VOutLite wdiffuseLite_vs_op(VIn IN,
 	uniform float4x4 wMat,
 	uniform float4x4 vpMat,
 	uniform float time,
-	uniform float3 waveSeedSizeSpeed,
+	uniform float2 waveSizeSpeed,
 	uniform sampler2D dispMap : register(s0)
 )
 {
@@ -256,7 +241,7 @@ VOutLite wdiffuseLite_vs_op(VIn IN,
     float4 wpos = mul(wMat, IN.p);
 	
 	//xy = wave map uv, z = add height, w = direct height map 
-	float4 waveParams = waveFunc(waveSeedSizeSpeed.yz, time, IN.c.r, dispMap, IN.uv.xy); 
+	float4 waveParams = waveFunc(waveSizeSpeed, time, IN.c.r, dispMap, IN.uv.xy); 
 
 	wpos.y += waveParams.z;
 	

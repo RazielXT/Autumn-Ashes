@@ -4,9 +4,9 @@ material material_water_dynamic
     set $specularCol "1 1 1"
     set $shininess "32"
     set $difUV "2 2"
-    set $speedUV "0.3"
 	
-	set $waveSeedSizeSpeed "1 1 1"
+    set $speedUV "0.3"
+	set $waveSizeSpeed "1 1"
 
     technique
     {
@@ -16,9 +16,9 @@ material material_water_dynamic
 			lighting off
 			colour_write off
 
-			vertex_program_ref water_d_vs
+			vertex_program_ref water_dLite_vs
 			{
-				param_named waveSeedSizeSpeed float3 $waveSeedSizeSpeed
+				param_named waveSizeSpeed float2 $waveSizeSpeed
 			}
 			
 			texture_unit wavesMap
@@ -42,7 +42,7 @@ material material_water_dynamic
 
             vertex_program_ref water_d_vs
             {
-				param_named waveSeedSizeSpeed float3 $waveSeedSizeSpeed
+				param_named waveSizeSpeed float2 $waveSizeSpeed
             }
  
             fragment_program_ref water_d_ps
@@ -90,7 +90,8 @@ material material_water_dynamic
 			
 			texture_unit reflectionMap
             {
-				//filtering trilinear
+				filtering anisotropic
+				max_anisotropy 8
 				 texture ANGMAP11.JPG
             }
 

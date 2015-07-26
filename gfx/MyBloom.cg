@@ -20,13 +20,10 @@ float4 Brightcheck_fp
 	) : COLOR
 {
 	float4 sharp = tex2D(scene,uv);
-	sharp.rbg-=0.3+sharp.a;
-	if(sharp.x<0) sharp.x=0;
-	if(sharp.y<0) sharp.y=0;
-	if(sharp.z<0) sharp.z=0;
+	sharp.rbg-=0.3-sharp.a*0.4;
 
 	float matBrightness = tex2D(sceneLum,uv).b;
-	float2 transBrightness = tex2D(sceneLum,uv).ba;
+	float2 transBrightness = tex2D(transLum,uv).ba;
 	
 	matBrightness = lerp(matBrightness, transBrightness.x, transBrightness.y);
 	

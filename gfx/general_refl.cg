@@ -427,5 +427,5 @@ float4 outp = float4(light0C,1);*/
 	color0=outp;
 	color1=float4(0.5,0.5,saturate(matSpec0.a+specular.r/2),1);
 	color2=float4(0,0,0,1);
-	color3=float4(IN.uv.z/IN.uv.w,IN.uv.z,0,1);
+	color3=float4(IN.uv.z/IN.uv.w,distance,0,1);
 }

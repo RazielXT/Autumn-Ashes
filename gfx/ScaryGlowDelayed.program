@@ -36,70 +36,48 @@ material ScaryGlowDelay
 	{
 		pass
 		{
+			vertex_program_ref givs_vs 
+			{
+			}
+
+			fragment_program_ref ScaryGlowDelay_fp
+			{
+			}
+
+			texture_unit scene
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering none
+			}
 			
+			texture_unit map
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering bilinear
+			}
+			
+			texture_unit
+			{
+				 tex_coord_set 0
+				tex_address_mode clamp
+				filtering none
+			}
 
-				   
-				   vertex_program_ref givs_vs 
-                        {
-                        }
+			texture_unit map
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering none
+			}
 
-                        fragment_program_ref ScaryGlowDelay_fp
-                        {
-                        }
-
-                        texture_unit scene
-                        {
-                                tex_coord_set 0
-                                tex_address_mode clamp
-                                filtering none
-                        }
-                        
-                        texture_unit map
-                        {
-                                tex_coord_set 0
-                                tex_address_mode clamp
-                                filtering bilinear
-                        }
-					texture_unit
-                        {
-                              tex_coord_set 0
-						tex_address_mode clamp
-						filtering none
-
-                        }
-
-					texture_unit map
-                        {
-                                tex_coord_set 0
-                                tex_address_mode clamp
-                                filtering none
-                        }
-
-																	texture_unit depth
-                        {
-                              tex_coord_set 0
-						tex_address_mode clamp
-						filtering none
-
-                        }
-
-					texture_unit noise
-                        {
-                              tex_coord_set 0
-						texture noise5nn.jpg
-						filtering bilinear
-                        }
-
-					texture_unit gray
-                        {
-                              tex_coord_set 0
-					texture 151009heightmapsbarra.jpg
-						filtering bilinear
-                        }
-
-
-
-
-                }
-        }
+			texture_unit sceneLow
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering bilinear
+			}
+		}
+	}
 }

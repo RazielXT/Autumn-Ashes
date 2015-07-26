@@ -25,6 +25,8 @@ void softsmoke_vs(uniform float4x4 wpmat,
 
 void softsmoke_ps(
 	uniform float3 camPos,
+	uniform float4 fogColor,
+	uniform float4 fogParams,
 	uniform sampler2D material: register(s0),
 	uniform sampler2D depthScene: register(s1),
 	uniform sampler2D depthTrans: register(s2),
@@ -37,12 +39,14 @@ void softsmoke_ps(
 {
 	if(uv.x<0 || uv.x>1 || uv.y<0 || uv.y>1)
 	discard;
-		
+	
+	/*
 	float depthCloudZ=d.z;
  
 	float depthSides = 30;
 	float sideW = abs(uv.xy*2 - 1);
 	depthCloudZ += (sideW*sideW)*depthSides; 
+	*/
 	
 	d/=d.w;
 	
@@ -55,24 +59,30 @@ void softsmoke_ps(
 	float depthTr=tex2D(depthTrans,depthTexCoord).y;   	
 	float depthEnv = depthTr==0 ? depthSc : min(depthSc,depthTr);
 	
-	if(depthEnv<depthCloudZ) discard;
+	if(depthEnv<depthCloud) discard;
 
-	float4 color=tex2D(material, uv.xy);
+	float4 color=tex2D(material, uv.xy)*float4(0.75,0.5,0.35,1);
 	if(color.a==0) discard;
 
-	float camScale=3;
-	float scale=10;
+	float camScale=2;
+	float scale=2;
 
 	/*float roz=saturate(abs(depthCloud-depthEnv)/scale);
 	roz*=0.8;
 
 	roz *= uv.z;*/
 	
-	float objBlend = saturate((depthEnv-depthCloudZ)/scale);
+	float objBlend = saturate((depthEnv-depthCloud)/scale);
 	float camBlend = saturate(depthCloud/camScale);
 	
 	color0=color.rgbr*objBlend*camBlend*uv.z;
-		
+	color0.a *= 3;//color.r;
+	
+	//distance fog
+	float insideFog = saturate((depthCloud - fogParams.y) / fogParams.z)*fogColor.a;
+	float3 atmFog = fogColor.rgb*color0.a;
+	color0.rgb = lerp(color0.rgb, atmFog, insideFog);
+	
 	//float dim=1;
 	//scale=2.5;
 	//if(depthCloud<scale) dim=depthCloud/scale;

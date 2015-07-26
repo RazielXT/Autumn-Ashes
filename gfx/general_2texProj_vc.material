@@ -12,9 +12,9 @@ material 2tProj_vc_material_static
 	set $uvSpreadScale "0.5"
 	set $uv2Scale "1"
 	
-	set $projScale "0.25" 
-	set $projSpeed "1" 
-	set $projDirXY "1 1" 
+	set $projScale "0.025" 
+	set $projSpeed "5" 
+	set $projDirXY "0 1" 
 	
     technique
     {

@@ -344,5 +344,5 @@ void diffuse_ps(
 	color0 = output;
 	color1 = float4(0.5, 0.5, saturate(matSpec0.a + specular.r / 2), 1);
 	color2 = float4(0, 0, 0, 1);
-	color3 = float4(IN.uv.z / IN.uv.w, IN.uv.z, 0, 1);
+	color3 = float4(IN.uv.z / IN.uv.w, dist, 0, 1);
 }

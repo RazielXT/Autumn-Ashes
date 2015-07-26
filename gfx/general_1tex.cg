@@ -182,14 +182,15 @@ void diffuse_ps(
 	)
 {
 	float uvDetailScale = uvScale*detailScale;
+	float offsetScale = 2;
 	
 	// direction
 	float3 lightDir = normalize(lightPos0.xyz - (lightPos0.w * IN.wp.xyz));
 
 	//pm offset
-	float height = tex2D(dispMap, IN.uv.xy * uvScale).x;
+	float height = tex2D(dispMap, IN.uv.xy * uvScale).x * offsetScale;
 	float3 vVec = float3(IN.t.w, IN.b.w, IN.n.w);	
-	float2 texCoordDispOffset = (0.05 * height - 0.025) * normalize(vVec).xy;
+	float2 texCoordDispOffset = (0.025 * height - 0.015*offsetScale) * normalize(vVec).xy;
 	
 	float2 texCoordBase = IN.uv.xy * uvScale + texCoordDispOffset;
 	float2 texCoordDetail = IN.uv.xy * uvDetailScale + texCoordDispOffset;
@@ -212,8 +213,9 @@ void diffuse_ps(
 	float4 diffuseTex = tex2D(diffuseMap, texCoordBase);
 	diffuseTex.rgb *= diffuseColor;
 	
+	float diffuseGeomLight = dot(lightDir, IN.n.xyz);
 	float diffuseLight = dot(lightDir, normal);
-
+	
 	float3 camDir = normalize(camPos - IN.wp.xyz);
 	float3 halfVec = normalize(lightDir + camDir);
 	float3 specular = pow(max(dot(normal, halfVec), 0), matShininess);
@@ -236,6 +238,14 @@ void diffuse_ps(
 	float3 halfVec4 = normalize(ld + camDir);
 	specular2 += saturate(pow(max(dot(normal, halfVec4), 0), 64) / 3);
 	
+	//float wl = 1 - abs(diffuseGeomLight);
+	/*if(diffuseGeomLight>diffuseLight)
+	{
+		float wl = diffuseGeomLight - diffuseLight;
+		diffuseLight += wl/2;
+	}*/
+		//diffuseLight = lerp(diffuseLight,diffuseLight*(1-diffuseGeomLight) + diffuseGeomLight,1);
+		
 	//shadow
 	float norm = diffuseLight;
 	float shadowing = 1.0f;
@@ -244,11 +254,10 @@ void diffuse_ps(
 		shadowing = 0;
 	else
 	{
-
 		float adder = 1;
 
 		if (norm < 0.5)
-			adder += (0.5 - norm) * 3;
+			adder += (0.5 - norm) * shFil*5;
 
 
 		if (IN.uv.z <= 12)                                                                     
@@ -258,15 +267,15 @@ void diffuse_ps(
 		}
 		else if (IN.uv.z <= 30)
 		{
-			shadowing = shadowSmooth(shadowMap1, IN.LightPosition1, 0.00000018*adder, shTex);
+			shadowing = shadowSmooth(shadowMap1, IN.LightPosition1, 0.000000235*adder, shTex);
 		}
-		else if (IN.uv.z <= 130)
+		else if (IN.uv.z <= 120)
 		{
-			shadowing = shadowSmooth(shadowMap2, IN.LightPosition2, 0.0000002*adder, shTex);
+			shadowing = shadowSmooth(shadowMap2, IN.LightPosition2, 0.00000037*adder, shTex);
 		}
 		else if (IN.uv.z <= 600)
 		{
-			shadowing = shadowSmooth(shadowMap3, IN.LightPosition3, 0.0000002, shTex);
+			shadowing = shadowSmooth(shadowMap3, IN.LightPosition3, 0.00000032, shTex);
 		}
 
 		if (norm < 0.5)
@@ -274,21 +283,24 @@ void diffuse_ps(
 
 	}
 
-	float3 vertexLight = ambientColor;
+	//ambientColor = float3(0.35,0.5,0.6);
+		
+	float3 underShadow = max(shadowing.xxx,ambientColor);
+	//ambient lighting
+	//float3 ambDifLight = saturate(-diffuseLight)*ambientColor;
 	
 	//slight gi normal mapping
-	diffuseLight = abs(max(diffuseLight,diffuseLight/2));
-
-	float3 diffuseContrib = saturate(diffuseLight* lightDif0.rgb + vertexLight);
+	float3 diffuseContrib = lerp(ambientColor, lightDif0.rgb, underShadow*abs(max(diffuseLight,diffuseLight)));
+	
 	float specWeight = specular2Weight;
 	float3 specularContrib = ((specular + specular2*3) * matSpec0.rgb*specWeight );
-	float3 rawColor = (diffuseContrib + specularContrib);
 	
-	float3 directLight = saturate(shadowing + vertexLight);
+	float3 outColor = (diffuseContrib*diffuseTex + specularContrib);
 	
-	float3 darkness = max(shadowing.xxx,vertexLight);
-	float3 ambientLight = (vertexLight);
-	float4 output = float4(rawColor*diffuseTex*lerp(ambientLight, max(directLight,vertexLight),darkness),1);
+	//float3 directLight = saturate(shadowing + ambientColor);
+	
+	//float4 output = float4(rawColor*lerp(ambientLight, directLight,underShadow),1);
+	float4 output = float4(outColor,1);
 	
 	//distance fog
 	float insideFog = saturate((distance - fogParams.y) / fogParams.z)*fogColor.a;
@@ -298,5 +310,5 @@ void diffuse_ps(
 	color0 = output;
 	color1 = float4(0.5, 0.5, saturate(matSpec0.a + specular.r / 2), 1);
 	color2 = float4(0, 0, 0, 1);
-	color3 = float4(IN.uv.z / IN.uv.w, IN.uv.z, 0, 1);
+	color3 = float4(IN.uv.z / IN.uv.w, distance, 0, 1);
 }
