@@ -805,7 +805,7 @@ void GuiOverlay::setDebugValue(Ogre::Real value1, std::vector<std::string>& valu
     int debugVarPos = debugVarsLine-3;
     if (debugVarPos < 0) debugVarPos += debugVars.size();
 
-    for (size_t i = 0; i < values.size() && i < DEBUG_VARIABLES_COUNT; i++)
+    for (size_t i = 0; i < debugVars.size() && i < DEBUG_VARIABLES_COUNT; i++)
     {
         std::string txt = debugVars[debugVarPos].name + ":  " + std::to_string(*debugVars[debugVarPos].target);
         debugVarCaption[i]->text(txt);

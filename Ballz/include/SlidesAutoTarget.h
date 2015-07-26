@@ -20,9 +20,6 @@ public:
     ~SlidesAutoTargetAsync();
 
     void getAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance = 30, Slide* ignoredSlide = nullptr);
-    void computeAutoTarget();
-
-    void hideAutoTarget();
 
     bool pressedAction();
 
@@ -35,9 +32,6 @@ private:
     Slide* preparedSlide;
     float preparedSlideOffset;
     Ogre::Vector3 preparedSlidePos;
-
-    Ogre::BillboardSet* targetBillboardSet;
-    Ogre::SceneNode* billboardNode;
 
     float targetTimer;
 

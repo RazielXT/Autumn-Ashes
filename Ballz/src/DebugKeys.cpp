@@ -2,6 +2,8 @@
 #include "DebugKeys.h"
 #include "CameraShaker.h"
 #include "GameStateManager.h"
+#include "PlayerSwimming.h"
+#include "Player.h"
 
 void DebugKeys::reloadVariables()
 {

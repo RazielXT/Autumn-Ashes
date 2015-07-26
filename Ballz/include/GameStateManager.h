@@ -46,6 +46,7 @@ public:
 
     void restartLevel();
     void reloadLevel();
+    void reloadSceneSettings();
 
     void switchState(int target, float time = 1.0f);
 

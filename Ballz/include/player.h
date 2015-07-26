@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "SlidesAutoTarget.h"
+#include "PlayerStateInfo.h"
 #include "PlayerPostProcess.h"
 #include "PlayerClimbing.h"
 #include "PlayerGrab.h"
@@ -37,6 +38,8 @@ class Player
     friend class PlayerGrab;
     friend class PlayerParkour;
     friend class PlayerSwimming;
+    friend class PlayerAbilities;
+	friend class PlayerSliding;
 
     struct CamArrivalInfo
     {
@@ -66,8 +69,12 @@ public:
 
     void setPosition(Ogre::Vector3 pos)
     {
+        bodyPosition = pos;
         body->setPositionOrientation(pos,body->getOrientation());
     }
+
+    void saveState(PlayerStateInfo& info);
+    void loadState(PlayerStateInfo& info);
 
     void die();
     void enableControl(bool enable);
@@ -103,13 +110,13 @@ public:
     Ogre::Vector3 bodyPosition;
     float bodyVelocityL;
 
-    SlidesAutoTargetAsync* slidesAutoTarget;
-
     PlayerPostProcess* pPostProcess;
     PlayerClimbing* pClimbing;
     PlayerGrab* pGrabbing;
     PlayerParkour* pParkour;
     PlayerSwimming* pSwimming;
+    PlayerAbilities* pAbilities;
+	PlayerSliding* pSliding;
 
 private:
 
@@ -146,13 +153,13 @@ private:
     OgreNewt::ConvexCollisionPtr col_p;
     WorldMaterials* wmaterials;
 
-    //state
+    //basic state
     bool alive, immortal;
     bool moving, right_key, left_key, back_key, forw_key;
     bool onGround, sprinting, inControl, inMoveControl;
 
     //extern state
-    bool hanging, grabbedObj, wallrunning;
+    bool hanging, grabbedObj, wallrunning, sliding;
     char climbing;
 
     float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, sprintmeter;

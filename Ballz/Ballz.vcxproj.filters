@@ -230,6 +230,12 @@
     <ClCompile Include="src\WaterCurrent.cpp">
       <Filter>Files\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="src\PlayerAbilities.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerSliding.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -477,6 +483,15 @@
     </ClInclude>
     <ClInclude Include="include\ScaryPPListener.h">
       <Filter>Files\Listeners</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerAbilities.h">
+      <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerStateInfo.h">
+      <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerSliding.h">
+      <Filter>Files\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

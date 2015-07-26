@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Slide.h"
 #include "Player.h"
+#include "PlayerSliding.h"
 #include "MUtils.h"
 #include "SlidesAutoTarget.h"
 
@@ -29,12 +30,12 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
     if (arg.key == OIS::KC_SPACE && unavailableTimer<0)
     {
 
-        if (slidesAutoTarget->targetInfo.targetSlide)
+        /*if (slidesAutoTarget->targetInfo.targetSlide)
         {
             if (slidesAutoTarget->targetInfo.targetSlide->start(slidesAutoTarget->targetInfo.targetSlidePosOffset, true))
                 release(false);
         }
-        else
+        else*/
         {
             auto jumpSpeed = Global::player->getFacingDirection() * 10;
             jumpSpeed.y += 7.0f;//std::max(jumpSpeed.y, 5.0f);
@@ -418,7 +419,7 @@ bool Slide::start(Vector3& pos, bool withJump)
         else
             attach(bidirectional);
 
-        Global::mEventsMgr->addCachedTask(this);
+		Global::player->pSliding->slideStarted(this);
 
         return true;
     }
@@ -466,7 +467,7 @@ bool Slide::start(float startOffset, bool withJump)
     else
         attach(bidirectional);
 
-    Global::mEventsMgr->addCachedTask(this);
+	Global::player->pSliding->slideStarted(this);
 
     return true;
 }
@@ -484,7 +485,6 @@ void Slide::updateSlidingSpeed(float time)
 void Slide::removeControlFromPlayer()
 {
     Global::player->enableControl(false);
-    slidesAutoTarget = Global::player->slidesAutoTarget;
 }
 
 Ogre::TransformKeyFrame Slide::getCurrentState()
@@ -514,8 +514,6 @@ Ogre::Quaternion Slide::getDirectionState()
 void Slide::attach(bool retainDirection)
 {
     resetHead();
-
-    registerInputListening();
 
     {
         Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
@@ -574,7 +572,6 @@ void Slide::release(bool returnControl)
         enablePlayerControl = true;
     }
 
-    unregisterInputListening();
     mTrackerState->setEnabled(false);
 
     unavailableTimer = 1.5f;
@@ -648,11 +645,6 @@ void Slide::updateSlidingCamera(float time)
     }
 }
 
-void Slide::updateTargetSlide(float time)
-{
-    slidesAutoTarget->getAutoTarget(head->_getDerivedPosition(), Global::player->getFacingDirection(), time, 30, this);
-}
-
 void Slide::updateSlidingState(float time)
 {
     auto thisPos = tracker->getPosition();
@@ -667,8 +659,6 @@ void Slide::updateSlidingState(float time)
 
     updateSlidingCamera(time);
 
-    updateTargetSlide(time);
-
     //past/near end
     if (!loop && mTrackerState->hasEnded())
     {
@@ -676,7 +666,6 @@ void Slide::updateSlidingState(float time)
     }
 
     lastPos = tracker->getPosition();
-    slidesAutoTarget->computeAutoTarget();
 }
 
 

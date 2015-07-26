@@ -104,7 +104,17 @@ void GameStateManager::switchToLevel(int lvl)
 
     auto& lvlInfo = levels[lvl];
 
-    Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
+    SceneParser::instance.loadScene(lvlInfo.path);
+
+    lvlInfo.init();
+
+    Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
+}
+
+void GameStateManager::reloadSceneSettings()
+{
+    auto& lvlInfo = levels[lastLVL];
+
     Global::mSceneMgr->setAmbientLight(lvlInfo.ambientColor);
     PostProcessMgr* postProcMgr = Global::mPPMgr;
     postProcMgr->ColouringShift = lvlInfo.ColorShift;
@@ -114,11 +124,7 @@ void GameStateManager::switchToLevel(int lvl)
     Global::mSceneMgr->setSkyBox(true, lvlInfo.skyboxName);
     Global::mSceneMgr->setFog(FOG_LINEAR, lvlInfo.fogColor, 1, lvlInfo.fogStartDistance, lvlInfo.fogEndDistance);
 
-    SceneParser::instance.loadScene(lvlInfo.path);
-
-    lvlInfo.init();
-
-    Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
+    Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
 }
 
 void GameStateManager::restartLevel()
@@ -217,7 +223,6 @@ void GameStateManager::update(float tslf)
         switch (gameState)
         {
         case GAME:
-            myMenu->setDebugValue(Global::mWindow->getLastFPS(), Global::debug, dbg->debugVars, dbg->debugVarsLine);
             myMenu->setDebugValue(Global::mWindow->getLastFPS(), Global::debug, dbg->debugVars, dbg->debugVarsLine);
             myMenu->updateIngame(tslf);
             break;

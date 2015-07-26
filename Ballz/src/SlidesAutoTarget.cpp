@@ -5,19 +5,6 @@
 
 SlidesAutoTargetAsync::SlidesAutoTargetAsync()
 {
-
-    targetBillboardSet = Global::mSceneMgr->createBillboardSet("autoTargetBillSet");
-    targetBillboardSet->setMaterialName("chimneySmoke");
-    auto targetBillboard = targetBillboardSet->createBillboard(Vector3(0, 0, 0));
-    targetBillboard->setDimensions(5, 5);
-
-    billboardNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    billboardNode->attachObject(targetBillboardSet);
-
-    targetBillboardSet->setVisible(false);
-    targetBillboardSet->setCastShadows(false);
-    targetBillboardSet->setRenderQueueGroup(RENDER_QUEUE_OVERLAY);
-
     targetTimer = 0;
 }
 
@@ -127,18 +114,6 @@ bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, float r
         return getTargetSlideTouch(pos, dir, ignoredSlide);
 }
 
-void SlidesAutoTargetAsync::hideAutoTarget()
-{
-    targetBillboardSet->setVisible(false);
-    targetInfo.targetSlide = nullptr;
-}
-
-void SlidesAutoTargetAsync::computeAutoTarget()
-{
-    //preparedSlide = nullptr;
-    //targetResult = std::async(std::launch::async, &SlidesAutoTargetAsync::getTargetSlideFunc, this, pos, dir, rayDistance, ignoredSlide);
-}
-
 void SlidesAutoTargetAsync::getAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance, Slide* ignoredSlide)
 {
     auto found = targetResult.valid() ? targetResult.get() : false;
@@ -152,8 +127,6 @@ void SlidesAutoTargetAsync::getAutoTarget(Vector3 pos, Vector3 dir, float tslf, 
         if (preparedSlideOffset != -1)
         {
             //Global::gameMgr->myMenu->showUseGui(Ui_Target);
-            targetBillboardSet->setVisible(true);
-            billboardNode->setPosition(targetInfo.targetSlidePos);
         }
         else
         {
@@ -166,7 +139,6 @@ void SlidesAutoTargetAsync::getAutoTarget(Vector3 pos, Vector3 dir, float tslf, 
 
         if (targetTimer < 0)
         {
-            targetBillboardSet->setVisible(false);
             targetInfo.targetSlide = nullptr;
         }
     }

@@ -66,6 +66,19 @@
         <enumItem name="AlphaGrow" value="2" />
 </enum>
 
+<class name="SceneSettings" usage="scene">
+
+	<data name="AmbientColor" type="rgb" defaultValue="0.25,0.25,0.35"/>
+	
+	<data name="FogWeight" type="float" groupName="Fog" defaultValue="0.5"/>
+	<data name="FogColor" type="rgb" groupName="Fog" defaultValue="0.7,0.7,0.8"/>
+	<data name="FogStart" type="float" groupName="Fog" defaultValue="100" maxValue="5000"/>
+	<data name="FogEnd" type="float" groupName="Fog" defaultValue="200" maxValue="5000"/>
+	
+	<data name="Skybox" type="string" defaultValue="TCENoonSkyBox"/>
+	
+</class>
+
 <class name="CompoundBodyPart" usage="object">
 	<data name="Target" displayName="Body target" type="string"/>
 	<data name="Visual" displayName="Visual" type="bool" defaultValue="true"/>

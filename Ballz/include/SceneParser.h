@@ -2462,6 +2462,44 @@ private:
         return "";
     }
 
+    void parseSceneSettings(const XMLElement* sceneElement)
+    {
+        Ogre::String userData;
+        GetChildText(sceneElement, userData);
+
+        Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
+        myLog->logMessage(userData, LML_NORMAL);
+
+        XMLDocument document;
+        document.Parse(userData.c_str());
+
+        if (!document.Error())
+        {
+            XMLElement *root = document.RootElement();
+
+            if (root->Value() != NULL)
+            {
+                Ogre::String rootTag(root->Value());
+
+                if (rootTag == "SceneSettings")
+                {
+                    auto ambient = getElementV3Value(root, "AmbientColor");
+                    auto fogColor = getElementV3Value(root, "FogColor");
+                    auto fogW = getElementFloatValue(root, "FogWeight");
+                    auto fogStart = getElementFloatValue(root, "FogStart");
+                    auto fogEnd = getElementFloatValue(root, "FogEnd");
+                    auto skybox = getElementValue(root, "Skybox");
+
+                    auto lvl = Global::gameMgr->getCurrentLvlInfo();
+                    lvl->ambientColor = Ogre::ColourValue(ambient.x, ambient.y, ambient.z);
+                    lvl->fogColor = Ogre::ColourValue(fogColor.x, fogColor.y, fogColor.z, fogW);
+                    lvl->fogStartDistance = fogStart;
+                    lvl->fogEndDistance = fogEnd;
+                    lvl->skyboxName = skybox;
+                }
+            }
+        }
+    }
 
 public:
 
@@ -2475,6 +2513,12 @@ public:
         document.LoadFile(filename.c_str());
         auto mainElement = document.RootElement();
         auto nodesElement = mainElement->FirstChildElement("nodes");
+        auto sceneElement = mainElement->FirstChildElement("userData");
+
+        if (sceneElement)
+            parseSceneSettings(sceneElement);
+
+        Global::gameMgr->reloadSceneSettings();
 
         std::vector<const XMLElement*> compBodies;
         String elementName;
@@ -2499,13 +2543,13 @@ public:
 
     void loadScene(Ogre::String filename)
     {
-
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("LOADING SCENE :: filename \"" + filename + "\"", LML_NORMAL);
 
         XMLDocument document;
         document.LoadFile(filename.c_str());
         auto mainElement = document.RootElement();
         auto nodesElement = mainElement->FirstChildElement("nodes");
+        auto sceneElement = mainElement->FirstChildElement("userData");
 
         loadedTasks.clear();
         loadedTriggers.clear();
@@ -2519,6 +2563,11 @@ public:
 
         if (Global::player != NULL)
             loadedBodies["Player"] = Global::player->body;
+
+        if (sceneElement)
+            parseSceneSettings(sceneElement);
+
+        Global::gameMgr->reloadSceneSettings();
 
         std::vector<const XMLElement*> compBodies;
         String elementName;

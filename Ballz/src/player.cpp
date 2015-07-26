@@ -6,6 +6,8 @@
 #include "PlayerSwimming.h"
 #include "MUtils.h"
 #include "GameStateManager.h"
+#include "PlayerAbilities.h"
+#include "PlayerSliding.h"
 
 using namespace Ogre;
 
@@ -43,13 +45,13 @@ Player::Player(WorldMaterials* wMaterials)
     climbing = 0;
     grabbedObj = false;
     wallrunning = false;
+	sliding = false;
 
     inControl = true;
     inMoveControl = true;
 
     immortal = true;
     alive = true;
-
 
     wmaterials = wMaterials;
 
@@ -69,20 +71,40 @@ Player::Player(WorldMaterials* wMaterials)
     pGrabbing = new PlayerGrab(this);
     pParkour = new PlayerParkour(this);
     pSwimming = new PlayerSwimming(this);
-
-    slidesAutoTarget = new SlidesAutoTargetAsync();
+    pAbilities = new PlayerAbilities(this);
+	pSliding = new PlayerSliding(this);
 }
 
 Player::~Player ()
 {
+    delete pAbilities;
     delete pSwimming;
     delete pPostProcess;
     delete pClimbing;
     delete pGrabbing;
     delete pParkour;
-    delete slidesAutoTarget;
+	delete pSliding;
     delete shaker;
 }
+
+void Player::saveState(PlayerStateInfo& info)
+{
+    info.position = bodyPosition;
+    info.velocity = body->getVelocity();
+
+    info.camOrientation = necknode->getOrientation();
+    info.camPitch = camPitch;
+}
+
+void Player::loadState(PlayerStateInfo& info)
+{
+    body->setPositionOrientation(info.position, Ogre::Quaternion::IDENTITY);
+    body->setVelocity(info.velocity);
+
+    necknode->setOrientation(info.camOrientation);
+    camPitch = info.camPitch;
+}
+
 void Player::initBody()
 {
     Ogre::Entity* ent = mSceneMgr->createEntity("name", "play2.mesh");
@@ -142,6 +164,8 @@ void Player::default_callback(OgreNewt::Body* me, float timeStep, int threadInde
 
 void Player::pressedKey(const OIS::KeyEvent &arg)
 {
+    pAbilities->pressedKey(arg);
+
     switch (arg.key)
     {
     case OIS::KC_D:
@@ -194,6 +218,8 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
 
 void Player::releasedKey(const OIS::KeyEvent &arg)
 {
+    pAbilities->releasedKey(arg);
+
     switch (arg.key)
     {
     case OIS::KC_D:
@@ -414,8 +440,6 @@ void Player::rotateCamera(Real hybX,Real hybY)
 
 void Player::update(Real time)
 {
-    pSwimming->update(time);
-
     tslf = time*Global::timestep;
     facingDir = mCamera->getDerivedOrientation()*Ogre::Vector3(0, 0, -1);
 
@@ -442,6 +466,11 @@ void Player::updateStats()
     updateGroundStats();
 
     bodyVelocityL = body->getVelocity().length();
+	pSwimming->update(tslf);
+	pAbilities->update(tslf);
+
+	bool readyToSlide = (inControl && !pParkour->isRolling() && !wallrunning && !climbing && !hanging);
+	pSliding->update(tslf, readyToSlide);
 
     if (!inControl)
         return;
@@ -466,13 +495,6 @@ void Player::updateStats()
     {
         updateUseGui();
     }
-
-    if (wallrunning)
-        slidesAutoTarget->getAutoTarget(mCamera->getDerivedPosition(), getFacingDirection(), tslf, wallrunning ? 20.0f : 10.0f);
-    else if (inControl && !pParkour->isRolling() && !climbing && !hanging)
-        slidesAutoTarget->getAutoTarget(mCamera->getDerivedPosition() - Vector3(0,2,0), getFacingDirection(), tslf, 0);
-    else
-        slidesAutoTarget->hideAutoTarget();
 }
 
 void Player::updateUseGui()

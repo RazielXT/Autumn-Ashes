@@ -7,7 +7,7 @@ using namespace Ogre;
 
 class SlidesAutoTargetAsync;
 
-class Slide : public EventTask, public InputListener
+class Slide
 {
 
 public:
@@ -81,9 +81,6 @@ protected:
 
     void updateSlidingState(float time);
     void updateHeadArrival(float time);
-
-    SlidesAutoTargetAsync* slidesAutoTarget;
-    inline void updateTargetSlide(float time);
 
     virtual void updateSlidingSpeed(float time);
 

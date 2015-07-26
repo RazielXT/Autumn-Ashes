@@ -31,9 +31,10 @@ class PlayerSwimming
 
     void enteredWater();
     void leftWater();
-    float outOfWaterTimer;
 
 public:
+
+    float outOfWaterTimer = 1.0f;
 
     bool inWater = false;
     PlayerSwimming(Player* player);
