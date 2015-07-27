@@ -89,7 +89,7 @@ void Player::jump()
     if (pClimbing->makingPullup())
         return;
 
-    if (!slidesAutoTarget->pressedAction() && !pClimbing->spacePressed() && !pParkour->spacePressed() && !pParkour->isRolling())
+    if (!pClimbing->spacePressed() && !pParkour->spacePressed() && !pParkour->isRolling())
     {
         if (onGround)
         {

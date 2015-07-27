@@ -39,7 +39,7 @@ class Player
     friend class PlayerParkour;
     friend class PlayerSwimming;
     friend class PlayerAbilities;
-	friend class PlayerSliding;
+    friend class PlayerSliding;
 
     struct CamArrivalInfo
     {
@@ -116,7 +116,7 @@ public:
     PlayerParkour* pParkour;
     PlayerSwimming* pSwimming;
     PlayerAbilities* pAbilities;
-	PlayerSliding* pSliding;
+    PlayerSliding* pSliding;
 
 private:
 

@@ -160,7 +160,7 @@ void Slide::invertTrack()
 
 void Slide::instantDetach(bool returnControl)
 {
-	release(returnControl);
+    release(returnControl);
 }
 
 void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
@@ -424,7 +424,7 @@ bool Slide::start(Vector3& pos, bool withJump)
         else
             attach(bidirectional);
 
-		Global::player->pSliding->slideStarted(this);
+        Global::player->pSliding->slideStarted(this);
 
         return true;
     }
@@ -472,7 +472,7 @@ bool Slide::start(float startOffset, bool withJump)
     else
         attach(bidirectional);
 
-	Global::player->pSliding->slideStarted(this);
+    Global::player->pSliding->slideStarted(this);
 
     return true;
 }

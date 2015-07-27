@@ -19,7 +19,7 @@ public:
     SlidesAutoTargetAsync();
     ~SlidesAutoTargetAsync();
 
-    void updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance = 30, Slide* ignoredSlide = nullptr);
+    void updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance, bool allowAutoAttach, Slide* ignoredSlide = nullptr);
 
     bool pressedAction();
 
@@ -29,6 +29,8 @@ public:
 
 private:
 
+    Slide* lastUnavailableSlide = nullptr;
+
     Slide* preparedSlide;
     float preparedSlideOffset;
     Ogre::Vector3 preparedSlidePos;
@@ -36,7 +38,7 @@ private:
     float targetTimer;
 
     std::future<bool> targetResult;
-    bool getTargetSlideFunc(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide);
+    bool getTargetSlideFunc(Vector3 pos, Vector3 dir, float rayDistance, bool allowAutoAttach, Slide* ignoredSlide);
 
     bool getTargetSlideRay(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide);
     bool getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide* ignoredSlide);

@@ -17,15 +17,17 @@ class PlayerAbilities
     float shiftTimeTarget = 0;
     std::list<PlayerStateInfo> playerHistory;
 
-	void updateStateHistory(float tslf);
-	void updatePortTarget();
+    void updateStateHistory(float tslf);
+
+    Ogre::Vector3 portTargetPos;
+    void updatePortTarget();
 
 public:
 
     PlayerAbilities(Player* player);
-	~PlayerAbilities();
+    ~PlayerAbilities();
 
-	void portForward();
+    void portForward();
 
     void shiftBack();
     void setShiftTime();
@@ -34,6 +36,6 @@ public:
 
     void pressedKey(const OIS::KeyEvent &arg);
     void releasedKey(const OIS::KeyEvent &arg);
-	void hidePortTarget();
-	void showPortTarget();
+    void hidePortTarget();
+    void showPortTarget();
 };

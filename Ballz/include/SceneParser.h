@@ -13,7 +13,8 @@
 #include "Crows.h"
 #include "MUtils.h"
 #include "WaterCurrent.h"
-
+#include "Player.h"
+#include "PlayerSliding.h"
 
 using namespace Ogre;
 using namespace tinyxml2;
@@ -1156,7 +1157,7 @@ private:
 
         loadedSlides[node->getName()] = line;
 
-        Global::player->slidesAutoTarget->loadedSlides.push_back(line);
+        Global::player->pSliding->addLoadedSlide(line);
 
         node->detachAllObjects();
         mSceneMgr->destroyEntity(ent);

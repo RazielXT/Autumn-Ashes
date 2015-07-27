@@ -106,15 +106,15 @@ bool SlidesAutoTargetAsync::getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide*
     return closest < maxDistSq;
 }
 
-bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide)
+bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, float rayDistance, bool allowAutoAttach, Slide* ignoredSlide)
 {
-    if (rayDistance != 0)
+    if (!allowAutoAttach)
         return getTargetSlideRay(pos, dir, rayDistance, ignoredSlide);
     else
         return getTargetSlideTouch(pos, dir, ignoredSlide);
 }
 
-void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance, Slide* ignoredSlide)
+void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance, bool allowAutoAttach, Slide* ignoredSlide)
 {
     auto found = targetResult.valid() ? targetResult.get() : false;
 
@@ -129,20 +129,20 @@ void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tsl
             //Global::gameMgr->myMenu->showUseGui(Ui_Target);
         }
         else
+            //auto attach on touch
         {
-            targetInfo.targetSlide->start(targetInfo.targetSlidePos);
+            if (lastUnavailableSlide != targetInfo.targetSlide)
+                targetInfo.targetSlide->start(targetInfo.targetSlidePos);
         }
     }
     else
     {
-        targetTimer -= tslf;
-
-        if (targetTimer < 0)
-        {
-            targetInfo.targetSlide = nullptr;
-        }
+        targetInfo.targetSlide = nullptr;
     }
 
+    if (allowAutoAttach && lastUnavailableSlide != targetInfo.targetSlide)
+        lastUnavailableSlide = nullptr;
+
     preparedSlide = nullptr;
-    targetResult = std::async(std::launch::async, &SlidesAutoTargetAsync::getTargetSlideFunc, this, pos, dir, rayDistance, ignoredSlide);
+    targetResult = std::async(std::launch::async, &SlidesAutoTargetAsync::getTargetSlideFunc, this, pos, dir, rayDistance, allowAutoAttach, ignoredSlide);
 }

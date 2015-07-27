@@ -45,7 +45,7 @@ Player::Player(WorldMaterials* wMaterials)
     climbing = 0;
     grabbedObj = false;
     wallrunning = false;
-	sliding = false;
+    sliding = false;
 
     inControl = true;
     inMoveControl = true;
@@ -72,7 +72,7 @@ Player::Player(WorldMaterials* wMaterials)
     pParkour = new PlayerParkour(this);
     pSwimming = new PlayerSwimming(this);
     pAbilities = new PlayerAbilities(this);
-	pSliding = new PlayerSliding(this);
+    pSliding = new PlayerSliding(this);
 }
 
 Player::~Player ()
@@ -83,7 +83,7 @@ Player::~Player ()
     delete pClimbing;
     delete pGrabbing;
     delete pParkour;
-	delete pSliding;
+    delete pSliding;
     delete shaker;
 }
 
@@ -466,11 +466,11 @@ void Player::updateStats()
     updateGroundStats();
 
     bodyVelocityL = body->getVelocity().length();
-	pSwimming->update(tslf);
-	pAbilities->update(tslf);
+    pSwimming->update(tslf);
+    pAbilities->update(tslf);
 
-	bool readyToSlide = (inControl && !pParkour->isRolling() && !wallrunning && !climbing && !hanging);
-	pSliding->update(tslf, readyToSlide);
+    bool readyToSlide = (inControl && !pParkour->isRolling() && !wallrunning && !climbing && !hanging);
+    pSliding->update(tslf, readyToSlide);
 
     if (!inControl)
         return;
