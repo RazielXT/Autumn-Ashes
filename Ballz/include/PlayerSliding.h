@@ -33,4 +33,7 @@ public:
 
 	void hideSlideTarget();
 	bool showPossibleSlideTarget();
+
+	bool foundTarget();
+	void portToTarget();
 };

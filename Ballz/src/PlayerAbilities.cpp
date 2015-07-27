@@ -40,7 +40,14 @@ void PlayerAbilities::shiftBack()
 
 void PlayerAbilities::portForward()
 {
-	
+	if (p->pSliding->foundTarget())
+		p->pSliding->portToTarget();
+	else
+	{
+		//ray target
+
+		//port to target
+	}
 }
 
 void PlayerAbilities::update(float tslf)

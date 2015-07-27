@@ -158,6 +158,11 @@ void Slide::invertTrack()
     initSlide(newPoints);
 }
 
+void Slide::instantDetach(bool returnControl)
+{
+	release(returnControl);
+}
+
 void Slide::initSlide(const std::vector<Ogre::Vector3>& points)
 {
     //bidirectional = true;
@@ -402,7 +407,7 @@ bool Slide::start(bool withJump)
 
 bool Slide::start(Vector3& pos, bool withJump)
 {
-    if (sliding || unavailableTimer>0)
+    if (sliding)
         return false;
 
     if (mTrackerState == nullptr)
@@ -453,7 +458,7 @@ void Slide::setCorrectDirection(float startOffset)
 
 bool Slide::start(float startOffset, bool withJump)
 {
-    if (sliding || unavailableTimer > 0)
+    if (sliding)
         return false;
 
     setCorrectDirection(startOffset);
@@ -574,7 +579,6 @@ void Slide::release(bool returnControl)
 
     mTrackerState->setEnabled(false);
 
-    unavailableTimer = 1.5f;
     sliding = false;
 }
 
@@ -687,5 +691,5 @@ bool Slide::update(Ogre::Real tslf)
     if (unavailableTimer>0)
         unavailableTimer -= tslf;
 
-    return jumpingToSlide || sliding || unavailableTimer>0;
+    return jumpingToSlide || sliding;
 }

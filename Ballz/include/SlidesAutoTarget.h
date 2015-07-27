@@ -19,7 +19,7 @@ public:
     SlidesAutoTargetAsync();
     ~SlidesAutoTargetAsync();
 
-    void getAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance = 30, Slide* ignoredSlide = nullptr);
+    void updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance = 30, Slide* ignoredSlide = nullptr);
 
     bool pressedAction();
 

@@ -39,29 +39,25 @@ void PlayerSliding::update(float tslf, bool readyToSlide)
 
 	//todo allow autoslide
 
-	slidesAutoTarget->getAutoTarget(p->mCamera->getDerivedPosition(), p->getFacingDirection(), tslf, 20.0f, currentSlide);
+	slidesAutoTarget->updateAutoTarget(p->mCamera->getDerivedPosition(), p->getFacingDirection(), tslf, 20.0f, currentSlide);
 }
 
 void PlayerSliding::pressedKey(const OIS::KeyEvent &arg)
 {
-	switch (arg.key)
-	{
-	case OIS::KC_LSHIFT:
-		break;
-	}
+	if (currentSlide)
+		currentSlide->pressedKey(arg);
 }
 
 void PlayerSliding::releasedKey(const OIS::KeyEvent &arg)
 {
-	switch (arg.key)
-	{
-
-	}
+	if (currentSlide)
+		currentSlide->releasedKey(arg);
 }
 
-void movedMouse(const OIS::MouseEvent &e)
+void PlayerSliding::movedMouse(const OIS::MouseEvent &e)
 {
-
+	if (currentSlide)
+		currentSlide->movedMouse(e);
 }
 
 void PlayerSliding::hideSlideTarget()
@@ -83,4 +79,22 @@ bool PlayerSliding::showPossibleSlideTarget()
 
 	hideSlideTarget();
 	return false;
+}
+
+bool PlayerSliding::foundTarget()
+{
+	auto& target = slidesAutoTarget->targetInfo;
+
+	return (target.targetSlide && target.targetSlidePosOffset >= 0);
+}
+
+void PlayerSliding::portToTarget()
+{
+	if (currentSlide)
+		currentSlide->instantDetach(false);
+
+	currentSlide = slidesAutoTarget->targetInfo.targetSlide;
+	
+	if (!currentSlide->start(slidesAutoTarget->targetInfo.targetSlidePosOffset))
+		currentSlide = nullptr;
 }

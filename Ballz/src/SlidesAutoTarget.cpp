@@ -114,7 +114,7 @@ bool SlidesAutoTargetAsync::getTargetSlideFunc(Vector3 pos, Vector3 dir, float r
         return getTargetSlideTouch(pos, dir, ignoredSlide);
 }
 
-void SlidesAutoTargetAsync::getAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance, Slide* ignoredSlide)
+void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance, Slide* ignoredSlide)
 {
     auto found = targetResult.valid() ? targetResult.get() : false;
 

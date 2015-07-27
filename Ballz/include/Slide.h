@@ -18,6 +18,7 @@ public:
     virtual bool start(Vector3& point, bool withJump = false);
 
     virtual bool start(float startOffset, bool withJump = false);
+	void instantDetach(bool returnControl);
 
     virtual bool update(Ogre::Real tslf);
 
