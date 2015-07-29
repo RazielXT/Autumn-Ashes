@@ -42,6 +42,9 @@
     <Filter Include="Files\Core\DetailGeometry">
       <UniqueIdentifier>{6009a606-e1a1-4c38-958c-609a987e8828}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\Core\RenderObjects">
+      <UniqueIdentifier>{83a765d8-98ef-4422-8267-53b52e92fbe1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CrowPath.cpp">
@@ -188,9 +191,6 @@
     <ClCompile Include="src\Crows.cpp">
       <Filter>Files\Objects\Crow</Filter>
     </ClCompile>
-    <ClCompile Include="src\Reflection.cpp">
-      <Filter>Files\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="src\AnimationBlender.cpp">
       <Filter>Files\Core</Filter>
     </ClCompile>
@@ -235,6 +235,12 @@
     </ClCompile>
     <ClCompile Include="src\PlayerSliding.cpp">
       <Filter>Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Reflection.cpp">
+      <Filter>Files\Core\RenderObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneCubeMap.cpp">
+      <Filter>Files\Core\RenderObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -421,9 +427,6 @@
     <ClInclude Include="include\Crows.h">
       <Filter>Files\Objects\Crow</Filter>
     </ClInclude>
-    <ClInclude Include="include\Reflection.h">
-      <Filter>Files\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="include\CrowWatch.h">
       <Filter>Files\Objects\Crow</Filter>
     </ClInclude>
@@ -492,6 +495,12 @@
     </ClInclude>
     <ClInclude Include="include\PlayerSliding.h">
       <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Reflection.h">
+      <Filter>Files\Core\RenderObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneCubeMap.h">
+      <Filter>Files\Core\RenderObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
