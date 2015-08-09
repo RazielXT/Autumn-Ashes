@@ -8,6 +8,7 @@
 #include "GameStateManager.h"
 #include "PlayerAbilities.h"
 #include "PlayerSliding.h"
+#include "SceneCubeMap.h"
 
 using namespace Ogre;
 
@@ -49,6 +50,7 @@ Player::Player(WorldMaterials* wMaterials)
 
     inControl = true;
     inMoveControl = true;
+    ownsCamera = true;
 
     immortal = true;
     alive = true;
@@ -64,8 +66,6 @@ Player::Player(WorldMaterials* wMaterials)
     initBody();
 
     pPostProcess = new PlayerPostProcess(this);
-
-    pPostProcess->injectPostProcess(&Global::mPPMgr->hurtEffect, &Global::mPPMgr->ivp, &Global::mPPMgr->pvp, &Global::mPPMgr->mbAmount);
 
     pClimbing = new PlayerClimbing(this);
     pGrabbing = new PlayerGrab(this);
@@ -269,7 +269,7 @@ void Player::movedMouse(const OIS::MouseEvent &e)
 
     int mouseY = (int)(-1 * e.state.Y.rel*Global::timestep);
 
-    if (inControl)
+    if (inControl && ownsCamera)
         rotateCamera(mouseX/10.0f,mouseY/10.0f);
 }
 
@@ -326,12 +326,25 @@ void Player::attachHead(Ogre::SceneNode* headNode)
 
 Ogre::Camera* Player::detachCamera()
 {
+    ownsCamera = false;
+
     camnode->detachObject(mCamera);
     return mCamera;
 }
 
-void Player::attachCamera()
+void Player::attachCamera(bool silent /*= false*/)
 {
+    ownsCamera = true;
+
+    if (silent)
+    {
+        mCamera->detachFromParent();
+        mCamera->setDirection(Ogre::Vector3(0, 0, -1));
+        camnode->attachObject(mCamera);
+
+        return;
+    }
+
     camPitch = 0;
     fallPitch=0;
     cam_walking=0;
@@ -440,6 +453,8 @@ void Player::rotateCamera(Real hybX,Real hybY)
 
 void Player::update(Real time)
 {
+    //SceneCubeMap::renderAll();
+
     tslf = time*Global::timestep;
     facingDir = mCamera->getDerivedOrientation()*Ogre::Vector3(0, 0, -1);
 

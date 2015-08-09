@@ -1,0 +1,106 @@
+float4 TraceSSReflections_fp
+    (
+         float2 uv: TEXCOORD0,
+		 uniform float4x4 invProjMatrix,
+		 uniform float4x4 projMatrix,
+         uniform sampler2D map: register(s0),
+		 uniform sampler2D mapSS: register(s1),
+		 uniform sampler2D mapDepth: register(s2)
+    ) : COLOR
+{   
+	float4 scene = tex2D(map, uv);
+	
+	float3 viewNormal = tex2D(mapSS, uv).xyz;
+	
+	if(viewNormal.x+viewNormal.y+viewNormal.z == 0)
+		return scene;
+		
+	//viewNormal = viewNormal*2 - 1;
+		
+	float zOverW = 1 - tex2D(mapDepth, uv).r;
+	float4 H = float4(uv.x * 2 - 1, (1 - uv.y) * 2 - 1, zOverW, 1);  
+	
+	float4 cameraVP = mul(invProjMatrix, H);
+	cameraVP = cameraVP / cameraVP.w;	
+	cameraVP.rgb *= 0.5;
+	
+	//return cameraVP;
+	//cameraVP.z *= -1;
+
+	float3 rayDirVP = normalize(reflect(normalize(cameraVP.xyz), viewNormal));
+	//rayDirVP.y *= -1;
+
+	//cameraVP.xz *= -1;
+	
+	//return float4(rayDirVP,1);
+	
+	float stepSize = 0.5;
+	float steps = 20.0;
+	//float2 size = 1/float2(1280,768);
+	
+	//rayDirVP = rayDirVP*stepSize;
+	float3 startPos = cameraVP.xyz;
+	float3 endPos = cameraVP.xyz + rayDirVP*stepSize*steps;
+
+	float4 startPosSS =  mul(projMatrix, float4(startPos,1)); //uv.xyxy; // 
+	startPosSS.xy = ((startPosSS.xy/startPosSS.w))*0.5 + 0.5; 
+	startPosSS.y = 1 - startPosSS.y;
+	
+	//endPos.z = min(-5,endPos.z);
+	float4 endPosSS = mul(projMatrix, float4(endPos,1));
+	endPosSS.xy =  ((endPosSS.xy/endPosSS.w))*0.5 + 0.5; 
+	endPosSS.y = 1 - endPosSS.y;
+	
+	//return float4(rayDirVP.xyzx);
+	//return float4(endPosSS.xy,startPosSS.xy);
+		
+	float traceLen = length(endPosSS.xy - startPosSS.xy);
+	float3 ssStep = (endPosSS.xyz - startPosSS.xyz)/steps;
+	float3 vpStep = (endPos.xyz - startPos.xyz)/steps;
+	float3 curPos = startPosSS.xyz;
+	float3 curPosVP = startPos.xyz;
+	
+	//ssStep *= min(1,length(ssStep)/0.1);
+	
+	float4 reflScene = scene;
+	float2 sampledUV = 1;
+	
+	for(int i=0; i<steps; i++)
+	{
+		curPosVP += vpStep;
+		curPos += ssStep;
+		float checkDepth = -curPosVP.z;
+		
+		//scene.xyz = curPos;
+
+		if(curPos.x >= 1 || curPos.y >= 1)
+			break;
+		
+		float depth = tex2D(mapDepth, curPos.xy).g;
+		//if((depth > checkDepth) && ((depth-checkDepth) < 2))
+		if(curPosVP.z < -5)
+		{
+			reflScene = tex2D(map, curPos.xy);
+			sampledUV = curPos.xy;
+			//break;
+		}
+	}
+	
+	float relfW = 1;
+	
+	if ( sampledUV.x>0.5 ) sampledUV.x = 1.0 - sampledUV.x ;
+	if ( sampledUV.y>0.5 ) sampledUV.y = 1.0 - sampledUV.y ;
+	
+	relfW = relfW * clamp (sampledUV.x * 10.0 , 0.0 , 1.0 );
+	relfW = relfW * clamp (sampledUV.y * 10.0 , 0.0 , 1.0 );
+		
+	scene = lerp(scene, reflScene, relfW);
+	
+	//scene/=steps+1;
+	
+	//scene.rgb = float3(-startPos.z, -endPos.z, 0)/100;
+	//scene.b = 0;
+	//scene.rgb = mul(projMatrix, cameraVP).rgb;//*float3(size,0);
+	
+	return scene;
+}

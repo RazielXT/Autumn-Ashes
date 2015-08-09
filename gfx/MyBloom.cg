@@ -20,20 +20,121 @@ float4 Brightcheck_fp
 	) : COLOR
 {
 	float4 sharp = tex2D(scene,uv);
-	sharp.rbg-=0.3-sharp.a*0.4;
+	sharp.rbg-=0.4-sharp.a*0.4;
 
-	float matBrightness = tex2D(sceneLum,uv).b;
+	float matBrightness = tex2D(sceneLum,uv).a;
 	float2 transBrightness = tex2D(transLum,uv).ba;
 	
 	matBrightness = lerp(matBrightness, transBrightness.x, transBrightness.y);
 	
 	//b > 0.8 -> 0.5-10
-	matBrightness = max(matBrightness, (matBrightness-0.77)*30);
+	matBrightness = max(matBrightness, (matBrightness-0.75)*30);
 
 	sharp*=2*matBrightness;
 
 	return  sharp;
 }
+
+
+static const float samples[11] =
+{//stddev=2.0
+0.01122447,
+0.03383468,
+0.05359061,
+0.10097757,
+0.16266632,
+
+0.37241265,
+
+0.16266632,
+0.10097757,
+0.05359061,
+0.03383468,
+0.01122447
+};
+
+static const float pos[11] =
+{
+-1.5,
+-1.1,
+-0.7,
+-0.4,
+-0.25,
+ 0,
+ 0.25,
+ 0.4,
+ 0.7,
+ 1.1,
+ 1.5
+};
+
+#define bloomSize 15;
+
+float4 MyBloomX_fp
+    (
+         float2 uv: TEXCOORD0,
+		 uniform float2 invTexSize,
+         uniform sampler2D scene: register(s0),
+		uniform sampler2D brightness: register(s1)
+         
+    ) : COLOR
+
+{
+	float t= 1 - tex2D(brightness, uv).r;
+   float b=t*bloomSize + 0.1;
+
+    float4 sum = 0;
+   for (int i = 0; i < 11; i++)
+   {
+      sum += tex2D(scene, uv+ float2(pos[i],0)*invTexSize.xy*b) * samples[i];
+   }
+   return sum;
+
+}
+
+float4 MyBloomY_fp
+    (
+         float2 uv: TEXCOORD0,
+		 uniform float2 invTexSize,
+         uniform sampler2D blurX: register(s0),
+		uniform sampler2D brightness: register(s1)
+         
+    ) : COLOR
+
+{
+	float t= 1 - tex2D(brightness, uv).r;
+   float b=t*bloomSize + 0.1;
+   
+   float4 sum = 0;
+   for (int i = 0; i < 11; i++)
+   {
+      sum += tex2D(blurX, uv +  float2(0,pos[i])*invTexSize.xy*b) * samples[i];
+   }
+   return sum;
+}
+
+float4 MyBloomYF_fp
+    (
+         float2 uv: TEXCOORD0,
+		 uniform float2 invTexSize,
+         uniform sampler2D blurX: register(s0),
+	    uniform sampler2D brightness: register(s1)
+         
+    ) : COLOR
+
+{
+	float t= 1 - tex2D(brightness, uv).r;
+   float b=t*bloomSize + 0.1;
+
+   float4 sum = 0;
+   for (int i = 0; i < 11; i++)
+   {
+      sum += tex2D(blurX, uv + float2(0,pos[i])*invTexSize.xy*b) * samples[i];
+   }
+   
+   return sum*(t + 0.1);
+}
+
 
 #define BLUR_RADIUS 3
 
@@ -67,61 +168,6 @@ static const float posSmoke[10] =
  1.8
 };
 
-static const float samples0[11] =
-{//stddev=2.0
-0.01222447,
-0.03783468,
-0.08559061,
-0.12097757,
-0.17466632,
-
-0.19741265,
-
-0.17466632,
-0.12097757,
-0.08559061,
-0.03783468,
-0.01222447
-};
-
-static const float2 pos0[11] =
-{
-0, -2.2,
-0, -1.4,
-0, -0.8,
-0, -0.4,
-0, -0.25,
-0, 0,
-0, 0.25,
-0, 0.4,
-0, 0.8,
-0, 1.4,
-0, 2.2
-};
-
-#define bloomSize 2;
-
-float4 MyBloomX_fp
-    (
-         float2 uv: TEXCOORD0,
-         uniform sampler2D scene: register(s0),
-		uniform sampler2D brightness: register(s1)
-         
-    ) : COLOR
-
-{
-	float t= 1 - tex2D(brightness, uv).r;
-   float b=t*bloomSize + 0.1;
-
-    float4 sum = 0;
-   for (int i = 0; i < 11; i++)
-   {
-      sum += tex2D(scene, uv+ pos0[i]*0.04*b*b) * samples0[i];
-   }
-   return sum;
-
-}
-
 float4 MySmokeBloomX_fp
     (
          float2 uv: TEXCOORD0,
@@ -145,59 +191,6 @@ float4 MySmokeBloomX_fp
    return sum;
 }
 
-static const float samples[11] =
-{//stddev=2.0
-0.01122447,
-0.03383468,
-0.05359061,
-0.10097757,
-0.16266632,
-
-0.37241265,
-
-0.16266632,
-0.10097757,
-0.05359061,
-0.03383468,
-0.01122447
-};
-
-static const float2 pos[11] =
-{
--2.2, 0,
--1.4, 0,
--0.8, 0,
--0.4, 0,
--0.25, 0,
- 0, 0,
- 0.25, 0,
- 0.4, 0,
- 0.8, 0,
- 1.4, 0,
- 2.2, 0,
-};
-
-float4 MyBloomY_fp
-    (
-         float2 uv: TEXCOORD0,
-         uniform sampler2D blurX: register(s0),
-		uniform sampler2D brightness: register(s1)
-         
-    ) : COLOR
-
-{
-	float t= 1 - tex2D(brightness, uv).r;
-   float b=t*bloomSize + 0.1;
-   
-   float4 sum = 0;
-   for (int i = 0; i < 11; i++)
-   {
-      sum += tex2D(blurX, uv + pos[i]*0.08*b) * samples[i];
-   }
-   return sum;
-
-
-}
 
 float4 MySmokeBloomY_fp
     (
@@ -220,26 +213,4 @@ float4 MySmokeBloomY_fp
    //if(ini.a>sum.a) sum=(ini+sum)/2; 
 
    return sum;
-}
-
-float4 MyBloomYF_fp
-    (
-         float2 uv: TEXCOORD0,
-         uniform sampler2D blurX: register(s0),
-	    uniform sampler2D brightness: register(s1)
-         
-    ) : COLOR
-
-{
-	float t= 1 - tex2D(brightness, uv).r;
-   float b=t*bloomSize + 0.1;
-
-   float4 sum = 0;
-   for (int i = 0; i < 11; i++)
-   {
-      sum += tex2D(blurX, uv + pos[i]*0.1*b) * samples[i];
-   }
-   return sum*b;
-
-
 }

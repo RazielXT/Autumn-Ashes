@@ -30,7 +30,7 @@ void WaterCurrent::addCurrent(Ogre::Vector3 start, Ogre::Vector3 end, float powe
     currents.push_back(cur);
 }
 
-Ogre::Vector3 WaterCurrent::findCurrent(Ogre::Vector3 pos)
+Ogre::Vector3 WaterCurrent::getCurrent(Ogre::Vector3 pos)
 {
     Vector3 out = Vector3::ZERO;
     float closestDistanceOffSq = 1000000;

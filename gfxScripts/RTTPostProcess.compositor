@@ -1,0 +1,14 @@
+compositor RTT_CubemapBlur
+{
+    technique
+    {
+		target_output
+        {
+            input none
+            pass render_quad
+            {			
+                material CubemapBlur
+            }
+        }
+    }
+}

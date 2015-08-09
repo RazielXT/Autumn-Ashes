@@ -150,6 +150,12 @@ float3 color_blend(float3 normalTex, float3 normalTex2)
 	r = (normalTex < 0.5 ? (2.0 * normalTex * normalTex2) : (1.0 - 2.0 * (1.0 - normalTex) * (1.0 - normalTex2)));
 	return r;
 }
+ 
+float3 offsetCubemapUV(in float3 v, float3 CubemapPositionWS, float3 PositionWS, float EnvMapOffset)
+{  
+	float3 ReflDirectionWS = v;
+	return (normalize(PositionWS - CubemapPositionWS)*EnvMapOffset + ReflDirectionWS);
+}
 
 void diffuse_ps(
 	PIn IN,
@@ -167,6 +173,7 @@ void diffuse_ps(
 	uniform float specular2Weight,
 	uniform float4x4 iTWMat,
 	uniform float4x4 viewMat,
+	uniform float4 cubemapWPOffset,
 	float2 screenSpace : WPOS,
 	uniform sampler2D diffuseMap : register(s0),
 	uniform sampler2D normalMap : register(s1),
@@ -176,6 +183,7 @@ void diffuse_ps(
 	uniform sampler2D shadowMap2 : register(s5),
 	uniform sampler2D shadowMap3 : register(s6),
 	uniform sampler2D normalDetailMap : register(s7),
+	uniform samplerCube envMap : register(s8),
 	out float4 color0 : COLOR0,
 	out float4 color1 : COLOR1,
 	out float4 color2 : COLOR2,
@@ -213,6 +221,12 @@ void diffuse_ps(
 
 	float4 diffuseTex = tex2D(diffuseMap, texCoordBase);
 	diffuseTex.rgb *= diffuseColor;
+	
+	float3 ReflectDir = reflect(eyeDir,normal);
+	ReflectDir.z *= -1;
+	float3 cubeDir = offsetCubemapUV(ReflectDir,cubemapWPOffset.xyz,IN.wp.xyz, cubemapWPOffset.w);
+	
+	diffuseTex.rgb = texCUBE(envMap,cubeDir).rgb;
 	
 	float diffuseGeomLight = dot(lightDir, IN.n.xyz);
 	float diffuseLight = dot(lightDir, normal);
@@ -308,11 +322,22 @@ void diffuse_ps(
 	float3 atmFog = fogColor.rgb;
 	output.rgb = lerp(output.rgb, atmFog, insideFog);
 
-	float3 viewNormal = normalize(mul((float3x3)viewMat, normal));
-	viewNormal = (viewNormal + 1)/2;
+	
+	float3 viewNormal = mul((float3x3)viewMat, float3(normal));
+	
+	//float4 viewNormal = mul(viewMat, float4(normal,1));
+	//viewNormal /= viewNormal.w;
+	
+	viewNormal.xyz = normalize(viewNormal.xyz);
+	//viewNormal.z *= -1;
+	//viewNormal.xyz = (viewNormal.xyz + 1)/2;
+	
+	float4 viewPos = mul(viewMat, float4(IN.wp.xyz,1));
+	viewPos /= viewPos.w;
+	output.rgb = diffuseTex.xyz;
 	
 	color0 = output;
-	color1 = float4(0,0,0, saturate(matSpec0.a + specular.r / 2));
+	color1 = float4(viewNormal.xyz, saturate(matSpec0.a + specular.r / 2));
 	color2 = float4(0, 0, 0, 1);
 	color3 = float4(1 - IN.uv.z / IN.uv.w, distance, 0, 1);
 }

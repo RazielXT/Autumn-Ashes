@@ -1,0 +1,243 @@
+vertex_program SSAO/GBuffer_vp hlsl
+{
+    source GBuffer.cg
+    entry_point GBuffer_vp
+    target vs_3_0
+}
+
+fragment_program SSAO/GBuffer_fp hlsl
+{
+    source GBuffer.cg
+    entry_point GBuffer_fp
+    target ps_3_0 
+}
+
+material 1tEnv_material_static
+{
+    set $diffuseCol "1 1 1"
+	set $specular2Weight "1"
+    set $specularCol "1 1 1"
+    set $shininess "32"
+    set $brightness "0.5"  
+
+	set $uvScale "1"
+	set $detailScale "5" 
+	
+    technique
+    {
+        
+		pass
+		{
+			lighting off
+			colour_write off
+
+			vertex_program_ref myvs_vs
+		   {
+		   }
+
+		}
+
+        pass
+        {
+
+			depth_write off
+            vertex_program_ref diffuse_vs_1texEnv
+            {
+            }
+
+            fragment_program_ref diffuse_ps_1texEnv
+            {
+				param_named uvScale float $uvScale
+				param_named detailScale float $detailScale
+				
+				param_named specular2Weight float $specular2Weight
+				param_named cubemapWPOffset float4 0 0 0 0
+            }
+
+            diffuse $diffuseCol
+            specular $specularCol $brightness $shininess
+            ambient 0 0 0 0
+
+            texture_unit diffuseMap
+            {
+		//filtering trilinear
+                texture white.bmp
+            }
+  
+            texture_unit normalMap
+            {
+//filtering trilinear
+		     texture flat_n.png
+            }
+
+		  texture_unit dispMap
+            {
+//filtering trilinear
+		     texture gray.bmp
+            }
+			
+		 texture_unit shadow_tex0
+		 {
+			filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+		
+	       texture_unit shadow_tex1
+		 {
+filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+
+	       texture_unit shadow_tex2
+		 {
+filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+
+		texture_unit shadow_tex3
+		 {
+filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+
+		 texture_unit normalDetailMap
+		 {
+			texture flat_n.png
+		 } 
+		 
+		texture_unit envCubeMap
+		{
+			cubic_texture imgs.png combinedUVW
+								filtering anisotropic
+					max_anisotropy 8
+		}
+			
+        }		
+
+    }
+
+	
+	technique
+    {
+    
+	scheme CubemapRender
+    
+		pass
+		{
+			lighting off
+			colour_write off
+
+			vertex_program_ref myvs_vs
+		   {
+		   }
+
+		}
+        pass
+        {
+
+			depth_write off
+            vertex_program_ref diffuse_vs_1texEnv
+            {
+            }
+
+            fragment_program_ref diffuse_ps_1texEnv
+            {
+				param_named uvScale float $uvScale
+				param_named detailScale float $detailScale
+				
+				param_named specular2Weight float $specular2Weight
+				param_named cubemapWPOffset float4 0 0 0 0
+            }
+
+            diffuse $diffuseCol
+            specular $specularCol $brightness $shininess
+            ambient 0 0 0 0
+
+            texture_unit diffuseMap
+            {
+		//filtering trilinear
+                texture white.bmp
+            }
+  
+            texture_unit normalMap
+            {
+//filtering trilinear
+		     texture flat_n.png
+            }
+
+		  texture_unit dispMap
+            {
+//filtering trilinear
+		     texture gray.bmp
+            }
+			
+		 texture_unit shadow_tex0
+		 {
+			filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+		
+	       texture_unit shadow_tex1
+		 {
+filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+
+	       texture_unit shadow_tex2
+		 {
+filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+
+		texture_unit shadow_tex3
+		 {
+filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+
+		 texture_unit normalDetailMap
+		 {
+			texture flat_n.png
+		 } 
+		 
+		texture_unit envCubeMapCR
+		{
+			cubic_texture clouds.png combinedUVW
+		}
+			
+        }		
+
+    }
+	
+	technique
+    {
+
+	scheme ssaoScheme
+
+	pass
+        {	 
+            vertex_program_ref SSAO/GBuffer_vp
+            {
+                param_named_auto cWorldViewProj worldviewproj_matrix
+                param_named_auto cWorldView worldview_matrix
+            }
+
+            fragment_program_ref SSAO/GBuffer_fp
+            {
+                param_named_auto cNearClipDistance near_clip_distance
+                param_named_auto cFarClipDistance far_clip_distance
+            }
+        }
+	
+
+    }
+}
+

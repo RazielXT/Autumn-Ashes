@@ -6,6 +6,7 @@
 
 PlayerAbilities::PlayerAbilities(Player* player) : p(player)
 {
+    cameraPortNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
 }
 
 PlayerAbilities::~PlayerAbilities()
@@ -45,16 +46,20 @@ void PlayerAbilities::portForward()
         p->pSliding->portToTarget();
     else
     {
-        p->bodyPosition = portTargetPos;
-        p->body->setPositionOrientation(portTargetPos, Ogre::Quaternion::IDENTITY);
-        p->body->setVelocity(p->getFacingDirection()*5);
+        portingTimer = 0;
+
+        cameraPortNode->setPosition(p->camnode->_getDerivedPosition());
+        cameraPortNode->setOrientation(p->camnode->_getDerivedOrientation());
+        cameraPortNode->attachObject(p->detachCamera());
+
+        portStartPos = cameraPortNode->getPosition();
     }
 }
 
 void PlayerAbilities::update(float tslf)
 {
     updateStateHistory(tslf);
-    updatePortTarget();
+    updatePortTarget(tslf);
 }
 
 void PlayerAbilities::updateStateHistory(float tslf)
@@ -78,9 +83,9 @@ void PlayerAbilities::updateStateHistory(float tslf)
     }
 }
 
-void PlayerAbilities::updatePortTarget()
+void PlayerAbilities::updatePortTarget(float tslf)
 {
-    if (true)
+    if (portingTimer<0)
     {
         if (!p->pSliding->showPossibleSlideTarget())
             showPortTarget();
@@ -89,6 +94,24 @@ void PlayerAbilities::updatePortTarget()
     {
         p->pSliding->hideSlideTarget();
         hidePortTarget();
+
+        const float portTime = 0.1f;
+        portingTimer += tslf;
+
+        if (portingTimer >= portTime)
+        {
+            Global::mPPMgr->vars.radialHorizBlurVignette.x = 0;
+            p->attachCamera(true);
+            p->bodyPosition = portTargetPos;
+            p->body->setPositionOrientation(portTargetPos, Ogre::Quaternion::IDENTITY);
+            p->body->setVelocity(p->getFacingDirection() * 10);
+            portingTimer = -1;
+        }
+        else
+        {
+            Global::mPPMgr->vars.radialHorizBlurVignette.x = 1;
+            cameraPortNode->setPosition(MUtils::lerp(portStartPos, portTargetPos, portingTimer / portTime));
+        }
     }
 }
 
@@ -132,7 +155,7 @@ void PlayerAbilities::hidePortTarget()
 void PlayerAbilities::showPortTarget()
 {
     //ray target
-    const float maxPortDistance = 40;
+    const float maxPortDistance = 45;
     auto dir = p->getFacingDirection();
     auto pos = p->bodyPosition;
 
@@ -155,6 +178,6 @@ void PlayerAbilities::showPortTarget()
         portTargetPos.y += 1;
     }
 
-    p->pSliding->targetBillboardSet->setVisible(true);
+    p->pSliding->targetBillboardSet->setVisible(false);
     p->pSliding->billboardNode->setPosition(portTargetPos);
 }

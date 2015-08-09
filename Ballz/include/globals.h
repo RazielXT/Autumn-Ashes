@@ -9,7 +9,7 @@ class AudioLibrary;
 class CameraShaker;
 
 enum GameState { GAME, PAUSE, MENU, CONSOLE, UNDEFINED };
-enum VisibilityFlag { VisibilityFlag_Water = 16 };
+enum VisibilityFlag { VisibilityFlag_Water = 16, VisibilityFlag_SoftParticles = 8};
 enum RenderQueueID { RenderQueue_Transparent = 81, RenderQueue_Particles = 91 };
 
 namespace Global

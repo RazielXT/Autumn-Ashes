@@ -14,11 +14,11 @@ PostProcessMgr::PostProcessMgr(Ogre::Camera* cam)
 
     camera = cam;
 
-    scaryList = new AaPostProcessListener(&SunScreenSpacePosition,&ivp,&pvp,&hurtEffect,&godrayEdge,&colourOverlaying,&ContSatuSharpNoise,&radialHorizBlurVignette, &ColouringShift, &bloomStrDep,&ppDistortionIgnore);
+    scaryList = new AaPostProcessListener(&vars);
 
     setToScaryBloom();
 
-    colourOverlaying = 1;
+    vars.colourOverlaying = 1;
     totalBlacktime = currentBlacktime = 0;
 
     fadeIn(Ogre::Vector3(0,0,0),2);
@@ -31,16 +31,17 @@ PostProcessMgr::~PostProcessMgr()
 
 void PostProcessMgr::resetValues()
 {
-    ivp=Ogre::Matrix4::IDENTITY;
-    pvp=Ogre::Matrix4::IDENTITY;
-    hurtEffect=0;
-    godrayEdge=0.2;
-    ContSatuSharpNoise=0;
-    radialHorizBlurVignette=0;
-    mbAmount=1;
-    ppDistortionIgnore = 1;
-    ColouringShift=Ogre::Vector4(1,1,1,0);
-    bloomStrDep=Ogre::Vector4(1,1,0,0);
+    vars.ivp = Ogre::Matrix4::IDENTITY;
+    vars.pvp = Ogre::Matrix4::IDENTITY;
+    vars.ipm = Ogre::Matrix4::IDENTITY;
+    vars.hurtEffect = 0;
+    vars.godrayEdge = 0.2;
+    vars.ContSatuSharpNoise = 0;
+    vars.radialHorizBlurVignette = 0;
+    vars.mbAmount = 1;
+    vars.ppDistortionIgnore = 1;
+    vars.ColouringShift = Ogre::Vector4(1, 1, 1, 0);
+    vars.bloomStrDep = Ogre::Vector4(1, 1, 0, 0);
 }
 
 void PostProcessMgr::setGodraySunPosition(Ogre::Vector3 pos)
@@ -71,11 +72,11 @@ void PostProcessMgr::update(float tslf)
     Vector3 worldViewPosition = camera->getViewMatrix() * sunPosition;
     Vector3 hcsPosition = camera->getProjectionMatrix() * worldViewPosition;
     Vector2 sunScreenSpacePosition = Vector2(0.5f + (0.5f * hcsPosition.x), 0.5f + (0.5f * -hcsPosition.y));
-    SunScreenSpacePosition = Vector4(sunScreenSpacePosition.x, sunScreenSpacePosition.y, 0, 1);
+    vars.SunScreenSpacePosition = Vector4(sunScreenSpacePosition.x, sunScreenSpacePosition.y, 0, 1);
     Ogre::Real par=(camera->getDerivedPosition() - sunPosition).dotProduct(camera->getDerivedDirection())/sunDistance;
     par-=0.15f;
 
-    godrayEdge = Ogre::Math::Clamp(par/0.65f-0.25f,0.0f,0.75f);
+    vars.godrayEdge = Ogre::Math::Clamp(par / 0.65f - 0.25f, 0.0f, 0.75f);
 
     if (!skipFadeFrame)
         if(totalBlacktime != currentBlacktime)
@@ -87,7 +88,7 @@ void PostProcessMgr::update(float tslf)
                 if(totalBlacktime > currentBlacktime)
                     totalBlacktime = currentBlacktime;
 
-                colourOverlaying.w = 1 - totalBlacktime / currentBlacktime;
+                vars.colourOverlaying.w = 1 - totalBlacktime / currentBlacktime;
             }
             else
             {
@@ -96,7 +97,7 @@ void PostProcessMgr::update(float tslf)
                 if(totalBlacktime < currentBlacktime)
                     currentBlacktime = totalBlacktime;
 
-                colourOverlaying.w = currentBlacktime / totalBlacktime;
+                vars.colourOverlaying.w = currentBlacktime / totalBlacktime;
             }
         }
 
@@ -121,8 +122,8 @@ void PostProcessMgr::setToAdvancedBloom()
 
 void PostProcessMgr::fadeOut(Ogre::Vector3 colour, float duration, bool skipFrame)
 {
-    colourOverlaying = colour;
-    colourOverlaying.w = 1;
+    vars.colourOverlaying = colour;
+    vars.colourOverlaying.w = 1;
 
     totalBlacktime = 0;
     currentBlacktime = duration;
@@ -131,8 +132,8 @@ void PostProcessMgr::fadeOut(Ogre::Vector3 colour, float duration, bool skipFram
 
 void PostProcessMgr::fadeIn(Ogre::Vector3 colour, float duration, bool skipFrame)
 {
-    colourOverlaying = colour;
-    colourOverlaying.w = 0;
+    vars.colourOverlaying = colour;
+    vars.colourOverlaying.w = 0;
 
     totalBlacktime = duration;
     currentBlacktime = 0;

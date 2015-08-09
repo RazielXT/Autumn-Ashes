@@ -1,23 +1,16 @@
+#pragma once
+
 #include "stdafx.h"
+
+struct PostProcessVariables;
 
 class AaPostProcessListener : public Ogre::CompositorInstance::Listener
 {
 public:
 
-    AaPostProcessListener(Ogre::Vector4* SunScreenSpacePosition, Ogre::Matrix4* ivp,	Ogre::Matrix4* pvp,	Ogre::Real* hurtEffect,	Ogre::Real* godrayEdge, Ogre::Vector4* colourOverlaying, Ogre::Vector4* ContSatuSharpNoise, Ogre::Vector3* radialHorizBlurVignette, Ogre::Vector4* ColouringShift, Ogre::Vector4* bloomStrDepFireOffsetState, float* ppDistortion )
+    AaPostProcessListener(PostProcessVariables* vars)
     {
-        this->SunScreenSpacePosition = SunScreenSpacePosition;
-        this->ivp = ivp;
-        this->pvp = pvp;
-        this->hurtEffect = hurtEffect;
-        this->godrayEdge = godrayEdge;
-        this->colourOverlaying = colourOverlaying;
-        this->ContSatuSharpNoise = ContSatuSharpNoise;
-        this->radialHorizBlurVignette = radialHorizBlurVignette;
-        this->ColouringShift = ColouringShift;
-        this->bloomStrDep = bloomStrDepFireOffsetState;
-
-        ppDist = ppDistortion;
+        this->vars = vars;
     }
 
     virtual void notifyMaterialSetup(Ogre::uint32 pass_id, Ogre::MaterialPtr &mat)
@@ -41,57 +34,49 @@ public:
     {
         if (pass_id == 1)
         {
-            params1->setNamedConstant("lightPosition", *SunScreenSpacePosition);
-            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("den",*godrayEdge);
+            params1->setNamedConstant("lightPosition", vars->SunScreenSpacePosition);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("den", vars->godrayEdge);
         }
         else if (pass_id == 2)
         {
-            params2->setNamedConstant("lightPosition", *SunScreenSpacePosition);
-            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("den",*godrayEdge);
+            params2->setNamedConstant("lightPosition", vars->SunScreenSpacePosition);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("den", vars->godrayEdge);
         }
         else if (pass_id == 3)
         {
-            params3->setNamedConstant("lightPosition", *SunScreenSpacePosition);
-            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("den",*godrayEdge);
+            params3->setNamedConstant("lightPosition", vars->SunScreenSpacePosition);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("den", vars->godrayEdge);
         }
-
-        if (pass_id == 12)
+        else if(pass_id == 4)
         {
-            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("ppDistortion", *ppDist);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("invProjMatrix", vars->ipm);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("projMatrix", vars->projm);
         }
-        if(pass_id==13)
+        else if (pass_id == 12)
         {
-            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("hurtCoef",*hurtEffect);
-            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("colourOverlaying",*colourOverlaying);
-            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("ContSatuSharpNoise",*ContSatuSharpNoise);
-            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("ColouringShift",*ColouringShift);
-            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("bloomStrDep",*bloomStrDep);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("ppDistortion", vars->ppDistortionIgnore);
         }
-        if(pass_id==14)
+        else if (pass_id == 13)
         {
-            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("invViewProjMatrix",*ivp);
-            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("prevViewProjMatrix",*pvp);
-            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("radialHorizBlurShade",&radialHorizBlurVignette->x,3);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("hurtCoef", vars->hurtEffect);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("colourOverlaying", vars->colourOverlaying);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("ContSatuSharpNoise", vars->ContSatuSharpNoise);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("ColouringShift", vars->ColouringShift);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("bloomStrDep", vars->bloomStrDep);
+        }
+        else if (pass_id == 14)
+        {
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("invViewProjMatrix", vars->ivp);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("prevViewProjMatrix", vars->pvp);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("radialHorizBlurShade", &(vars->radialHorizBlurVignette.x), 3);
         }
     }
 
-
-
 private:
 
-    Ogre::Vector4* SunScreenSpacePosition;
-    Ogre::Matrix4* ivp;
-    Ogre::Matrix4* pvp;
-    Ogre::Real* hurtEffect;
-    Ogre::Real* godrayEdge;
-    Ogre::Vector4* colourOverlaying;
-    Ogre::Vector4* ContSatuSharpNoise;
-    Ogre::Vector3* radialHorizBlurVignette;
-    Ogre::Vector4* bloomStrDep;
+    PostProcessVariables* vars;
+
     Ogre::GpuProgramParametersSharedPtr params1;
     Ogre::GpuProgramParametersSharedPtr params2;
     Ogre::GpuProgramParametersSharedPtr params3;
-    Ogre::Vector4* ColouringShift;
-    float* ppDist;
-
 };

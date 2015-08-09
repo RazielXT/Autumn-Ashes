@@ -27,9 +27,9 @@ bool ParkToDreamReaction::update(Ogre::Real tslf)
     if(timer>1.1f)
     {
         PostProcessMgr* mgr = Global::mPPMgr;
-        mgr->ColouringShift.x = 0.55;
-        mgr->ColouringShift.y = 1.0;
-        mgr->ColouringShift.z = 1.7;
+        mgr->vars.ColouringShift.x = 0.55;
+        mgr->vars.ColouringShift.y = 1.0;
+        mgr->vars.ColouringShift.z = 1.7;
 
         mgr->fadeIn(Ogre::Vector3(1, 1, 1), 2);
         Global::mSceneMgr->setVisibilityMask(2);
@@ -59,9 +59,9 @@ bool NearParkEndReaction::start()
     (*Global::globalData)["tvnoise.ogg"] = noiseSound;
     timer=0;
 
-    mgr->ColouringShift.x = 1.2;
-    mgr->ColouringShift.y = 1.1;
-    mgr->ColouringShift.z = 0;
+    mgr->vars.ColouringShift.x = 1.2;
+    mgr->vars.ColouringShift.y = 1.1;
+    mgr->vars.ColouringShift.z = 0;
 
     return true;
 }
@@ -74,10 +74,10 @@ bool NearParkEndReaction::update(Ogre::Real tslf)
     {
         float val = std::min(timer,0.5f-timer)*20;
 
-        mgr->ContSatuSharpNoise.w = val;
-        mgr->ColouringShift.w += tslf*2;
-        mgr->radialHorizBlurVignette.y = val;
-        mgr->radialHorizBlurVignette.x += tslf*1.5f;
+        mgr->vars.ContSatuSharpNoise.w = val;
+        mgr->vars.ColouringShift.w += tslf * 2;
+        mgr->vars.radialHorizBlurVignette.y = val;
+        mgr->vars.radialHorizBlurVignette.x += tslf*1.5f;
 
         if(!doneEffect0 && timer>0.25f)
         {
@@ -89,10 +89,10 @@ bool NearParkEndReaction::update(Ogre::Real tslf)
 
         if(timer>0.5f)
         {
-            mgr->ContSatuSharpNoise.w = 0;
-            mgr->ColouringShift.w = 1;
-            mgr->radialHorizBlurVignette.x = 0.75f;
-            mgr->radialHorizBlurVignette.y = 0;
+            mgr->vars.ContSatuSharpNoise.w = 0;
+            mgr->vars.ColouringShift.w = 1;
+            mgr->vars.radialHorizBlurVignette.x = 0.75f;
+            mgr->vars.radialHorizBlurVignette.y = 0;
             Global::timestep = 0.4f;
             doneEffect = true;
         }
@@ -105,13 +105,13 @@ bool NearParkEndReaction::update(Ogre::Real tslf)
             float distance = (Ogre::Vector3(17.6,14.34,151.26)-Global::player->body->getPosition()).length();
             float val = std::max(0.0f,1.0f-distance/50.0f);
             noiseSound->setVolume(val*0.5f);
-            mgr->ContSatuSharpNoise.w = val;
-            mgr->ContSatuSharpNoise.z = val*0.3f;
+            mgr->vars.ContSatuSharpNoise.w = val;
+            mgr->vars.ContSatuSharpNoise.z = val*0.3f;
         }
         else
         {
-            mgr->ContSatuSharpNoise.w = 0;
-            mgr->ContSatuSharpNoise.z = 0;
+            mgr->vars.ContSatuSharpNoise.w = 0;
+            mgr->vars.ContSatuSharpNoise.z = 0;
             noiseSound->drop();
             return false;
         }
@@ -171,17 +171,17 @@ bool ParkEndReaction::update(Ogre::Real tslf)
     {
         float val = std::min(timer,0.5f-timer)*20;
 
-        mgr->ContSatuSharpNoise.w = val;
-        mgr->ColouringShift.w += tslf*2;
-        mgr->radialHorizBlurVignette.y = val;
-        mgr->radialHorizBlurVignette.x += tslf*1.5f;
+        mgr->vars.ContSatuSharpNoise.w = val;
+        mgr->vars.ColouringShift.w += tslf * 2;
+        mgr->vars.radialHorizBlurVignette.y = val;
+        mgr->vars.radialHorizBlurVignette.x += tslf*1.5f;
 
         if(timer>0.5f)
         {
-            mgr->ContSatuSharpNoise.w = 0;
-            mgr->ColouringShift.w = 1;
-            mgr->radialHorizBlurVignette.x = 0.75f;
-            mgr->radialHorizBlurVignette.y = 0;
+            mgr->vars.ContSatuSharpNoise.w = 0;
+            mgr->vars.ColouringShift.w = 1;
+            mgr->vars.radialHorizBlurVignette.x = 0.75f;
+            mgr->vars.radialHorizBlurVignette.y = 0;
             Global::timestep = 1.0f;
             Global::player->enableMovement(false);
             Global::player->stopMoving();
@@ -206,10 +206,10 @@ bool ParkEndReaction::update(Ogre::Real tslf)
             float val0 = Ogre::Math::Clamp(std::min(relTimer*10,2.0f-relTimer),0.0f,1.0f);
             float val1 = relTimer/2.0f;
 
-            mgr->ContSatuSharpNoise.x = val1;
-            mgr->ContSatuSharpNoise.y = val1;
-            mgr->ColouringShift.w = val0;
-            mgr->radialHorizBlurVignette.y = val0;
+            mgr->vars.ContSatuSharpNoise.x = val1;
+            mgr->vars.ContSatuSharpNoise.y = val1;
+            mgr->vars.ColouringShift.w = val0;
+            mgr->vars.radialHorizBlurVignette.y = val0;
             Global::timestep = 1.0f - val1;
 
             sound->setVolume(Global::timestep);
@@ -238,10 +238,10 @@ bool ParkEndReaction::update(Ogre::Real tslf)
             if(timer>4.0f)
             {
 
-                mgr->ContSatuSharpNoise.x = 1;
-                mgr->ContSatuSharpNoise.y = 1;
-                mgr->ColouringShift.w = 0;
-                mgr->radialHorizBlurVignette.y = 0;
+                mgr->vars.ContSatuSharpNoise.x = 1;
+                mgr->vars.ContSatuSharpNoise.y = 1;
+                mgr->vars.ColouringShift.w = 0;
+                mgr->vars.radialHorizBlurVignette.y = 0;
 
                 Global::timestep = 1.0f;
                 Global::player->enableMovement(true);

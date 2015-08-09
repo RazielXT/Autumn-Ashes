@@ -27,25 +27,30 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
     info.bloomDepth = 0.35f;
     levels[0] = info;
 
+    info.name = "Park";
     info.path = "../../media/park/park.scene";
     info.init = createLevelTuto;
     info.bloomStr = info.bloomDepth = 1;
     levels[1] = info;
 
+    info.name = "Caves";
     info.path = "../../media/caves.scene";
     info.init = createLevel1_1;
     levels[2] = info;
 
+    info.name = "Valley";
     info.path = "../../media/valley/valley.scene";
     info.init = createLevel2;
     levels[3] = info;
 
+    info.name = "Test1";
     info.path = "../../media/testLvl/test.scene";
     info.init = createTestLevel;
     info.ambientColor = ColourValue(0.25f, 0.35f, 0.4f);
     info.ColorShift = Ogre::Vector4(0.9f, 1.0f, 1.05f, 0);
     levels[4] = info;
 
+    info.name = "Test2";
     info.path = "../../media/testLvl2/test.scene";
     info.init = createTestLevel2;
     info.ambientColor = ColourValue(0.2f, 0.2f, 0.1f);
@@ -87,6 +92,7 @@ void GameStateManager::switchToLevel(int lvl)
         Global::player = NULL;
     }
 
+    SceneCubeMap::clearAll();
     geometryMgr->clear();
     Global::mWorld->destroyAllBodies();
     Global::mSceneMgr->clearScene();
@@ -105,8 +111,9 @@ void GameStateManager::switchToLevel(int lvl)
     auto& lvlInfo = levels[lvl];
 
     SceneParser::instance.loadScene(lvlInfo.path);
-
     lvlInfo.init();
+    Global::gameMgr->geometryMgr->update();
+    SceneCubeMap::renderAll();
 
     Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
 }
@@ -117,10 +124,10 @@ void GameStateManager::reloadSceneSettings()
 
     Global::mSceneMgr->setAmbientLight(lvlInfo.ambientColor);
     PostProcessMgr* postProcMgr = Global::mPPMgr;
-    postProcMgr->ColouringShift = lvlInfo.ColorShift;
-    postProcMgr->ContSatuSharpNoise = lvlInfo.ContSatuSharpNoise;
-    postProcMgr->bloomStrDep.y = lvlInfo.bloomStr;
-    postProcMgr->bloomStrDep.x = lvlInfo.bloomDepth;
+    postProcMgr->vars.ColouringShift = lvlInfo.ColorShift;
+    postProcMgr->vars.ContSatuSharpNoise = lvlInfo.ContSatuSharpNoise;
+    postProcMgr->vars.bloomStrDep.y = lvlInfo.bloomStr;
+    postProcMgr->vars.bloomStrDep.x = lvlInfo.bloomDepth;
     Global::mSceneMgr->setSkyBox(true, lvlInfo.skyboxName);
     Global::mSceneMgr->setFog(FOG_LINEAR, lvlInfo.fogColor, 1, lvlInfo.fogStartDistance, lvlInfo.fogEndDistance);
 
@@ -155,7 +162,7 @@ bool GameStateManager::insideMenuPressed()
     }
     if (i == -1)
     {
-        Global::mPPMgr->radialHorizBlurVignette.z = 0.0;
+        Global::mPPMgr->vars.radialHorizBlurVignette.z = 0.0;
         gameState = GAME;
     }
     if (i == SS_RESTART)
@@ -253,21 +260,21 @@ void GameStateManager::escapePressed()
     {
         myMenu->clearMenu();
         myMenu->setIngameMenu();
-        Global::mPPMgr->radialHorizBlurVignette.z = 2.0;
+        Global::mPPMgr->vars.radialHorizBlurVignette.z = 2.0;
 
-        lastNoise = Global::mPPMgr->ContSatuSharpNoise.z;
-        lastCont = Global::mPPMgr->ContSatuSharpNoise.x;
-        Global::mPPMgr->ContSatuSharpNoise.z = 1;
-        Global::mPPMgr->ContSatuSharpNoise.x = 1;
+        lastNoise = Global::mPPMgr->vars.ContSatuSharpNoise.z;
+        lastCont = Global::mPPMgr->vars.ContSatuSharpNoise.x;
+        Global::mPPMgr->vars.ContSatuSharpNoise.z = 1;
+        Global::mPPMgr->vars.ContSatuSharpNoise.x = 1;
 
         gameState = PAUSE;
     }
     else if (gameState == PAUSE)
     {
         myMenu->clearMenu();
-        Global::mPPMgr->radialHorizBlurVignette.z = 0.0;
-        Global::mPPMgr->ContSatuSharpNoise.z = lastNoise;
-        Global::mPPMgr->ContSatuSharpNoise.x = lastCont;
+        Global::mPPMgr->vars.radialHorizBlurVignette.z = 0.0;
+        Global::mPPMgr->vars.ContSatuSharpNoise.z = lastNoise;
+        Global::mPPMgr->vars.ContSatuSharpNoise.x = lastCont;
 
         gameState = GAME;
     }

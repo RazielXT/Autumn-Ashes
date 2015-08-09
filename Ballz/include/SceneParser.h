@@ -15,6 +15,7 @@
 #include "WaterCurrent.h"
 #include "Player.h"
 #include "PlayerSliding.h"
+#include "SceneCubeMap.h"
 
 using namespace Ogre;
 using namespace tinyxml2;
@@ -564,7 +565,7 @@ private:
 
         Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem("Particle" + std::to_string(partID++), name);
         ps->setRenderQueueGroup(rGroup);
-        ps->setVisibilityFlags(8);
+        ps->setVisibilityFlags(VisibilityFlag_SoftParticles);
         if (getElementBoolValue(rootElement, "EditParams"))
         {
             auto mat = getElementValue(rootElement, "Material");
@@ -1062,6 +1063,28 @@ private:
         mSceneMgr->destroySceneNode(node);
         ((Forests::TreeLoader3D *)trees->getPageLoader())->addTree(ent, pos, yaw, scale);
 
+    }
+
+    void loadSceneCubeMap(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
+    {
+        SceneCubeMap* cube = new SceneCubeMap();
+
+        auto res = getElementIntValue(element, "Resolution");
+        auto edit = getElementBoolValue(element, "Editable");
+        auto minDist = getElementFloatValue(element, "MinRenderDistance");
+
+        cube->init(node->getName(), res, edit, minDist);
+
+        auto offsetW = getElementFloatValue(element, "PositionOffsetW");
+        auto radius = getElementFloatValue(element, "ObjectsRadius");
+
+        cube->position = node->_getDerivedPosition();
+        cube->posessionRadius = radius;
+        cube->materialWPOffset = offsetW;
+
+        node->detachAllObjects();
+        Global::mSceneMgr->destroyEntity(ent);
+        Global::mSceneMgr->destroySceneNode(node);
     }
 
     void loadWaterCurrent(const XMLElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
@@ -1832,6 +1855,9 @@ private:
             int index = GetIntAttribute(childElement, "index", 0);
             ent->getSubEntity(index)->setMaterialName(GetStringAttribute(childElement, "materialName"));
 
+            //update dynamic materials
+            ent->getSubEntity(index)->setMaterial(getCorrectMaterial(ent->getSubEntity(index)->getMaterial(), node));
+
             auto matPtr = ent->getSubEntity(index)->getMaterial();
 
             for (int i = 0; i < matPtr->getNumTechniques() && !waterFlag; i++)
@@ -1927,6 +1953,10 @@ private:
                     else if (rootTag == "Reflection")
                     {
                         loadReflection(element, ent, node, mSceneMgr);
+                    }
+                    else if (rootTag == "SceneCubeMap")
+                    {
+                        loadSceneCubeMap(root, ent, node);
                     }
                     else if (rootTag == "SlideTrack")
                     {
@@ -2267,6 +2297,25 @@ private:
         }
     }
 
+    Ogre::MaterialPtr getCorrectMaterial(Ogre::MaterialPtr mat, Ogre::SceneNode* node)
+    {
+        auto retMat = mat;
+
+        if (mat->getTechnique(0)->getNumPasses() == 2)
+        {
+            auto mainPass = mat->getTechnique(0)->getPass(1);
+
+            //scene cubemap
+            Ogre::TextureUnitState* t = mainPass->getTextureUnitState("envCubeMap");
+            if (t)
+            {
+                retMat = SceneCubeMap::applyCubemap(mat, node->getPosition());
+            }
+        }
+
+        return retMat;
+    }
+
     void connectJoints()
     {
 
@@ -2521,7 +2570,6 @@ public:
 
         Global::gameMgr->reloadSceneSettings();
 
-        std::vector<const XMLElement*> compBodies;
         String elementName;
         const XMLElement* childElement = 0;
         while (childElement = IterateChildElements(nodesElement, childElement))
@@ -2541,6 +2589,10 @@ public:
         Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("-----------------------------------------------------------", LML_NORMAL);
     }
 
+    bool isInPreloadPass(std::string type)
+    {
+        return (type == "SceneCubeMap");
+    }
 
     void loadScene(Ogre::String filename)
     {
@@ -2572,6 +2624,8 @@ public:
 
         std::vector<const XMLElement*> compBodies;
         String elementName;
+
+        //preload pass
         const XMLElement* childElement = 0;
         while (childElement = IterateChildElements(nodesElement, childElement))
         {
@@ -2579,6 +2633,24 @@ public:
 
             if (elementName == "node")
             {
+                auto type = getUserDataType(childElement);
+
+                if (isInPreloadPass(type))
+                    loadNode(childElement);
+            }
+        }
+
+        childElement = 0;
+        while (childElement = IterateChildElements(nodesElement, childElement))
+        {
+            elementName = childElement->Value();
+
+            if (elementName == "node")
+            {
+                auto type = getUserDataType(childElement);
+                if (isInPreloadPass(type))
+                    continue;
+
                 if (!isCompoundBody(childElement))
                     loadNode(childElement);
                 else

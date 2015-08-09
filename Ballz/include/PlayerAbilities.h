@@ -19,8 +19,11 @@ class PlayerAbilities
 
     void updateStateHistory(float tslf);
 
+    Ogre::SceneNode* cameraPortNode;
+    float portingTimer = -1;
     Ogre::Vector3 portTargetPos;
-    void updatePortTarget();
+    Ogre::Vector3 portStartPos;
+    void updatePortTarget(float tslf);
 
 public:
 

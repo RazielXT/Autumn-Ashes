@@ -6,7 +6,6 @@ void skybox_vs(uniform float4x4 wmat,
 in float2 uvIn : TEXCOORD0
 	)
 {
-
     pos = mul(wmat, inPos);
 	uv0=uvIn;
 }
@@ -21,12 +20,12 @@ void skybox_ps(
  		out float4 color3 : COLOR3
 		)
 {
-
-
 	color0=tex2D(material, uv);
-	color1=float4(0.5,0.5,0.3,0.3);
+	
+	float brightess = (color0.r + color0.g + color0.b) == 3 ? 1 : 0;
+	color1=float4(0, 0, 0, 0.25*color0 + brightess);
 	color2=color0;
-	color3=float4(1,64000,0,1);
+	color3=float4(0,8000,0,1);
 }
 
 void skyboxToDark_ps(
@@ -39,10 +38,8 @@ void skyboxToDark_ps(
 		uniform float4 dark
 		)
 {
-
-
 	color0=tex2D(material, uv)*dark;
 	color1=float4(0.5,0.5,0.3,0.3);
 	color2=color0;
-	color3=float4(1,64000,0,1);
+	color3=float4(0,64000,0,1);
 }

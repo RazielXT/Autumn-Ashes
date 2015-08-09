@@ -206,14 +206,6 @@ public:
             break;
         }
 
-        case OIS::KC_G:
-        {
-            PostProcessMgr* mgr = Global::mPPMgr;
-            Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("PP: " + Ogre::StringConverter::toString(mgr->ColouringShift.x) + "," + Ogre::StringConverter::toString(mgr->ColouringShift.y) + "," + Ogre::StringConverter::toString(mgr->ColouringShift.z), Ogre::LML_NORMAL);
-
-            break;
-        }
-
         case OIS::KC_NUMPAD2:
         {
             reloadShaders();

@@ -37,6 +37,7 @@ void Application::setupScene()
     Camera *cam = mSceneMgr->createCamera("Camera");
     Viewport *vp = mWindow->addViewport(cam);
     cam->setNearClipDistance(0.4);
+    cam->setFarClipDistance(8000);
     float aspect = mWindow->getWidth() / (float)mWindow->getHeight();
 
     m_World = new OgreNewt::World();

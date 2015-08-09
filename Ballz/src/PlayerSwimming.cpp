@@ -4,8 +4,6 @@
 #include "WaterCurrent.h"
 #include "GameStateManager.h"
 
-int size = 1;
-
 PlayerSwimming::PlayerSwimming(Player* player) : p(player)
 {
     initWaterDepthReading();
@@ -33,7 +31,7 @@ void PlayerSwimming::initWaterDepthReading()
 
     texture = TextureManager::getSingleton().createManual("waterDepth",
               ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D,
-              size, size, 0, PF_FLOAT32_R, TU_RENDERTARGET);
+              1, 1, 0, PF_FLOAT32_R, TU_RENDERTARGET);
 
     rttTex = texture->getBuffer()->getRenderTarget();
 
@@ -43,7 +41,7 @@ void PlayerSwimming::initWaterDepthReading()
     mWaterCam->setAspectRatio(1);
 
     mWaterCam->setProjectionType(PT_ORTHOGRAPHIC);
-    mWaterCam->setOrthoWindow(size, size);
+    mWaterCam->setOrthoWindow(1.0f, 1.0f);
     mWaterCam->lookAt(0, 0, -1);
     //mReflectCam->setVisibilityFlags(2);
     Viewport *v = rttTex->addViewport(mWaterCam);
@@ -62,12 +60,12 @@ void PlayerSwimming::initWaterDepthReading()
 
 void PlayerSwimming::readWaterDepth()
 {
-    size_t width = size;
-    size_t height = size;
+    size_t width = 1;
+    size_t height = 1;
     Ogre::Image::Box imageBox;
 
     float depth;
-    Ogre::PixelBox tempPb(size, size, 1, Ogre::PF_FLOAT32_R, &depth);
+    Ogre::PixelBox tempPb(1, 1, 1, Ogre::PF_FLOAT32_R, &depth);
 
     texture->getBuffer()->blitToMemory(tempPb);
 
@@ -95,18 +93,18 @@ void PlayerSwimming::readWaterDepth()
 
 void PlayerSwimming::enteredWater()
 {
-    Global::mPPMgr->ColouringShift = Ogre::Vector4(1.5f, 1.15f, 1.05f, 0);
+    Global::mPPMgr->vars.ColouringShift = Ogre::Vector4(1.5f, 1.15f, 1.05f, 0);
     Global::mSceneMgr->setFog(FOG_LINEAR, Ogre::ColourValue(0.4, 0.4, 0.5, 0.85f), 1, 5, 25);
 
     Global::player->body->setLinearDamping(0.5f);
-    Global::player->gravity = Ogre::Vector3(0, 0.3f, 0) + currents->findCurrent(p->bodyPosition);
+    Global::player->gravity = Ogre::Vector3(0, 0.3f, 0) + currents->getCurrent(p->bodyPosition);
 }
 
 void PlayerSwimming::leftWater()
 {
     auto lvlInfo = Global::gameMgr->getCurrentLvlInfo();
 
-    Global::mPPMgr->ColouringShift = lvlInfo->ColorShift;
+    Global::mPPMgr->vars.ColouringShift = lvlInfo->ColorShift;
     Global::mSceneMgr->setFog(FOG_LINEAR, lvlInfo->fogColor, 1, lvlInfo->fogStartDistance, lvlInfo->fogEndDistance);
 
     Global::player->body->setLinearDamping(0);
@@ -126,6 +124,6 @@ void PlayerSwimming::update(float tslf)
 
 
     float outOfWaterEffect = std::min(outOfWaterTimer / 2.0f, 1.0f);
-    Global::mPPMgr->ppDistortionIgnore = outOfWaterEffect;
-    Global::mPPMgr->ColouringShift.w = 1 - outOfWaterEffect;
+    Global::mPPMgr->vars.ppDistortionIgnore = outOfWaterEffect;
+    Global::mPPMgr->vars.ColouringShift.w = 1 - outOfWaterEffect;
 }

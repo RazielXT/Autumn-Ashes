@@ -7,13 +7,14 @@
 #include "lvl_update.h"
 #include "SceneParser.h"
 #include "CrowWatch.h"
+#include "SceneCubeMap.h"
 
 using namespace Ogre;
 
 void createMenuLevel()
 {
     PostProcessMgr* postProcMgr = Global::mPPMgr;
-    postProcMgr->radialHorizBlurVignette.z = 1.0;
+    postProcMgr->vars.radialHorizBlurVignette.z = 1.0;
     postProcMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 
     Camera* mCamera=Global::mSceneMgr->getCamera("Camera");
@@ -31,7 +32,7 @@ void createMenuLevel()
 void createTestLevel()
 {
     PostProcessMgr* ppMgr = Global::mPPMgr;
-    ppMgr->radialHorizBlurVignette = 0.0;
+    ppMgr->vars.radialHorizBlurVignette = 0.0;
 
     ppMgr->setAutoGodraySunDirection();
 
@@ -41,7 +42,7 @@ void createTestLevel()
 void createTestLevel2()
 {
     PostProcessMgr* ppMgr = Global::mPPMgr;
-    ppMgr->radialHorizBlurVignette = 0.0;
+    ppMgr->vars.radialHorizBlurVignette = 0.0;
 
     ppMgr->setAutoGodraySunDirection();
 
@@ -62,9 +63,9 @@ void createLevelTuto()
 
     auto ppMgr = Global::mPPMgr;
     ppMgr->setToScaryBloom();
-    ppMgr->ContSatuSharpNoise = 0.0;
-    ppMgr->radialHorizBlurVignette = 0.0;
-    ppMgr->ColouringShift = Ogre::Vector4(0.95, 0.98, 0.83, 0);
+    ppMgr->vars.ContSatuSharpNoise = 0.0;
+    ppMgr->vars.radialHorizBlurVignette = 0.0;
+    ppMgr->vars.ColouringShift = Ogre::Vector4(0.95, 0.98, 0.83, 0);
     ppMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 
     //Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().getByName("TCENoonSkyBoxToDark");
@@ -272,9 +273,9 @@ void createLevel1_1()
 
     PostProcessMgr* ppMgr = Global::mPPMgr;
     ppMgr->setToScaryBloom();
-    ppMgr->ContSatuSharpNoise = 0.0;
-    ppMgr->radialHorizBlurVignette = 0.0;
-    ppMgr->ColouringShift = Ogre::Vector4(0.95, 0.89, 1, 0);
+    ppMgr->vars.ContSatuSharpNoise = 0.0;
+    ppMgr->vars.radialHorizBlurVignette = 0.0;
+    ppMgr->vars.ColouringShift = Ogre::Vector4(0.95, 0.89, 1, 0);
 
     ppMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 }
@@ -293,9 +294,9 @@ void createLevel2()
 
     PostProcessMgr* ppMgr = Global::mPPMgr;
     ppMgr->setToScaryBloom();
-    ppMgr->ContSatuSharpNoise = 0.0;
-    ppMgr->radialHorizBlurVignette = 0.0;
-    ppMgr->ColouringShift = Ogre::Vector4(0.95, 0.89, 1, 0);
+    ppMgr->vars.ContSatuSharpNoise = 0.0;
+    ppMgr->vars.radialHorizBlurVignette = 0.0;
+    ppMgr->vars.ColouringShift = Ogre::Vector4(0.95, 0.89, 1, 0);
 
     ppMgr->setAutoGodraySunDirection();
 }

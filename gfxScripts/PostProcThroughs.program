@@ -1,3 +1,17 @@
+vertex_program pp_vp cg
+{
+	source PostProcThroughs.cg
+	profiles vs_3_0
+
+	entry_point pp_vp
+	
+	default_params
+    {
+        param_named_auto wvpMat worldviewproj_matrix
+    }
+	
+}
+
 fragment_program PutThrough_fp cg
 {
 	source PostProcThroughs.cg
@@ -22,6 +36,71 @@ material PutThrough
 			}
 
 			texture_unit map
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering bilinear
+			}
+		}
+	}
+}
+
+fragment_program CubemapBlur_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_3_0
+
+	entry_point CubemapBlur_fp
+	
+}
+
+material CubemapBlur
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			vertex_program_ref pp_vp
+			{
+			}
+			
+			fragment_program_ref CubemapBlur_fp
+			{
+			}
+			
+			texture_unit CubemapOrig
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering bilinear
+			}
+		}
+	}
+}
+
+material CubemapBlur2
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			vertex_program_ref pp_vp
+			{
+			}
+			
+			fragment_program_ref CubemapBlur_fp
+			{
+			}
+			
+			texture_unit CubemapOrig
 			{
 				tex_coord_set 0
 				tex_address_mode clamp

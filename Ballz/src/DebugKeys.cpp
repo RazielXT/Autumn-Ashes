@@ -10,17 +10,17 @@ void DebugKeys::reloadVariables()
     debugVars.clear();
     debugVarsLine = 0;
 
-    debugVars.push_back(DebugVar("ColorShift R", &Global::mPPMgr->ColouringShift.x, 0.02f));
-    debugVars.push_back(DebugVar("ColorShift G", &Global::mPPMgr->ColouringShift.y, 0.02f));
-    debugVars.push_back(DebugVar("ColorShift B", &Global::mPPMgr->ColouringShift.z, 0.02f));
+    debugVars.push_back(DebugVar("ColorShift R", &Global::mPPMgr->vars.ColouringShift.x, 0.02f));
+    debugVars.push_back(DebugVar("ColorShift G", &Global::mPPMgr->vars.ColouringShift.y, 0.02f));
+    debugVars.push_back(DebugVar("ColorShift B", &Global::mPPMgr->vars.ColouringShift.z, 0.02f));
 
-    debugVars.push_back(DebugVar("Bloom Str", &Global::mPPMgr->bloomStrDep.x, 0.15f));
-    debugVars.push_back(DebugVar("Bloom Depth", &Global::mPPMgr->bloomStrDep.y, 0.15f));
-    debugVars.push_back(DebugVar("Horiz Blur", &Global::mPPMgr->radialHorizBlurVignette.y, 0.1f));
+    debugVars.push_back(DebugVar("Bloom Str", &Global::mPPMgr->vars.bloomStrDep.x, 0.15f));
+    debugVars.push_back(DebugVar("Bloom Depth", &Global::mPPMgr->vars.bloomStrDep.y, 0.15f));
+    debugVars.push_back(DebugVar("Horiz Blur", &Global::mPPMgr->vars.radialHorizBlurVignette.y, 0.1f));
 
-    debugVars.push_back(DebugVar("Contrast", &Global::mPPMgr->ContSatuSharpNoise.x, 0.05f));
-    debugVars.push_back(DebugVar("Saturation", &Global::mPPMgr->ContSatuSharpNoise.y, 0.05f));
-    debugVars.push_back(DebugVar("Sharpness", &Global::mPPMgr->ContSatuSharpNoise.z, 0.05f));
+    debugVars.push_back(DebugVar("Contrast", &Global::mPPMgr->vars.ContSatuSharpNoise.x, 0.05f));
+    debugVars.push_back(DebugVar("Saturation", &Global::mPPMgr->vars.ContSatuSharpNoise.y, 0.05f));
+    debugVars.push_back(DebugVar("Sharpness", &Global::mPPMgr->vars.ContSatuSharpNoise.z, 0.05f));
 
     debugVars.push_back(DebugVar("Timestep", &Global::timestep, 0.1f));
 }

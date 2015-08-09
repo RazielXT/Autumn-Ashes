@@ -15,6 +15,7 @@ enum StateSwitching
 
 struct LevelInfo
 {
+    std::string name;
     std::string path;
     std::function<void()> init;
 

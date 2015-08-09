@@ -360,6 +360,16 @@
 	
 </class>
 
+<class name="SceneCubeMap" usage="object">
+
+	<data name="Resolution" type="int" defaultValue="64" groupName="Cubemap"/>
+	<data name="MinRenderDistance" type="float" defaultValue="2" groupName="Cubemap"/>
+	<data name="Editable" type="bool" defaultValue="false" groupName="Cubemap"/>
+			
+	<data name="PositionOffsetW" type="float" defaultValue="0.5" groupName="Materials"/>
+	<data name="ObjectsRadius" type="float" defaultValue="100" groupName="Materials"/>
+
+</class>
 
 <class name="DeathVolume" usage="object">
 </class>

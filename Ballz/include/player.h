@@ -93,7 +93,7 @@ public:
     };
 
     Ogre::Camera* detachCamera();
-    void attachCamera();
+    void attachCamera(bool silent = false);
     void attachCameraWithTransition();
 
     Ogre::Vector3 getFacingDirection() const;
@@ -156,7 +156,7 @@ private:
     //basic state
     bool alive, immortal;
     bool moving, right_key, left_key, back_key, forw_key;
-    bool onGround, sprinting, inControl, inMoveControl;
+    bool onGround, sprinting, inControl, inMoveControl, ownsCamera;
 
     //extern state
     bool hanging, grabbedObj, wallrunning, sliding;

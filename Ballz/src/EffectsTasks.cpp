@@ -56,17 +56,17 @@ bool QuickScaryBlink::update(Ogre::Real tslf)
 
     float val = std::max(0.15f,std::min(timer*2.0f,totalTime*2-timer*2.0f));
 
-    mgr->radialHorizBlurVignette.y = val*3*effectStr;
-    mgr->ContSatuSharpNoise.w = val*5*effectStr;
-    mgr->ContSatuSharpNoise.z = val*4*effectStr;
+    mgr->vars.radialHorizBlurVignette.y = val * 3 * effectStr;
+    mgr->vars.ContSatuSharpNoise.w = val * 5 * effectStr;
+    mgr->vars.ContSatuSharpNoise.z = val * 4 * effectStr;
 
 
     if(timer>totalTime)
     {
         timer = 0;
-        mgr->radialHorizBlurVignette.y = 0;
-        mgr->ContSatuSharpNoise.w = 0;
-        mgr->ContSatuSharpNoise.z = 0;
+        mgr->vars.radialHorizBlurVignette.y = 0;
+        mgr->vars.ContSatuSharpNoise.w = 0;
+        mgr->vars.ContSatuSharpNoise.z = 0;
         return false;
     }
 
@@ -96,11 +96,11 @@ SwitchColorSchemeFx::SwitchColorSchemeFx(Ogre::String info)
 bool SwitchColorSchemeFx::start()
 {
     timer = 0;
-    colorBase.x = Global::mPPMgr->ColouringShift.x;
-    colorBase.y = Global::mPPMgr->ColouringShift.y;
-    colorBase.z = Global::mPPMgr->ColouringShift.z;
+    colorBase.x = Global::mPPMgr->vars.ColouringShift.x;
+    colorBase.y = Global::mPPMgr->vars.ColouringShift.y;
+    colorBase.z = Global::mPPMgr->vars.ColouringShift.z;
 
-    bloomStrBase = Global::mPPMgr->bloomStrDep.y;
+    bloomStrBase = Global::mPPMgr->vars.bloomStrDep.y;
     fovBase = Global::mPPMgr->camera->getFOVy().valueDegrees();
 
     return true;
@@ -116,19 +116,19 @@ bool SwitchColorSchemeFx::update(float tslf)
     auto fromHalfW = std::max(0.0f, (timer - wHalfPoint) / (1 - wHalfPoint));
 
     auto shift = colorTarget*fromHalfW + colorBase*(1 - fromHalfW);
-    Global::mPPMgr->ColouringShift.x = shift.x;
-    Global::mPPMgr->ColouringShift.y = shift.y;
-    Global::mPPMgr->ColouringShift.z = shift.z;
+    Global::mPPMgr->vars.ColouringShift.x = shift.x;
+    Global::mPPMgr->vars.ColouringShift.y = shift.y;
+    Global::mPPMgr->vars.ColouringShift.z = shift.z;
 
     const auto stepMin = 0.15f;
     Global::timestep = pow(1 - halfTopW*(1-stepMin),1.5f);
 
     const auto blAdd = 3.0f;
-    Global::mPPMgr->bloomStrDep.y = bloomStrBase + blAdd*halfTopW;
+    Global::mPPMgr->vars.bloomStrDep.y = bloomStrBase + blAdd*halfTopW;
 
-    Global::mPPMgr->ColouringShift.w = halfTopW;
-    Global::mPPMgr->radialHorizBlurVignette.x = halfTopW;
-    Global::mPPMgr->ContSatuSharpNoise.x = halfTopW;
+    Global::mPPMgr->vars.ColouringShift.w = halfTopW;
+    Global::mPPMgr->vars.radialHorizBlurVignette.x = halfTopW;
+    Global::mPPMgr->vars.ContSatuSharpNoise.x = halfTopW;
 
     const auto fovAdd = 20.0f;
     Global::mPPMgr->camera->setFOVy(Ogre::Degree(fovBase + fovAdd*halfTopW));

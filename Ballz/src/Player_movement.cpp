@@ -117,7 +117,7 @@ void Player::manageFall()
 
         if (fallVelocity > 50)
         {
-            *(pPostProcess->ppFall) = std::min(fallVelocity / 7.0f, 8.0f);
+            pPostProcess->vars->hurtEffect = std::min(fallVelocity / 7.0f, 8.0f);
 
             if (!fallPitch)
                 fallVelocity = 80;

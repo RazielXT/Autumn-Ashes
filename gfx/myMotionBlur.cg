@@ -12,7 +12,7 @@ float4 MBFinal_fp
 
 {
 float4 cBlur = tex2D(blur,texCoord);
-float zOverW = tex2D(depthMap, texCoord).r;   
+float zOverW = 1 - tex2D(depthMap, texCoord).r;   
 
 // H is the viewport position at this pixel in the range -1 to 1.   
 float4 H = float4(texCoord.x * 2 - 1, (1 - texCoord.y) * 2 - 1,   

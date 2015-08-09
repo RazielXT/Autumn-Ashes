@@ -6,6 +6,23 @@
 class BasicPostProcessListener;
 class AaPostProcessListener;
 
+struct PostProcessVariables
+{
+    Ogre::Matrix4 ipm;
+    Ogre::Matrix4 projm;
+    Ogre::Matrix4 ivp;
+    Ogre::Matrix4 pvp;
+    Ogre::Real hurtEffect;
+    Ogre::Real godrayEdge;
+    Ogre::Vector3 radialHorizBlurVignette;
+    Ogre::Vector4 ContSatuSharpNoise, ColouringShift, bloomStrDep;
+    Ogre::Real mbAmount;
+    Ogre::Real ppDistortionIgnore;
+
+    Ogre::Vector4 colourOverlaying;
+    Ogre::Vector4 SunScreenSpacePosition;
+};
+
 class PostProcessMgr
 {
 public:
@@ -27,15 +44,7 @@ public:
     void setGodraySunPositionFar(Ogre::Vector3 pos);
     void setAutoGodraySunDirection();
 
-    Ogre::Matrix4 ivp;
-    Ogre::Matrix4 pvp;
-    Ogre::Real hurtEffect;
-    Ogre::Real godrayEdge;
-    Ogre::Vector3 radialHorizBlurVignette;
-    Ogre::Vector4 ContSatuSharpNoise,ColouringShift, bloomStrDep;
-    Ogre::Real mbAmount;
-    Ogre::Real ppDistortionIgnore;
-
+    PostProcessVariables vars;
     Ogre::Camera* camera;
 
 private:
@@ -45,12 +54,11 @@ private:
     bool scaryPP,advancedPP;
 
     AaPostProcessListener* scaryList;
-    Ogre::Vector4 colourOverlaying;
 
     Ogre::String currentCompositor;
     Ogre::Vector3 sunPosition;
     float sunDistance;
-    Ogre::Vector4 SunScreenSpacePosition;
+
 };
 
 #endif
