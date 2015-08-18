@@ -309,10 +309,11 @@ void diffuse_ps(
 	output.rgb = lerp(output.rgb, atmFog, insideFog);
 
 	float3 viewNormal = normalize(mul((float3x3)viewMat, normal));
-	viewNormal = (viewNormal + 1)/2;
+	float4 viewPos = mul(viewMat, float4(IN.wp.xyz,1));
+	viewPos /= viewPos.w;
 	
 	color0 = output;
-	color1 = float4(0,0,0, saturate(matSpec0.a + specular.r / 2));
+	color1 = float4(viewNormal, saturate(matSpec0.a + specular.r / 2));
 	color2 = float4(0, 0, 0, 1);
-	color3 = float4(1 - IN.uv.z / IN.uv.w, distance, 0, 1);
+	color3 = float4(1 - IN.uv.z / IN.uv.w, -viewPos.z, 0, 1);
 }

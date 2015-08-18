@@ -1,7 +1,7 @@
 fragment_program TraceSSReflections_fp cg
 {
 	source SSReflections.cg
-	profiles ps_2_x
+	profiles ps_3_0
 
 	entry_point TraceSSReflections_fp
 	
@@ -21,6 +21,10 @@ material TraceSSReflections
 			cull_software none
 			depth_func always_pass
 
+			vertex_program_ref pp_vp
+			{
+			}
+			
 			fragment_program_ref TraceSSReflections_fp
 			{
 			}

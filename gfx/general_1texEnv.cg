@@ -323,21 +323,14 @@ void diffuse_ps(
 	output.rgb = lerp(output.rgb, atmFog, insideFog);
 
 	
-	float3 viewNormal = mul((float3x3)viewMat, float3(normal));
-	
-	//float4 viewNormal = mul(viewMat, float4(normal,1));
-	//viewNormal /= viewNormal.w;
-	
-	viewNormal.xyz = normalize(viewNormal.xyz);
-	//viewNormal.z *= -1;
-	//viewNormal.xyz = (viewNormal.xyz + 1)/2;
-	
+	float3 viewNormal = mul((float3x3)viewMat, float3(normal));	
 	float4 viewPos = mul(viewMat, float4(IN.wp.xyz,1));
 	viewPos /= viewPos.w;
+	
 	output.rgb = diffuseTex.xyz;
 	
 	color0 = output;
 	color1 = float4(viewNormal.xyz, saturate(matSpec0.a + specular.r / 2));
 	color2 = float4(0, 0, 0, 1);
-	color3 = float4(1 - IN.uv.z / IN.uv.w, distance, 0, 1);
+	color3 = float4(1 - IN.uv.z / IN.uv.w, -viewPos.z, 0, 1);
 }
