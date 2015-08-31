@@ -55,14 +55,11 @@ public:
             float distToCenter = cm->position.distance(pos);
             float distToRadius = std::max(0.0f, distToCenter - cm->posessionRadius);
 
-            if (!r || distToRadius <= closestToRadius)
+            if (!r || (distToRadius <= closestToRadius || (distToRadius == 0 && distToCenter < closestToCenter)))
             {
-                if (!r || (distToRadius == closestToRadius && distToCenter<closestToCenter))
-                {
-                    r = cm;
-                    closestToRadius = distToRadius;
-                    closestToCenter = distToCenter;
-                }
+                r = cm;
+                closestToRadius = distToRadius;
+                closestToCenter = distToCenter;
             }
         }
 
