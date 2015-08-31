@@ -13,8 +13,10 @@ float4 TraceSSReflections_fp
 	float3 viewNormal = tex2D(mapSS, uv).xyz;
 	
 	if(viewNormal.x+viewNormal.y+viewNormal.z == 0)
-		return scene;
-		
+		return 0;
+	
+	viewNormal = normalize(viewNormal);
+	
 	//viewNormal = viewNormal*2 - 1;
 		
 	float zOverW = 1 - tex2D(mapDepth, uv).r;
@@ -32,15 +34,17 @@ float4 TraceSSReflections_fp
 	float3 rayDirVP = normalize(reflect(camDir, viewNormal));
 	//rayDirVP.z *= 0.5;
 	//rayDirVP.xyz *= 1 + pow(abs(rayDirVP.z)*2,2);
-	float distCorrect = pow(saturate(dot(rayDirVP,camDir)),2)*2;
+	float steepW = pow(saturate(dot(rayDirVP,camDir)),2);
+	
+	float distCorrect = steepW*6;
 	rayDirVP.xyz *= 1 + distCorrect;
 
 	//cameraVP.xz *= -1;
 	
 	//return float4(rayDirVP,1);
 	
-	float stepSize = 1.0 * saturate(-cameraVP.z/50)*3;
-	float steps = 15.0;
+	float stepSize = 1 + saturate(-cameraVP.z/50)*2;
+	float steps = 20.0;
 	//float2 size = 1/float2(1280,768);
 	
 	//rayDirVP = rayDirVP*stepSize;
@@ -65,7 +69,7 @@ float4 TraceSSReflections_fp
 	float vpNormalDot = 0;
 	
 	float sampledDif = 0;
-	float sampledDifMax = 10.0;
+	float sampledDifMax = 10.0 + steepW*10;
 	
 	
 	for(int i=0; i<steps; i++)
@@ -101,7 +105,7 @@ float4 TraceSSReflections_fp
 		}
 	}
 	
-	float detailSteps = 25.0;
+	float detailSteps = 2.0;
 	float detailStepSize = stepSize/detailSteps;
 	float3 vpMinStep = vpStep/detailSteps;
 	float sampledSubStep = 0;
@@ -127,7 +131,7 @@ float4 TraceSSReflections_fp
 		float sampledDDif = checkDepth - depth;
 		
 		//if(checkDepth > depth && ((checkDepth - depth) > 0))
-		if(sampledDDif > 0 && sampledDif < sampledDifMax)
+		if(sampledDDif > 0 && sampledDDif < sampledDifMax)
 		{
 			sampledDif = sampledDDif;
 			vpNormalDot = sampledNormalDot;
@@ -157,9 +161,11 @@ float4 TraceSSReflections_fp
 	float stepsWD = 1.0 - (detailSteps-sampledSubStep)/detailSteps;
 	stepsWD /= steps;
 	
-	//reflW *= 1.0 - sampledDif/sampledDifMax;
+	//reflW *= pow(1.0 - sampledDif/sampledDifMax,1);
 	
 	reflW *= stepsW+stepsWD;
+	
+	reflW *= pow(saturate(sampledPosVP.z/-10),2);
 	
 	//reflW  *= saturate(1 - pow(sampledDif/10,1)); //1.0/(1.0 + abs(sampledDepth - -sampledPosVP.z )*10);
 
@@ -176,6 +182,25 @@ float4 TraceSSReflections_fp
 	//scene.rgb = mul(projMatrix, cameraVP).rgb;//*float3(size,0);
 	
 	return scene;
+}
+
+
+
+float4 MergeSSReflections_fp
+    (
+         float2 uv: TEXCOORD0,
+         uniform sampler2D map: register(s0),
+		 uniform sampler2D mapNormal: register(s1),
+		 uniform sampler2D mapSS: register(s2)
+    ) : COLOR
+{   
+	float4 scene = tex2D(map, uv);
+	float4 norm = tex2D(mapNormal,uv);
+	float4 refl = tex2D(mapSS,uv);
+	
+	float relfterm = saturate(length(norm.xyz));
+
+	return lerp(scene,refl,relfterm);
 }
 
 

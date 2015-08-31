@@ -108,13 +108,13 @@ material grassMat : 1t_material_static
 
 material sandMat : 1tEnv_material_static 
 {
-	set_texture_alias diffuseMap NZjZrKrvsTA.jpg
-	//set_texture_alias normalMap NZjZrKrvsTA_NORM.tga
+	set_texture_alias diffuseMap ConcreteNew0007_2_S.bmp
+	set_texture_alias normalMap ConcreteNew0007_2_S_NORM.tga
 	//set_texture_alias dispMap NZjZrKrvsTA_DISP.bmp
-	//set_texture_alias normalDetailMap SilveryBlue_NORM.tga
+	//set_texture_alias normalDetailMap 05_NORMAL.jpg
 	
 	set $uvScale "0.75"
-	set $detailScale "8"
+	set $detailScale "5"
 	
 	set $diffuseCol "1 1 1"
 	// specular colour multiplier (for example, red-ish)

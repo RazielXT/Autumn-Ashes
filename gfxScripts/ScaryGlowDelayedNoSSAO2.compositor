@@ -2,14 +2,21 @@ compositor ScaryBloomNoSSAO
 {
     technique
     {
-		texture rt0 target_width target_height PF_FLOAT32_RGBA PF_FLOAT32_RGBA PF_FLOAT32_RGBA PF_FLOAT32_RGBA
+		texture rt0 target_width target_height PF_FLOAT16_RGBA PF_FLOAT16_RGBA PF_FLOAT16_RGBA PF_FLOAT32_GR
 		texture rtTran target_width target_height PF_R8G8B8A8 PF_R8G8B8A8 PF_R8G8B8A8 PF_FLOAT16_GR
 		
 		texture smoke_rt target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8A8
 		texture halfSize_rt target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8A8
 		
 		texture rtCombined target_width target_height PF_R8G8B8A8
-		texture rt1 target_width target_height PF_FLOAT16_RGBA
+		texture rt1 target_width target_height PF_R8G8B8A8
+		
+		texture rt2 target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8A8
+		texture rt22 target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8A8
+		texture rtD2 target_width_scaled 0.5 target_height_scaled 0.5 PF_FLOAT32_GR
+		
+		texture rtO target_width_scaled 0.5 target_height_scaled 0.5 PF_R8G8B8A8
+		
 		texture rtD target_width target_height PF_FLOAT16_GR
 
 		texture godray0 320 240 PF_R8G8B8
@@ -56,7 +63,17 @@ compositor ScaryBloomNoSSAO
 			}
         }
 
-		target rt1
+		target rtD2
+		{
+			input none
+			pass render_quad
+			{
+				material PutThrough
+				input 0 rt0 3
+			}
+		}
+		
+		target rt2
         {
             input none
             pass render_quad
@@ -66,9 +83,72 @@ compositor ScaryBloomNoSSAO
                 material TraceSSReflections
                 input 0 rt0 0
 				input 1 rt0 1
-				input 2 rt0 3
+				input 2 rtD2
             }
         }
+		
+		target rt22
+		{
+			input none
+			pass render_quad
+			{
+				material MySmokeBloomY
+				input 0 rt2
+			}
+		}
+
+		target rt2
+		{
+			input none
+			pass render_quad
+			{
+				material MySmokeBloomX
+				input 0 rt22
+			}
+		}
+		
+		target rt22
+		{
+			input none
+			pass render_quad
+			{
+				material MySmokeBloomY
+				input 0 rt2
+			}
+		}
+
+		target rt2
+		{
+			input none
+			pass render_quad
+			{
+				material MySmokeBloomX
+				input 0 rt22
+			}
+		}
+		
+		target rt1
+        {
+            input none
+			
+            pass render_quad
+            {
+                material MergeSSReflections
+                input 0 rt0 0
+				input 1 rt0 1
+				input 2 rtO
+            }
+        }
+		
+		target rtO
+		{
+			input none
+			pass render_quad
+			{
+				material PutThrough
+				input 0 rt2
+			}
+		}
 		
 		//transparent
         target rtTran

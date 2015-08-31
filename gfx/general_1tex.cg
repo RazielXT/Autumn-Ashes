@@ -313,7 +313,7 @@ void diffuse_ps(
 	viewPos /= viewPos.w;
 	
 	color0 = output;
-	color1 = float4(viewNormal, saturate(matSpec0.a + specular.r / 2));
+	color1 = float4(0, 0, 0, saturate(matSpec0.a + specular.r / 2));
 	color2 = float4(0, 0, 0, 1);
 	color3 = float4(1 - IN.uv.z / IN.uv.w, -viewPos.z, 0, 1);
 }

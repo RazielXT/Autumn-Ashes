@@ -226,7 +226,10 @@ void diffuse_ps(
 	ReflectDir.z *= -1;
 	float3 cubeDir = offsetCubemapUV(ReflectDir,cubemapWPOffset.xyz,IN.wp.xyz, cubemapWPOffset.w);
 	
-	diffuseTex.rgb = texCUBE(envMap,cubeDir).rgb;
+	float fresnel = 1 - pow(-dot(eyeDir, normal.xyz), 2)*0.5;
+	//fresnel *= 0.8;
+	
+	diffuseTex.rgb = lerp(diffuseTex.rgb, texCUBE(envMap,cubeDir).rgb, fresnel);
 	
 	float diffuseGeomLight = dot(lightDir, IN.n.xyz);
 	float diffuseLight = dot(lightDir, normal);
@@ -298,7 +301,7 @@ void diffuse_ps(
 
 	}
 
-	//ambientColor = float3(0.35,0.5,0.6);
+	ambientColor = float3(0.5,0.5,0.6);
 		
 	float3 underShadow = max(shadowing.xxx,ambientColor);
 	//ambient lighting
@@ -327,10 +330,12 @@ void diffuse_ps(
 	float4 viewPos = mul(viewMat, float4(IN.wp.xyz,1));
 	viewPos /= viewPos.w;
 	
-	output.rgb = diffuseTex.xyz;
+	
+	
+	//output.rgb = diffuseTex.xyz;
 	
 	color0 = output;
-	color1 = float4(viewNormal.xyz, saturate(matSpec0.a + specular.r / 2));
+	color1 = float4(viewNormal*fresnel, saturate(matSpec0.a + specular.r / 2));
 	color2 = float4(0, 0, 0, 1);
 	color3 = float4(1 - IN.uv.z / IN.uv.w, -viewPos.z, 0, 1);
 }

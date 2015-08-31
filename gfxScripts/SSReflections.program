@@ -33,21 +33,73 @@ material TraceSSReflections
 			{
 					tex_coord_set 0
 					tex_address_mode clamp
-					filtering none
 			}
 
 			texture_unit sceneSS
 			{
 					tex_coord_set 0
 					tex_address_mode clamp
-					filtering none
 			}
 			
 			texture_unit sceneDepth
 			{
 					tex_coord_set 0
 					tex_address_mode clamp
-					filtering none
+			}
+			
+
+		}
+	}
+}
+
+
+fragment_program MergeSSReflections_fp cg
+{
+	source SSReflections.cg
+	profiles ps_3_0
+
+	entry_point MergeSSReflections_fp
+	
+	default_params
+    {
+        //param_named_auto projMatrix projection_matrix
+    }
+}
+
+material MergeSSReflections
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			vertex_program_ref pp_vp
+			{
+			}
+			
+			fragment_program_ref MergeSSReflections_fp
+			{
+			}
+
+			texture_unit scene
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+			}
+
+			texture_unit sceneSS
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+			}
+			
+			texture_unit sceneRefl
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
 			}
 			
 
