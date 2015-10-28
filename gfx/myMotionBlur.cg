@@ -6,12 +6,10 @@ float4 MBFinal_fp
 	    uniform float4x4 vpm,
 		uniform float4x4 myMatrix,
          uniform sampler2D scene: register(s0),
-	    uniform sampler2D depthMap: register(s1),
-		uniform sampler2D blur: register(s2)
+	    uniform sampler2D depthMap: register(s1)
     ) : COLOR
 
 {
-float4 cBlur = tex2D(blur,texCoord);
 float zOverW = 1 - tex2D(depthMap, texCoord).r;   
 
 // H is the viewport position at this pixel in the range -1 to 1.   
