@@ -88,7 +88,7 @@ protected:
     virtual void updateSlidingCamera(float time);
 
     void attach(bool retainDirection = false, float headArrivalTime = 1.0f);
-    void release(bool returnControl = true, bool inTrackDirection = true);
+    void release(bool returnControl = true, bool manualJump = false);
 
     float currentSpeed;
     float avgSpeed = 5;

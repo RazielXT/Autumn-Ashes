@@ -57,13 +57,9 @@ void PlayerSliding::update(float tslf, bool readyToSlide)
 
 void PlayerSliding::pressedKey(const OIS::KeyEvent &arg)
 {
-    if (currentSlide)
+    if (!(arg.key == OIS::KC_SPACE && slidesAutoTarget->pressedAction()))
     {
-        if (arg.key == OIS::KC_SPACE && slidesAutoTarget->targetInfo.targetSlide)
-        {
-            slidesAutoTarget->targetInfo.targetSlide->start(slidesAutoTarget->targetInfo.targetSlidePosOffset, true);
-        }
-        else
+        if (currentSlide)
             currentSlide->pressedKey(arg);
     }
 }

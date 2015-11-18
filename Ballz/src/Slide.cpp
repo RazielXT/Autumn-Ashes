@@ -16,7 +16,7 @@ void Slide::releasedKey(const OIS::KeyEvent &arg)
     if (!sliding)
         return;
 
-	if (arg.key == OIS::KC_LSHIFT)
+    if (arg.key == OIS::KC_LSHIFT)
     {
         sprint = false;
     }
@@ -29,7 +29,7 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
 
     if (arg.key == OIS::KC_SPACE && unavailableTimer<0)
     {
-        release();
+        release(true, true);
     }
 
     if (arg.key == OIS::KC_C)
@@ -53,7 +53,7 @@ Vector3 Slide::getTrackPosition(float timeOffset)
 
 void Slide::movedMouse(const OIS::MouseEvent &e)
 {
-    if (!sliding)
+    if (!sliding || sprint)
         return;
 
     float mod = Global::timestep / -10.0f;
@@ -564,19 +564,22 @@ void Slide::attach(bool retainDirection, float headArrivalTime)
     sprint = false;
 }
 
-void Slide::release(bool returnControl, bool inTrackDirection)
+void Slide::release(bool returnControl, bool manualJump)
 {
     if (returnControl)
     {
-        Ogre::Quaternion direction = inTrackDirection ? getDirectionState() : head->_getDerivedOrientation();
+        Ogre::Quaternion direction = !manualJump ? getDirectionState() : head->_getDerivedOrientation();
 
         Global::player->attachCameraWithTransition(0.2f, direction);
         Global::player->body->setPositionOrientation(head->_getDerivedPosition(), Ogre::Quaternion::IDENTITY);
         Global::player->body->unFreeze();
 
-        float releaseSpeed = pow(std::max(1.0f,currentSpeed * 0.5f), 0.75f);
+        float releaseSpeed = pow(std::max(1.0f, currentSpeed * 0.5f), 0.75f);
 
-        Global::player->body->setVelocity(direction*Vector3(0, 0, -1 * releaseSpeed) + Vector3(0, 3, 0));
+        if (!manualJump)
+            Global::player->body->setVelocity(direction*Vector3(0, 0, -1 * releaseSpeed) + Vector3(0, 3, 0));
+        else
+            Global::player->body->setVelocity(10 * Global::player->getFacingDirection() + Vector3(0, 5, 0));
 
         Global::shaker->startShaking(0.85, 1.0, 0.25, 1, 1, 0.5, 0.35, 1, true);
 

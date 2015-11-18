@@ -563,7 +563,7 @@ private:
         Ogre::String name = getElementValue(rootElement, "Name");
         int rGroup = getElementIntValue(rootElement, "RenderQroup", RenderQueue_Particles);
 
-		Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem(name + "_" + std::to_string(partID++), name);
+        Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem(name + "_" + std::to_string(partID++), name);
         ps->setRenderQueueGroup(rGroup);
         ps->setVisibilityFlags(VisibilityFlag_SoftParticles);
         if (getElementBoolValue(rootElement, "EditParams"))
