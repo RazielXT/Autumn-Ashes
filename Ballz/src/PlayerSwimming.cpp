@@ -60,10 +60,6 @@ void PlayerSwimming::initWaterDepthReading()
 
 void PlayerSwimming::readWaterDepth()
 {
-    size_t width = 1;
-    size_t height = 1;
-    Ogre::Image::Box imageBox;
-
     float depth;
     Ogre::PixelBox tempPb(1, 1, 1, Ogre::PF_FLOAT32_R, &depth);
 

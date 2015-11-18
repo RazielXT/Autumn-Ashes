@@ -16,7 +16,7 @@ void Slide::releasedKey(const OIS::KeyEvent &arg)
     if (!sliding)
         return;
 
-    if (arg.key == OIS::KC_W)
+	if (arg.key == OIS::KC_LSHIFT)
     {
         sprint = false;
     }
@@ -29,16 +29,7 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
 
     if (arg.key == OIS::KC_SPACE && unavailableTimer<0)
     {
-
-        {
-            auto jumpSpeed = Global::player->getFacingDirection() * 10;
-            jumpSpeed.y += 7.0f;//std::max(jumpSpeed.y, 5.0f);
-
-            release();
-
-            Global::player->body->setVelocity(jumpSpeed);
-        }
-
+        release();
     }
 
     if (arg.key == OIS::KC_C)
@@ -46,7 +37,7 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
         release();
     }
 
-    if (arg.key == OIS::KC_W)
+    if (arg.key == OIS::KC_LSHIFT)
     {
         sprint = true;
     }
