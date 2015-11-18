@@ -319,8 +319,8 @@ blurom  += tex2D(bloomp,float2(uv.x,uv.y-ps));
 blurom = saturate(blurom/5);
 
 
-blurom+=blurom*b*b*(1 + (1-bright)*2)*bloomStrDep.y;
-blurom*=bloomStrDep.x;
+blurom+=blurom*b*b*(1 + (1-bright)*2)*bloomStrDep.x;
+blurom*=bloomStrDep.y;
 
 col=col*clamp(b+b*b*b,0.81,1.5);
 

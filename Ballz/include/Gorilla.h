@@ -2835,6 +2835,13 @@ public:
         mLayer->_markDirty();
     }
 
+    void  yes_background(const Ogre::Real& alpha)
+    {
+        mBackground.a = alpha;
+        mDirty = true;
+        mLayer->_markDirty();
+    }
+
     /*! function. _redraw
         desc.
             Redraw the text.

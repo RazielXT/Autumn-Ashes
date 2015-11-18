@@ -12,6 +12,50 @@ vertex_program pp_vp cg
 	
 }
 
+fragment_program ReconstructSSR_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_3_0
+
+	entry_point ReconstructSSR_fp
+	
+}
+
+material ReconstructSSR
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			vertex_program_ref pp_vp
+			{
+			}
+			
+			fragment_program_ref ReconstructSSR_fp
+			{
+			}
+			
+			texture_unit SSROrig
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering bilinear
+			}
+			
+			texture_unit Depth
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering none
+			}
+		}
+	}
+}
+
 fragment_program PutThrough_fp cg
 {
 	source PostProcThroughs.cg

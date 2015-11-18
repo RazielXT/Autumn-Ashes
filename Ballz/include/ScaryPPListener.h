@@ -52,6 +52,11 @@ public:
             mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("invProjMatrix", vars->ipm);
             mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("projMatrix", vars->projm);
         }
+        else if (pass_id == 5)
+        {
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("invViewProjMatrix", vars->ivp);
+            mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("prevViewProjMatrix", vars->pvp);
+        }
         else if (pass_id == 12)
         {
             mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("ppDistortion", vars->ppDistortionIgnore);

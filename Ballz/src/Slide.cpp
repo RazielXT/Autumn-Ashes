@@ -16,7 +16,7 @@ void Slide::releasedKey(const OIS::KeyEvent &arg)
     if (!sliding)
         return;
 
-    if (arg.key == OIS::KC_LSHIFT)
+    if (arg.key == OIS::KC_W)
     {
         sprint = false;
     }
@@ -30,12 +30,6 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
     if (arg.key == OIS::KC_SPACE && unavailableTimer<0)
     {
 
-        /*if (slidesAutoTarget->targetInfo.targetSlide)
-        {
-            if (slidesAutoTarget->targetInfo.targetSlide->start(slidesAutoTarget->targetInfo.targetSlidePosOffset, true))
-                release(false);
-        }
-        else*/
         {
             auto jumpSpeed = Global::player->getFacingDirection() * 10;
             jumpSpeed.y += 7.0f;//std::max(jumpSpeed.y, 5.0f);
@@ -52,7 +46,7 @@ void Slide::pressedKey(const OIS::KeyEvent &arg)
         release();
     }
 
-    if (arg.key == OIS::KC_LSHIFT)
+    if (arg.key == OIS::KC_W)
     {
         sprint = true;
     }
@@ -68,7 +62,7 @@ Vector3 Slide::getTrackPosition(float timeOffset)
 
 void Slide::movedMouse(const OIS::MouseEvent &e)
 {
-    if (!sliding || sprint)
+    if (!sliding)
         return;
 
     float mod = Global::timestep / -10.0f;
@@ -393,7 +387,7 @@ void Slide::updateJumpToSlide(float time)
     {
         jumpingToSlide = false;
 
-        attach(true);
+        attach(true,0.2f);
     }
 }
 
@@ -415,14 +409,17 @@ bool Slide::start(Vector3& pos, bool withJump)
 
     if (placePointOnLine(pos))
     {
-        currentSpeed = 0;// Global::player->bodyVelocity / avgSpeed;
         setCorrectDirection();
         removeControlFromPlayer();
+
+        auto pdir = Global::player->getFacingDirection();
+        auto slDir = getDirectionState()*Vector3(0, 0, -1);
+        currentSpeed = Global::player->bodyVelocityL * std::max(0.0f, pdir.dotProduct(slDir));//  Global::player->bodyVelocity / avgSpeed;
 
         if (withJump)
             startJumpToSlide();
         else
-            attach(bidirectional);
+            attach(true);
 
         Global::player->pSliding->slideStarted(this);
 
@@ -456,7 +453,7 @@ void Slide::setCorrectDirection(float startOffset)
     mTrackerState->setTimePosition(startOffset);
 }
 
-bool Slide::start(float startOffset, bool withJump)
+bool Slide::start(float startOffset, bool withJump, float headArrivalTimer)
 {
     if (sliding)
         return false;
@@ -470,7 +467,7 @@ bool Slide::start(float startOffset, bool withJump)
     if (withJump)
         startJumpToSlide();
     else
-        attach(bidirectional);
+        attach(true, headArrivalTimer);
 
     Global::player->pSliding->slideStarted(this);
 
@@ -483,8 +480,17 @@ void Slide::updateSlidingSpeed(float time)
     //auto dir = tracker->getOrientation()*Vector3(0, 0, -1);
     //currentSpeed = Math::Clamp(currentSpeed + -dir.y*0.5f*time, 1.0f, 2.5f);
 
-    auto diff = time*1.0f;
-    currentSpeed = std::min(sprint ? avgSpeed*1.5f : avgSpeed, currentSpeed + diff);
+    auto dir = tracker->getOrientation()*Vector3(0, 0, -1);
+    float g = dir.y < 0 ? (1 + dir.y) : 0.5f * (1 - dir.y);
+
+    if (sprint)
+        g += 1.0f;
+
+    g *= avgSpeed;
+
+    float nextSpeed = currentSpeed + time*g;
+
+    currentSpeed = nextSpeed;
 }
 
 void Slide::removeControlFromPlayer()
@@ -516,7 +522,7 @@ Ogre::Quaternion Slide::getDirectionState()
     return key.getRotation();
 }
 
-void Slide::attach(bool retainDirection)
+void Slide::attach(bool retainDirection, float headArrivalTime)
 {
     resetHead();
 
@@ -537,7 +543,7 @@ void Slide::attach(bool retainDirection)
             headState.pitch = headState.yaw = 0;
         }
 
-        headArrival.timer = 1.0f;
+        headArrival.timer = headArrivalTime;
         headArrival.posTarget = state.getTranslate() + head->getPosition();
         headArrival.pos = cam->getDerivedPosition();
         headArrival.dir = pDir;
@@ -559,20 +565,29 @@ void Slide::attach(bool retainDirection)
 
     unavailableTimer = 0.25f;
 
+    Global::shaker->startShaking(0.85, 1.0, 0.25, 1, 1, 0.5, 0.35, 1, true);
+
     mTrackerState->setEnabled(true);
     mTrackerState->setLoop(loop);
     sliding = true;
     sprint = false;
 }
 
-void Slide::release(bool returnControl)
+void Slide::release(bool returnControl, bool inTrackDirection)
 {
     if (returnControl)
     {
-        Global::player->attachCameraWithTransition();
+        Ogre::Quaternion direction = inTrackDirection ? getDirectionState() : head->_getDerivedOrientation();
+
+        Global::player->attachCameraWithTransition(0.2f, direction);
         Global::player->body->setPositionOrientation(head->_getDerivedPosition(), Ogre::Quaternion::IDENTITY);
         Global::player->body->unFreeze();
-        Global::player->body->setVelocity(getDirectionState()*Vector3(0, 0, -1 * currentSpeed) + Vector3(0, 3, 0));
+
+        float releaseSpeed = pow(std::max(1.0f,currentSpeed * 0.5f), 0.75f);
+
+        Global::player->body->setVelocity(direction*Vector3(0, 0, -1 * releaseSpeed) + Vector3(0, 3, 0));
+
+        Global::shaker->startShaking(0.85, 1.0, 0.25, 1, 1, 0.5, 0.35, 1, true);
 
         enablePlayerControl = true;
     }
@@ -584,7 +599,7 @@ void Slide::release(bool returnControl)
 
 void Slide::updateHeadArrival(float time)
 {
-    headArrival.timer -= time*10*currentSpeed;
+    headArrival.timer -= time*currentSpeed;
 
     if (headArrival.timer <= 0)
     {
@@ -659,7 +674,7 @@ void Slide::updateSlidingState(float time)
 
     updateSlidingSpeed(time);
 
-    mTrackerState->addTime(time*currentSpeed*avgSpeed);
+    mTrackerState->addTime(time*currentSpeed);
 
     updateSlidingCamera(time);
 
@@ -677,12 +692,6 @@ bool Slide::update(Ogre::Real tslf)
 {
     tslf *= Global::timestep;
 
-    if (enablePlayerControl)
-    {
-        Global::player->enableControl(true);
-        enablePlayerControl = false;
-    }
-
     if (sliding)
         updateSlidingState(tslf);
     else if (jumpingToSlide)
@@ -690,6 +699,12 @@ bool Slide::update(Ogre::Real tslf)
 
     if (unavailableTimer>0)
         unavailableTimer -= tslf;
+
+    if (enablePlayerControl)
+    {
+        Global::player->enableControl(true);
+        enablePlayerControl = false;
+    }
 
     return jumpingToSlide || sliding;
 }

@@ -17,7 +17,7 @@ public:
     virtual bool start(bool withJump = false);
     virtual bool start(Vector3& point, bool withJump = false);
 
-    virtual bool start(float startOffset, bool withJump = false);
+    virtual bool start(float startOffset, bool withJump = false, float headArrivalTimer = 1.0f);
     void instantDetach(bool returnControl);
 
     virtual bool update(Ogre::Real tslf);
@@ -46,7 +46,7 @@ protected:
 
     NodeAnimationTrack* track;
 
-    Slide(const std::string& zipName, bool looped, float speed) : animName(zipName), loop(looped), avgSpeed(speed*5) {};
+    Slide(const std::string& zipName, bool looped, float speed) : animName(zipName), loop(looped), avgSpeed(speed) {};
 
     virtual void resetHead() {};
 
@@ -87,8 +87,8 @@ protected:
 
     virtual void updateSlidingCamera(float time);
 
-    void attach(bool retainDirection = false);
-    void release(bool returnControl = true);
+    void attach(bool retainDirection = false, float headArrivalTime = 1.0f);
+    void release(bool returnControl = true, bool inTrackDirection = true);
 
     float currentSpeed;
     float avgSpeed = 5;

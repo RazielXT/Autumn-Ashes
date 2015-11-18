@@ -23,14 +23,15 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
     info.ContSatuSharpNoise = 0;
     info.ambientColor = ColourValue(0.35f, 0.35f, 0.35f);
     info.skyboxName = "TCENoonSkyBox";
-    info.bloomStr = 10;
+    info.bloomStr = 1;
     info.bloomDepth = 0.35f;
     levels[0] = info;
 
     info.name = "Park";
     info.path = "../../media/park/park.scene";
     info.init = createLevelTuto;
-    info.bloomStr = info.bloomDepth = 1;
+    info.bloomStr = 1.5f;
+    info.bloomDepth = 0.5f;
     levels[1] = info;
 
     info.name = "Caves";
@@ -74,6 +75,14 @@ void GameStateManager::switchToMainMenu()
 LevelInfo* GameStateManager::getCurrentLvlInfo()
 {
     return &levels[lastLVL];
+}
+
+LevelInfo* GameStateManager::getLvlInfo(int id)
+{
+    if (levels.find(id) != levels.end())
+        return &levels[id];
+
+    return nullptr;
 }
 
 void GameStateManager::switchToLevel(int lvl)
@@ -126,8 +135,8 @@ void GameStateManager::reloadSceneSettings()
     PostProcessMgr* postProcMgr = Global::mPPMgr;
     postProcMgr->vars.ColouringShift = lvlInfo.ColorShift;
     postProcMgr->vars.ContSatuSharpNoise = lvlInfo.ContSatuSharpNoise;
-    postProcMgr->vars.bloomStrDep.y = lvlInfo.bloomStr;
-    postProcMgr->vars.bloomStrDep.x = lvlInfo.bloomDepth;
+    postProcMgr->vars.bloomStrDep.x = lvlInfo.bloomStr;
+    postProcMgr->vars.bloomStrDep.y = lvlInfo.bloomDepth;
     Global::mSceneMgr->setSkyBox(true, lvlInfo.skyboxName);
     Global::mSceneMgr->setFog(FOG_LINEAR, lvlInfo.fogColor, 1, lvlInfo.fogStartDistance, lvlInfo.fogEndDistance);
 

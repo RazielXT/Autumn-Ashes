@@ -6,6 +6,7 @@
 #include <fstream>
 #include "PostProcessMgr.h"
 #include "MUtils.h"
+#include "GameStateManager.h"
 
 using namespace Ogre;
 
@@ -402,42 +403,43 @@ void GuiOverlay::createIngameMenuButtons()
 
 void GuiOverlay::createLevelsMenuButtons()
 {
+    int lvlImgs = 6;
     float pos = 1680/2.0f;
-    Gorilla::Rectangle* r = mLvlsLayer->createRectangle(pos-210,1050,420,270);
-    r->background_image("lvl1");
-    lvlButton* b = new lvlButton(r,1,true,pos);
-    lMenuButtons.push_back(b);
-    firstLevelButton = curLvlButton = b;
+    int lvlId = 0;
+    auto lvlInfo = Global::gameMgr->getLvlInfo(lvlId++);
+    Ogre::Vector4 mainButtonSize(210, 1050, 420, 270);
+    Ogre::Vector4 sideButtonSize(100, 1050, 230, 160);
 
-    pos+=400;
-    r = mLvlsLayer->createRectangle(pos-100,1050,230,160);
-    r->background_image("lvl2");
-    b = new lvlButton(r,2,true,pos);
-    lMenuButtons.push_back(b);
+    while (lvlInfo && lvlId <= lvlImgs)
+    {
+        auto& buttonSize = lvlId == 1 ? mainButtonSize : sideButtonSize;
+        Gorilla::Rectangle* r = mLvlsLayer->createRectangle(pos - buttonSize.x, buttonSize.y, buttonSize.z, buttonSize.w);
+        auto caption = mLayer->createCaption(48, pos - buttonSize.x, buttonSize.y, lvlInfo->name);
+        caption->size(buttonSize.z, buttonSize.w);
+        caption->align(Gorilla::TextAlign_Centre);
 
-    pos+=400;
-    r = mLvlsLayer->createRectangle(pos-100,1050,230,160);
-    r->background_image("lvl3");
-    b = new lvlButton(r,3,true,pos);
-    lMenuButtons.push_back(b);
+        r->background_image("lvl" + std::to_string(lvlId));
+        lvlButton* b = new lvlButton(r,caption, lvlId, true, pos);
+        lMenuButtons.push_back(b);
+        pos += 400;
 
-    pos+=400;
-    r = mLvlsLayer->createRectangle(pos-100,1050,230,160);
-    r->background_image("lvl4");
-    b = new lvlButton(r,4,false,pos);
-    lMenuButtons.push_back(b);
+        if (lvlId==1)
+            firstLevelButton = curLvlButton = b;
 
-    pos+=400;
-    r = mLvlsLayer->createRectangle(pos-100,1050,230,160);
-    r->background_image("lvl5");
-    b = new lvlButton(r,5,false,pos);
-    lMenuButtons.push_back(b);
+        lvlInfo = Global::gameMgr->getLvlInfo(lvlId++);
+    }
 
-    pos+=400;
-    r = mLvlsLayer->createRectangle(pos-100,1050,230,160);
-    r->background_image("lvl6");
-    b = new lvlButton(r,6,false,pos);
-    lMenuButtons.push_back(b);
+    while (lvlId < lvlImgs)
+    {
+        Gorilla::Rectangle* r = mLayer->createRectangle(pos - sideButtonSize.x, sideButtonSize.y, sideButtonSize.z, sideButtonSize.w);
+        auto caption = mLvlsLayer->createCaption(48, pos - sideButtonSize.x, sideButtonSize.y, "TBD");
+        caption->size(sideButtonSize.z, sideButtonSize.w);
+        r->background_image("lvl" + std::to_string(lvlId));
+        lvlButton* b = new lvlButton(r, caption, lvlId, false, pos);
+        lMenuButtons.push_back(b);
+        pos += 400;
+        lvlId++;
+    }
 }
 
 void GuiOverlay::setMainMenu()
@@ -772,13 +774,18 @@ int GuiOverlay::mainMenuPressed()
                     if(b->id > curLvlButton->id)
                     {
                         movingDir=-1;
-                        curLvlButton = lMenuButtons.at(curLvlButton->id);
                     }
                     else
                     {
                         movingDir=1;
-                        curLvlButton = lMenuButtons.at(curLvlButton->id-2);
                     }
+
+                    for (auto lvl : lMenuButtons)
+                        if (lvl->id == curLvlButton->id - movingDir)
+                        {
+                            curLvlButton = lvl;
+                            break;
+                        }
 
                     return 0;
                 }
@@ -853,13 +860,20 @@ void GuiOverlay::updateLevelsMove(Ogre::Real time)
         {
             float scaler = 1 - Ogre::Math::Clamp(abs((*myIterator)->pos-840)/500.0f,0.0f,1.0f);
 
-            Gorilla::Rectangle* c=(*myIterator)->r;
-            (*myIterator)->pos+=rotSpeed;
-            c->left((*myIterator)->pos-115-scaler*85);
-            c->width(230+scaler*190);
-            c->height(160+scaler*110);
+            (*myIterator)->pos += rotSpeed;
 
-            Real alpha=1-Math::Abs((c->left()-690)/999.0f);
+            Gorilla::Rectangle* r=(*myIterator)->r;
+            r->left((*myIterator)->pos-115-scaler*85);
+            r->width(230+scaler*190);
+            r->height(160+scaler*110);
+
+            Real alpha=1-Math::Abs((r->left()-690)/999.0f);
+            r->yes_background(alpha);
+
+            Gorilla::Caption* c = (*myIterator)->c;
+            c->left((*myIterator)->pos - 115 - scaler * 85);
+            c->width(230 + scaler * 190);
+            c->height(160 + scaler * 110);
             c->yes_background(alpha);
         }
     }

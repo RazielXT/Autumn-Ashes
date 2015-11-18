@@ -159,13 +159,15 @@ void main_fp(float4 uv			: TEXCOORD0,
 		shadowing = shadowPCF(shadowMap3, LightPosition3, invShadowMapSize2.xy,0.0000003 ); //2
 	}
 	
+	shadowing = shadowing*0.85 + 0.15;
+	
 	float3 lighting = saturate(ambientColor + shadowing);
 	//lighting/=1.25;
 
 	float3 clr = diffTex.rgb * lighting;
 
-	oColor = float4(clr, diffTex.a)*iColor;
+	oColor = float4(clr, diffTex.a)*iColor*float4(1.2,0.95,0.75,1);
 	oColor1= float4(0.5,0.5,0.3,0);
 	oColor2= float4(0,0,0,diffTex.a);
-	oColor3= float4(uv.z/uv.w,uv.z,0,0);
+	oColor3= float4(1 - uv.z/uv.w,uv.z,0,0);
 }

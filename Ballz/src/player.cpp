@@ -47,6 +47,7 @@ Player::Player(WorldMaterials* wMaterials)
     grabbedObj = false;
     wallrunning = false;
     sliding = false;
+    transformed = false;
 
     inControl = true;
     inMoveControl = true;
@@ -73,6 +74,7 @@ Player::Player(WorldMaterials* wMaterials)
     pSwimming = new PlayerSwimming(this);
     pAbilities = new PlayerAbilities(this);
     pSliding = new PlayerSliding(this);
+    pTransform = new PlayerTransform(this);
 }
 
 Player::~Player ()
@@ -84,6 +86,7 @@ Player::~Player ()
     delete pGrabbing;
     delete pParkour;
     delete pSliding;
+    delete pTransform;
     delete shaker;
 }
 
@@ -164,7 +167,9 @@ void Player::default_callback(OgreNewt::Body* me, float timeStep, int threadInde
 
 void Player::pressedKey(const OIS::KeyEvent &arg)
 {
+    pSliding->pressedKey(arg);
     pAbilities->pressedKey(arg);
+    pTransform->pressedKey(arg);
 
     switch (arg.key)
     {
@@ -218,6 +223,7 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
 
 void Player::releasedKey(const OIS::KeyEvent &arg)
 {
+    pSliding->releasedKey(arg);
     pAbilities->releasedKey(arg);
 
     switch (arg.key)
@@ -270,7 +276,9 @@ void Player::movedMouse(const OIS::MouseEvent &e)
     int mouseY = (int)(-1 * e.state.Y.rel*Global::timestep);
 
     if (inControl && ownsCamera)
-        rotateCamera(mouseX/10.0f,mouseY/10.0f);
+        rotateCamera(mouseX / 10.0f, mouseY / 10.0f);
+    else
+        pSliding->movedMouse(e);
 }
 
 
@@ -365,17 +373,14 @@ void Player::attachCamera(bool silent /*= false*/)
     camnode->setOrientation(Ogre::Quaternion::IDENTITY);
     //camnode->setPosition(Vector3(0,0,0));
 
-    Ogre::Quaternion q = mCamera->getDerivedOrientation();
-
     mCamera->detachFromParent();
     mCamera->setDirection(Ogre::Vector3(0,0,-1));
     camnode->attachObject(mCamera);
-    rotateCamera(Ogre::Degree(q.getYaw()).valueDegrees(),Ogre::Degree(q.getPitch()).valueDegrees());
 }
 
-void Player::attachCameraWithTransition()
+void Player::attachCameraWithTransition(float duration, Ogre::Quaternion targetOr)
 {
-    cameraArrival.timer = 0.2f;
+    cameraArrival.timer = duration;
     cameraArrival.tempNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 
     cameraArrival.pos = mCamera->getDerivedPosition();
@@ -385,6 +390,7 @@ void Player::attachCameraWithTransition()
     cameraArrival.tempNode->setOrientation(cameraArrival.dir);
 
     attachCamera();
+    rotateCamera(cameraArrival.dir);
 
     mCamera->detachFromParent();
     cameraArrival.tempNode->attachObject(mCamera);
@@ -418,14 +424,19 @@ void Player::updateCameraArrival()
     }
 }
 
-void Player::rotateCamera(Real hybX,Real hybY)
+void Player::rotateCamera(Ogre::Quaternion or)
 {
-    camPitch+=(hybY);
+    rotateCamera(or.getYaw().valueDegrees(), or.getPitch().valueDegrees());
+}
+
+void Player::rotateCamera(Real yaw,Real pitch)
+{
+    camPitch+=(pitch);
     if (camPitch>-80 && camPitch<80)
-        necknode->pitch(Degree(hybY), Node::TS_LOCAL);
+        necknode->pitch(Degree(pitch), Node::TS_LOCAL);
     else
     {
-        camPitch=camPitch-hybY;
+        camPitch=camPitch-pitch;
         if (camPitch<0)
         {
             necknode->pitch(Degree(-80-camPitch), Node::TS_LOCAL);
@@ -439,21 +450,21 @@ void Player::rotateCamera(Real hybX,Real hybY)
     }
 
     if(climbing)
-        pClimbing->updateClimbCamera(hybX);
+        pClimbing->updateClimbCamera(yaw);
     else
     {
         //damping of turning speed if moving quickly midair
         if (!onGround && bodyVelocityL>10)
-            hybX *= std::max(0.1f, (100-bodyVelocityL)/90.f);
+            yaw *= std::max(0.1f, (100-bodyVelocityL)/90.f);
 
-        necknode->yaw(Degree(hybX), Node::TS_WORLD);
+        necknode->yaw(Degree(yaw), Node::TS_WORLD);
     }
 
 }
 
 void Player::update(Real time)
 {
-    //SceneCubeMap::renderAll();
+    Global::DebugPrint(std::to_string(mCamera->getDerivedOrientation().getPitch().valueDegrees()));
 
     tslf = time*Global::timestep;
     facingDir = mCamera->getDerivedOrientation()*Ogre::Vector3(0, 0, -1);
@@ -481,8 +492,15 @@ void Player::updateStats()
     updateGroundStats();
 
     bodyVelocityL = body->getVelocity().length();
+
     pSwimming->update(tslf);
     pAbilities->update(tslf);
+
+    if (transformed)
+    {
+        pTransform->update(tslf);
+        return;
+    }
 
     bool readyToSlide = (inControl && !pParkour->isRolling() && !wallrunning && !climbing && !hanging);
     pSliding->update(tslf, readyToSlide);

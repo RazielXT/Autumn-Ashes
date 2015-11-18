@@ -334,8 +334,10 @@ void diffuse_ps(
 	
 	//output.rgb = diffuseTex.xyz;
 	
+	float brightness = (output.r + output.g + output.g)/3;
+	
 	color0 = output;
-	color1 = float4(viewNormal*fresnel, saturate(matSpec0.a + specular.r / 2));
+	color1 = float4(viewNormal*fresnel, saturate(brightness + matSpec0.a + specular.r / 2));
 	color2 = float4(0, 0, 0, 1);
-	color3 = float4(1 - IN.uv.z / IN.uv.w, -viewPos.z, 0, 1);
+	color3 = float4(1 - IN.uv.z / IN.uv.w, distance, 0, 1);
 }

@@ -242,6 +242,9 @@
     <ClCompile Include="src\SceneCubeMap.cpp">
       <Filter>Files\Core\RenderObjects</Filter>
     </ClCompile>
+    <ClCompile Include="src\PlayerTransform.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -501,6 +504,9 @@
     </ClInclude>
     <ClInclude Include="include\SceneCubeMap.h">
       <Filter>Files\Core\RenderObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerTransform.h">
+      <Filter>Files\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

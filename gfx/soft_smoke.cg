@@ -65,7 +65,7 @@ void softsmoke_ps(
 	if(color.a==0) discard;
 
 	float camScale=2;
-	float scale=2;
+	float scale=5;
 
 	/*float roz=saturate(abs(depthCloud-depthEnv)/scale);
 	roz*=0.8;

@@ -40,6 +40,7 @@ public:
     GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, WorldMaterials* wMaterials);
     ~GameStateManager();
 
+    LevelInfo* getLvlInfo(int id);
     LevelInfo* getCurrentLvlInfo();
 
     void switchToMainMenu();

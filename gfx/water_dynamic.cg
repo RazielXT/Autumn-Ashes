@@ -94,7 +94,7 @@ VOut wdiffuse_vs_op(VIn IN,
     OUT.t.xyz = IN.t;
     OUT.b.xyz = cross(IN.t.xyz, wMapNormal);
 	
-	OUT.wp.w = max(waveParams.w/2.5,foamDirect);//OUT.vVec.w*add*IN.c.r/(waveSize*1.5);
+	OUT.wp.w = max(waveParams.w/2,foamDirect);//OUT.vVec.w*add*IN.c.r/(waveSize*1.5);
 	
     return OUT;
 }
@@ -215,7 +215,7 @@ void wdiffuse_ps_op(
 	
     color1=float4(normalOut,shine,alpha);
     color2=pow(fresnel*1.5,2);
-    color3=float4(IN.uv.z/IN.uv.w,dist,0,0);
+    color3=float4(1-IN.uv.z/IN.uv.w,dist,0,0);
 }
 
 struct VOutLite

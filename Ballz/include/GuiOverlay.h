@@ -26,16 +26,18 @@ enum UiInfo
 
 struct lvlButton
 {
-    lvlButton(Gorilla::Rectangle* r, int id, bool unlocked, float pos)
+    lvlButton(Gorilla::Rectangle* r, Gorilla::Caption* c, int id, bool unlocked, float pos)
     {
         this->r = r;
         this->id = id;
         this->unlocked = unlocked;
         this->pos = pos;
+        this->c = c;
     }
 
     float pos;
     Gorilla::Rectangle* r;
+    Gorilla::Caption* c;
     int id;
     bool unlocked;
 };

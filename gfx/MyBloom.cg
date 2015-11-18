@@ -176,19 +176,22 @@ float4 MySmokeBloomX_fp
     ) : COLOR
 
 {
-
     float4 ini=tex2Dlod(scene, float4(uv,0,0));
     float4 sum = ini*0.15;
+	float maxAlpha = ini.a;
+	
+	for (int i = 0; i < 10; i++)
+	{
+		float4 t=tex2Dlod(scene, float4(uv + float2(0,posSmoke[i]*SMOKE_BLUR_RADIUS),0,0));
 
-   for (int i = 0; i < 10; i++)
-   {
-	float4 t=tex2Dlod(scene, float4(uv + float2(0,posSmoke[i]*SMOKE_BLUR_RADIUS),0,0)) * samplesSmoke[i];
+		maxAlpha = max(maxAlpha,t.a);
+		sum += t * samplesSmoke[i];
+	}
 
-      sum +=t;
-   }
-
-   //if(ini.a>sum.a) sum=(ini+sum)/2; 
-   return sum;
+	float s = sum.r + sum.g + sum.b;
+   	sum.a = (s + sum.a + maxAlpha)/3;
+	//if(ini.a>sum.a) sum=(ini+sum)/2; 
+	return sum;
 }
 
 
@@ -200,17 +203,21 @@ float4 MySmokeBloomY_fp
     ) : COLOR
 
 {
-   float4 ini=tex2Dlod(blurX, float4(uv,0,0));
-   float4 sum = ini*0.15;
+	float4 ini=tex2Dlod(blurX, float4(uv,0,0));
+	float4 sum = ini*0.15;
+	float maxAlpha = ini.a;
 
-   for (int i = 0; i < 10; i++)
-   {
-      float4 t=tex2Dlod(blurX, float4(uv+ float2(posSmoke[i]*SMOKE_BLUR_RADIUS,0),0,0)) * samplesSmoke[i];
+	for (int i = 0; i < 10; i++)
+	{
+		float4 t=tex2Dlod(blurX, float4(uv+ float2(posSmoke[i]*SMOKE_BLUR_RADIUS,0),0,0));
 
-	sum +=t;
-   }
+		maxAlpha = max(maxAlpha,t.a);
+		sum +=t * samplesSmoke[i];
+	}
 
-   //if(ini.a>sum.a) sum=(ini+sum)/2; 
+		float s = sum.r + sum.g + sum.b;
+   	sum.a = (s + sum.a + maxAlpha)/3;
+	//if(ini.a>sum.a) sum=(ini+sum)/2; 
 
-   return sum;
+	return sum;
 }

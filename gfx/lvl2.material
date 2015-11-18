@@ -106,7 +106,27 @@ material grassMat : 1t_material_static
 	set $shininess "16"
 }
 
-material sandMat : 1tEnv_material_static 
+material fallenLeaves : 1t_material_static 
+{
+	set_texture_alias diffuseMap LeavesDead0060_7_S.jpg
+	set_texture_alias normalMap LeavesDead0060_7_S_NORM.tga
+	set_texture_alias dispMap LeavesDead0060_7_S_DISP.bmp
+	//set_texture_alias normalDetailMap 05_NORMAL.jpg
+	
+	set $uvScale "0.75"
+	set $detailScale "5"
+	
+	set $diffuseCol "1 1 1"
+	// specular colour multiplier (for example, red-ish)
+
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	// specular power (shininess) (the higher, the sharper the highlights)
+	set $shininess "16"
+
+}
+
+material concreteMat : 1tEnv_material_static 
 {
 	set_texture_alias diffuseMap ConcreteNew0007_2_S.bmp
 	set_texture_alias normalMap ConcreteNew0007_2_S_NORM.tga
@@ -195,7 +215,7 @@ material  branch_summer2png: leaf_material_dynamic_op
 	set $specularCol "0.1046281215 0.13446281215 0.10546281215"
 }
 
-material wood03png : 2t_vc_material_static
+material wood03png : 1t_vc_material_static
 {
 	set $uvScale "1"
 	set $uvSpreadScale "0.5" 
@@ -207,12 +227,21 @@ material wood03png : 2t_vc_material_static
 	
 	set_texture_alias diffuseMap bark_deciduous.dds
 	set_texture_alias normalMap wood_NORM.tga
-	
-	set_texture_alias diffuseMap2 grass_diffuse.png
-	set_texture_alias normalMap2 grass_diffuse_NORM.tga
 
 	set $diffuseCol "1 1 1"
 	set $specularCol "0.1 0.1 0.05"
+}
+
+material wood1Mat : 1t_material_static 
+{
+	set_texture_alias diffuseMap bark_deciduous.dds
+	set_texture_alias normalMap wood_NORM.tga
+
+	set $difUV "1 1"
+	set $diffuseCol "1 1 1"
+	set $brightness "0.05"
+	set $specularCol "0.1036 0.101 0.152"
+	set $shininess "32"
 }
 
 material wood03png2 : 1t_material_static 
@@ -240,6 +269,18 @@ material wood00png : 1t_material_static
 }
 
 material wood07png : 1t_material_static 
+{
+	set_texture_alias diffuseMap wood.png
+	set_texture_alias normalMap wood_NORM.tga
+
+	set $difUV "1 1"
+	set $diffuseCol "1 1 1"
+	set $brightness "0.05"
+	set $specularCol "0.1036 0.101 0.152"
+	set $shininess "32"
+}
+
+material sandMat : 1t_material_static 
 {
 	set_texture_alias diffuseMap wood.png
 	set_texture_alias normalMap wood_NORM.tga
@@ -279,7 +320,7 @@ material terrainGrassRock : 2t_material_static
 
 }
 
-material terrainRock : 2t_material_static
+material terrainRock : 2t_vc_material_static
 {
 	set $uvScale "2"
 	set $uv2Scale "2"

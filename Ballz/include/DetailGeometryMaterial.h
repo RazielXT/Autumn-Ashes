@@ -22,7 +22,7 @@ public:
     {
         if (editVCMeshes.empty())
         {
-            auto darkenCenter = [](Ogre::Entity* e, float* pos, float*, Ogre::RGBA* color, void*)
+            auto darkenBottomCenter = [](Ogre::Entity* e, float* pos, float*, Ogre::RGBA* color, void*)
             {
                 if (!color)
                     return;
@@ -37,14 +37,15 @@ public:
 
                 float dark = std::max(topLight, centerDark);
                 dark = Ogre::Math::Clamp<float>(dark, 0.0f, 1.0f);
-                *color = Ogre::ColourValue(0, 0, 0, dark).getAsARGB();
+                *color = Ogre::ColourValue(dark, dark, dark, dark).getAsARGB();
             };
 
-            editVCMeshes["aspenLeafs.mesh"] = darkenCenter;
-            editVCMeshes["aspen2Leafs.mesh"] = darkenCenter;
-            editVCMeshes["treeBunchLeafs.mesh"] = darkenCenter;
-            editVCMeshes["treeBunchBigLeafs.mesh"] = darkenCenter;
-            editVCMeshes["bush1.mesh"] = darkenCenter;
+            editVCMeshes["aspenLeafs.mesh"] = darkenBottomCenter;
+            editVCMeshes["aspen2Leafs.mesh"] = darkenBottomCenter;
+            editVCMeshes["treeBunchLeafs.mesh"] = darkenBottomCenter;
+            editVCMeshes["treeBunchBigLeafs.mesh"] = darkenBottomCenter;
+            editVCMeshes["bush1.mesh"] = darkenBottomCenter;
+
         }
     }
 

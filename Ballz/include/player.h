@@ -9,6 +9,7 @@
 #include "PlayerGrab.h"
 #include "PlayerParkour.h"
 #include "CameraShaker.h"
+#include "PlayerTransform.h"
 
 class Shaker
 {
@@ -40,6 +41,7 @@ class Player
     friend class PlayerSwimming;
     friend class PlayerAbilities;
     friend class PlayerSliding;
+    friend class PlayerTransform;
 
     struct CamArrivalInfo
     {
@@ -94,10 +96,11 @@ public:
 
     Ogre::Camera* detachCamera();
     void attachCamera(bool silent = false);
-    void attachCameraWithTransition();
+    void attachCameraWithTransition(float duration, Ogre::Quaternion targetOr);
 
     Ogre::Vector3 getFacingDirection() const;
     void rotateCamera(Ogre::Real hybX, Ogre::Real hybY);
+    void rotateCamera(Ogre::Quaternion or);
 
     Ogre::SceneNode* detachHead();
     void attachHead(Ogre::SceneNode* headNode = nullptr);
@@ -117,6 +120,7 @@ public:
     PlayerSwimming* pSwimming;
     PlayerAbilities* pAbilities;
     PlayerSliding* pSliding;
+    PlayerTransform* pTransform;
 
 private:
 
@@ -159,7 +163,7 @@ private:
     bool onGround, sprinting, inControl, inMoveControl, ownsCamera;
 
     //extern state
-    bool hanging, grabbedObj, wallrunning, sliding;
+    bool hanging, grabbedObj, wallrunning, sliding, transformed;
     char climbing;
 
     float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, sprintmeter;

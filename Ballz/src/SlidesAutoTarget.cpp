@@ -78,7 +78,8 @@ bool SlidesAutoTargetAsync::getTargetSlideRay(Vector3 pos, Vector3 dir, float ra
 
 bool SlidesAutoTargetAsync::getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide* ignoredSlide)
 {
-    float maxDistSq = 2;
+    pos.y -= 2;
+    float maxDistSq = 5;
     float closest = maxDistSq;
 
     for (auto s : loadedSlides)
@@ -128,8 +129,7 @@ void SlidesAutoTargetAsync::updateAutoTarget(Vector3 pos, Vector3 dir, float tsl
         {
             //Global::gameMgr->myMenu->showUseGui(Ui_Target);
         }
-        else
-            //auto attach on touch
+        else   //auto attach on touch
         {
             if (lastUnavailableSlide != targetInfo.targetSlide)
                 targetInfo.targetSlide->start(targetInfo.targetSlidePos);

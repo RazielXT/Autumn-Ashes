@@ -21,9 +21,10 @@ void skybox_ps(
 		)
 {
 	color0=tex2D(material, uv);
-	
-	float brightess = (color0.r + color0.g + color0.b) == 3 ? 1 : 0;
-	color1=float4(0, 0, 0, 0.25*color0 + brightess);
+
+	float brightess =  pow((color0.r + color0.g + color0.b)/3.0,2);
+	float add = brightess == 1 ? 2 : 0;
+	color1=float4(0, 0, 0, brightess + add);
 	color2=color0;
 	color3=float4(0,8000,0,1);
 }

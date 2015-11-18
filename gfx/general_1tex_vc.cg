@@ -214,7 +214,7 @@ void diffuse_ps(
 	eyeDir = normalize(eyeDir);
 
 	float4 diffuseTex = tex2D(diffuseMap, texCoordBase);
-	diffuseTex.rgb *= diffuseColor;
+	diffuseTex.rgb *= saturate(1 + diffuseColor);
 	
 	float diffuseLight = dot(lightDir, normal);
 
@@ -301,7 +301,7 @@ void diffuse_ps(
 	output.rgb = lerp(output.rgb, atmFog, insideFog);
 
 	color0 = output;
-	color1 = float4(0.5, 0.5, saturate(matSpec0.a + specular.r / 2), 1);
+	color1 = float4(0.5, 0.5, 0.5, saturate(matSpec0.a + specular.r / 2));
 	color2 = float4(0, 0, 0, 1);
-	color3 = float4(IN.uv.z / IN.uv.w, distance, 0, 1);
+	color3 = float4(1 - IN.uv.z / IN.uv.w, distance, 0, 1);
 }

@@ -59,7 +59,25 @@ compositor ScaryBloomNoSSAO
 				last_render_queue 79
 			}
         }
+
+		//transparent
+        target rtTran
+        {
+			shadows off
+					
+			pass clear
+			{
+				buffers colour
+			}
+			
+			pass render_scene
+			{
+				first_render_queue 80
+				last_render_queue 89
+			}
+        }
 		
+				
 		target rt22
 		{
 			input none
@@ -99,23 +117,6 @@ compositor ScaryBloomNoSSAO
 				input 0 rt22
 			}
 		}
-
-		//transparent
-        target rtTran
-        {
-			shadows off
-					
-			pass clear
-			{
-				buffers colour
-			}
-			
-			pass render_scene
-			{
-				first_render_queue 80
-				last_render_queue 89
-			}
-        }
 		
 		target rtD
 		{
