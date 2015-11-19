@@ -7,6 +7,36 @@ using namespace Ogre;
 namespace MUtils
 {
 
+inline float quickstep(float x, float smoothing)
+{
+    float w0 = smoothing;
+    float w1 = 1.0f - smoothing;
+
+    float w = (4 - 4 * x)*x;
+
+    if (x > 0.5)
+        w = 2 - w;
+
+    return (w0*x + w1*w*0.5f);
+}
+
+inline float smoothstep(float x)
+{
+    return x*x*(3 - 2 * x);
+}
+
+inline float smoothstep(float edge0, float edge1, float x)
+{
+    float diff = edge1 - edge0;
+
+    // Scale, bias and saturate x to 0..1 range
+    x = Ogre::Math::Clamp((x - edge0) / (diff), 0.0f, 1.0f);
+    // Evaluate polynomial
+
+
+    return edge0 + diff*smoothstep(x);
+}
+
 inline std::string strtok_str(std::string& txt, char delim)
 {
     auto dPos = txt.find_first_of(delim);

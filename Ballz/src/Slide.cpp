@@ -280,8 +280,6 @@ bool Slide::placePointOnLine(Vector3& point)
 
 void Slide::startJumpToSlide()
 {
-    Global::shaker->startShaking(0.8, 1.0, 0.5, 1, 1, 0.4, 0.25, 1, true);
-
     auto target = getCurrentState().getTranslate();
     target.y += head->getPosition().y;
 
@@ -306,6 +304,9 @@ void Slide::startJumpToSlide()
     headArrival.dirTarget = headArrival.dirTarget*Quaternion(Ogre::Degree(-30), Vector3(1, 0, 0));
 
     jumpingToSlide = true;
+
+    float shakeW = std::min(1.0f, headArrival.dist*0.8f);
+    Global::shaker->startShaking(shakeW*0.8f, shakeW*1.0f, 0.5f, 1, 1, 0.4f, 0.25f, 1, true);
 }
 
 //w^n, n = -1-1 to 3-1/3, n 0->1
@@ -353,9 +354,11 @@ void Slide::updateJumpToSlide(float time)
 
     if (!beforeJump)
     {
-        headArrival.timer = std::min(headArrival.timer + time*1.75f, headArrival.dist);
+        headArrival.timer = std::min(headArrival.timer + time*2.75f, headArrival.dist);
         w = headArrival.timer / headArrival.dist;
-        w = pow(w, 0.8f);
+
+        //w = pow(w, 0.58f);
+        //w = quickstep(w, 0.75f);
     }
 
     auto hDiff = headArrival.pos.y - headArrival.posTarget.y;
