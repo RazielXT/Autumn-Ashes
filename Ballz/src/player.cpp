@@ -74,7 +74,6 @@ Player::Player(WorldMaterials* wMaterials)
     pSwimming = new PlayerSwimming(this);
     pAbilities = new PlayerAbilities(this);
     pSliding = new PlayerSliding(this);
-    pTransform = new PlayerTransform(this);
 }
 
 Player::~Player ()
@@ -86,7 +85,6 @@ Player::~Player ()
     delete pGrabbing;
     delete pParkour;
     delete pSliding;
-    delete pTransform;
     delete shaker;
 }
 
@@ -169,7 +167,6 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
 {
     pSliding->pressedKey(arg);
     pAbilities->pressedKey(arg);
-    pTransform->pressedKey(arg);
 
     switch (arg.key)
     {
@@ -495,12 +492,6 @@ void Player::updateStats()
 
     pSwimming->update(tslf);
     pAbilities->update(tslf);
-
-    if (transformed)
-    {
-        pTransform->update(tslf);
-        return;
-    }
 
     bool readyToSlide = (inControl && !pParkour->isRolling() && !wallrunning && !climbing && !hanging);
     pSliding->update(tslf, readyToSlide);

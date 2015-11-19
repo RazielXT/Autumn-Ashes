@@ -120,7 +120,6 @@ public:
     PlayerSwimming* pSwimming;
     PlayerAbilities* pAbilities;
     PlayerSliding* pSliding;
-    PlayerTransform* pTransform;
 
 private:
 
