@@ -31,17 +31,7 @@ PostProcessMgr::~PostProcessMgr()
 
 void PostProcessMgr::resetValues()
 {
-    vars.ivp = Ogre::Matrix4::IDENTITY;
-    vars.pvp = Ogre::Matrix4::IDENTITY;
-    vars.ipm = Ogre::Matrix4::IDENTITY;
-    vars.hurtEffect = 0;
-    vars.godrayEdge = 0.2;
-    vars.ContSatuSharpNoise = 0;
-    vars.radialHorizBlurVignette = 0;
-    vars.mbAmount = 1;
-    vars.ppDistortionIgnore = 1;
-    vars.ColouringShift = Ogre::Vector4(1, 1, 1, 0);
-    vars.bloomStrDep = Ogre::Vector4(1, 1, 0, 0);
+	vars.reset();
 }
 
 void PostProcessMgr::setGodraySunPosition(Ogre::Vector3 pos)
@@ -106,18 +96,11 @@ void PostProcessMgr::update(float tslf)
 
 void PostProcessMgr::setToScaryBloom()
 {
-    scaryPP = true;
-    advancedPP = false;
-
     //Ogre::CompositorManager::getSingleton().removeCompositor(camera->getViewport(), currentCompositor);
     currentCompositor = "ScaryBloomNoSSAO";
     Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor);
     bloomCompositor->addListener(scaryList);
     Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor, true);
-}
-
-void PostProcessMgr::setToAdvancedBloom()
-{
 }
 
 void PostProcessMgr::fadeOut(Ogre::Vector3 colour, float duration, bool skipFrame)

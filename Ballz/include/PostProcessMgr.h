@@ -21,6 +21,21 @@ struct PostProcessVariables
 
     Ogre::Vector4 colourOverlaying;
     Ogre::Vector4 SunScreenSpacePosition;
+
+	void reset()
+	{
+		ivp = Ogre::Matrix4::IDENTITY;
+		pvp = Ogre::Matrix4::IDENTITY;
+		ipm = Ogre::Matrix4::IDENTITY;
+		hurtEffect = 0;
+		godrayEdge = 0.2;
+		ContSatuSharpNoise = 0;
+		radialHorizBlurVignette = 0;
+		mbAmount = 1;
+		ppDistortionIgnore = 1;
+		ColouringShift = Ogre::Vector4(1, 1, 1, 0);
+		bloomStrDep = Ogre::Vector4(1, 1, 0, 0);
+	}
 };
 
 class PostProcessMgr
@@ -36,9 +51,7 @@ public:
     void fadeOut(Ogre::Vector3 targetColor, float duration, bool skipFrame = false);
     void fadeIn(Ogre::Vector3 startColor, float duration, bool skipFrame = false);
 
-    void setToBasicBloom();
     void setToScaryBloom();
-    void setToAdvancedBloom();
 
     void setGodraySunPosition(Ogre::Vector3 pos);
     void setGodraySunPositionFar(Ogre::Vector3 pos);
@@ -51,7 +64,6 @@ private:
 
     bool skipFadeFrame = false;
     float totalBlacktime,currentBlacktime;
-    bool scaryPP,advancedPP;
 
     AaPostProcessListener* scaryList;
 
