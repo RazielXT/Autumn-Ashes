@@ -229,7 +229,8 @@
 
 <class name="SlideTrack" usage="object">
 	<data name="Loop" displayName="Loop" type="bool" defaultValue="false"/>
-	<data name="Top" displayName="Top slide" type="bool" defaultValue="false"/>
+	<data name="Top" displayName="Top slide" type="bool" defaultValue="true"/>
+	<data name="Walkable" displayName="Walkable" type="bool" defaultValue="false"/>
 	<data name="Bidirectional" displayName="Bidirectional" type="bool" defaultValue="false"/>
 	
 	<data name="Speed" displayName="Speed" type="float" defaultValue="1"/>

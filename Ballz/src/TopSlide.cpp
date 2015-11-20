@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "OgreMath.h"
 
-TopSlide::TopSlide(SceneNode* node, const std::string& zipName, const std::string& zipAnimName, bool looped, float speed) : Slide(zipAnimName, looped, speed)
+TopSlide::TopSlide(SceneNode* node, const std::string& zipName, const std::string& zipAnimName, bool looped, bool walkable, float speed) : Slide(zipAnimName, looped, walkable, speed)
 {
     tracker = node;
     base = tracker->createChildSceneNode();
@@ -14,7 +14,7 @@ TopSlide::TopSlide(SceneNode* node, const std::string& zipName, const std::strin
     initSlide(zipAnimName);
 }
 
-TopSlide::TopSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, float speed) : Slide(zipName, looped, speed)
+TopSlide::TopSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, bool walkable, float speed) : Slide(zipName, looped, walkable, speed)
 {
     tracker = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
     base = tracker->createChildSceneNode();

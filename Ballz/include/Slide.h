@@ -46,7 +46,7 @@ protected:
 
     NodeAnimationTrack* track;
 
-    Slide(const std::string& zipName, bool looped, float speed) : animName(zipName), loop(looped), avgSpeed(speed) {};
+	Slide(const std::string& zipName, bool looped, bool isWalkable, float speed) : animName(zipName), loop(looped), walkable(isWalkable), avgSpeed(speed) {};
 
     virtual void resetHead() {};
 
@@ -93,6 +93,7 @@ protected:
     float currentSpeed;
     float avgSpeed = 5;
     bool loop = false;
+	bool walkable = false;
 
     void invertTrack();
 

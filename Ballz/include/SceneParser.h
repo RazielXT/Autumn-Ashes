@@ -1137,6 +1137,7 @@ private:
         auto bidir = Ogre::StringConverter::parseBool(getElementValue(element, "Bidirectional"));
         auto speed = Ogre::StringConverter::parseReal(getElementValue(element, "Speed"));
         auto top = Ogre::StringConverter::parseBool(getElementValue(element, "Top"));
+		auto walkable = Ogre::StringConverter::parseBool(getElementValue(element, "Walkable"));
         auto animTrack = getElementValue(element, "Animation");
 
         Slide* line;

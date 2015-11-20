@@ -159,7 +159,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\ManualDetailGeometry.cpp" />
     <ClCompile Include="src\PgDetailGeometry.cpp" />
     <ClCompile Include="src\PlayerAbilities.cpp" />
-    <ClCompile Include="src\PlayerCamera.cpp" />
+    <ClCompile Include="src\CameraJump.cpp" />
     <ClCompile Include="src\PlayerClimbing.cpp" />
     <ClCompile Include="src\PlayerGrab.cpp" />
     <ClCompile Include="src\PlayerParkour.cpp" />
@@ -242,7 +242,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\GeometryManager.h" />
     <ClInclude Include="include\PgDetailGeometry.h" />
     <ClInclude Include="include\PlayerAbilities.h" />
-    <ClInclude Include="include\PlayerCamera.h" />
+    <ClInclude Include="include\CameraJump.h" />
     <ClInclude Include="include\PlayerClimbing.h" />
     <ClInclude Include="include\PlayerGrab.h" />
     <ClInclude Include="include\PlayerParkour.h" />

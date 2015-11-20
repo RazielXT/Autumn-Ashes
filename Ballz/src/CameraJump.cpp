@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CameraJump.h"
 
-void CameraJump::update(float tslf)
+bool CameraJump::update(float tslf)
 {
 
 }
