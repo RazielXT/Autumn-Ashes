@@ -44,10 +44,10 @@ bool SlidesAutoTargetAsync::getTargetSlideRay(Vector3 pos, Vector3 dir, float ra
         int foundSegmentId = -1;
         float foundSegmentPos = 1;
 
-        for (size_t i = 1; i < s->slidePoints.size(); i++)
+        for (size_t i = 1; i < s->trackPoints.size(); i++)
         {
-            auto s0 = s->slidePoints[i - 1].pos;
-            auto s1 = s->slidePoints[i].pos;
+            auto s0 = s->trackPoints[i - 1].pos;
+            auto s1 = s->trackPoints[i].pos;
 
             auto r = MUtils::getSegmentsDistanceInfo(rayStart, rayTarget, s0, s1);
             float minCompDist = minRayRadiusW*r.s1Pos;
@@ -66,8 +66,8 @@ bool SlidesAutoTargetAsync::getTargetSlideRay(Vector3 pos, Vector3 dir, float ra
         {
             preparedSlide = s;
 
-            auto s0 = s->slidePoints[foundSegmentId - 1].startOffset;
-            auto s1 = s->slidePoints[foundSegmentId].startOffset;
+            auto s0 = s->trackPoints[foundSegmentId - 1].startOffset;
+            auto s1 = s->trackPoints[foundSegmentId].startOffset;
             preparedSlideOffset = s0 + (s1 - s0)*foundSegmentPos;
         }
 
@@ -87,10 +87,10 @@ bool SlidesAutoTargetAsync::getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide*
         if (s == ignoredSlide)
             continue;
 
-        for (size_t i = 1; i < s->slidePoints.size(); i++)
+        for (size_t i = 1; i < s->trackPoints.size(); i++)
         {
-            auto s0 = s->slidePoints[i - 1].pos;
-            auto s1 = s->slidePoints[i].pos;
+            auto s0 = s->trackPoints[i - 1].pos;
+            auto s1 = s->trackPoints[i].pos;
 
             auto r = MUtils::getProjectedState(pos, s0, s1);
 

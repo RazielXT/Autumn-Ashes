@@ -11,7 +11,7 @@ TopSlide::TopSlide(SceneNode* node, const std::string& zipName, const std::strin
 
     resetHead();
 
-    initSlide(zipAnimName);
+    initTrack(zipAnimName);
 }
 
 TopSlide::TopSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, bool walkable, float speed) : Slide(zipName, looped, walkable, speed)
@@ -22,7 +22,7 @@ TopSlide::TopSlide(const std::vector<Ogre::Vector3>& points, const std::string& 
 
     resetHead();
 
-    initSlide(points);
+    initTrack(points);
 }
 
 void TopSlide::pressedKey(const OIS::KeyEvent &arg)

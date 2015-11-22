@@ -8,7 +8,7 @@ class ZipLineSlide : public Slide
 {
 public:
 
-    ZipLineSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, float speed);
+    ZipLineSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, bool is_walkable, float speed);
 
     virtual bool start();
 

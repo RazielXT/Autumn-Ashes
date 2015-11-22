@@ -8,9 +8,9 @@ class TopSlide : public Slide
 {
 public:
 
-	TopSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, bool walkable, float speed);
+    TopSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, bool walkable, float speed);
 
-	TopSlide(Ogre::SceneNode* node, const std::string& zipName, const std::string& zipAnimName, bool looped, bool walkable, float speed);
+    TopSlide(Ogre::SceneNode* node, const std::string& zipName, const std::string& zipAnimName, bool looped, bool walkable, float speed);
 
     virtual void pressedKey(const OIS::KeyEvent &arg);
 

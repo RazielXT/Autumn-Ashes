@@ -245,6 +245,9 @@
     <ClCompile Include="src\CameraJump.cpp">
       <Filter>Files\Player</Filter>
     </ClCompile>
+    <ClCompile Include="src\AnimatedTrack.cpp">
+      <Filter>Files\Objects\Slide</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -507,6 +510,9 @@
     </ClInclude>
     <ClInclude Include="include\CameraJump.h">
       <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimatedTrack.h">
+      <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

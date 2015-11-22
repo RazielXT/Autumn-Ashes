@@ -22,20 +22,20 @@ struct PostProcessVariables
     Ogre::Vector4 colourOverlaying;
     Ogre::Vector4 SunScreenSpacePosition;
 
-	void reset()
-	{
-		ivp = Ogre::Matrix4::IDENTITY;
-		pvp = Ogre::Matrix4::IDENTITY;
-		ipm = Ogre::Matrix4::IDENTITY;
-		hurtEffect = 0;
-		godrayEdge = 0.2;
-		ContSatuSharpNoise = 0;
-		radialHorizBlurVignette = 0;
-		mbAmount = 1;
-		ppDistortionIgnore = 1;
-		ColouringShift = Ogre::Vector4(1, 1, 1, 0);
-		bloomStrDep = Ogre::Vector4(1, 1, 0, 0);
-	}
+    void reset()
+    {
+        ivp = Ogre::Matrix4::IDENTITY;
+        pvp = Ogre::Matrix4::IDENTITY;
+        ipm = Ogre::Matrix4::IDENTITY;
+        hurtEffect = 0;
+        godrayEdge = 0.2;
+        ContSatuSharpNoise = 0;
+        radialHorizBlurVignette = 0;
+        mbAmount = 1;
+        ppDistortionIgnore = 1;
+        ColouringShift = Ogre::Vector4(1, 1, 1, 0);
+        bloomStrDep = Ogre::Vector4(1, 1, 0, 0);
+    }
 };
 
 class PostProcessMgr

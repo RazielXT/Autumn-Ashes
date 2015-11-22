@@ -1137,7 +1137,7 @@ private:
         auto bidir = Ogre::StringConverter::parseBool(getElementValue(element, "Bidirectional"));
         auto speed = Ogre::StringConverter::parseReal(getElementValue(element, "Speed"));
         auto top = Ogre::StringConverter::parseBool(getElementValue(element, "Top"));
-		auto walkable = Ogre::StringConverter::parseBool(getElementValue(element, "Walkable"));
+        auto walkable = Ogre::StringConverter::parseBool(getElementValue(element, "Walkable"), true);
         auto animTrack = getElementValue(element, "Animation");
 
         Slide* line;
@@ -1170,14 +1170,14 @@ private:
             vbuf->unlock();
 
             if (top)
-                line = new TopSlide(points, node->getName(), loop, speed);
+                line = new TopSlide(points, node->getName(), loop, walkable, speed);
             else
-                line = new ZipLineSlide(points, node->getName(), loop, speed);
+                line = new ZipLineSlide(points, node->getName(), loop, walkable, speed);
 
             line->bidirectional = bidir;
         }
         else
-            line = new TopSlide(node, node->getName(), animTrack, loop, speed);
+            line = new TopSlide(node, node->getName(), animTrack, loop, walkable, speed);
 
         loadedSlides[node->getName()] = line;
 

@@ -7,15 +7,15 @@
 class CameraJump
 {
 public:
-	CameraJump();
+    CameraJump();
 
-	void saveState(PlayerStateInfo& info);
-	void loadState(PlayerStateInfo& info);
+    void saveState(PlayerStateInfo& info);
+    void loadState(PlayerStateInfo& info);
 
-	bool update(float tslf);
+    bool update(float tslf);
 
 private:
 
-	Player* p;
+    Player* p;
 };
 

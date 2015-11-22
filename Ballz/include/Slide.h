@@ -2,12 +2,13 @@
 #include "stdafx.h"
 #include "InputListener.h"
 #include <future>
+#include "AnimatedTrack.h"
 
 using namespace Ogre;
 
 class SlidesAutoTargetAsync;
 
-class Slide
+class Slide : public AnimatedTrack
 {
 
 public:
@@ -26,32 +27,15 @@ public:
     virtual void releasedKey(const OIS::KeyEvent &arg);
     virtual void movedMouse(const OIS::MouseEvent &e);
 
-    Vector3 getTrackPosition(float timeOffset);
-
-    Ogre::Quaternion getDirectionState(float offset);
-    Ogre::Quaternion getDirectionState();
-
-    Ogre::TransformKeyFrame getCurrentState();
-
-    struct SlidePoint
-    {
-        Vector3 pos;
-        float startOffset;
-    };
-
-    std::vector<SlidePoint> slidePoints;
     bool bidirectional = false;
 
 protected:
 
-    NodeAnimationTrack* track;
-
-	Slide(const std::string& zipName, bool looped, bool isWalkable, float speed) : animName(zipName), loop(looped), walkable(isWalkable), avgSpeed(speed) {};
+    Slide(const std::string& zipName, bool looped, bool isWalkable, float speed) : AnimatedTrack(zipName), loop(looped), walkable(isWalkable), avgSpeed(speed) {};
 
     virtual void resetHead() {};
 
     void removeControlFromPlayer();
-    void setCorrectDirection(float startOffset = -1);
 
     bool jumpingToSlide = false;
 
@@ -61,7 +45,7 @@ protected:
     struct HeadTransitionState
     {
         float dist;
-        SceneNode* tempNode;
+        SceneNode* tempNode = nullptr;
         Vector3 posTarget;
         Vector3 pos;
         Quaternion dir;
@@ -74,11 +58,6 @@ protected:
         float yaw;
         float pitch;
     };
-
-    void initSlide(const std::string& zipAnimName);
-    void initSlide(const std::vector<Ogre::Vector3>& points);
-
-    bool placePointOnLine(Vector3& point);
 
     void updateSlidingState(float time);
     void updateHeadArrival(float time);
@@ -93,19 +72,14 @@ protected:
     float currentSpeed;
     float avgSpeed = 5;
     bool loop = false;
-	bool walkable = false;
-
-    void invertTrack();
+    bool walkable = false;
 
     bool enablePlayerControl = false;
     bool sliding = false;
     bool sprint = false;
     float unavailableTimer = 0;
 
-    std::string animName;
 
-    AnimationState * mTrackerState = 0;
-    SceneNode* tracker;
     SceneNode* head;
     SceneNode* base;
 

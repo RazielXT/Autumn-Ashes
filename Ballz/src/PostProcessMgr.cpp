@@ -31,7 +31,7 @@ PostProcessMgr::~PostProcessMgr()
 
 void PostProcessMgr::resetValues()
 {
-	vars.reset();
+    vars.reset();
 }
 
 void PostProcessMgr::setGodraySunPosition(Ogre::Vector3 pos)
