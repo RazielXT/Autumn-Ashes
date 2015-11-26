@@ -70,23 +70,7 @@ void Slide::startJumpToSlide()
 
     Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
 
-    auto pos = cam->getDerivedPosition();
-    auto or = cam->getDerivedOrientation();
-
-    cam->detachFromParent();
-    headArrival.tempNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    headArrival.tempNode->attachObject(cam);
-    headArrival.tempNode->setPosition(pos);
-    headArrival.tempNode->setOrientation(or);
-
-    headArrival.pos = pos;
-    headArrival.posTarget = target;
-    headArrival.timer = 0;
-    headArrival.dist = std::max(0.5f, pos.distance(target) / 10.0f);
-    headArrival.dir = or;
-
-    headArrival.dirTarget.FromAngleAxis(or.getYaw(), Vector3(0,1,0));
-    headArrival.dirTarget = headArrival.dirTarget*Quaternion(Ogre::Degree(-30), Vector3(1, 0, 0));
+    headArrival.initializeJump(cam, target);
 
     jumpingToSlide = true;
 
@@ -94,75 +78,9 @@ void Slide::startJumpToSlide()
     Global::shaker->startShaking(shakeW*0.8f, shakeW*1.0f, 0.5f, 1, 1, 0.4f, 0.25f, 1, true);
 }
 
-//w^n, n = -1-1 to 3-1/3, n 0->1
-float transformHeightFuncTime(float time, float hd)
-{
-    auto t = abs(hd);
-
-    t = t * 2 + 1;
-
-    if (hd > 0)
-        t = 1 / t;
-
-    return pow(time, t);
-}
-
-float heightFunc(float time, float hd)
-{
-    auto x = transformHeightFuncTime(time, hd);
-
-    float off = 1;
-    float ex = 2; //2,4,6
-    float addH = -pow(x*off * 2 - off, ex) + pow(off, ex);
-    addH /= off * 2;
-
-    addH *= 1 - abs(hd);
-
-    return addH;
-}
-
 void Slide::updateJumpToSlide(float time)
 {
-    float w = 0;
-    bool beforeJump = false;
-
-    if (headArrival.timer < 0)
-    {
-        auto t = headArrival.timer + time*2.0f;
-
-        if (t < 0)
-        {
-            headArrival.timer = t;
-            beforeJump = true;
-        }
-    }
-
-    if (!beforeJump)
-    {
-        headArrival.timer = std::min(headArrival.timer + time*2.75f, headArrival.dist);
-        w = headArrival.timer / headArrival.dist;
-
-        //w = pow(w, 0.58f);
-        //w = quickstep(w, 0.75f);
-    }
-
-    auto hDiff = headArrival.pos.y - headArrival.posTarget.y;
-    auto tDist = headArrival.pos.distance(headArrival.posTarget);
-    auto hd = hDiff / tDist;
-
-    auto pos = MUtils::lerp(headArrival.pos, headArrival.posTarget, w);
-    auto dir = Quaternion::nlerp(w, headArrival.dir, headArrival.dirTarget, true);
-
-    auto maxH = tDist;// / 2.0f;
-    auto hAdd = heightFunc(w, hd)*maxH;
-    pos.y += hAdd;
-
-    //Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("Jumping: hadd " + Ogre::StringConverter::toString(hAdd) + ", hd " + Ogre::StringConverter::toString(hd), Ogre::LML_NORMAL);
-
-    headArrival.tempNode->setPosition(pos);
-    headArrival.tempNode->setOrientation(dir*Global::shaker->current);
-
-    if (headArrival.timer==headArrival.dist)
+    if (headArrival.updateJump(time))
     {
         jumpingToSlide = false;
 
@@ -277,21 +195,7 @@ void Slide::attach(bool retainDirection, float headArrivalTime)
             headState.pitch = headState.yaw = 0;
         }
 
-        headArrival.timer = headArrivalTime;
-        headArrival.posTarget = state.getTranslate() + head->getPosition();
-        headArrival.pos = cam->getDerivedPosition();
-        headArrival.dir = pDir;
-
-        if (headArrival.tempNode == nullptr)
-        {
-            headArrival.tempNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
-        }
-
-        cam->detachFromParent();
-        headArrival.tempNode->attachObject(cam);
-
-        headArrival.tempNode->setPosition(headArrival.pos);
-        headArrival.tempNode->setOrientation(headArrival.dir);
+        headArrival.initializeTransition(cam, state.getTranslate() + head->getPosition(), headArrivalTime);
     }
 
     Global::player->body->setPositionOrientation(Vector3(0,1000,0), Quaternion::IDENTITY);
@@ -336,39 +240,23 @@ void Slide::release(bool returnControl, bool manualJump)
 
 void Slide::updateHeadArrival(float time)
 {
-    headArrival.timer -= time*std::max(1.0f,currentSpeed);
+    bool finished = headArrival.updateTransition(time*std::max(1.0f,currentSpeed));
 
-    if (headArrival.timer <= 0)
+    Quaternion qpitch = Quaternion(Degree(headState.pitch), Vector3(0, 1, 0));
+    Quaternion qyaw = Quaternion(Degree(headState.yaw), Vector3(1, 0, 0));
+    Quaternion qCam = qpitch*qyaw*Global::shaker->current;
+
+    if (finished)
     {
         Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
-        cam->detachFromParent();
         head->attachObject(cam);
-
-        Quaternion qpitch = Quaternion(Degree(headState.pitch), Vector3(0, 1, 0));
-        Quaternion qyaw = Quaternion(Degree(headState.yaw), Vector3(1, 0, 0));
-        head->setOrientation(qpitch*qyaw*Global::shaker->current);
-
-        Global::mSceneMgr->destroySceneNode(headArrival.tempNode);
-        headArrival.tempNode = nullptr;
+        head->setOrientation(qCam);
     }
     else
     {
-        auto w = headArrival.timer;
-
-        Quaternion qpitch = Quaternion(Degree(headState.pitch), Vector3(0, 1, 0));
-        Quaternion qyaw = Quaternion(Degree(headState.yaw), Vector3(1, 0, 0));
-        Quaternion qCur = head->_getDerivedOrientation()*qpitch*qyaw*Global::shaker->current;
-
-        Quaternion q = Quaternion::nlerp(1-w, headArrival.dir, qCur, true);
-        headArrival.tempNode->setOrientation(q);
-
-        Vector3 moveOffset = head->_getDerivedPosition() - headArrival.posTarget;
-
-        Vector3 p = w*headArrival.pos + (1 - w)*headArrival.posTarget;
-        headArrival.tempNode->setPosition(p + moveOffset);
-
+        Quaternion qCur = head->_getDerivedOrientation()*qCam;
+        headArrival.refreshTransition(qCur, head->_getDerivedPosition());
     }
-
 }
 
 void Slide::updateSlidingCamera(float time)

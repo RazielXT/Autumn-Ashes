@@ -248,6 +248,9 @@
     <ClCompile Include="src\AnimatedTrack.cpp">
       <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
+    <ClCompile Include="src\HeadTransition.cpp">
+      <Filter>Files\Objects\Slide</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -512,6 +515,9 @@
       <Filter>Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="include\AnimatedTrack.h">
+      <Filter>Files\Objects\Slide</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HeadTransition.h">
       <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
   </ItemGroup>

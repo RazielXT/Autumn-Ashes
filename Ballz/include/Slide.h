@@ -1,8 +1,8 @@
 #pragma once
 #include "stdafx.h"
 #include "InputListener.h"
-#include <future>
 #include "AnimatedTrack.h"
+#include "HeadTransition.h"
 
 using namespace Ogre;
 
@@ -42,17 +42,6 @@ protected:
     void startJumpToSlide();
     void updateJumpToSlide(float time);
 
-    struct HeadTransitionState
-    {
-        float dist;
-        SceneNode* tempNode = nullptr;
-        Vector3 posTarget;
-        Vector3 pos;
-        Quaternion dir;
-        Quaternion dirTarget;
-        float timer;
-    };
-
     struct HeadControlState
     {
         float yaw;
@@ -83,7 +72,7 @@ protected:
     SceneNode* head;
     SceneNode* base;
 
-    HeadTransitionState headArrival;
+    HeadTransition headArrival;
     HeadControlState headState;
 
     float realSpeed;
