@@ -30,6 +30,31 @@ void HeadTransition::initializeJump(Ogre::Camera* cam, Ogre::Vector3 target)
 }
 
 //w^n, n = -1-1 to 3-1/3, n 0->1
+float HeadTransition::transformHeightFuncTimeLow(float time, float hd)
+{
+    auto t = abs(hd);
+
+    t = t * 2 + 1;
+
+    if (hd > 0)
+        t = 1 / t;
+
+    return pow(time, t);
+}
+
+float HeadTransition::heightFuncLow(float time, float hd)
+{
+    auto x = (std::min(time, 1 - time) - 0.5f)*2;
+
+    float ex = 2; //2,4
+    float addH = 1 - pow(x, ex);
+
+    addH *= 1 - abs(hd);
+
+    return addH;
+}
+
+//w^n, n = -1-1 to 3-1/3, n 0->1
 float HeadTransition::transformHeightFuncTime(float time, float hd)
 {
     auto t = abs(hd);
@@ -83,13 +108,13 @@ bool HeadTransition::updateJump(float time)
 
     auto hDiff = pos.y - posTarget.y;
     auto tDist = pos.distance(posTarget);
-    auto hd = hDiff / tDist;
+    hDiff = hDiff / tDist;
 
     auto cpos = MUtils::lerp(pos, posTarget, w);
     auto cdir = Quaternion::nlerp(w, dir, dirTarget, true);
 
-    auto maxH = tDist;// / 2.0f;
-    auto hAdd = heightFunc(w, hd)*maxH;
+    auto maxH = tDist / 2.0f;
+    auto hAdd = heightFuncLow(w, hDiff)*maxH;
     cpos.y += hAdd;
 
     //Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("Jumping: hadd " + Ogre::StringConverter::toString(hAdd) + ", hd " + Ogre::StringConverter::toString(hd), Ogre::LML_NORMAL);

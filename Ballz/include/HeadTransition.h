@@ -24,4 +24,7 @@ private:
 
     float transformHeightFuncTime(float time, float hd);
     float heightFunc(float time, float hd);
+
+    float transformHeightFuncTimeLow(float time, float hd);
+    float heightFuncLow(float time, float hd);
 };
