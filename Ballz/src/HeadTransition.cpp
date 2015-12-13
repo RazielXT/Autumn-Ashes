@@ -44,10 +44,7 @@ float HeadTransition::transformHeightFuncTimeLow(float time, float hd)
 
 float HeadTransition::heightFuncLow(float time, float hd)
 {
-    auto x = (std::min(time, 1 - time) - 0.5f)*2;
-
-    float ex = 2; //2,4
-    float addH = 1 - pow(x, ex);
+	float addH = MUtils::smoothjump(time, 2);
 
     addH *= 1 - abs(hd);
 
