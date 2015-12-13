@@ -251,6 +251,9 @@
     <ClCompile Include="src\HeadTransition.cpp">
       <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
+    <ClCompile Include="src\GuiMaterialDebug.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -519,6 +522,9 @@
     </ClInclude>
     <ClInclude Include="include\HeadTransition.h">
       <Filter>Files\Objects\Slide</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GuiMaterialDebug.h">
+      <Filter>Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

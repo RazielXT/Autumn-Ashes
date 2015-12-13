@@ -461,8 +461,6 @@ void Player::rotateCamera(Real yaw,Real pitch)
 
 void Player::update(Real time)
 {
-    Global::DebugPrint(std::to_string(mCamera->getDerivedOrientation().getPitch().valueDegrees()));
-
     tslf = time*Global::timestep;
     facingDir = mCamera->getDerivedOrientation()*Ogre::Vector3(0, 0, -1);
 

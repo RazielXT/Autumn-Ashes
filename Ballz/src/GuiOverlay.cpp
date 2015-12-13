@@ -263,6 +263,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
         debugVarCaption[i]->align(Gorilla::TextAlign_Left);
     }
 
+
     infoTextTimer = 0;
     shownInfoText = false;
     shownUseGui = false;

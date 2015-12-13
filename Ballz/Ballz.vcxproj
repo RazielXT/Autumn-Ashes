@@ -149,6 +149,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\GameStateManager.cpp" />
     <ClCompile Include="src\Gorilla.cpp" />
     <ClCompile Include="src\GrassDetailGeometry.cpp" />
+    <ClCompile Include="src\GuiMaterialDebug.cpp" />
     <ClCompile Include="src\HandGripReaction.cpp" />
     <ClCompile Include="src\HeadTransition.cpp" />
     <ClCompile Include="src\ImpostorRenderer.cpp" />
@@ -223,6 +224,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\GameConfig.h" />
     <ClInclude Include="include\DetailGeometry.h" />
     <ClInclude Include="include\GrassDetailGeometry.h" />
+    <ClInclude Include="include\GuiMaterialDebug.h" />
     <ClInclude Include="include\HeadTransition.h" />
     <ClInclude Include="include\ImpostorRenderer.h" />
     <ClInclude Include="include\ImpostorTexture.h" />
