@@ -49,33 +49,9 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
     }
     break;
 
-    case OIS::KC_I:
+    case OIS::KC_NUMPAD6:
     {
-        MUtils::RayInfo out;
-        if (MUtils::getRayInfo(Global::player->getCameraPosition(), Global::player->getFacingDirection(), 1000, out))
-        {
-            auto node = static_cast<Ogre::SceneNode*>(out.body->getOgreNode());
-
-            if (node)
-            {
-                auto ent = static_cast<Ogre::Entity*>(node->getAttachedObject(0));
-
-                if (ent)
-                {
-                    auto mat = ent->getSubEntity(0)->getMaterial();
-
-                    if (mat->getTechnique(0)->getNumPasses() > 1)
-                    {
-                        auto& l = mat->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->getConstantDefinitions();
-
-                        for (auto c : l.map)
-                        {
-                            Global::DebugPrint(c.first);
-                        }
-                    }
-                }
-            }
-        }
+		Global::gameMgr->myMenu->showMaterialDebug();
     }
     break;
 

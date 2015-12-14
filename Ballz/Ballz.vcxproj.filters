@@ -45,6 +45,9 @@
     <Filter Include="Files\Core\RenderObjects">
       <UniqueIdentifier>{83a765d8-98ef-4422-8267-53b52e92fbe1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\Core\MaterialEdit">
+      <UniqueIdentifier>{235e7fbd-2a99-4af2-9976-14a60da0a8e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CrowPath.cpp">
@@ -251,8 +254,8 @@
     <ClCompile Include="src\HeadTransition.cpp">
       <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
-    <ClCompile Include="src\GuiMaterialDebug.cpp">
-      <Filter>Files\Core</Filter>
+    <ClCompile Include="src\GuiMaterialEdit.cpp">
+      <Filter>Files\Core\MaterialEdit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -523,8 +526,8 @@
     <ClInclude Include="include\HeadTransition.h">
       <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
-    <ClInclude Include="include\GuiMaterialDebug.h">
-      <Filter>Files\Core</Filter>
+    <ClInclude Include="include\GuiMaterialEdit.h">
+      <Filter>Files\Core\MaterialEdit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

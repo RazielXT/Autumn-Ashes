@@ -4,6 +4,7 @@
 #include "Gorilla.h"
 #include "ListLoop.h"
 #include "DebugKeys.h"
+#include "GuiMaterialEdit.h"
 
 enum mMenuEnum {START,OPTIONS,QUIT,RESUME,RESTART};
 enum menusEnum {MAINM,STARTM,OPTIONSM,QUITM,TOSM,FRSM,TOOM,FROM,TOQM,FRQM};
@@ -55,6 +56,7 @@ public:
     void setMainMenu();
     void setIngameMenu();
 
+	void showMaterialDebug();
     void showDebug(bool show);
     void setDebugValue(Ogre::Real value1, std::vector<std::string>& values, std::vector<DebugVar>& debugVars, int debugVarsLine);
     void updateMainMenu(Ogre::Real time);
@@ -69,6 +71,8 @@ public:
     void updateIngameMenu(Ogre::Real time);
 
 private:
+
+	GuiMaterialEdit materialUi;
 
     GameConfig* gConfig;
 

@@ -103,7 +103,6 @@ void GuiOverlay::clear()
 
 int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
 {
-
     if(currentMenu==MAINM && !moving)
     {
         switch (arg.key)
@@ -263,6 +262,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
         debugVarCaption[i]->align(Gorilla::TextAlign_Left);
     }
 
+	materialUi.initUi(mouseLayer);
 
     infoTextTimer = 0;
     shownInfoText = false;
@@ -838,6 +838,11 @@ void GuiOverlay::showDebug(bool show)
     }
 
     debugVarCaption[3]->colour(Ogre::ColourValue(1, 1, 0, alpha));
+}
+
+void GuiOverlay::showMaterialDebug()
+{
+	materialUi.
 }
 
 void GuiOverlay::updateLevelsMove(Ogre::Real time)
