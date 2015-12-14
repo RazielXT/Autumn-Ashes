@@ -30,34 +30,24 @@ enum BodyType
 
 struct bodyUserData
 {
-    TriggerInfo* trigger;
-    ObjectAudio* sounds;
-    short material;
-    short actions[4];
-    bool makeActions;
-    bool enabledTrigger;
-    void* customData;
+    TriggerInfo* trigger = nullptr;
+    ObjectAudio* sounds = nullptr;
+    short material = 0;
+	short actions[4] = {0};
+    bool makeActions = false;
+    bool enabledTrigger = false;
+    void* customData = nullptr;
 
     bodyUserData()
     {
-        actions[0]=0;
-        actions[1]=0;
-        actions[2]=0;
-        actions[3]=0;
-        trigger=NULL;
-        sounds=NULL;
-        customData=NULL;
-        material=0;
-        makeActions=false;
-        enabledTrigger=false;
     };
 
     ~bodyUserData()
     {
-        if(trigger!=NULL)
+        if(trigger)
             delete trigger;
 
-        if(customData!=NULL)
+        if(customData)
             delete customData;
     };
 };

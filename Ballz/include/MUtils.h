@@ -6,22 +6,23 @@ using namespace Ogre;
 
 namespace MUtils
 {
-	//normalized input
-	inline float smoothjump(float x, float center, float exponent)
-	{
-		auto modX = (x < center) ? (x / center) : ((x - center) / (1 - center));
 
-		return smoothjump(modX, exponent);
-	}
+//normalized input
+inline float smoothjump(float x, float center, float exponent)
+{
+    auto modX = (x < center) ? (x / center) : ((x - center) / (1 - center));
 
-	//normalized input
-	inline float smoothjump(float x, float exponent)
-	{
-		auto y = 1 - std::min(x, 1 - x) * 2; //1-0-1
-		float h = 1 - pow(y, exponent);
+    return smoothjump(modX, exponent);
+}
 
-		return h;
-	}
+//normalized input
+inline float smoothjump(float x, float exponent)
+{
+    auto y = 1 - std::min(x, 1 - x) * 2; //1-0-1
+    float h = 1 - pow(y, exponent);
+
+    return h;
+}
 
 inline float quickstep(float x, float smoothing)
 {
