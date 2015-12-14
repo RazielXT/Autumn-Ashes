@@ -56,7 +56,7 @@ public:
     void setMainMenu();
     void setIngameMenu();
 
-	void showMaterialDebug();
+    void showMaterialDebug();
     void showDebug(bool show);
     void setDebugValue(Ogre::Real value1, std::vector<std::string>& values, std::vector<DebugVar>& debugVars, int debugVarsLine);
     void updateMainMenu(Ogre::Real time);
@@ -72,7 +72,7 @@ public:
 
 private:
 
-	GuiMaterialEdit materialUi;
+    GuiMaterialEdit materialUi;
 
     GameConfig* gConfig;
 

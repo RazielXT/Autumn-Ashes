@@ -51,7 +51,7 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 
     case OIS::KC_NUMPAD6:
     {
-		Global::gameMgr->myMenu->showMaterialDebug();
+        Global::gameMgr->myMenu->showMaterialDebug();
     }
     break;
 

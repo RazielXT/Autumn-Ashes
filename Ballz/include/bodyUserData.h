@@ -33,13 +33,14 @@ struct bodyUserData
     TriggerInfo* trigger = nullptr;
     ObjectAudio* sounds = nullptr;
     short material = 0;
-	short actions[4] = {0};
+    short actions[4];
     bool makeActions = false;
     bool enabledTrigger = false;
     void* customData = nullptr;
 
     bodyUserData()
     {
+        actions[0] = 0;
     };
 
     ~bodyUserData()
