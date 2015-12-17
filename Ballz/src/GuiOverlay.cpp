@@ -7,6 +7,7 @@
 #include "PostProcessMgr.h"
 #include "MUtils.h"
 #include "GameStateManager.h"
+#include "GuiMaterialEdit.h"
 
 using namespace Ogre;
 
@@ -103,8 +104,8 @@ void GuiOverlay::clear()
 
 int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
 {
-	if (materialUi.pressedKey(arg))
-		return 1;
+    if (materialUi->pressedKey(arg))
+        return 1;
 
     if(currentMenu==MAINM && !moving)
     {
@@ -148,6 +149,8 @@ int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
 
 GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs, irrklang::ISoundEngine* eng)
 {
+    materialUi = new GuiMaterialEdit();
+
     engine=eng;
 
     gConfig = gameConfig;
@@ -265,7 +268,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
         debugVarCaption[i]->align(Gorilla::TextAlign_Left);
     }
 
-    materialUi.initUi(mouseLayer);
+    materialUi->initUi(mouseLayer);
 
     infoTextTimer = 0;
     shownInfoText = false;
@@ -843,12 +846,12 @@ void GuiOverlay::showDebug(bool show)
     debugVarCaption[3]->colour(Ogre::ColourValue(1, 1, 0, alpha));
 
     if (show)
-        materialUi.setVisible(false);
+        materialUi->setVisible(0);
 }
 
 void GuiOverlay::showMaterialDebug()
 {
-    materialUi.queryMaterial();
+    materialUi->queryMaterial();
 }
 
 void GuiOverlay::updateLevelsMove(Ogre::Real time)

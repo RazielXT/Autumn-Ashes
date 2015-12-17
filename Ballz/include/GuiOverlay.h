@@ -4,7 +4,8 @@
 #include "Gorilla.h"
 #include "ListLoop.h"
 #include "DebugKeys.h"
-#include "GuiMaterialEdit.h"
+
+class GuiMaterialEdit;
 
 enum mMenuEnum {START,OPTIONS,QUIT,RESUME,RESTART};
 enum menusEnum {MAINM,STARTM,OPTIONSM,QUITM,TOSM,FRSM,TOOM,FROM,TOQM,FRQM};
@@ -72,7 +73,7 @@ public:
 
 private:
 
-    GuiMaterialEdit materialUi;
+    GuiMaterialEdit* materialUi;
 
     GameConfig* gConfig;
 
