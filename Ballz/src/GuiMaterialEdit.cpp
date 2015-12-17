@@ -44,12 +44,60 @@ void GuiMaterialEdit::initUi(Gorilla::Layer* layer)
         debugVariableParamsCaption[i]->align(Gorilla::TextAlign_Left);
     }
 
-    setVisible(false);
+    setVisible(-1);
 }
 
-void GuiMaterialEdit::setVisible(bool show, int lvl)
+void GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
 {
-    active = show;
+	if (activeLvl < 0)
+		return;
+
+	switch (arg.key)
+	{
+	case OIS::KC_LEFT:
+		activeLvl = Ogre::Math::Clamp(activeLvl - 1, 0, 2);
+		break;
+	case OIS::KC_RIGHT:
+		activeLvl = Ogre::Math::Clamp(activeLvl + 1, 0, 2);
+		break;
+	case OIS::KC_DOWN:
+		if (activeLvl==0)
+			activeBaseId =(activeBaseId + 1) % 4;
+		if (activeLvl == 1)
+			activeVarId = (activeVarId + 1) % matEdit.psVariables.size();
+		if (activeLvl == 2)
+			activeParamId = (activeParamId + 1) % matEdit.psVariables[activeVarId].size;
+		break;
+	case OIS::KC_UP:
+		if (activeLvl == 0)
+			activeBaseId = (activeBaseId - 1) % 4;
+		if (activeLvl == 1)
+			activeVarId = (activeVarId - 1) % matEdit.psVariables.size();
+		if (activeLvl == 2)
+			activeParamId = (activeParamId - 1) % matEdit.psVariables[activeVarId].size;
+		break;
+	case OIS::KC_DIVIDE:
+		matEdit.psVariables[activeVarId].buffer[activeParamId] -= 0.1f;
+		matEdit.setMaterialParam(matEdit.psVariables[activeVarId]);
+		break;
+	case OIS::KC_MULTIPLY:
+		matEdit.psVariables[activeVarId].buffer[activeParamId] += 0.1f;
+		matEdit.setMaterialParam(matEdit.psVariables[activeVarId]);
+		break;
+	default:
+		return;
+	}
+
+	updateState();
+}
+
+void GuiMaterialEdit::setVisible(int lvl)
+{
+	activeLvl = lvl;
+	bool show = lvl >= 0;
+
+	if (!show)
+		matEdit.reset();
 
     float alpha = show ? 1.0f : 0.0f;
     Ogre::ColourValue bckColor(0, 0, 0, show ? 0.8f : 0);
@@ -62,7 +110,7 @@ void GuiMaterialEdit::setVisible(bool show, int lvl)
 
     debugMaterialCaption[0]->colour(Ogre::ColourValue(1, 1, 1, alpha));
 
-    if (lvl == 0) alpha = bckColor.a = 0;
+    if (lvl < 1) alpha = bckColor.a = 0;
 
     for (size_t i = 0; i < DEBUG_VARIABLES_COUNT; i++)
     {
@@ -70,44 +118,78 @@ void GuiMaterialEdit::setVisible(bool show, int lvl)
         debugVariablesCaption[i]->background(bckColor);
         debugVariablesCaption[i]->text("");
     }
+	debugVariablesCaption[selectedOffset]->colour(Ogre::ColourValue(1, 1, 0, alpha));
 
-    if (lvl == 1) alpha = bckColor.a = 0;
+    //if (lvl < 2) alpha = bckColor.a = 0;
 
     for (size_t i = 0; i < DEBUG_VARIABLES_COUNT; i++)
     {
         debugVariableParamsCaption[i]->colour(Ogre::ColourValue(1, 1, 1, alpha));
-        debugVariablesCaption[i]->background(bckColor);
-        debugVariablesCaption[i]->text("");
+		debugVariableParamsCaption[i]->background(bckColor);
+		debugVariableParamsCaption[i]->text("");
     }
+	debugVariableParamsCaption[selectedOffset]->colour(Ogre::ColourValue(1, 1, 0, alpha));
 }
 
 void GuiMaterialEdit::queryMaterial()
 {
     if (matEdit.queryMaterial())
     {
-        setVisible(true, 2);
+        setVisible(2);
 
         debugMaterialCaption[0]->text(matEdit.name);
 
-        int i = 0;
-        for (auto& v : matEdit.psVariables)
-        {
-            if (i < DEBUG_VARIABLES_COUNT)
-                debugVariablesCaption[i++]->text(v.name);
-        }
-
-        for (i = 0; i < matEdit.psVariables[0].size; i++)
-        {
-            debugVariableParamsCaption[i]->text(std::to_string(matEdit.psVariables[0].buffer[i]));
-        }
+		updateState();
     }
     else
-        setVisible(false);
+        setVisible(-1);
+}
+
+void GuiMaterialEdit::updateState()
+{
+	setVisible(activeLvl);
+
+	if (activeLvl < 0)
+		return;
+
+	debugMaterialCaption[activeBaseId]->colour(Ogre::ColourValue(1, 1, 0, 1));
+
+	updateText();
+}
+
+void GuiMaterialEdit::updateText()
+{
+	if (activeLvl > 0 && matEdit.psVariables.size() > 0)
+		for (int i = 0; i < DEBUG_VARIABLES_COUNT; i++)
+		{
+			int id = (activeVarId - selectedOffset + i) % matEdit.psVariables.size();
+
+			debugVariablesCaption[i]->text(matEdit.psVariables[id].name);
+		}
+
+	auto& var = matEdit.psVariables[activeVarId];
+
+	if (activeLvl > 0 && var.size > 0)
+		for (int i = 0; i < DEBUG_VARIABLES_COUNT; i++)
+		{
+			if (i == var.size)
+				break;
+
+			debugVariableParamsCaption[i]->text(std::to_string(var.buffer[i]));
+		}
 }
 
 GuiMaterialEdit::GuiMaterialEdit()
 {
 
+}
+
+void MaterialEdit::reset()
+{
+	name.clear();
+	psVariables.clear();
+	vsVariables.clear();
+	ptr.setNull();
 }
 
 bool MaterialEdit::queryMaterial()
@@ -155,4 +237,12 @@ bool MaterialEdit::queryMaterial()
     }
 
     return false;
+}
+
+void MaterialEdit::setMaterialParam(MaterialVariable& var)
+{
+	if (ptr.isNull())
+		return;
+
+	ptr->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, var.size);
 }

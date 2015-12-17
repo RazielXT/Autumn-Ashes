@@ -29,6 +29,9 @@ void DebugKeys::reloadVariables()
 void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 {
     auto postProcMgr = Global::mPPMgr;
+	
+	if (Global::gameMgr->myMenu->pressedKey(arg))
+		return;
 
     switch (arg.key)
     {

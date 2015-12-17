@@ -19,7 +19,9 @@ struct MaterialEdit
 
     Ogre::MaterialPtr ptr;
 
+	void reset();
     bool queryMaterial();
+	void setMaterialParam(MaterialVariable& var);
 };
 
 class GuiMaterialEdit
@@ -33,17 +35,26 @@ public:
 
     void initUi(Gorilla::Layer* layer);
 
-    void update(float tslf);
-
     void pressedKey(const OIS::KeyEvent &arg);
 
-    void setVisible(bool show, int lvl = 0);
+    void setVisible(int lvl = 0);
 
     void queryMaterial();
 
+	void updateState();
+
+	void updateText();
+
 private:
 
-    bool active = false;
+	int selectedOffset = 3;
+
+	int activeLvl = 0;
+
+	int activeBaseId = 0;
+	int activeVarId = 0;
+	int activeParamId = 0;
+
     MaterialEdit matEdit;
 
     Gorilla::Caption*       debugMaterialCaption[4];

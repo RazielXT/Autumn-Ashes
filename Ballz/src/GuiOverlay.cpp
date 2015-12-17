@@ -103,6 +103,9 @@ void GuiOverlay::clear()
 
 int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
 {
+	if (materialUi.pressedKey(arg))
+		return 1;
+
     if(currentMenu==MAINM && !moving)
     {
         switch (arg.key)
