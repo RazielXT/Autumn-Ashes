@@ -58,7 +58,19 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
         activeLvl = Ogre::Math::Clamp(activeLvl - 1, 1, 3);
         break;
     case OIS::KC_RIGHT:
-        activeLvl = Ogre::Math::Clamp(activeLvl + 1, 1, 3);
+        if (activeLvl == 1 && activeBaseId == 0)
+        {
+            curMatEdit.resetMaterial();
+        }
+        else if (activeLvl == 1 && activeBaseId == 1)
+        {
+            if (curMatEdit.changed)
+                library.saveEdit(curMatEdit.edit, curMatEdit.entity->getName());
+            else
+                library.removeEdit(curMatEdit.entity->getName());
+        }
+        else
+            activeLvl = Ogre::Math::Clamp(activeLvl + 1, 1, 3);
         break;
     case OIS::KC_DOWN:
         if (activeLvl == 1)
@@ -68,11 +80,11 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
         }
         if (activeLvl == 2)
         {
-            activeVarId = (activeVarId + 1) % matEdit.psVariables.size();
+            activeVarId = (activeVarId + 1) % curMatEdit.edit.psVariables.size();
             activeParamId = 0;
         }
         if (activeLvl == 3)
-            activeParamId = (activeParamId + 1) % matEdit.psVariables[activeVarId].size;
+            activeParamId = (activeParamId + 1) % curMatEdit.edit.psVariables[activeVarId].size;
         break;
     case OIS::KC_UP:
         if (activeLvl == 1)
@@ -86,28 +98,36 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
         }
         if (activeLvl == 2)
         {
-            activeVarId = (activeVarId - 1) % matEdit.psVariables.size();
+            activeVarId = (activeVarId - 1);
 
             if (activeVarId < 0)
-                activeVarId += matEdit.psVariables.size();
+                activeVarId += curMatEdit.edit.psVariables.size();
+
+            activeVarId = activeVarId % curMatEdit.edit.psVariables.size();
 
             activeParamId = 0;
         }
         if (activeLvl == 3)
         {
-            activeParamId = (activeParamId - 1) % matEdit.psVariables[activeVarId].size;
+            activeParamId = (activeParamId - 1);
 
             if (activeParamId < 0)
-                activeParamId += matEdit.psVariables[activeVarId].size;
+                activeParamId += curMatEdit.edit.psVariables[activeVarId].size;
+
+            activeParamId = activeParamId % curMatEdit.edit.psVariables[activeVarId].size;
         }
         break;
     case OIS::KC_DIVIDE:
-        matEdit.psVariables[activeVarId].buffer[activeParamId] -= 0.1f;
-        matEdit.setMaterialParam(matEdit.psVariables[activeVarId]);
+        curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] -= 0.1f;
+        curMatEdit.edit.psVariables[activeVarId].edited = true;
+        curMatEdit.changed = true;
+        curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
         break;
     case OIS::KC_MULTIPLY:
-        matEdit.psVariables[activeVarId].buffer[activeParamId] += 0.1f;
-        matEdit.setMaterialParam(matEdit.psVariables[activeVarId]);
+        curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] += 0.1f;
+        curMatEdit.edit.psVariables[activeVarId].edited = true;
+        curMatEdit.changed = true;
+        curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
         break;
     default:
         return false;
@@ -124,7 +144,7 @@ void GuiMaterialEdit::setVisible(int lvl)
     bool show = lvl > 0;
 
     if (!show)
-        matEdit.reset();
+        curMatEdit.reset();
 
     float alpha = show ? 1.0f : 0.0f;
     Ogre::ColourValue bckColor(0, 0, 0, show ? 0.8f : 0);
@@ -164,11 +184,13 @@ void GuiMaterialEdit::setVisible(int lvl)
 
 void GuiMaterialEdit::queryMaterial()
 {
-    if (matEdit.queryMaterial())
+    if (curMatEdit.queryMaterial())
     {
+        library.loadEdit(curMatEdit.edit, curMatEdit.entity->getName());
+
         setVisible(1);
 
-        debugMaterialCaption[0]->text(matEdit.name);
+        debugMaterialCaption[0]->text(curMatEdit.edit.originMatName);
 
         updateState();
     }
@@ -188,15 +210,17 @@ void GuiMaterialEdit::updateState()
 
 void GuiMaterialEdit::updateText()
 {
-    if (activeLvl > 1 && matEdit.psVariables.size() > 0)
+    if (activeLvl > 1 && curMatEdit.edit.psVariables.size() > 0)
         for (int i = 0; i < DEBUG_VARIABLES_COUNT; i++)
         {
-            int id = (activeVarId - selectedOffset + i) % matEdit.psVariables.size();
+            int id = (activeVarId - selectedOffset + i);
 
-            debugVariablesCaption[i]->text(matEdit.psVariables[id].name);
+            id = (id < 0) ? id + curMatEdit.edit.psVariables.size() : id % curMatEdit.edit.psVariables.size();
+
+            debugVariablesCaption[i]->text(curMatEdit.edit.psVariables[id].name);
         }
 
-    auto& var = matEdit.psVariables[activeVarId];
+    auto& var = curMatEdit.edit.psVariables[activeVarId];
 
     if (activeLvl > 1 && var.size > 0)
         for (int i = 0; i < DEBUG_VARIABLES_COUNT; i++)
@@ -213,16 +237,18 @@ GuiMaterialEdit::GuiMaterialEdit()
 
 }
 
-void MaterialEdit::reset()
+void LoadedMaterialEdit::reset()
 {
-    name.clear();
-    psVariables.clear();
-    vsVariables.clear();
     ptr.setNull();
+    entity = nullptr;
+    changed = false;
+    matInstance = false;
 }
 
-bool MaterialEdit::queryMaterial()
+bool LoadedMaterialEdit::queryMaterial()
 {
+    reset();
+
     MUtils::RayInfo out;
     if (MUtils::getRayInfo(Global::player->getCameraPosition(), Global::player->getFacingDirection(), 1000, out))
     {
@@ -235,7 +261,9 @@ bool MaterialEdit::queryMaterial()
 
             if (mat->getTechnique(0)->getNumPasses() > 1)
             {
-                name = mat->getName();
+                edit.originMatName = mat->getName();
+                entity = ent;
+
                 ptr = mat;
 
                 auto params = mat->getTechnique(0)->getPass(1)->getFragmentProgramParameters();
@@ -251,16 +279,16 @@ bool MaterialEdit::queryMaterial()
 
                     if (c.second.constType <= 4)
                     {
-                        MaterialVariable var;
+                        MaterialEdit::MaterialVariable var;
                         var.name = c.first;
                         var.size = c.second.constType;
                         memcpy(var.buffer, params->getFloatPointer(c.second.physicalIndex), 4 * var.size);
 
-                        psVariables.push_back(var);
+                        edit.psVariables.push_back(var);
                     }
                 }
 
-                return psVariables.size() > 0;
+                return edit.psVariables.size() > 0;
             }
         }
     }
@@ -268,10 +296,18 @@ bool MaterialEdit::queryMaterial()
     return false;
 }
 
-void MaterialEdit::setMaterialParam(MaterialVariable& var)
+void LoadedMaterialEdit::setMaterialParam(MaterialEdit::MaterialVariable& var)
 {
     if (ptr.isNull())
         return;
 
     ptr->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+}
+
+void LoadedMaterialEdit::resetMaterial()
+{
+    entity->setMaterialName(edit.originMatName);
+    changed = false;
+    matInstance = false;
+    ptr = entity->getSubEntity(0)->getMaterial();
 }

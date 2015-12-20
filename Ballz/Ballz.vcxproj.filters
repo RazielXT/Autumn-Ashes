@@ -257,6 +257,9 @@
     <ClCompile Include="src\GuiMaterialEdit.cpp">
       <Filter>Files\Core\MaterialEdit</Filter>
     </ClCompile>
+    <ClCompile Include="src\MaterialEditsLibrary.cpp">
+      <Filter>Files\Core\MaterialEdit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -527,6 +530,9 @@
       <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
     <ClInclude Include="include\GuiMaterialEdit.h">
+      <Filter>Files\Core\MaterialEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MaterialEditsLibrary.h">
       <Filter>Files\Core\MaterialEdit</Filter>
     </ClInclude>
   </ItemGroup>

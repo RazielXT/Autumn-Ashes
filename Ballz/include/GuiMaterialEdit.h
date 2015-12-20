@@ -1,27 +1,21 @@
 #pragma once
 
 #include "Gorilla.h"
+#include "MaterialEditsLibrary.h"
 
-struct MaterialEdit
+struct LoadedMaterialEdit
 {
-    struct MaterialVariable
-    {
-        std::string name;
-        int size = 0;
-        float buffer[4];
-        bool changed = false;
-    };
+    MaterialEdit edit;
 
-    std::string name;
-    std::vector<MaterialVariable> psVariables;
-    std::vector<MaterialVariable> vsVariables;
-    bool instanced = false;
-
+    bool changed = false;
+    bool matInstance = false;
     Ogre::MaterialPtr ptr;
+    Ogre::Entity* entity;
 
+    void resetMaterial();
     void reset();
     bool queryMaterial();
-    void setMaterialParam(MaterialVariable& var);
+    void setMaterialParam(MaterialEdit::MaterialVariable& var);
 };
 
 class GuiMaterialEdit
@@ -55,7 +49,8 @@ private:
     int activeVarId = 0;
     int activeParamId = 0;
 
-    MaterialEdit matEdit;
+    MaterialEditsLibrary library;
+    LoadedMaterialEdit curMatEdit;
 
     Gorilla::Caption*       debugMaterialCaption[4];
     Gorilla::Caption*       debugVariablesCaption[DEBUG_VARIABLES_COUNT];
