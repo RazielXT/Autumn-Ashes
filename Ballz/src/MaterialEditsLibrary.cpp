@@ -2,10 +2,11 @@
 #include "MaterialEditsLibrary.h"
 #include "GameStateManager.h"
 
+#include <iostream>
 
 void MaterialEdit::mergeChanges(MaterialEdit& r, bool addNotExisting)
 {
-    r.originMatName = originMatName;
+    originMatName = r.originMatName;
 
     for (auto& var : r.psVariables)
     {
@@ -67,7 +68,7 @@ void MaterialEditsLibrary::removeEdit(std::string entName)
     saveFile();
 }
 
-bool MaterialEditsLibrary::loadEdit(MaterialEdit& edit, std::string entName)
+bool MaterialEditsLibrary::loadSavedChanges(MaterialEdit& edit, std::string entName)
 {
     auto& entities = editHistory[Global::gameMgr->getCurrentLvlInfo()->name];
 
@@ -80,42 +81,61 @@ bool MaterialEditsLibrary::loadEdit(MaterialEdit& edit, std::string entName)
             edit.mergeChanges(ent->second, false);
             return true;
         }
+
+        ent++;
     }
 
     return false;
 }
 
-void MaterialEditsLibrary::saveFile()
-{
-
-}
-
 MaterialEditsLibrary::MaterialEditsLibrary()
 {
-
 }
 
 void MaterialEditsLibrary::applyChanges()
 {
-	auto& entities = editHistory[Global::gameMgr->getCurrentLvlInfo()->name];
+    auto& entities = editHistory[Global::gameMgr->getCurrentLvlInfo()->name];
 
-	for (auto& ent : entities)
-	{
-		if (Global::mSceneMgr->hasEntity(ent.first))
-		{
-			auto e = Global::mSceneMgr->getEntity(ent.first);
-			auto curMat = e->getSubEntity(0)->getMaterial();
+    for (auto& ent : entities)
+    {
+        if (Global::mSceneMgr->hasEntity(ent.first))
+        {
+            auto e = Global::mSceneMgr->getEntity(ent.first);
+            auto curMat = e->getSubEntity(0)->getMaterial();
 
-			if (ent.second.originMatName == curMat->getName())
-			{
-				auto newMat = curMat->clone(curMat->getName() + std::to_string(idCounter++));
-				e->setMaterial(newMat);
+            if (ent.second.originMatName == curMat->getName())
+            {
+                auto newMat = curMat->clone(curMat->getName() + std::to_string(idCounter++));
+                e->setMaterial(newMat);
 
-				for (auto& var : ent.second.psVariables)
-				{
-					newMat->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
-				}		
-			}
-		}
-	}
+                for (auto& var : ent.second.psVariables)
+                {
+                    newMat->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+                }
+            }
+        }
+    }
+}
+
+void MaterialEditsLibrary::saveFile()
+{
+    std::ofstream ofs("materialEdits");
+    boost::archive::text_oarchive oa(ofs);
+    oa << this;
+}
+
+void MaterialEditsLibrary::loadFile()
+{
+    std::ifstream ifs("materialEdits");
+
+    if (ifs.good())
+    {
+        boost::archive::text_iarchive ia(ifs);
+
+        MaterialEditsLibrary* arch;
+        ia >> arch;
+
+        editHistory = std::move(arch->editHistory);
+        delete arch;
+    }
 }

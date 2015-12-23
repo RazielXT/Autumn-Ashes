@@ -2,6 +2,7 @@
 #include "GuiMaterialEdit.h"
 #include "MUtils.h"
 #include "Player.h"
+#include "GameStateManager.h"
 
 void GuiMaterialEdit::initUi(Gorilla::Layer* layer)
 {
@@ -65,9 +66,9 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
         else if (activeLvl == 1 && activeBaseId == 1)
         {
             if (curMatEdit.changed)
-                library.saveEdit(curMatEdit.edit, curMatEdit.entity->getName());
+                Global::gameMgr->materialEdits.saveEdit(curMatEdit.edit, curMatEdit.entity->getName());
             else
-                library.removeEdit(curMatEdit.entity->getName());
+                Global::gameMgr->materialEdits.removeEdit(curMatEdit.entity->getName());
         }
         else
             activeLvl = Ogre::Math::Clamp(activeLvl + 1, 1, 3);
@@ -118,16 +119,22 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
         }
         break;
     case OIS::KC_DIVIDE:
-        curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] -= 0.1f;
-        curMatEdit.edit.psVariables[activeVarId].edited = true;
-        curMatEdit.changed = true;
-        curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+        if (activeLvl == 3)
+        {
+            curMatEdit.materialChanged();
+            curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] -= 0.1f;
+            curMatEdit.edit.psVariables[activeVarId].edited = true;
+            curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+        }
         break;
     case OIS::KC_MULTIPLY:
-        curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] += 0.1f;
-        curMatEdit.edit.psVariables[activeVarId].edited = true;
-        curMatEdit.changed = true;
-        curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+        if (activeLvl == 3)
+        {
+            curMatEdit.materialChanged();
+            curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] += 0.1f;
+            curMatEdit.edit.psVariables[activeVarId].edited = true;
+            curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+        }
         break;
     default:
         return false;
@@ -184,9 +191,10 @@ void GuiMaterialEdit::setVisible(int lvl)
 
 void GuiMaterialEdit::queryMaterial()
 {
-    if (curMatEdit.queryMaterial())
+    if (curMatEdit.queryWorld())
     {
-        library.loadEdit(curMatEdit.edit, curMatEdit.entity->getName());
+        if (Global::gameMgr->materialEdits.loadSavedChanges(curMatEdit.edit, curMatEdit.entity->getName()))
+            curMatEdit.changed = true;
 
         setVisible(1);
 
@@ -234,7 +242,6 @@ void GuiMaterialEdit::updateText()
 
 GuiMaterialEdit::GuiMaterialEdit()
 {
-
 }
 
 void LoadedMaterialEdit::reset()
@@ -245,7 +252,7 @@ void LoadedMaterialEdit::reset()
     matInstance = false;
 }
 
-bool LoadedMaterialEdit::queryMaterial()
+bool LoadedMaterialEdit::queryWorld()
 {
     reset();
 
@@ -310,4 +317,17 @@ void LoadedMaterialEdit::resetMaterial()
     changed = false;
     matInstance = false;
     ptr = entity->getSubEntity(0)->getMaterial();
+}
+
+void LoadedMaterialEdit::materialChanged()
+{
+    if (!changed)
+    {
+        changed = true;
+
+        auto newMat = ptr->clone(ptr->getName() + std::to_string(idCounter++));
+        entity->setMaterial(newMat);
+
+        ptr = newMat;
+    }
 }

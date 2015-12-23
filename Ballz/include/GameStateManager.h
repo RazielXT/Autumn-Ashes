@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "WorldMaterials.h"
 #include "GeometryManager.h"
+#include "MaterialEditsLibrary.h"
 
 class GuiOverlay;
 class DebugKeys;
@@ -62,6 +63,7 @@ public:
     GuiOverlay* myMenu;
     WorldMaterials* wMaterials;
     GeometryManager* geometryMgr;
+    MaterialEditsLibrary materialEdits;
 
     std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
 

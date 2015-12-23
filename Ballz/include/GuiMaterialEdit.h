@@ -11,10 +11,12 @@ struct LoadedMaterialEdit
     bool matInstance = false;
     Ogre::MaterialPtr ptr;
     Ogre::Entity* entity;
+    int idCounter = 5000;
 
+    void materialChanged();
     void resetMaterial();
     void reset();
-    bool queryMaterial();
+    bool queryWorld();
     void setMaterialParam(MaterialEdit::MaterialVariable& var);
 };
 
@@ -49,7 +51,6 @@ private:
     int activeVarId = 0;
     int activeParamId = 0;
 
-    MaterialEditsLibrary library;
     LoadedMaterialEdit curMatEdit;
 
     Gorilla::Caption*       debugMaterialCaption[4];

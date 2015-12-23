@@ -84,7 +84,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>D:\AA\Ogre_src\include;D:\AA\Ogre_src\ogre_src_v1-8-0\OgreMain\include;D:\AA\PagedGeometry1.1.1\include;D:\AA\OIS\trunk\includes;D:\AA\NewtonWin-2.24/sdk/dCustomJoints;D:\AA\NewtonWin-2.24/sdk/dContainers;D:\AA\NewtonWin-2.24/sdk/dMath;D:\AA\irrKlang-1.3.0\include;D:\AA\boost_1_47;D:\AA\NewtonWin-2.24/sdk;D:\AA\ogrenewt4\inc;include;D:\OgreSDK_vc10_v1-8-0\samples\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\AA\Ogre_src\include;D:\AA\Ogre_src\ogre_src_v1-8-0\OgreMain\include;D:\AA\PagedGeometry1.1.1\include;D:\AA\OIS\trunk\includes;D:\AA\NewtonWin-2.24/sdk/dCustomJoints;D:\AA\NewtonWin-2.24/sdk/dContainers;D:\AA\NewtonWin-2.24/sdk/dMath;D:\AA\irrKlang-1.3.0\include;D:\AA\boost_1_60_0;D:\AA\NewtonWin-2.24/sdk;D:\AA\ogrenewt4\inc;include;D:\OgreSDK_vc10_v1-8-0\samples\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>true</MinimalRebuild>
@@ -101,9 +101,9 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>OgreMain.lib;OIS_static.lib;newton.lib;dJointLibrary.lib;OgreNewt.lib;irrKlang.lib;PagedGeometry.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OgreMain.lib;OIS_static.lib;newton.lib;dJointLibrary.lib;OgreNewt.lib;irrKlang.lib;boost_serialization-vc120-mt-1_60.lib;PagedGeometry.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>D:\AA\OIS\trunk\lib;D:\AA\PagedGeometry1.1.1\lib;D:\AA\Ogre_src\lib\release;D:\AA\irrKlang-1.3.0\lib\Win32-visualStudio;D:\AA\NewtonWin-2.24/sdk/x32;D:\AA\NewtonWin-2.24/sdk/x32/dll_vs9;D:\AA\NewtonWin-2.24/sdk/x32/lib_vs9_md;D:\AA\boost_1_47\lib;D:\AA\ogrenewt4\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\AA\OIS\trunk\lib;D:\AA\PagedGeometry1.1.1\lib;D:\AA\Ogre_src\lib\release;D:\AA\irrKlang-1.3.0\lib\Win32-visualStudio;D:\AA\NewtonWin-2.24/sdk/x32;D:\AA\NewtonWin-2.24/sdk/x32/dll_vs9;D:\AA\NewtonWin-2.24/sdk/x32/lib_vs9_md;D:\AA\boost_1_60_0\lib32-msvc-12.0;D:\AA\ogrenewt4\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>

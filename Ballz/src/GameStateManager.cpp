@@ -59,6 +59,8 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
 
     dbg = new DebugKeys();
     dbg->registerInputListening();
+
+    materialEdits.loadFile();
 }
 
 GameStateManager::~GameStateManager()
@@ -121,6 +123,7 @@ void GameStateManager::switchToLevel(int lvl)
 
     SceneParser::instance.loadScene(lvlInfo.path);
     lvlInfo.init();
+    Global::gameMgr->materialEdits.applyChanges();
     Global::gameMgr->geometryMgr->update();
     SceneCubeMap::renderAll();
 
