@@ -18,6 +18,7 @@ struct LevelInfo
 {
     std::string name;
     std::string path;
+    std::string sceneFile;
     std::function<void()> init;
 
     std::string skyboxName;

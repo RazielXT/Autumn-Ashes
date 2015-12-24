@@ -14,7 +14,8 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
     this->wMaterials = wMaterials;
 
     LevelInfo info;
-    info.path = "../../media/menu/menu.scene";
+    info.path = "../../media/menu/";
+    info.sceneFile = "menu.scene";
     info.init = createMenuLevel;
     info.fogColor = Ogre::ColourValue(0.5f, 0.55f, 0.65f, 0.5f);
     info.fogStartDistance = 80;
@@ -28,39 +29,42 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, Wo
     levels[0] = info;
 
     info.name = "Park";
-    info.path = "../../media/park/park.scene";
+    info.path = "../../media/park/";
+    info.sceneFile = "park.scene";
     info.init = createLevelTuto;
     info.bloomStr = 1.5f;
     info.bloomDepth = 0.5f;
     levels[1] = info;
 
     info.name = "Caves";
-    info.path = "../../media/caves.scene";
+    info.path = "../../media/";
+    info.sceneFile = "caves.scene";
     info.init = createLevel1_1;
     levels[2] = info;
 
     info.name = "Valley";
-    info.path = "../../media/valley/valley.scene";
+    info.path = "../../media/valley/";
+    info.sceneFile = "valley.scene";
     info.init = createLevel2;
     levels[3] = info;
 
     info.name = "Test1";
-    info.path = "../../media/testLvl/test.scene";
+    info.path = "../../media/testLvl/";
+    info.sceneFile = "test.scene";
     info.init = createTestLevel;
     info.ambientColor = ColourValue(0.25f, 0.35f, 0.4f);
     info.ColorShift = Ogre::Vector4(0.9f, 1.0f, 1.05f, 0);
     levels[4] = info;
 
     info.name = "Test2";
-    info.path = "../../media/testLvl2/test.scene";
+    info.path = "../../media/testLvl2/";
+    info.sceneFile = "test.scene";
     info.init = createTestLevel2;
     info.ambientColor = ColourValue(0.2f, 0.2f, 0.1f);
     levels[5] = info;
 
     dbg = new DebugKeys();
     dbg->registerInputListening();
-
-    materialEdits.loadFile();
 }
 
 GameStateManager::~GameStateManager()
@@ -121,7 +125,7 @@ void GameStateManager::switchToLevel(int lvl)
 
     auto& lvlInfo = levels[lvl];
 
-    SceneParser::instance.loadScene(lvlInfo.path);
+    SceneParser::instance.loadScene(lvlInfo.path + lvlInfo.sceneFile);
     lvlInfo.init();
     Global::gameMgr->materialEdits.applyChanges();
     Global::gameMgr->geometryMgr->update();
@@ -153,7 +157,7 @@ void GameStateManager::restartLevel()
 
 void GameStateManager::reloadLevel()
 {
-    SceneParser::instance.reloadScene(levels[lastLVL].path);
+    SceneParser::instance.reloadScene(levels[lastLVL].path + levels[lastLVL].sceneFile);
 }
 
 bool GameStateManager::insideMenuPressed()

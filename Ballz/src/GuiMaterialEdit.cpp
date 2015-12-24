@@ -66,7 +66,7 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
         else if (activeLvl == 1 && activeBaseId == 1)
         {
             if (curMatEdit.changed)
-                Global::gameMgr->materialEdits.saveEdit(curMatEdit.edit, curMatEdit.entity->getName());
+                Global::gameMgr->materialEdits.addEdit(curMatEdit.edit, curMatEdit.entity->getName());
             else
                 Global::gameMgr->materialEdits.removeEdit(curMatEdit.entity->getName());
         }
@@ -118,7 +118,7 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
             activeParamId = activeParamId % curMatEdit.edit.psVariables[activeVarId].size;
         }
         break;
-    case OIS::KC_DIVIDE:
+    case OIS::KC_MINUS:
         if (activeLvl == 3)
         {
             curMatEdit.materialChanged();
@@ -127,11 +127,29 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
             curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
         }
         break;
-    case OIS::KC_MULTIPLY:
+    case OIS::KC_ADD:
         if (activeLvl == 3)
         {
             curMatEdit.materialChanged();
             curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] += 0.1f;
+            curMatEdit.edit.psVariables[activeVarId].edited = true;
+            curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+        }
+        break;
+    case OIS::KC_MULTIPLY:
+        if (activeLvl == 3)
+        {
+            curMatEdit.materialChanged();
+            curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] *= 1.5f;
+            curMatEdit.edit.psVariables[activeVarId].edited = true;
+            curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+        }
+        break;
+    case OIS::KC_DIVIDE:
+        if (activeLvl == 3)
+        {
+            curMatEdit.materialChanged();
+            curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] /= 1.5f;
             curMatEdit.edit.psVariables[activeVarId].edited = true;
             curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
         }
@@ -250,6 +268,9 @@ void LoadedMaterialEdit::reset()
     entity = nullptr;
     changed = false;
     matInstance = false;
+
+    edit.psVariables.clear();
+    edit.vsVariables.clear();
 }
 
 bool LoadedMaterialEdit::queryWorld()

@@ -38,43 +38,39 @@ void MaterialEdit::mergeChanges(MaterialEdit& r, bool addNotExisting)
     }
 }
 
-void MaterialEditsLibrary::saveEdit(MaterialEdit& edit, std::string entName)
+void MaterialEditsLibrary::addEdit(MaterialEdit& edit, std::string entName)
 {
-    auto& entities = editHistory[Global::gameMgr->getCurrentLvlInfo()->name];
-    auto& ent = entities[entName];
+    auto& ent = editHistory[entName];
 
     if (ent.originMatName.empty())
         ent.originMatName = edit.originMatName;
 
     ent.mergeChanges(edit, true);
 
-    saveFile();
+    saveFile(Global::gameMgr->getCurrentLvlInfo()->path);
 }
 
 void MaterialEditsLibrary::removeEdit(std::string entName)
 {
-    auto& entities = editHistory[Global::gameMgr->getCurrentLvlInfo()->name];
-    auto& ent = entities.begin();
+    auto& ent = editHistory.begin();
 
-    while (ent != entities.end())
+    while (ent != editHistory.end())
     {
         if (ent->first == entName)
         {
-            entities.erase(ent);
+            editHistory.erase(ent);
             break;
         }
     }
 
-    saveFile();
+    saveFile(Global::gameMgr->getCurrentLvlInfo()->path);
 }
 
 bool MaterialEditsLibrary::loadSavedChanges(MaterialEdit& edit, std::string entName)
 {
-    auto& entities = editHistory[Global::gameMgr->getCurrentLvlInfo()->name];
+    auto& ent = editHistory.begin();
 
-    auto& ent = entities.begin();
-
-    while (ent != entities.end())
+    while (ent != editHistory.end())
     {
         if (ent->first == entName)
         {
@@ -94,9 +90,9 @@ MaterialEditsLibrary::MaterialEditsLibrary()
 
 void MaterialEditsLibrary::applyChanges()
 {
-    auto& entities = editHistory[Global::gameMgr->getCurrentLvlInfo()->name];
+    loadFile(Global::gameMgr->getCurrentLvlInfo()->path);
 
-    for (auto& ent : entities)
+    for (auto& ent : editHistory)
     {
         if (Global::mSceneMgr->hasEntity(ent.first))
         {
@@ -117,16 +113,16 @@ void MaterialEditsLibrary::applyChanges()
     }
 }
 
-void MaterialEditsLibrary::saveFile()
+void MaterialEditsLibrary::saveFile(std::string path)
 {
-    std::ofstream ofs("materialEdits");
+    std::ofstream ofs(path + "materialEdits");
     boost::archive::text_oarchive oa(ofs);
     oa << this;
 }
 
-void MaterialEditsLibrary::loadFile()
+void MaterialEditsLibrary::loadFile(std::string path)
 {
-    std::ifstream ifs("materialEdits");
+    std::ifstream ifs(path + "materialEdits");
 
     if (ifs.good())
     {

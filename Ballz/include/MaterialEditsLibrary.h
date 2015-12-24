@@ -55,7 +55,7 @@ public:
 
 
     bool loadSavedChanges(MaterialEdit& edit, std::string entName);
-    void saveEdit(MaterialEdit& edit, std::string entName);
+    void addEdit(MaterialEdit& edit, std::string entName);
     void removeEdit(std::string entName);
 
     friend class boost::serialization::access;
@@ -66,16 +66,16 @@ public:
         ar & editHistory;
     }
 
-    void saveFile();
-    void loadFile();
+    void saveFile(std::string path);
+    void loadFile(std::string path);
+
     void applyChanges();
 
 private:
 
     using EditedEntities = std::map < std::string, MaterialEdit >;
-    using EditedLevels = std::map < std::string, EditedEntities > ;
 
-    EditedLevels editHistory;
+    EditedEntities editHistory;
 
     int idCounter = 500;
 };
