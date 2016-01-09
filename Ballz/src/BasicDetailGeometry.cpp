@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "BasicDetailGeometry.h"
 #include "MUtils.h"
+#include "SUtils.h"
+#include "GUtils.h"
 #include "GameStateManager.h"
 #include "DetailGeometryMaterial.h"
 
@@ -50,13 +52,13 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
                 scaleMask = MUtils::lerp(params.customEdit.customMinmaxScale.x, params.customEdit.customMinmaxScale.y, scaleW);
             }
 
-            MUtils::RayInfo ray;
+            GUtils::RayInfo ray;
             bool foundRay = false;
 
             if (gridInfo.target)
-                foundRay = MUtils::getRayFilteredInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray, gridInfo.target);
+                foundRay = GUtils::getRayFilteredInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray, gridInfo.target);
             else
-                foundRay = MUtils::getRayInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray);
+                foundRay = GUtils::getRayInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray);
 
             if (foundRay && ray.normal.y >= info.maxSteepY && acceptsWeight(w))
             {
@@ -112,7 +114,7 @@ void BasicDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, V
 
     while (!meshName.empty())
     {
-        auto name = MUtils::strtok_str(meshName, ';');
+        auto name = SUtils::strtok_str(meshName, ';');
         auto ent = Global::mSceneMgr->createEntity(name);
         //node->attachObject(ent);
 

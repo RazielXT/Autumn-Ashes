@@ -9,6 +9,7 @@
 #include "PlayerAbilities.h"
 #include "PlayerSliding.h"
 #include "SceneCubeMap.h"
+#include "GameUi.h"
 
 using namespace Ogre;
 
@@ -56,6 +57,7 @@ Player::Player(WorldMaterials* wMaterials)
     immortal = true;
     alive = true;
 
+    ui = Global::gameMgr->myMenu->gameUi;
     wmaterials = wMaterials;
 
     mCamera=mSceneMgr->getCamera("Camera");
@@ -108,7 +110,7 @@ void Player::loadState(PlayerStateInfo& info)
 
 void Player::initBody()
 {
-    Ogre::Entity* ent = mSceneMgr->createEntity("name", "play2.mesh");
+    Ogre::Entity* ent = mSceneMgr->createEntity("playerBody", "play2.mesh");
     SceneNode* node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CenterNode");
     node->attachObject(ent);
     ent->setCastShadows(false);
@@ -245,25 +247,27 @@ void Player::releasedKey(const OIS::KeyEvent &arg)
 
 void Player::pressedMouse(const OIS::MouseEvent &arg,OIS::MouseButtonID id)
 {
-    switch (id)
-    {
-    case OIS::MB_Right:
-        if (!grabbedObj)
-            pGrabbing->tryToGrab();
+    if(!pAbilities->pressedMouse(arg, id))
+        switch (id)
+        {
+        case OIS::MB_Right:
+            if (!grabbedObj)
+                pGrabbing->tryToGrab();
 
-        break;
-    }
+            break;
+        }
 }
 void Player::releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
-    switch (id)
-    {
-    case OIS::MB_Right:
-        if (grabbedObj)
-            pGrabbing->releaseObj();
+    if (!pAbilities->releasedMouse(arg, id))
+        switch (id)
+        {
+        case OIS::MB_Right:
+            if (grabbedObj)
+                pGrabbing->releaseObj();
 
-        break;
-    }
+            break;
+        }
 }
 void Player::movedMouse(const OIS::MouseEvent &e)
 {
@@ -463,6 +467,7 @@ void Player::update(Real time)
 {
     tslf = time*Global::timestep;
     facingDir = mCamera->getDerivedOrientation()*Ogre::Vector3(0, 0, -1);
+    camPosition = mCamera->getDerivedPosition();
 
     pPostProcess->update(tslf);
 
@@ -512,52 +517,51 @@ void Player::updateStats()
     {
         pParkour->updateWallrunning();
     }
-
-    if (!grabbedObj && !climbing && !hanging && !wallrunning)
-    {
-        updateUseGui();
-    }
 }
 
 void Player::updateUseGui()
 {
-    auto pos = bodyPosition;
-    pos.y += 1;
-    OgreNewt::BasicRaycast ray(m_World, pos, pos + getFacingDirection() * 2, false);
+    const float distanceFacingProbe = 20;
+
+    OgreNewt::BasicRaycast ray(m_World, camPosition, camPosition + getFacingDirection() * distanceFacingProbe, false);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
 
-    if (info.mBody)
-    {
-        //grabbable
-        if (info.mBody->getType() == Grabbable)
-        {
-            Global::gameMgr->myMenu->showUseGui(Ui_Pickup);
-        }
-        //climbable
-        else if (info.mBody->getType() == Pullup_old)
-        {
-            Global::gameMgr->myMenu->showUseGui(Ui_Climb);
-        }
-        //trigger
-        else if (info.mBody->getType() == Trigger)
-        {
-            Ogre::Any any = info.mBody->getUserData();
+    facingWallDistance = info.mBody ? distanceFacingProbe*info.getDistance() : distanceFacingProbe;
 
-            if (!any.isEmpty())
+    if (inControl)
+        if (!grabbedObj && !climbing && !hanging)
+            if (!wallrunning && info.mBody && facingWallDistance <= 2.0f)
             {
-                bodyUserData* a0 = Ogre::any_cast<bodyUserData*>(any);
-                if (a0->enabledTrigger)
+                //grabbable
+                if (info.mBody->getType() == Grabbable)
                 {
-                    Global::gameMgr->myMenu->showUseGui(Ui_Use);
+                    ui->showUseGui(Ui_Pickup);
+                }
+                //climbable
+                else if (info.mBody->getType() == Pullup_old)
+                {
+                    ui->showUseGui(Ui_Climb);
+                }
+                //trigger
+                else if (info.mBody->getType() == Trigger)
+                {
+                    Ogre::Any any = info.mBody->getUserData();
+
+                    if (!any.isEmpty())
+                    {
+                        bodyUserData* a0 = Ogre::any_cast<bodyUserData*>(any);
+                        if (a0->enabledTrigger)
+                        {
+                            ui->showUseGui(Ui_Use);
+                        }
+                    }
                 }
             }
-        }
-    }
 }
 
 Vector3 Player::getCameraPosition() const
 {
-    return camnode->_getDerivedPosition();
+    return camPosition;
 }
 
 void Player::startCameraShake(float time,float power,float impulse)

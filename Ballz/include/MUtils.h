@@ -53,22 +53,6 @@ inline float smoothstep(float edge0, float edge1, float x)
     return edge0 + diff*smoothstep(x);
 }
 
-inline std::string strtok_str(std::string& txt, char delim)
-{
-    auto dPos = txt.find_first_of(delim);
-    std::string ret = txt;
-
-    if (dPos != std::string::npos)
-    {
-        ret.erase(dPos, std::string::npos);
-        txt.erase(0, dPos + 1);
-    }
-    else
-        txt.clear();
-
-    return ret;
-}
-
 inline float getYawBetween(Quaternion& q1, Quaternion& q2)
 {
     auto yaw = q1.getYaw().valueDegrees();
@@ -107,58 +91,6 @@ inline Quaternion crowQuaternionFromDir(Vector3 dirFront)
     return Quaternion(dirFront, dirUp, dirRight);
 }
 
-inline bool getVerticalRayPos(Vector3& pos, float yOffset)
-{
-    OgreNewt::BasicRaycast ray(Global::mWorld, Vector3(pos.x, pos.y + yOffset, pos.z), Vector3(pos.x, pos.y - yOffset, pos.z), false);
-
-    if (ray.getHitCount() > 0)
-    {
-        OgreNewt::BasicRaycast::BasicRaycastInfo& info = ray.getFirstHit();
-        pos.y += -yOffset + 2 * yOffset * (1 - info.getDistance());
-
-        return true;
-    }
-    else
-        return false;
-}
-
-inline bool isPathFree(Vector3 start, Vector3 end)
-{
-    OgreNewt::BasicRaycast ray(Global::mWorld, start, end, false);
-
-    return (ray.getHitCount() == 0);
-}
-
-struct RayInfo
-{
-    float offset;
-    Vector3 pos;
-    Vector3 normal;
-    OgreNewt::Body* body;
-};
-
-inline bool getRayFilteredInfo(Vector3 start, Vector3 end, RayInfo& minfo, OgreNewt::Body* target)
-{
-    OgreNewt::BasicRaycast ray(Global::mWorld, start, end, true);
-
-    for (int i = 0; i < ray.getHitCount(); i++)
-    {
-        OgreNewt::BasicRaycast::BasicRaycastInfo& info = ray.getFirstHit();
-
-        if (info.getBody() == target)
-        {
-            minfo.normal = info.getNormal();
-            minfo.pos = end* info.getDistance() + start*(1 - info.getDistance());
-            minfo.body = info.getBody();
-            minfo.offset = info.getDistance();
-
-            return true;
-        }
-    }
-
-    return false;
-}
-
 inline Ogre::Vector3 getMinimum(Vector3 v1, Vector3 v2)
 {
     Vector3 out = v1;
@@ -179,67 +111,6 @@ inline Ogre::Vector3 getMaximum(Vector3 v1, Vector3 v2)
     if (v2.z > out.z) out.z = v2.z;
 
     return out;
-}
-
-inline bool getRayFilteredInfo(Vector3 start, Vector3 dir, float len, RayInfo& minfo, OgreNewt::Body* target)
-{
-    dir.normalise();
-    Vector3 end = start + dir*len;
-
-    return getRayFilteredInfo(start, end, minfo, target);
-}
-
-inline bool getRayInfo(Vector3 start, Vector3 end, RayInfo& minfo)
-{
-    OgreNewt::BasicRaycast ray(Global::mWorld, start, end, false);
-
-    if (ray.getHitCount() > 0)
-    {
-        OgreNewt::BasicRaycast::BasicRaycastInfo& info = ray.getFirstHit();
-        minfo.normal = info.getNormal();
-        minfo.pos = end* info.getDistance() + start*(1 - info.getDistance());
-        minfo.body = info.getBody();
-        minfo.offset = info.getDistance();
-
-        return true;
-    }
-    else
-        return false;
-}
-
-inline bool getRayInfo(Vector3 start, Vector3 dir, float len, RayInfo& minfo)
-{
-    //dir.normalise();
-    Vector3 end = start + dir*len;
-
-    return getRayInfo(start, end, minfo);
-}
-
-inline bool getRayPortInfo(Vector3 start, Vector3 dir, float len, float offset, RayInfo& minfo)
-{
-    float offsetSub = offset / len;
-    Vector3 end = start + dir*len;
-    OgreNewt::BasicRaycast ray(Global::mWorld, start, end, false);
-
-    if (ray.getHitCount() > 0)
-    {
-        OgreNewt::BasicRaycast::BasicRaycastInfo& info = ray.getFirstHit();
-        minfo.normal = info.getNormal();
-        minfo.offset = info.getDistance();
-        minfo.pos = start + std::max(0.0f, minfo.offset - offsetSub)*len*dir;
-        minfo.body = info.getBody();
-
-        return true;
-    }
-    else
-    {
-        minfo.normal = Ogre::Vector3(0,1,0);
-        minfo.pos = end;
-        minfo.body = nullptr;
-        minfo.offset = 1;
-
-        return false;
-    }
 }
 
 inline Quaternion crowQuaternionFromDirNoPitch(Vector3 dirFront)
@@ -304,7 +175,7 @@ struct LineProjState
     float sqMinDistance;
 };
 
-inline LineProjState getProjectedState(Ogre::Vector3& point, Ogre::Vector3& start, Ogre::Vector3& end)
+inline LineProjState getProjectedPointOnLine(Ogre::Vector3& point, Ogre::Vector3& start, Ogre::Vector3& end)
 {
     Vector3 dir = end - start;
     Vector3 pDir = point - start;
@@ -350,7 +221,7 @@ struct SegmentsDistanceInfo
     float s2Pos;
 };
 
-inline SegmentsDistanceInfo getSegmentsDistanceInfo(Vector3 S1P0, Vector3 S1P1, Vector3 S2P0, Vector3 S2P1)
+inline SegmentsDistanceInfo getLinesDistanceInfo(Vector3 S1P0, Vector3 S1P1, Vector3 S2P0, Vector3 S2P1)
 {
     Vector3   u = S1P1 - S1P0;
     Vector3   v = S2P1 - S2P0;

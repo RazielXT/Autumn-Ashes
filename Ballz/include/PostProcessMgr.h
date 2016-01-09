@@ -15,7 +15,7 @@ struct PostProcessVariables
     Ogre::Real hurtEffect;
     Ogre::Real godrayEdge;
     Ogre::Vector3 radialHorizBlurVignette;
-    Ogre::Vector4 ContSatuSharpNoise, ColouringShift, bloomStrDep;
+    Ogre::Vector4 ContSatuSharpNoise, ColouringShift, bloomStrDepAddSize;
     Ogre::Real mbAmount;
     Ogre::Real ppDistortionIgnore;
 
@@ -34,7 +34,7 @@ struct PostProcessVariables
         mbAmount = 1;
         ppDistortionIgnore = 1;
         ColouringShift = Ogre::Vector4(1, 1, 1, 0);
-        bloomStrDep = Ogre::Vector4(1, 1, 0, 0);
+        bloomStrDepAddSize = Ogre::Vector4(1, 1, 0, 1);
     }
 };
 

@@ -51,7 +51,7 @@ void createTestLevel2()
 
 void createLevelTuto()
 {
-    Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBoxToDark");
+    //Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBoxToDark");
 
     irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("tokyostreetatnight.ogg").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
     //music->setMinDistance(20);

@@ -384,9 +384,37 @@
 </class>
 
 <class name="Player" usage="object">
-	<data name="reactions" displayName="Rections [int;int...]" groupName="Player" type="string"/>
+	<data name="reactions" displayName="Reactions [int;int...]" groupName="Player" type="string"/>
 	<data name="rfunctions" displayName="Functions" groupName="Player" type="string"/>
 </class>
 
+<enum name="gateType" type="int">
+	   <enumItem name="Field" value="Field" />
+       <enumItem name="Horizontal" value="Horizontal" />
+       <enumItem name="Vertical" value="Vertical" />
+</enum>
+
+<class name="Gate" usage="object">
+	<data name="Type" type="gateType" defaultValue="Field"/>
+	<data name="ID" type="string"/>
+	<data name="Timeout" type="int" defaultValue="0"/>
+	<data name="MinUnlock" type="int" defaultValue="0"/>
+</class>
+
+<enum name="gateLockType" type="int">
+       <enumItem name="WallEnergy" value="WallEnergy" />
+	   <enumItem name="GroundEnergy" value="GroundEnergy" />
+	   <enumItem name="GroundTouch" value="GroundTouch" />
+</enum>
+
+<class name="Gate Lock" usage="object">
+	<data name="Type" type="gateLockType" defaultValue="WallEnergy"/>
+	<data name="ID" type="string"/>
+	<data name="Timeout" type="int" defaultValue="0"/>
+</class>
+
+<class name="Energy" usage="object">
+	<data name="Auto obtain" type="bool" defaultValue="false"/>
+</class>
 
 </userDataTypes>

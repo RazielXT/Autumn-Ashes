@@ -4,6 +4,7 @@
 #include "WorldMaterials.h"
 #include "GeometryManager.h"
 #include "MaterialEditsLibrary.h"
+#include "ParticleManager.h"
 
 class GuiOverlay;
 class DebugKeys;
@@ -31,6 +32,8 @@ struct LevelInfo
 
     Ogre::Vector4 ContSatuSharpNoise;
     Ogre::Vector4 ColorShift;
+    float bloomAdd = 0;
+    float bloomSize = 1;
     float bloomStr;
     float bloomDepth;
 };
@@ -39,7 +42,7 @@ class GameStateManager
 {
 public:
 
-    GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, WorldMaterials* wMaterials);
+    GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs);
     ~GameStateManager();
 
     LevelInfo* getLvlInfo(int id);
@@ -62,16 +65,18 @@ public:
     GameConfig gameConfig;
     GameState gameState;
     GuiOverlay* myMenu;
-    WorldMaterials* wMaterials;
+    WorldMaterials wMaterials;
     GeometryManager* geometryMgr;
+    ParticleManager particleMgr;
     MaterialEditsLibrary materialEdits;
 
     std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
 
     void addDebugKey(std::string name, float* target, float step = 0.2f);
 
-
 private:
+
+    void clearLevel();
 
     std::map<int, LevelInfo> levels;
 

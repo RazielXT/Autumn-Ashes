@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ManualDetailGeometry.h"
 #include "MUtils.h"
+#include "SUtils.h"
 #include "DetailGeometryInfo.h"
 
 using namespace Ogre;
@@ -47,7 +48,7 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
 
         while (!meshName.empty())
         {
-            auto name = MUtils::strtok_str(meshName, ';');
+            auto name = SUtils::strtok_str(meshName, ';');
             auto ent = Global::mSceneMgr->createEntity(name);
             //node->attachObject(ent);
 

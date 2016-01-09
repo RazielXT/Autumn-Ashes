@@ -9,7 +9,6 @@
 #include "TriggerPlayerContactCallback.h"
 #include "Gorilla.h"
 #include "lvl_update.h"
-#include "Console.h"
 #include "PostProcessMgr.h"
 #include "NewtonListener.h"
 #include "DebugKeys.h"
@@ -20,63 +19,6 @@ using namespace Ogre;
 class MainListener : public FrameListener, public OIS::MouseListener, public OIS::KeyListener
 {
 public:
-
-
-    void reloadShaders()
-    {
-        //std::string matsFile("lvl2.material");
-
-        /*std::vector<std::string> reloadedMats;
-        auto mit = MaterialManager::getSingleton().getResourceIterator();
-
-        while (mit.hasMoreElements())
-        {
-        	MaterialPtr mat = mit.getNext();
-            mat->reload();
-
-        	if (mat->getOrigin() == matsFile)
-        		reloadedMats.push_back(mat->getName());
-        }*/
-        /*
-        Ogre::SceneManager::MovableObjectIterator mIterator = Global::mSceneMgr->getMovableObjectIterator("Entity");
-        std::vector<std::pair<Ogre::Entity*, std::string>> ents;
-
-        while (mIterator.hasMoreElements())
-        {
-            auto e = (Ogre::Entity*)mIterator.getNext();
-
-            if (e->getNumSubEntities() > 0)
-            {
-                auto sub = e->getSubEntity(0);
-                auto matName = sub->getMaterialName();
-                auto mat = sub->getMaterial();
-
-                //if (std::find(reloadedMats.begin(), reloadedMats.end(), mat) != reloadedMats.end())
-                if (mat->getOrigin() == matsFile)
-                {
-                    sub->setMaterialName("BaseWhite");
-                    mat->unload();
-
-                    ents.push_back(std::make_pair(e, matName));
-                }
-            }
-        }
-
-        MaterialManager::getSingleton().parseScript(Ogre::ResourceGroupManager::getSingleton().openResource(matsFile), "General");
-
-        for (auto& p : ents)
-        {
-            p.first->setMaterialName(p.second);
-        }
-        */
-        auto it = HighLevelGpuProgramManager::getSingleton().getResourceIterator();
-
-        while (it.hasMoreElements())
-        {
-            HighLevelGpuProgramPtr gpuProgram = it.getNext();
-            gpuProgram->reload();
-        }
-    }
 
     ~MainListener()
     {
@@ -89,9 +31,6 @@ public:
         mBufferFlush.stop();
 
         delete postProcMgr;
-
-        delete wMaterials;
-
     }
 
     MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse,SceneManager * sceneMgr,OgreNewt::World* nWorld, Ogre::Root *mRoot,Ogre::RenderWindow* mWin)
@@ -120,8 +59,8 @@ public:
         mWorld=nWorld;
         mWorld->setSolverModel(3);
         mCamera=mSceneMgr->getCamera("Camera");
-        wMaterials = new WorldMaterials();
 
+        Global::mCamera = mCamera;
         Global::mSceneMgr = mSceneMgr;
         Global::mWorld = mWorld;
         Global::mWindow = mWindow;
@@ -130,7 +69,7 @@ public:
         Global::audioLib = new AudioLibrary(engine);
         Global::shaker = new CameraShaker();
 
-        gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem(), wMaterials);
+        gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem());
         Global::gameMgr = gameMgr;
         Global::gameMgr->geometryMgr = geometryMgr;
 
@@ -145,13 +84,7 @@ public:
         if (mKeyboard)
             mKeyboard->setEventCallback(this);
 
-        wMaterials->init(mWorld);
         gameMgr->switchToMainMenu();
-    }
-
-    void default_callback(OgreNewt::Body* me, float timeStep, int threadIndex )
-    {
-        me->addForce(Vector3(0,-6,0));
     }
 
     bool frameStarted(const FrameEvent& evt)
@@ -190,28 +123,7 @@ public:
 
         switch (arg.key)
         {
-        case OIS::KC_M:
-        {
-            if (gameMgr->gameState == GAME)
-                makecube();
 
-            break;
-        }
-
-        case OIS::KC_NUMPAD1:
-        {
-            if (gameMgr->gameState == GAME)
-                makecube(true);
-
-            break;
-        }
-
-        case OIS::KC_NUMPAD2:
-        {
-            reloadShaders();
-
-            break;
-        }
         case OIS::KC_ESCAPE:
         {
             gameMgr->escapePressed();
@@ -270,35 +182,6 @@ public:
         return true;
     }
 
-    void makecube(bool platform = false)
-    {
-        Ogre::Vector3 size( 2, 2,2 );
-        Ogre::Real mass = platform ? 0 : 0.3f;
-
-        Entity* ent = mSceneMgr->createEntity( "boxEL.mesh" );
-        SceneNode* node = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-        node->attachObject( ent );
-        node->setScale( size );
-        ent->setCastShadows(true);
-        ent->setMaterialName( "murbob" );
-        OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box( mWorld, size, 0 ));
-        OgreNewt::Body* body = new OgreNewt::Body( mWorld, col );
-
-        Ogre::Vector3 inertia, offset;
-        col->calculateInertialMatrix(inertia, offset);
-
-#ifdef OGRENEWT_NO_COLLISION_SHAREDPTR
-        delete col;
-#endif
-
-        body->setMassMatrix( mass, mass*inertia );
-        body->setCenterOfMass(offset);
-        body->attachNode( node );
-        body->setType(Grabbable);
-        body->setCustomForceAndTorqueCallback<MainListener>(&MainListener::default_callback, this);
-        body->setPositionOrientation(Global::player->bodyPosition + Vector3(0, platform ? -3.0f : 5.0f, 0), Ogre::Quaternion::IDENTITY);
-    }
-
 
 private:
     OIS::Keyboard *mKeyboard;
@@ -307,10 +190,7 @@ private:
     SceneManager * mSceneMgr;
     Camera* mCamera;
     OgreNewt::World* mWorld;
-    Player* p;
     Ogre::GpuCommandBufferFlush mBufferFlush;
-    WorldMaterials* wMaterials;
-    //OgreNewt::MaterialID* stoji_mat, *ide_mat, *flag_mat,*playerIgnore_mat,*trig_mat,*action_mat, *selfIgnore_mat;
     Ogre::RenderWindow* mWindow;
     OgreNewt::Body* vytah;
     EventsManager* mEventMgr;

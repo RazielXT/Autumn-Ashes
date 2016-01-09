@@ -3,7 +3,7 @@
 struct WorldMaterials
 {
     ~WorldMaterials();
-    void init(OgreNewt::World* mWorld);
+    void init();
 
     OgreNewt::MaterialID* plNoMove_mat = NULL;
     OgreNewt::MaterialID* plMove_mat;
@@ -14,5 +14,6 @@ struct WorldMaterials
     OgreNewt::MaterialID* selfIgnore_mat;
     OgreNewt::MaterialID* plBlock_mat;
 
+private:
     void initCollisions(OgreNewt::World* mWorld);
 };

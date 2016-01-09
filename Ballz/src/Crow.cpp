@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Crow.h"
-#include "MUtils.h"
+#include "GUtils.h"
 #include "Player.h"
 
 using namespace Ogre;
@@ -180,7 +180,7 @@ void Crow::landTo(Ogre::Vector3 pos, float maxOffset)
 {
     Vector3 offset(Math::RangeRandom(-maxOffset, maxOffset), 0, Math::RangeRandom(-maxOffset, maxOffset));
     Vector3 lpos(pos + offset);
-    bool passRay = MUtils::getVerticalRayPos(lpos, 5);
+    bool passRay = GUtils::getVerticalRayPos(lpos, 5, 5);
 
     //try 3 positions, get last one if nothing passes
     for (size_t i = 0; i < 2; i++)
@@ -189,7 +189,7 @@ void Crow::landTo(Ogre::Vector3 pos, float maxOffset)
         {
             offset = Vector3(Math::RangeRandom(-maxOffset, maxOffset), 0, Math::RangeRandom(-maxOffset, maxOffset));
             lpos = pos + offset;
-            passRay = MUtils::getVerticalRayPos(lpos, 5);
+            passRay = GUtils::getVerticalRayPos(lpos, 5, 5);
         }
         else
             break;
@@ -217,7 +217,7 @@ void Crow::startWalking()
         Vector3 offset(Math::RangeRandom(-walkDistMax, walkDistMax), 0, Math::RangeRandom(-walkDistMax, walkDistMax));
         lpos = (spos + offset);
 
-        found = MUtils::getVerticalRayPos(lpos, 5) && MUtils::isPathFree(spos, lpos) && validateGroundPos(lpos);
+        found = GUtils::getVerticalRayPos(lpos, 5, 5) && GUtils::isPathFree(spos, lpos) && validateGroundPos(lpos);
     }
 
     if (found)

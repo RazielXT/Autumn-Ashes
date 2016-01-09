@@ -3,49 +3,78 @@
 #include "PlayerSliding.h"
 #include "Player.h"
 #include "MUtils.h"
+#include "GameStateManager.h"
+#include "GameUi.h"
+#include "PlayerEnergies.h"
+#include "Energy.h"
 
-PlayerAbilities::PlayerAbilities(Player* player) : p(player)
+PlayerAbilities::PlayerAbilities(Player* player) : p(player), pEnergies(player), flash(player, &pEnergies), timeshift(player, &pEnergies)
 {
-    cameraPortNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
 }
 
 PlayerAbilities::~PlayerAbilities()
 {
 }
 
-void PlayerAbilities::setShiftTime()
+void PlayerAbilities::update(float tslf)
 {
-    shiftTimeTarget = stateTimer;
+    pEnergies.update(tslf);
+
+    timeshift.updateStateHistory(tslf);
+    flash.update(tslf);
 }
 
-void PlayerAbilities::shiftBack()
+bool PlayerAbilities::pressedKey(const OIS::KeyEvent &arg)
 {
-    if (playerHistory.empty())
-        return;
+    if (pEnergies.pressedKey(arg))
+        return true;
 
-    auto& targetState = playerHistory.front();
-
-    for (auto& state : playerHistory)
+    switch (arg.key)
     {
-        if (state.timestamp < shiftTimeTarget)
-            targetState = state;
-        else
-            break;
+    case OIS::KC_F:
+        flash.portForward();
+        break;
+
+    case OIS::KC_R:
+        timeshift.shiftBack();
+        break;
+
+    default:
+        return false;
     }
 
-    p->loadState(targetState);
-    p->bodyVelocityL = 0;
-
-    playerHistory.clear();
-    lastTimestamp = 0;
+    return true;
 }
 
-void PlayerAbilities::portForward()
+bool PlayerAbilities::releasedKey(const OIS::KeyEvent &arg)
 {
-    if (p->pSliding->foundTarget())
-        p->pSliding->portToTarget();
-    else
+    if (pEnergies.releasedKey(arg))
+        return true;
+
+    return false;
+}
+
+bool PlayerAbilities::pressedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+{
+    return (pEnergies.pressedMouse(arg, id));
+}
+
+bool PlayerAbilities::releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+{
+    return (pEnergies.releasedMouse(arg, id));
+}
+
+
+void PlayerFlash::portForward()
+{
+    auto target = pEnergies->facingEnergy();
+    auto e = pEnergies->getAvailableEnergy();
+
+    if (target && e)
     {
+        target->startUsage(energyRechargeTime, Energy::Recharging, true);
+        e->startUsage(energyRechargeTime, Energy::Recharging, true);
+
         portingTimer = 0;
 
         cameraPortNode->setPosition(p->camnode->_getDerivedPosition());
@@ -53,48 +82,14 @@ void PlayerAbilities::portForward()
         cameraPortNode->attachObject(p->detachCamera());
 
         portStartPos = cameraPortNode->getPosition();
+        portTargetPos = target->position;
     }
 }
 
-void PlayerAbilities::update(float tslf)
+void PlayerFlash::update(float tslf)
 {
-    updateStateHistory(tslf);
-    updatePortTarget(tslf);
-}
-
-void PlayerAbilities::updateStateHistory(float tslf)
-{
-    const float timeStateGaps = 0.1f;
-    const float maxtime = 5;
-
-    stateTimer += tslf;
-
-    while (!playerHistory.empty() && (stateTimer - playerHistory.front().timestamp) > maxtime)
+    if (portingTimer >= 0)
     {
-        playerHistory.pop_front();
-    }
-
-    if ((stateTimer - lastTimestamp) > timeStateGaps)
-    {
-        PlayerStateInfo info;
-        p->saveState(info);
-        info.timestamp = lastTimestamp = stateTimer;
-        playerHistory.push_back(info);
-    }
-}
-
-void PlayerAbilities::updatePortTarget(float tslf)
-{
-    if (portingTimer<0)
-    {
-        if (!p->pSliding->showPossibleSlideTarget())
-            showPortTarget();
-    }
-    else
-    {
-        p->pSliding->hideSlideTarget();
-        hidePortTarget();
-
         const float portTime = 0.1f;
         portingTimer += tslf;
 
@@ -115,69 +110,9 @@ void PlayerAbilities::updatePortTarget(float tslf)
     }
 }
 
-void PlayerAbilities::pressedKey(const OIS::KeyEvent &arg)
+PlayerFlash::PlayerFlash(Player* player, PlayerEnergies* energies)
 {
-    switch (arg.key)
-    {
-    case OIS::KC_LSHIFT:
-        shiftPressed = true;
-        break;
-
-    case OIS::KC_F:
-        portForward();
-        break;
-
-    case OIS::KC_R:
-        shiftBack();
-        break;
-
-    case OIS::KC_T:
-        setShiftTime();
-        break;
-    }
-}
-
-void PlayerAbilities::releasedKey(const OIS::KeyEvent &arg)
-{
-    switch (arg.key)
-    {
-    case OIS::KC_LSHIFT:
-        shiftPressed = false;
-        break;
-    }
-}
-
-void PlayerAbilities::hidePortTarget()
-{
-
-}
-
-void PlayerAbilities::showPortTarget()
-{
-    //ray target
-    const float maxPortDistance = 45;
-    auto dir = p->getFacingDirection();
-    auto pos = p->bodyPosition;
-
-    MUtils::RayInfo feetRay;
-    MUtils::RayInfo bodyRay;
-
-    pos.y += 1;
-    MUtils::getRayPortInfo(pos, dir, maxPortDistance, 1, bodyRay);
-    pos.y -= 2;
-    MUtils::getRayPortInfo(pos, dir, maxPortDistance, 1, feetRay);
-
-    //port to target
-    portTargetPos = bodyRay.pos;
-
-    if (bodyRay.offset < feetRay.offset)
-        portTargetPos.y -= 1;
-    else
-    {
-        portTargetPos = feetRay.pos;
-        portTargetPos.y += 1;
-    }
-
-    p->pSliding->targetBillboardSet->setVisible(false);
-    p->pSliding->billboardNode->setPosition(portTargetPos);
+    p = player;
+    pEnergies = energies;
+    cameraPortNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
 }

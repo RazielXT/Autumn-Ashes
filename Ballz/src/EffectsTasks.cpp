@@ -100,7 +100,7 @@ bool SwitchColorSchemeFx::start()
     colorBase.y = Global::mPPMgr->vars.ColouringShift.y;
     colorBase.z = Global::mPPMgr->vars.ColouringShift.z;
 
-    bloomStrBase = Global::mPPMgr->vars.bloomStrDep.y;
+    bloomStrBase = Global::mPPMgr->vars.bloomStrDepAddSize.y;
     fovBase = Global::mPPMgr->camera->getFOVy().valueDegrees();
 
     return true;
@@ -124,7 +124,7 @@ bool SwitchColorSchemeFx::update(float tslf)
     Global::timestep = pow(1 - halfTopW*(1-stepMin),1.5f);
 
     const auto blAdd = 3.0f;
-    Global::mPPMgr->vars.bloomStrDep.y = bloomStrBase + blAdd*halfTopW;
+    Global::mPPMgr->vars.bloomStrDepAddSize.y = bloomStrBase + blAdd*halfTopW;
 
     Global::mPPMgr->vars.ColouringShift.w = halfTopW;
     Global::mPPMgr->vars.radialHorizBlurVignette.x = halfTopW;

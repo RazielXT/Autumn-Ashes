@@ -3,18 +3,17 @@
 #include "GameStateManager.h"
 
 #include <iostream>
+#include "SUtils.h"
 
-void MaterialEdit::mergeChanges(MaterialEdit& r, bool addNotExisting)
+static void mergeParams(std::vector<MaterialEdit::MaterialVariable>& from, std::vector<MaterialEdit::MaterialVariable>& target, bool addNotExisting)
 {
-    originMatName = r.originMatName;
-
-    for (auto& var : r.psVariables)
+    for (auto& var : from)
     {
         if (var.edited)
         {
             bool found = false;
 
-            for (auto& mvar : psVariables)
+            for (auto& mvar : target)
             {
                 if (mvar.name == var.name && mvar.size == var.size)
                 {
@@ -25,17 +24,84 @@ void MaterialEdit::mergeChanges(MaterialEdit& r, bool addNotExisting)
 
             if (!found && addNotExisting)
             {
-                MaterialVariable mvar;
+                MaterialEdit::MaterialVariable mvar;
                 mvar.edited = true;
                 mvar.name = var.name;
                 mvar.size = var.size;
                 memcpy(mvar.buffer, var.buffer, 4 * var.size);
 
-                psVariables.push_back(mvar);
+                target.push_back(mvar);
             }
         }
 
     }
+}
+
+void MaterialEdit::mergeChanges(MaterialEdit& r, bool addNotExisting)
+{
+    originMatName = r.originMatName;
+
+    mergeParams(r.moreParams, moreParams, addNotExisting);
+
+    mergeParams(r.psVariables, psVariables, addNotExisting);
+}
+
+void MaterialEdit::setMaterialParam(Ogre::MaterialPtr ptr, MaterialEdit::MaterialVariable& var)
+{
+    if (ptr.isNull())
+        return;
+
+    int pass = ptr->getTechnique(0)->getNumPasses() - 1;
+
+    ptr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+}
+
+void MaterialEdit::setParticleParam(Ogre::ParticleSystem* ps, MaterialEdit::MaterialVariable& var)
+{
+    if (var.name == "Angle")
+        ps->getEmitter(0)->setAngle(Ogre::Degree(var.buffer[0]));
+    if (var.name == "MinMaxVelocity")
+        ps->getEmitter(0)->setParticleVelocity(var.buffer[0], var.buffer[1]);
+    if (var.name == "Emmision")
+        ps->getEmitter(0)->setEmissionRate(var.buffer[0]);
+    if (var.name == "MinMaxTime")
+        ps->getEmitter(0)->setTimeToLive(var.buffer[0], var.buffer[1]);
+    if (var.name == "XYSize")
+        ps->setDefaultDimensions(var.buffer[0], var.buffer[1]);
+}
+
+void MaterialEdit::generateParticleParams(Ogre::ParticleSystem* ps)
+{
+    moreParams.clear();
+    MaterialEdit::MaterialVariable var;
+
+    var.name = "Angle";
+    var.size = 1;
+    var.buffer[0] = ps->getEmitter(0)->getAngle().valueDegrees();
+    moreParams.push_back(var);
+
+    var.name = "MinMaxVelocity";
+    var.size = 2;
+    var.buffer[0] = ps->getEmitter(0)->getMinParticleVelocity();
+    var.buffer[1] = ps->getEmitter(0)->getMaxParticleVelocity();
+    moreParams.push_back(var);
+
+    var.name = "Emmision";
+    var.size = 1;
+    var.buffer[0] = ps->getEmitter(0)->getEmissionRate();
+    moreParams.push_back(var);
+
+    var.name = "MinMaxTime";
+    var.size = 2;
+    var.buffer[0] = ps->getEmitter(0)->getMinTimeToLive();
+    var.buffer[1] = ps->getEmitter(0)->getMaxTimeToLive();
+    moreParams.push_back(var);
+
+    var.name = "XYSize";
+    var.size = 2;
+    var.buffer[0] = ps->getDefaultWidth();
+    var.buffer[1] = ps->getDefaultHeight();
+    moreParams.push_back(var);
 }
 
 void MaterialEditsLibrary::addEdit(MaterialEdit& edit, std::string entName)
@@ -74,7 +140,16 @@ bool MaterialEditsLibrary::loadSavedChanges(MaterialEdit& edit, std::string entN
     {
         if (ent->first == entName)
         {
-            edit.mergeChanges(ent->second, false);
+            //must have at least copy name of saved origin
+            if (!SUtils::startsWith(edit.originMatName, ent->second.originMatName))
+            {
+                //old save, erase it
+                editHistory.erase(ent);
+                return false;
+            }
+            else
+                edit.mergeChanges(ent->second, false);
+
             return true;
         }
 
@@ -106,7 +181,36 @@ void MaterialEditsLibrary::applyChanges()
 
                 for (auto& var : ent.second.psVariables)
                 {
-                    newMat->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+                    int pass = newMat->getTechnique(0)->getNumPasses() - 1;
+                    newMat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+                }
+            }
+        }
+    }
+
+    for (auto& ps : editParticleHistory)
+    {
+        if (Global::mSceneMgr->hasParticleSystem(ps.first))
+        {
+            auto p = Global::mSceneMgr->getParticleSystem(ps.first);
+            auto curMatName = p->getMaterialName();
+
+            if (ps.second.originMatName == curMatName)
+            {
+                Ogre::MaterialPtr newMat = Ogre::MaterialManager::getSingleton().getByName(curMatName);
+                newMat = newMat->clone(curMatName + std::to_string(idCounter++));
+
+                p->setMaterialName(newMat->getName());
+
+                for (auto& var : ps.second.psVariables)
+                {
+                    int pass = newMat->getTechnique(0)->getNumPasses() - 1;
+                    newMat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+                }
+
+                for (auto& var : ps.second.moreParams)
+                {
+                    ps.second.setParticleParam(p, var);
                 }
             }
         }
@@ -115,23 +219,70 @@ void MaterialEditsLibrary::applyChanges()
 
 void MaterialEditsLibrary::saveFile(std::string path)
 {
-    std::ofstream ofs(path + "materialEdits");
-    boost::archive::text_oarchive oa(ofs);
+    std::ofstream ofs(path + "materialEdits", std::ios::binary);
+    boost::archive::binary_oarchive oa(ofs);
     oa << this;
 }
 
 void MaterialEditsLibrary::loadFile(std::string path)
 {
-    std::ifstream ifs(path + "materialEdits");
+    std::ifstream ifs(path + "materialEdits", std::ios::binary);
 
     if (ifs.good())
     {
-        boost::archive::text_iarchive ia(ifs);
+        boost::archive::binary_iarchive ia(ifs);
 
         MaterialEditsLibrary* arch;
         ia >> arch;
 
         editHistory = std::move(arch->editHistory);
+        editParticleHistory = std::move(arch->editParticleHistory);
         delete arch;
     }
+}
+
+bool MaterialEditsLibrary::loadSavedParticleChanges(MaterialEdit& edit, std::string particleName)
+{
+    auto& particle = editParticleHistory.begin();
+
+    while (particle != editParticleHistory.end())
+    {
+        if (particle->first == particleName)
+        {
+            edit.mergeChanges(particle->second, false);
+            return true;
+        }
+
+        particle++;
+    }
+
+    return false;
+}
+
+void MaterialEditsLibrary::addParticleEdit(MaterialEdit& edit, std::string particleName)
+{
+    auto& ent = editParticleHistory[particleName];
+
+    if (ent.originMatName.empty())
+        ent.originMatName = edit.originMatName;
+
+    ent.mergeChanges(edit, true);
+
+    saveFile(Global::gameMgr->getCurrentLvlInfo()->path);
+}
+
+void MaterialEditsLibrary::removeParticleEdit(std::string particleName)
+{
+    auto& ent = editParticleHistory.begin();
+
+    while (ent != editParticleHistory.end())
+    {
+        if (ent->first == particleName)
+        {
+            editParticleHistory.erase(ent);
+            break;
+        }
+    }
+
+    saveFile(Global::gameMgr->getCurrentLvlInfo()->path);
 }

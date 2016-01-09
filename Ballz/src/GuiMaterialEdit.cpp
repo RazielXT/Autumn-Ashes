@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GuiMaterialEdit.h"
 #include "MUtils.h"
+#include "GUtils.h"
 #include "Player.h"
 #include "GameStateManager.h"
 
@@ -26,7 +27,6 @@ void GuiMaterialEdit::initUi(Gorilla::Layer* layer)
 
     debugMaterialCaption[0]->text("");
     debugMaterialCaption[1]->text("Save");
-    debugMaterialCaption[2]->text("VS");
     debugMaterialCaption[3]->text("PS");
 
     for (size_t i = 0; i < DEBUG_VARIABLES_COUNT; i++)
@@ -65,10 +65,21 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
         }
         else if (activeLvl == 1 && activeBaseId == 1)
         {
-            if (curMatEdit.changed)
-                Global::gameMgr->materialEdits.addEdit(curMatEdit.edit, curMatEdit.entity->getName());
+            if (particleMode)
+            {
+                if (curMatEdit.changed)
+                    Global::gameMgr->materialEdits.addParticleEdit(curMatEdit.edit, curMatEdit.ps->getName());
+                else
+                    Global::gameMgr->materialEdits.removeParticleEdit(curMatEdit.ps->getName());
+            }
             else
-                Global::gameMgr->materialEdits.removeEdit(curMatEdit.entity->getName());
+            {
+                if (curMatEdit.changed)
+                    Global::gameMgr->materialEdits.addEdit(curMatEdit.edit, curMatEdit.entity->getName());
+                else
+                    Global::gameMgr->materialEdits.removeEdit(curMatEdit.entity->getName());
+            }
+
         }
         else
             activeLvl = Ogre::Math::Clamp(activeLvl + 1, 1, 3);
@@ -81,11 +92,21 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
         }
         if (activeLvl == 2)
         {
-            activeVarId = (activeVarId + 1) % curMatEdit.edit.psVariables.size();
+            if (particleMode && activeBaseId == 2)
+                activeVarId = (activeVarId + 1) % curMatEdit.edit.moreParams.size();
+            else
+                activeVarId = (activeVarId + 1) % curMatEdit.edit.psVariables.size();
+
             activeParamId = 0;
         }
         if (activeLvl == 3)
-            activeParamId = (activeParamId + 1) % curMatEdit.edit.psVariables[activeVarId].size;
+        {
+            if (particleMode && activeBaseId == 2)
+                activeParamId = (activeParamId + 1) % curMatEdit.edit.moreParams[activeVarId].size;
+            else
+                activeParamId = (activeParamId + 1) % curMatEdit.edit.psVariables[activeVarId].size;
+        }
+
         break;
     case OIS::KC_UP:
         if (activeLvl == 1)
@@ -101,10 +122,20 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
         {
             activeVarId = (activeVarId - 1);
 
-            if (activeVarId < 0)
-                activeVarId += curMatEdit.edit.psVariables.size();
+            if (particleMode && activeBaseId == 2)
+            {
+                if (activeVarId < 0)
+                    activeVarId += curMatEdit.edit.moreParams.size();
 
-            activeVarId = activeVarId % curMatEdit.edit.psVariables.size();
+                activeVarId = activeVarId % curMatEdit.edit.moreParams.size();
+            }
+            else
+            {
+                if (activeVarId < 0)
+                    activeVarId += curMatEdit.edit.psVariables.size();
+
+                activeVarId = activeVarId % curMatEdit.edit.psVariables.size();
+            }
 
             activeParamId = 0;
         }
@@ -112,46 +143,92 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
         {
             activeParamId = (activeParamId - 1);
 
-            if (activeParamId < 0)
-                activeParamId += curMatEdit.edit.psVariables[activeVarId].size;
+            if (particleMode && activeBaseId == 2)
+            {
+                if (activeParamId < 0)
+                    activeParamId += curMatEdit.edit.moreParams[activeVarId].size;
 
-            activeParamId = activeParamId % curMatEdit.edit.psVariables[activeVarId].size;
+                activeParamId = activeParamId % curMatEdit.edit.moreParams[activeVarId].size;
+            }
+            else
+            {
+                if (activeParamId < 0)
+                    activeParamId += curMatEdit.edit.psVariables[activeVarId].size;
+
+                activeParamId = activeParamId % curMatEdit.edit.psVariables[activeVarId].size;
+            }
         }
         break;
-    case OIS::KC_MINUS:
+    case OIS::KC_SUBTRACT:
         if (activeLvl == 3)
         {
-            curMatEdit.materialChanged();
-            curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] -= 0.1f;
-            curMatEdit.edit.psVariables[activeVarId].edited = true;
-            curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+            if (particleMode && activeBaseId == 2)
+            {
+                curMatEdit.edit.moreParams[activeVarId].buffer[activeParamId] -= 0.1f;
+                curMatEdit.edit.moreParams[activeVarId].edited = true;
+                curMatEdit.setParticleParam(curMatEdit.edit.psVariables[activeVarId]);
+            }
+            else
+            {
+                curMatEdit.materialChanged();
+                curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] -= 0.1f;
+                curMatEdit.edit.psVariables[activeVarId].edited = true;
+                curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+            }
         }
         break;
     case OIS::KC_ADD:
         if (activeLvl == 3)
         {
-            curMatEdit.materialChanged();
-            curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] += 0.1f;
-            curMatEdit.edit.psVariables[activeVarId].edited = true;
-            curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+            if (particleMode && activeBaseId == 2)
+            {
+                curMatEdit.edit.moreParams[activeVarId].buffer[activeParamId] += 0.1f;
+                curMatEdit.edit.moreParams[activeVarId].edited = true;
+                curMatEdit.setParticleParam(curMatEdit.edit.psVariables[activeVarId]);
+            }
+            else
+            {
+                curMatEdit.materialChanged();
+                curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] += 0.1f;
+                curMatEdit.edit.psVariables[activeVarId].edited = true;
+                curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+            }
         }
         break;
     case OIS::KC_MULTIPLY:
         if (activeLvl == 3)
         {
-            curMatEdit.materialChanged();
-            curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] *= 1.5f;
-            curMatEdit.edit.psVariables[activeVarId].edited = true;
-            curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+            if (particleMode && activeBaseId == 2)
+            {
+                curMatEdit.edit.moreParams[activeVarId].buffer[activeParamId] *= 1.5f;
+                curMatEdit.edit.moreParams[activeVarId].edited = true;
+                curMatEdit.setParticleParam(curMatEdit.edit.moreParams[activeVarId]);
+            }
+            else
+            {
+                curMatEdit.materialChanged();
+                curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] *= 1.5f;
+                curMatEdit.edit.psVariables[activeVarId].edited = true;
+                curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+            }
         }
         break;
     case OIS::KC_DIVIDE:
         if (activeLvl == 3)
         {
-            curMatEdit.materialChanged();
-            curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] /= 1.5f;
-            curMatEdit.edit.psVariables[activeVarId].edited = true;
-            curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+            if (particleMode && activeBaseId == 2)
+            {
+                curMatEdit.edit.moreParams[activeVarId].buffer[activeParamId] /= 1.5f;
+                curMatEdit.edit.moreParams[activeVarId].edited = true;
+                curMatEdit.setParticleParam(curMatEdit.edit.moreParams[activeVarId]);
+            }
+            else
+            {
+                curMatEdit.materialChanged();
+                curMatEdit.edit.psVariables[activeVarId].buffer[activeParamId] /= 1.5f;
+                curMatEdit.edit.psVariables[activeVarId].edited = true;
+                curMatEdit.setMaterialParam(curMatEdit.edit.psVariables[activeVarId]);
+            }
         }
         break;
     default:
@@ -214,6 +291,25 @@ void GuiMaterialEdit::queryMaterial()
         if (Global::gameMgr->materialEdits.loadSavedChanges(curMatEdit.edit, curMatEdit.entity->getName()))
             curMatEdit.changed = true;
 
+        particleMode = false;
+        setVisible(1);
+
+        debugMaterialCaption[0]->text(curMatEdit.edit.originMatName);
+
+        updateState();
+    }
+    else
+        setVisible(0);
+}
+
+void GuiMaterialEdit::queryParticle()
+{
+    if (curMatEdit.queryParticle())
+    {
+        if (Global::gameMgr->materialEdits.loadSavedParticleChanges(curMatEdit.edit, curMatEdit.ps->getName()))
+            curMatEdit.changed = true;
+
+        particleMode = true;
         setVisible(1);
 
         debugMaterialCaption[0]->text(curMatEdit.edit.originMatName);
@@ -236,7 +332,13 @@ void GuiMaterialEdit::updateState()
 
 void GuiMaterialEdit::updateText()
 {
-    if (activeLvl > 1 && curMatEdit.edit.psVariables.size() > 0)
+    if (particleMode)
+        debugMaterialCaption[2]->text("Particle");
+    else
+        debugMaterialCaption[2]->text("VS");
+
+    if (activeLvl > 1 && activeBaseId == 3 && curMatEdit.edit.psVariables.size() > 0)
+    {
         for (int i = 0; i < DEBUG_VARIABLES_COUNT; i++)
         {
             int id = (activeVarId - selectedOffset + i);
@@ -246,16 +348,39 @@ void GuiMaterialEdit::updateText()
             debugVariablesCaption[i]->text(curMatEdit.edit.psVariables[id].name);
         }
 
-    auto& var = curMatEdit.edit.psVariables[activeVarId];
+        auto& var = curMatEdit.edit.psVariables[activeVarId];
 
-    if (activeLvl > 1 && var.size > 0)
+        if (activeLvl > 1 && var.size > 0)
+            for (int i = 0; i < DEBUG_VARIABLES_COUNT; i++)
+            {
+                if (i == var.size)
+                    break;
+
+                debugVariableParamsCaption[i]->text(std::to_string(var.buffer[i]));
+            }
+    }
+    else if (activeLvl > 1 && activeBaseId == 2 && particleMode && curMatEdit.edit.moreParams.size() > 0)
+    {
         for (int i = 0; i < DEBUG_VARIABLES_COUNT; i++)
         {
-            if (i == var.size)
-                break;
+            int id = (activeVarId - selectedOffset + i);
 
-            debugVariableParamsCaption[i]->text(std::to_string(var.buffer[i]));
+            id = (id < 0) ? id + curMatEdit.edit.moreParams.size() : id % curMatEdit.edit.moreParams.size();
+
+            debugVariablesCaption[i]->text(curMatEdit.edit.moreParams[id].name);
         }
+
+        auto& var = curMatEdit.edit.moreParams[activeVarId];
+
+        if (activeLvl > 1 && var.size > 0)
+            for (int i = 0; i < DEBUG_VARIABLES_COUNT; i++)
+            {
+                if (i == var.size)
+                    break;
+
+                debugVariableParamsCaption[i]->text(std::to_string(var.buffer[i]));
+            }
+    }
 }
 
 GuiMaterialEdit::GuiMaterialEdit()
@@ -265,6 +390,7 @@ GuiMaterialEdit::GuiMaterialEdit()
 void LoadedMaterialEdit::reset()
 {
     ptr.setNull();
+    ps = nullptr;
     entity = nullptr;
     changed = false;
     matInstance = false;
@@ -277,8 +403,8 @@ bool LoadedMaterialEdit::queryWorld()
 {
     reset();
 
-    MUtils::RayInfo out;
-    if (MUtils::getRayInfo(Global::player->getCameraPosition(), Global::player->getFacingDirection(), 1000, out))
+    GUtils::RayInfo out;
+    if (GUtils::getRayInfo(Global::player->getCameraPosition(), Global::player->getFacingDirection(), 1000, out))
     {
         auto node = static_cast<Ogre::SceneNode*>(out.body->getOgreNode());
 
@@ -287,34 +413,12 @@ bool LoadedMaterialEdit::queryWorld()
             auto ent = static_cast<Ogre::Entity*>(node->getAttachedObject(0));
             auto mat = ent->getSubEntity(0)->getMaterial();
 
-            if (mat->getTechnique(0)->getNumPasses() > 1)
+            if (mat->getTechnique(0)->getNumPasses() > 0)
             {
-                edit.originMatName = mat->getName();
                 entity = ent;
-
                 ptr = mat;
 
-                auto params = mat->getTechnique(0)->getPass(1)->getFragmentProgramParameters();
-                auto& l = params->getConstantDefinitions();
-                bool skip = true;
-
-                for (auto c : l.map)
-                {
-                    skip = !skip;
-                    if (skip) continue;
-
-                    Global::DebugPrint(c.first);
-
-                    if (c.second.constType <= 4)
-                    {
-                        MaterialEdit::MaterialVariable var;
-                        var.name = c.first;
-                        var.size = c.second.constType;
-                        memcpy(var.buffer, params->getFloatPointer(c.second.physicalIndex), 4 * var.size);
-
-                        edit.psVariables.push_back(var);
-                    }
-                }
+                loadMaterial();
 
                 return edit.psVariables.size() > 0;
             }
@@ -322,14 +426,6 @@ bool LoadedMaterialEdit::queryWorld()
     }
 
     return false;
-}
-
-void LoadedMaterialEdit::setMaterialParam(MaterialEdit::MaterialVariable& var)
-{
-    if (ptr.isNull())
-        return;
-
-    ptr->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
 }
 
 void LoadedMaterialEdit::resetMaterial()
@@ -347,8 +443,63 @@ void LoadedMaterialEdit::materialChanged()
         changed = true;
 
         auto newMat = ptr->clone(ptr->getName() + std::to_string(idCounter++));
-        entity->setMaterial(newMat);
+
+        if (entity)
+            entity->setMaterial(newMat);
+
+        if (ps)
+            ps->setMaterialName(newMat->getName());
 
         ptr = newMat;
     }
+}
+
+bool LoadedMaterialEdit::queryParticle()
+{
+    ps = Global::gameMgr->particleMgr.getClosestParticle();
+
+    if (!ps || ps->getNumEmitters() == 0)
+        return false;
+
+    ptr = Ogre::MaterialManager::getSingleton().getByName(ps->getMaterialName());
+
+    loadMaterial();
+    edit.generateParticleParams(ps);
+
+    return true;
+}
+
+void LoadedMaterialEdit::loadMaterial()
+{
+    edit.originMatName = ptr->getName();
+    int pass = ptr->getTechnique(0)->getNumPasses() - 1;
+    auto params = ptr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters();
+    auto& l = params->getConstantDefinitions();
+    bool skip = true;
+
+    for (auto c : l.map)
+    {
+        skip = !skip;
+        if (skip) continue;
+
+        if (c.second.constType <= 4)
+        {
+            MaterialEdit::MaterialVariable var;
+            var.name = c.first;
+            var.size = c.second.constType;
+            memcpy(var.buffer, params->getFloatPointer(c.second.physicalIndex), 4 * var.size);
+
+            edit.psVariables.push_back(var);
+        }
+    }
+}
+
+void LoadedMaterialEdit::setMaterialParam(MaterialEdit::MaterialVariable& var)
+{
+    edit.setMaterialParam(ptr, var);
+}
+
+void LoadedMaterialEdit::setParticleParam(MaterialEdit::MaterialVariable& var)
+{
+    edit.setParticleParam(ps, var);
 }

@@ -48,6 +48,18 @@
     <Filter Include="Files\Core\MaterialEdit">
       <UniqueIdentifier>{235e7fbd-2a99-4af2-9976-14a60da0a8e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\Core\Gui">
+      <UniqueIdentifier>{83ce8b73-fa13-47e7-8a3c-ed41a1d88a0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Objects\Gate">
+      <UniqueIdentifier>{568569cd-5041-4f4b-92de-7f91e3eef69a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Core\VolumeDetection">
+      <UniqueIdentifier>{9bc27a78-d410-426c-a58d-bca01dccc29f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Core\Utils">
+      <UniqueIdentifier>{79beb400-fdc2-4299-8b2a-162a6e2b7ee7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CrowPath.cpp">
@@ -104,9 +116,6 @@
     <ClCompile Include="src\TriggerObjectContactCallback.cpp">
       <Filter>Files\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="src\BridgeMaker.cpp">
-      <Filter>Files\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="src\ZipLineSlide.cpp">
       <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
@@ -146,12 +155,6 @@
     <ClCompile Include="src\AudioLibrary.cpp">
       <Filter>Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\CameraShaker.cpp">
-      <Filter>Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Console.cpp">
-      <Filter>Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="src\DebugKeys.cpp">
       <Filter>Files\Core</Filter>
     </ClCompile>
@@ -165,12 +168,6 @@
       <Filter>Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\globals.cpp">
-      <Filter>Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Gorilla.cpp">
-      <Filter>Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GuiOverlay.cpp">
       <Filter>Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\OgreGpuCommandBufferFlush.cpp">
@@ -194,13 +191,7 @@
     <ClCompile Include="src\Crows.cpp">
       <Filter>Files\Objects\Crow</Filter>
     </ClCompile>
-    <ClCompile Include="src\AnimationBlender.cpp">
-      <Filter>Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="src\DynamicRope.cpp">
-      <Filter>Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TrackBuilder.cpp">
       <Filter>Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="src\GeometryManager.cpp">
@@ -245,9 +236,6 @@
     <ClCompile Include="src\SceneCubeMap.cpp">
       <Filter>Files\Core\RenderObjects</Filter>
     </ClCompile>
-    <ClCompile Include="src\CameraJump.cpp">
-      <Filter>Files\Player</Filter>
-    </ClCompile>
     <ClCompile Include="src\AnimatedTrack.cpp">
       <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
@@ -260,12 +248,57 @@
     <ClCompile Include="src\MaterialEditsLibrary.cpp">
       <Filter>Files\Core\MaterialEdit</Filter>
     </ClCompile>
+    <ClCompile Include="src\Energy.cpp">
+      <Filter>Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneParser.cpp">
+      <Filter>Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ParticleManager.cpp">
+      <Filter>Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gorilla.cpp">
+      <Filter>Files\Core\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GuiOverlay.cpp">
+      <Filter>Files\Core\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameUi.cpp">
+      <Filter>Files\Core\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gate.cpp">
+      <Filter>Files\Objects\Gate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GateLock.cpp">
+      <Filter>Files\Objects\Gate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VolumeDetection.cpp">
+      <Filter>Files\Core\VolumeDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BridgeMaker.cpp">
+      <Filter>Files\Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TrackBuilder.cpp">
+      <Filter>Files\Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimationBlender.cpp">
+      <Filter>Files\Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CameraShaker.cpp">
+      <Filter>Files\Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUtils.cpp">
+      <Filter>Files\Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerEnergies.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerTimeshift.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
-      <Filter>Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource1.h">
       <Filter>Files</Filter>
     </ClInclude>
     <ClInclude Include="include\stdafx.h">
@@ -331,15 +364,6 @@
     <ClInclude Include="include\BasicPPListener.h">
       <Filter>Files\Listeners</Filter>
     </ClInclude>
-    <ClInclude Include="include\BridgeMaker.h">
-      <Filter>Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="include\CameraShaker.h">
-      <Filter>Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Console.h">
-      <Filter>Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="include\DebugKeys.h">
       <Filter>Files\Core</Filter>
     </ClInclude>
@@ -373,16 +397,7 @@
     <ClInclude Include="include\NewtonListener.h">
       <Filter>Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="include\GuiOverlay.h">
-      <Filter>Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Gorilla.h">
-      <Filter>Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="include\GrassHeightFunction.h">
-      <Filter>Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ListLoop.h">
       <Filter>Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h">
@@ -448,19 +463,10 @@
     <ClInclude Include="include\CrowWatch.h">
       <Filter>Files\Objects\Crow</Filter>
     </ClInclude>
-    <ClInclude Include="include\AnimationBlender.h">
-      <Filter>Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="include\DynamicRope.h">
       <Filter>Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="include\TrackBuilder.h">
-      <Filter>Files\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="include\GeometryManager.h">
-      <Filter>Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MUtils.h">
       <Filter>Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="include\DetailGeometry.h">
@@ -493,9 +499,6 @@
     <ClInclude Include="include\ImpostorRenderer.h">
       <Filter>Files\Core\DetailGeometry</Filter>
     </ClInclude>
-    <ClInclude Include="include\VolumeDetection.h">
-      <Filter>Files\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="include\PlayerSwimming.h">
       <Filter>Files\Player</Filter>
     </ClInclude>
@@ -520,9 +523,6 @@
     <ClInclude Include="include\SceneCubeMap.h">
       <Filter>Files\Core\RenderObjects</Filter>
     </ClInclude>
-    <ClInclude Include="include\CameraJump.h">
-      <Filter>Files\Player</Filter>
-    </ClInclude>
     <ClInclude Include="include\AnimatedTrack.h">
       <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
@@ -534,6 +534,66 @@
     </ClInclude>
     <ClInclude Include="include\MaterialEditsLibrary.h">
       <Filter>Files\Core\MaterialEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Energy.h">
+      <Filter>Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ParticleManager.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Gorilla.h">
+      <Filter>Files\Core\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GuiOverlay.h">
+      <Filter>Files\Core\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameUi.h">
+      <Filter>Files\Core\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameUiActions.h">
+      <Filter>Files\Core\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Gate.h">
+      <Filter>Files\Objects\Gate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GateLock.h">
+      <Filter>Files\Objects\Gate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Volume.h">
+      <Filter>Files\Core\VolumeDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VolumeDetection.h">
+      <Filter>Files\Core\VolumeDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BridgeMaker.h">
+      <Filter>Files\Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TrackBuilder.h">
+      <Filter>Files\Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimationBlender.h">
+      <Filter>Files\Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MUtils.h">
+      <Filter>Files\Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ListLoop.h">
+      <Filter>Files\Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CameraShaker.h">
+      <Filter>Files\Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GUtils.h">
+      <Filter>Files\Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SUtils.h">
+      <Filter>Files\Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerEnergies.h">
+      <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerTimeshift.h">
+      <Filter>Files\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

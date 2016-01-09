@@ -5,6 +5,7 @@
 #include "PlayerSwimming.h"
 #include "Player.h"
 #include "MUtils.h"
+#include "GUtils.h"
 
 void DebugKeys::reloadVariables()
 {
@@ -15,8 +16,10 @@ void DebugKeys::reloadVariables()
     debugVars.push_back(DebugVar("ColorShift G", &Global::mPPMgr->vars.ColouringShift.y, 0.02f));
     debugVars.push_back(DebugVar("ColorShift B", &Global::mPPMgr->vars.ColouringShift.z, 0.02f));
 
-    debugVars.push_back(DebugVar("Bloom Str", &Global::mPPMgr->vars.bloomStrDep.x, 0.15f));
-    debugVars.push_back(DebugVar("Bloom Depth", &Global::mPPMgr->vars.bloomStrDep.y, 0.15f));
+    debugVars.push_back(DebugVar("Bloom Str", &Global::mPPMgr->vars.bloomStrDepAddSize.x, 0.1f));
+    debugVars.push_back(DebugVar("Bloom Depth", &Global::mPPMgr->vars.bloomStrDepAddSize.y, 0.1f));
+    debugVars.push_back(DebugVar("Bloom Add", &Global::mPPMgr->vars.bloomStrDepAddSize.z, 0.05f));
+    debugVars.push_back(DebugVar("Bloom Size", &Global::mPPMgr->vars.bloomStrDepAddSize.w, 0.05f));
     debugVars.push_back(DebugVar("Horiz Blur", &Global::mPPMgr->vars.radialHorizBlurVignette.y, 0.1f));
 
     debugVars.push_back(DebugVar("Contrast", &Global::mPPMgr->vars.ContSatuSharpNoise.x, 0.05f));
@@ -55,6 +58,32 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
     case OIS::KC_NUMPAD6:
     {
         Global::gameMgr->myMenu->showMaterialDebug();
+    }
+    break;
+
+    case OIS::KC_NUMPAD5:
+    {
+        Global::gameMgr->myMenu->showParticleDebug();
+    }
+    break;
+
+    case OIS::KC_NUMPAD1:
+    {
+        if (Global::gameMgr->gameState == GAME)
+            makecube(true);
+    }
+    break;
+
+    case OIS::KC_NUMPAD2:
+    {
+        reloadShaders();
+    }
+    break;
+
+    case OIS::KC_M:
+    {
+        if (Global::gameMgr->gameState == GAME)
+            makecube();
     }
     break;
 
@@ -99,7 +128,7 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
     }
 
     case OIS::KC_DELETE:
-        Global::debug.clear();
+        GUtils::debug.clear();
         break;
 
     case OIS::KC_1:
@@ -136,4 +165,89 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
         postProcMgr->resetValues();
         break;
     }
+}
+
+void DebugKeys::reloadShaders()
+{
+    //std::string matsFile("lvl2.material");
+
+    /*std::vector<std::string> reloadedMats;
+    auto mit = MaterialManager::getSingleton().getResourceIterator();
+
+    while (mit.hasMoreElements())
+    {
+    MaterialPtr mat = mit.getNext();
+    mat->reload();
+
+    if (mat->getOrigin() == matsFile)
+    reloadedMats.push_back(mat->getName());
+    }*/
+    /*
+    Ogre::SceneManager::MovableObjectIterator mIterator = Global::mSceneMgr->getMovableObjectIterator("Entity");
+    std::vector<std::pair<Ogre::Entity*, std::string>> ents;
+
+    while (mIterator.hasMoreElements())
+    {
+    auto e = (Ogre::Entity*)mIterator.getNext();
+
+    if (e->getNumSubEntities() > 0)
+    {
+    auto sub = e->getSubEntity(0);
+    auto matName = sub->getMaterialName();
+    auto mat = sub->getMaterial();
+
+    //if (std::find(reloadedMats.begin(), reloadedMats.end(), mat) != reloadedMats.end())
+    if (mat->getOrigin() == matsFile)
+    {
+    sub->setMaterialName("BaseWhite");
+    mat->unload();
+
+    ents.push_back(std::make_pair(e, matName));
+    }
+    }
+    }
+
+    MaterialManager::getSingleton().parseScript(Ogre::ResourceGroupManager::getSingleton().openResource(matsFile), "General");
+
+    for (auto& p : ents)
+    {
+    p.first->setMaterialName(p.second);
+    }
+    */
+    auto it = HighLevelGpuProgramManager::getSingleton().getResourceIterator();
+
+    while (it.hasMoreElements())
+    {
+        HighLevelGpuProgramPtr gpuProgram = it.getNext();
+        gpuProgram->reload();
+    }
+}
+
+void DebugKeys::makecube(bool platform)
+{
+    Ogre::Vector3 size(2, 2, 2);
+    Ogre::Real mass = platform ? 0 : 0.3f;
+
+    Entity* ent = Global::mSceneMgr->createEntity("boxEL.mesh");
+    SceneNode* node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    node->attachObject(ent);
+    node->setScale(size);
+    ent->setCastShadows(true);
+    ent->setMaterialName("murbob");
+    OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::mWorld, size, 0));
+    OgreNewt::Body* body = new OgreNewt::Body(Global::mWorld, col);
+
+    Ogre::Vector3 inertia, offset;
+    col->calculateInertialMatrix(inertia, offset);
+
+#ifdef OGRENEWT_NO_COLLISION_SHAREDPTR
+    delete col;
+#endif
+
+    body->setMassMatrix(mass, mass*inertia);
+    body->setCenterOfMass(offset);
+    body->attachNode(node);
+    body->setType(Grabbable);
+    body->setCustomForceAndTorqueCallback<DebugKeys>(&DebugKeys::default_callback, this);
+    body->setPositionOrientation(Global::player->bodyPosition + Vector3(0, platform ? -3.0f : 5.0f, 0), Ogre::Quaternion::IDENTITY);
 }

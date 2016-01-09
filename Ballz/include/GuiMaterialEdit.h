@@ -10,14 +10,21 @@ struct LoadedMaterialEdit
     bool changed = false;
     bool matInstance = false;
     Ogre::MaterialPtr ptr;
+
     Ogre::Entity* entity;
+    Ogre::ParticleSystem* ps;
+
     int idCounter = 5000;
 
     void materialChanged();
     void resetMaterial();
+    void loadMaterial();
     void reset();
     bool queryWorld();
+    bool queryParticle();
+
     void setMaterialParam(MaterialEdit::MaterialVariable& var);
+    void setParticleParam(MaterialEdit::MaterialVariable& var);
 };
 
 class GuiMaterialEdit
@@ -36,6 +43,7 @@ public:
     void setVisible(int lvl = 1);
 
     void queryMaterial();
+    void queryParticle();
 
     void updateState();
 
@@ -51,6 +59,7 @@ private:
     int activeVarId = 0;
     int activeParamId = 0;
 
+    bool particleMode = false;
     LoadedMaterialEdit curMatEdit;
 
     Gorilla::Caption*       debugMaterialCaption[4];

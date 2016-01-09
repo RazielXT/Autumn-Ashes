@@ -2,8 +2,8 @@
 
 #include "Gorilla.h"
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/map.hpp>
@@ -33,7 +33,7 @@ struct MaterialEdit
     std::vector<MaterialVariable> psVariables;
     std::vector<MaterialVariable> vsVariables;
 
-    void mergeChanges(MaterialEdit& r, bool ignoreNotExisting);
+    std::vector<MaterialVariable> moreParams;
 
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
@@ -41,7 +41,13 @@ struct MaterialEdit
         ar & originMatName;
         ar & psVariables;
         ar & vsVariables;
+        ar & moreParams;
     }
+
+    void mergeChanges(MaterialEdit& r, bool ignoreNotExisting);
+    void setMaterialParam(Ogre::MaterialPtr ptr, MaterialEdit::MaterialVariable& var);
+    void setParticleParam(Ogre::ParticleSystem* ps, MaterialEdit::MaterialVariable& var);
+    void generateParticleParams(Ogre::ParticleSystem* ps);
 };
 
 class MaterialEditsLibrary
@@ -58,24 +64,29 @@ public:
     void addEdit(MaterialEdit& edit, std::string entName);
     void removeEdit(std::string entName);
 
-    friend class boost::serialization::access;
-
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-        ar & editHistory;
-    }
+    bool loadSavedParticleChanges(MaterialEdit& edit, std::string particleName);
+    void addParticleEdit(MaterialEdit& edit, std::string particleName);
+    void removeParticleEdit(std::string particleName);
 
     void saveFile(std::string path);
     void loadFile(std::string path);
 
     void applyChanges();
 
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        ar & editHistory;
+        ar & editParticleHistory;
+    }
+
 private:
 
     using EditedEntities = std::map < std::string, MaterialEdit >;
-
     EditedEntities editHistory;
+
+    using EditedParticles = std::map < std::string, MaterialEdit >;
+    EditedParticles editParticleHistory;
 
     int idCounter = 500;
 };

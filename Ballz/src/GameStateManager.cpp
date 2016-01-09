@@ -3,15 +3,18 @@
 #include "Player.h"
 #include "levelsInit.h"
 #include "DebugKeys.h"
+#include "VolumeDetection.h"
+#include "GUtils.h"
+#include "Energy.h"
+#include "Gate.h"
 
-SceneParser SceneParser::instance;
-
-GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs, WorldMaterials* wMaterials)
+GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs)
 {
     gameConfig.loadCfg();
 
     myMenu = new GuiOverlay(&gameConfig, cam, Global::mWindow, rs, Global::soundEngine);
-    this->wMaterials = wMaterials;
+
+    wMaterials.init();
 
     LevelInfo info;
     info.path = "../../media/menu/";
@@ -104,28 +107,21 @@ void GameStateManager::switchToLevel(int lvl)
     if (Global::player)
     {
         delete Global::player;
-        Global::player = NULL;
+        Global::player = nullptr;
     }
 
-    SceneCubeMap::clearAll();
-    geometryMgr->clear();
-    Global::mWorld->destroyAllBodies();
-    Global::mSceneMgr->clearScene();
-    Global::mEventsMgr->clear();
-    Global::soundEngine->removeAllSoundSources();
-    Global::mPPMgr->resetValues();
+    clearLevel();
 
     if (gameState == GAME)
     {
-        Player* p = new Player(wMaterials);
-        Global::player = p;
+        Global::player = new Player(&wMaterials);
     }
 
     dbg->reloadVariables();
 
     auto& lvlInfo = levels[lvl];
 
-    SceneParser::instance.loadScene(lvlInfo.path + lvlInfo.sceneFile);
+    SceneParser::loadScene(lvlInfo.path + lvlInfo.sceneFile);
     lvlInfo.init();
     Global::gameMgr->materialEdits.applyChanges();
     Global::gameMgr->geometryMgr->update();
@@ -142,8 +138,10 @@ void GameStateManager::reloadSceneSettings()
     PostProcessMgr* postProcMgr = Global::mPPMgr;
     postProcMgr->vars.ColouringShift = lvlInfo.ColorShift;
     postProcMgr->vars.ContSatuSharpNoise = lvlInfo.ContSatuSharpNoise;
-    postProcMgr->vars.bloomStrDep.x = lvlInfo.bloomStr;
-    postProcMgr->vars.bloomStrDep.y = lvlInfo.bloomDepth;
+    postProcMgr->vars.bloomStrDepAddSize.z = lvlInfo.bloomAdd;
+    postProcMgr->vars.bloomStrDepAddSize.x = lvlInfo.bloomStr;
+    postProcMgr->vars.bloomStrDepAddSize.y = lvlInfo.bloomDepth;
+    postProcMgr->vars.bloomStrDepAddSize.w = lvlInfo.bloomSize;
     Global::mSceneMgr->setSkyBox(true, lvlInfo.skyboxName);
     Global::mSceneMgr->setFog(FOG_LINEAR, lvlInfo.fogColor, 1, lvlInfo.fogStartDistance, lvlInfo.fogEndDistance);
 
@@ -157,7 +155,7 @@ void GameStateManager::restartLevel()
 
 void GameStateManager::reloadLevel()
 {
-    SceneParser::instance.reloadScene(levels[lastLVL].path + levels[lastLVL].sceneFile);
+    SceneParser::reloadScene(levels[lastLVL].path + levels[lastLVL].sceneFile);
 }
 
 bool GameStateManager::insideMenuPressed()
@@ -246,7 +244,7 @@ void GameStateManager::update(float tslf)
         switch (gameState)
         {
         case GAME:
-            myMenu->setDebugValue(Global::mWindow->getLastFPS(), Global::debug, dbg->debugVars, dbg->debugVarsLine);
+            myMenu->setDebugValue(Global::mWindow->getLastFPS(), GUtils::debug, dbg->debugVars, dbg->debugVarsLine);
             myMenu->updateIngame(tslf);
             break;
         case PAUSE:
@@ -294,4 +292,18 @@ void GameStateManager::escapePressed()
 
         gameState = GAME;
     }
+}
+
+void GameStateManager::clearLevel()
+{
+    SceneCubeMap::clearAll();
+    geometryMgr->clear();
+    Global::mWorld->destroyAllBodies();
+    Global::mSceneMgr->clearScene();
+    Global::mEventsMgr->clear();
+    Global::soundEngine->removeAllSoundSources();
+    Global::mPPMgr->resetValues();
+    VolumeDetectionManager::get.reset();
+    SceneEnergies::reset();
+    Gate::reset();
 }

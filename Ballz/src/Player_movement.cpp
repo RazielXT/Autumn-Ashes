@@ -363,6 +363,8 @@ void Player::updateHead()
 
 void Player::updateGroundStats()
 {
+    updateUseGui();
+
     OgreNewt::Body* groundBody = nullptr;
     OgreNewt::BasicRaycast ray(m_World, (bodyPosition - Vector3(0, 1.6, 0)), (bodyPosition - Vector3(0, 2.6, 0)), false);
     OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();

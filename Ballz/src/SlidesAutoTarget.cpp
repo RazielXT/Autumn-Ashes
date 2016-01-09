@@ -49,7 +49,7 @@ bool SlidesAutoTargetAsync::getTargetSlideRay(Vector3 pos, Vector3 dir, float ra
             auto s0 = s->trackPoints[i - 1].pos;
             auto s1 = s->trackPoints[i].pos;
 
-            auto r = MUtils::getSegmentsDistanceInfo(rayStart, rayTarget, s0, s1);
+            auto r = MUtils::getLinesDistanceInfo(rayStart, rayTarget, s0, s1);
             float minCompDist = minRayRadiusW*r.s1Pos;
 
             if (r.sqMinDistance < minCompDist && r.sqMinDistance < closest)
@@ -92,7 +92,7 @@ bool SlidesAutoTargetAsync::getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide*
             auto s0 = s->trackPoints[i - 1].pos;
             auto s1 = s->trackPoints[i].pos;
 
-            auto r = MUtils::getProjectedState(pos, s0, s1);
+            auto r = MUtils::getProjectedPointOnLine(pos, s0, s1);
 
             if (r.sqMinDistance < closest)
             {

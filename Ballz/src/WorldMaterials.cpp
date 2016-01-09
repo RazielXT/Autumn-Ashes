@@ -3,8 +3,10 @@
 #include "TriggerObjectContactCallback.h"
 #include "DefaultObjectContactCallback.h"
 
-void WorldMaterials::init(OgreNewt::World* mWorld)
+void WorldMaterials::init()
 {
+    auto mWorld = Global::mWorld;
+
     plNoMove_mat = new OgreNewt::MaterialID(mWorld);
     plMove_mat = new OgreNewt::MaterialID(mWorld);
     noCollide_mat = new OgreNewt::MaterialID(mWorld);

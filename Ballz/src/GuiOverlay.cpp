@@ -6,8 +6,10 @@
 #include <fstream>
 #include "PostProcessMgr.h"
 #include "MUtils.h"
+#include "SUtils.h"
 #include "GameStateManager.h"
 #include "GuiMaterialEdit.h"
+#include "GameUi.h"
 
 using namespace Ogre;
 
@@ -174,9 +176,9 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
     resolutionsLoop= new ListLoop<resolution>();
     std::string s=mFoundResolutions.at(0);
 
-    std::string s1=MUtils::strtok_str(s,' ');
-    MUtils::strtok_str(s, ' ');
-    std::string s2 = MUtils::strtok_str(s, ' ');
+    std::string s1=SUtils::strtok_str(s,' ');
+    SUtils::strtok_str(s, ' ');
+    std::string s2 = SUtils::strtok_str(s, ' ');
     std::string res=s1+"x"+s2;
     resolutionsLoop->value.res = res;
     resolutionsLoop->value.w = Ogre::StringConverter::parseInt(s1);
@@ -186,9 +188,9 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
     {
         std::string s=mFoundResolutions.at(o);
 
-        std::string s1 = MUtils::strtok_str(s, ' ');
-        MUtils::strtok_str(s, ' ');
-        std::string s2 = MUtils::strtok_str(s, ' ');
+        std::string s1 = SUtils::strtok_str(s, ' ');
+        SUtils::strtok_str(s, ' ');
+        std::string s2 = SUtils::strtok_str(s, ' ');
         std::string res=s1+"x"+s2;
         resolution trLoopN;
         trLoopN.w=Ogre::StringConverter::parseInt(s1);
@@ -239,9 +241,12 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
 
     Ogre::Real vpW = mScreen->getWidth(), vpH = mScreen->getHeight();
 
-    mLayer = mScreen->createLayer(0);
-    mLvlsLayer = mScreenLvls->createLayer(0);
-    mouseLayer = mScreen->createLayer(1);
+    mLayer = mScreen->createLayer(1);
+    mLvlsLayer = mScreenLvls->createLayer(1);
+    mouseLayer = mScreen->createLayer(2);
+
+    gameLayer = mScreen->createLayer(0);
+    gameUi = new GameUi(gameLayer);
 
     mousePointer = mouseLayer->createRectangle(0,0,41,42);
     mousePointer->background_image("mousepointer");
@@ -269,21 +274,6 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
     }
 
     materialUi->initUi(mouseLayer);
-
-    infoTextTimer = 0;
-    shownInfoText = false;
-    shownUseGui = false;
-    wantUseGui = false;
-
-    infoTextCaption = mouseLayer->createCaption(48, 50, 900, "");
-    infoTextCaption->size(1600,50);
-    infoTextCaption->align(Gorilla::TextAlign_Centre);
-    infoTextCaption->vertical_align(Gorilla::VerticalAlign_Bottom);
-
-    useTextCaption = mouseLayer->createCaption(48, 50, 500, "");
-    useTextCaption->size(1580,50);
-    useTextCaption->align(Gorilla::TextAlign_Centre);
-    useTextCaption->vertical_align(Gorilla::VerticalAlign_Middle);
 
     showDebug(false);
 }
@@ -454,6 +444,7 @@ void GuiOverlay::setMainMenu()
     mousePointer->yes_background(1);
     mLayer->show();
     mLvlsLayer->show();
+    gameLayer->hide();
 
     createMainMenuButtons();
     createOptionMenuButtons();
@@ -468,6 +459,7 @@ void GuiOverlay::setIngameMenu()
     mousePointer->yes_background(1);
     mLayer->show();
     mLvlsLayer->show();
+    gameLayer->hide();
 
     createIngameMenuButtons();
     createOptionMenuButtons();
@@ -854,6 +846,11 @@ void GuiOverlay::showMaterialDebug()
     materialUi->queryMaterial();
 }
 
+void GuiOverlay::showParticleDebug()
+{
+    materialUi->queryParticle();
+}
+
 void GuiOverlay::updateLevelsMove(Ogre::Real time)
 {
     Real rotSpeed=time*1100;
@@ -998,64 +995,11 @@ void GuiOverlay::updateMainMenu(Ogre::Real time)
 }
 
 
-void GuiOverlay::showIngameText(Ogre::String text)
-{
-    infoTextCaption->text(text);
-
-    infoTextTimer = Ogre::Math::Clamp(0.1f*text.length(),2.0f,8.0f);
-    shownInfoText = true;
-}
-
-void GuiOverlay::showUseGui(UiInfo id)
-{
-    wantUseGui = true;
-
-    if(!shownUseGui || id != currUseGui)
-    {
-        shownUseGui = true;
-        currUseGui = id;
-
-        switch(id)
-        {
-        case Ui_Pickup:
-            useTextCaption->text("pickup");
-            break;
-        case Ui_Use:
-            useTextCaption->text("use");
-            break;
-        case Ui_Climb:
-            useTextCaption->text("climb");
-            break;
-        case Ui_Target:
-            useTextCaption->text("(   )");
-            break;
-        default:
-            useTextCaption->text("??");
-        }
-    }
-}
-
 void GuiOverlay::updateIngame(Ogre::Real time)
 {
-    if(shownUseGui && !wantUseGui)
-    {
-        useTextCaption->text("");
-        shownUseGui = false;
-    }
+    gameLayer->show();
 
-    wantUseGui = false;
-
-    if(shownInfoText)
-    {
-        infoTextTimer -= time;
-        infoTextCaption->colour(Ogre::ColourValue(1,1,1,Ogre::Math::Clamp(infoTextTimer*2,0.0f,1.0f)));
-
-        if(infoTextTimer<=0)
-        {
-            infoTextCaption->text("");
-            shownInfoText = false;
-        }
-    }
+    gameUi->update(time);
 }
 
 

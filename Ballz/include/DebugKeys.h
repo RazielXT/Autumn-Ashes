@@ -32,6 +32,16 @@ public:
 
     void pressedKey(const OIS::KeyEvent &arg);
 
+
+    void reloadShaders();
+
+    void default_callback(OgreNewt::Body* me, float timeStep, int threadIndex)
+    {
+        me->addForce(Ogre::Vector3(0, -6, 0));
+    }
+
+    void makecube(bool platform = false);
+
     std::vector<DebugVar> debugVars;
     int debugVarsLine = 0;
 };

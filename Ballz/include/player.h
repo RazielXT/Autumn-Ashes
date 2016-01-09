@@ -9,7 +9,6 @@
 #include "PlayerGrab.h"
 #include "PlayerParkour.h"
 #include "CameraShaker.h"
-#include "PlayerTransform.h"
 
 class Shaker
 {
@@ -32,6 +31,8 @@ private:
     Ogre::Quaternion camShakePrev,camShakeTarget;
 };
 
+class GameUi;
+
 class Player
 {
     friend class PlayerPostProcess;
@@ -41,7 +42,8 @@ class Player
     friend class PlayerSwimming;
     friend class PlayerAbilities;
     friend class PlayerSliding;
-    friend class PlayerTransform;
+    friend class PlayerTimeshift;
+    friend class PlayerFlash;
 
     struct CamArrivalInfo
     {
@@ -110,8 +112,10 @@ public:
         return inControl;
     }
 
+    Ogre::Vector3 camPosition;
     Ogre::Vector3 bodyPosition;
     float bodyVelocityL;
+    float facingWallDistance;
 
     PlayerPostProcess* pPostProcess;
     PlayerClimbing* pClimbing;
@@ -142,6 +146,7 @@ private:
         Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID, 0.3f);
     }
 
+    GameUi* ui;
     Shaker* shaker;
 
     OgreNewt::World* m_World;

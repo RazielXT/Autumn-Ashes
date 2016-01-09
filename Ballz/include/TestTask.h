@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "EventTask.h"
-#include "VolumeDetection.h"
+#include "Volume.h"
 
 class TestReaction : public EventTask
 {
@@ -18,7 +18,7 @@ public:
 
 private:
 
-    VolumeDetection volume;
+    Volume volume;
 };
 
 #endif //TEVENTR_H

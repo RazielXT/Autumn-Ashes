@@ -254,7 +254,7 @@ bool AnimatedTrack::placePointOnLine(Ogre::Vector3& point)
 
     for (size_t id = 1; id < trackPoints.size(); id++)
     {
-        auto state = MUtils::getProjectedState(point, trackPoints[id - 1].pos, trackPoints[id].pos);
+        auto state = MUtils::getProjectedPointOnLine(point, trackPoints[id - 1].pos, trackPoints[id].pos);
 
         //log->logMessage(std::to_string(id) + ". state: " + Ogre::StringConverter::toString(state.projPos) + " distance " + Ogre::StringConverter::toString(state.sqMinDistance), Ogre::LML_NORMAL);
         //log->logMessage(std::to_string(id) + ". line: " + Ogre::StringConverter::toString(slidePoints[id - 1].pos) + " to " + Ogre::StringConverter::toString(slidePoints[id].pos), Ogre::LML_NORMAL);

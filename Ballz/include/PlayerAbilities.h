@@ -1,44 +1,48 @@
 #pragma once
 
 #include "stdafx.h"
-#include "PlayerStateInfo.h"
+#include "PlayerTimeshift.h"
+#include "PlayerEnergies.h"
 
-class Player;
-
-class PlayerAbilities
+class PlayerFlash
 {
-    friend class Player;
-
-    bool shiftPressed = false;
-
     Player* p;
-    float stateTimer = 0;
-    float lastTimestamp = 0;
-    float shiftTimeTarget = 0;
-    std::list<PlayerStateInfo> playerHistory;
-
-    void updateStateHistory(float tslf);
+    PlayerEnergies* pEnergies;
 
     Ogre::SceneNode* cameraPortNode;
     float portingTimer = -1;
     Ogre::Vector3 portTargetPos;
     Ogre::Vector3 portStartPos;
-    void updatePortTarget(float tslf);
+
+public:
+
+    void update(float tslf);
+
+    PlayerFlash(Player* player, PlayerEnergies* energies);
+
+    void portForward();
+};
+
+class PlayerAbilities
+{
+    friend class Player;
+
+    Player* p;
+
+    PlayerEnergies pEnergies;
+    PlayerTimeshift timeshift;
+    PlayerFlash flash;
 
 public:
 
     PlayerAbilities(Player* player);
     ~PlayerAbilities();
 
-    void portForward();
-
-    void shiftBack();
-    void setShiftTime();
-
     void update(float tslf);
 
-    void pressedKey(const OIS::KeyEvent &arg);
-    void releasedKey(const OIS::KeyEvent &arg);
-    void hidePortTarget();
-    void showPortTarget();
+    bool pressedKey(const OIS::KeyEvent &arg);
+    bool releasedKey(const OIS::KeyEvent &arg);
+
+    bool pressedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
+    bool releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 };

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GrassDetailGeometry.h"
+#include "GUtils.h"
 #include "MUtils.h"
 #include "GameStateManager.h"
 
@@ -101,8 +102,8 @@ void GrassDetailGeometry::init(DetailGeometryParams& info)
 
 bool GrassDetailGeometry::placeObject(GeometryMaskInfo& gridInfo, Vector3 pos, float scale, Vector3 color)
 {
-    MUtils::RayInfo ray;
-    MUtils::RayInfo ray2;
+    GUtils::RayInfo ray;
+    GUtils::RayInfo ray2;
     bool foundRay = false;
 
     Quaternion rayOr = gridInfo.node->getOrientation();
@@ -111,13 +112,13 @@ bool GrassDetailGeometry::placeObject(GeometryMaskInfo& gridInfo, Vector3 pos, f
 
     if (gridInfo.target)
     {
-        foundRay = MUtils::getRayFilteredInfo(pos, rayOr*Vector3(0, -1, 0), gridInfo.rayDistance, ray, gridInfo.target);
-        foundRay = foundRay && MUtils::getRayFilteredInfo(pos2, rayOr*Vector3(0, -1, 0), gridInfo.rayDistance, ray2, gridInfo.target);
+        foundRay = GUtils::getRayFilteredInfo(pos, rayOr*Vector3(0, -1, 0), gridInfo.rayDistance, ray, gridInfo.target);
+        foundRay = foundRay && GUtils::getRayFilteredInfo(pos2, rayOr*Vector3(0, -1, 0), gridInfo.rayDistance, ray2, gridInfo.target);
     }
     else
     {
-        foundRay = MUtils::getRayInfo(pos, rayOr*Vector3(0, -1, 0), gridInfo.rayDistance, ray);
-        foundRay = foundRay && MUtils::getRayInfo(pos2, rayOr*Vector3(0, -1, 0), gridInfo.rayDistance, ray2);
+        foundRay = GUtils::getRayInfo(pos, rayOr*Vector3(0, -1, 0), gridInfo.rayDistance, ray);
+        foundRay = foundRay && GUtils::getRayInfo(pos2, rayOr*Vector3(0, -1, 0), gridInfo.rayDistance, ray2);
     }
 
     if (foundRay && ray.normal.y >= maxSteepY && ray.normal.y <= minSteepY && ray2.normal.y >= maxSteepY && ray2.normal.y <= minSteepY)

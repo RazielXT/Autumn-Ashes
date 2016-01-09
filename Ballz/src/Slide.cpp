@@ -165,8 +165,8 @@ void Slide::updateSlidingSpeed(float time)
 
     currentSpeed = nextSpeed;
 
-    if (walkable)
-        currentSpeed = 0;
+    //if (walkable)
+    //    currentSpeed = 0;
 }
 
 void Slide::removeControlFromPlayer()

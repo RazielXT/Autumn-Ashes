@@ -3,6 +3,7 @@
 #include "BodyUserData.h"
 #include "Player.h"
 #include "GameStateManager.h"
+#include "GameUi.h"
 
 #define BITS_20_TO_31 4290772992
 #define BITS_0_TO_19 1048575
@@ -1242,7 +1243,7 @@ bool ShowText::start()
     if(delay)
         return true;
 
-    Global::gameMgr->myMenu->showIngameText(text);
+    Global::gameMgr->myMenu->gameUi->showIngameText(text);
     return false;
 }
 
@@ -1252,7 +1253,7 @@ bool ShowText::update(float tslf)
 
     if(timer>=delay)
     {
-        Global::gameMgr->myMenu->showIngameText(text);
+        Global::gameMgr->myMenu->gameUi->showIngameText(text);
         return false;
     }
 
