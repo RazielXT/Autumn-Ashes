@@ -249,6 +249,7 @@ compositor ScaryBloomNoSSAO
 			
             pass render_quad
             {
+				identifier 6
                 material Brightcheck
                 input 0 rtCombined
 				input 1 rt0 1
@@ -262,6 +263,7 @@ compositor ScaryBloomNoSSAO
 			
             pass render_quad
             {
+				identifier 7
                 material MyBloomX
                 input 0 bloom_rt
 				input 1 nvm
@@ -274,6 +276,7 @@ compositor ScaryBloomNoSSAO
 			
             pass render_quad
             {
+				identifier 7
                 material MyBloomY
                 input 0 bloom_rt0
 				input 1 nvm
@@ -286,6 +289,7 @@ compositor ScaryBloomNoSSAO
 			
             pass render_quad
             {
+				identifier 7
                 material MyBloomX
                 input 0 bloom_rt01
 				input 1 nvm
@@ -298,6 +302,7 @@ compositor ScaryBloomNoSSAO
 			
             pass render_quad
             {
+				identifier 7
                 material MyBloomY
                 input 0 bloom_rt1
 				input 1 nvm
@@ -310,6 +315,7 @@ compositor ScaryBloomNoSSAO
 			
             pass render_quad
             {
+				identifier 7
                 material MyBloomX
                 input 0 bloom_rt11
 				input 1 nvm
@@ -322,6 +328,7 @@ compositor ScaryBloomNoSSAO
 			
             pass render_quad
             {
+				identifier 7
                 material MyBloomYF
                 input 0 bloom_rt21
 				input 1 nvm

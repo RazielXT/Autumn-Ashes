@@ -26,6 +26,7 @@ material 2t_vc_material_static
 	set $uvSpreadScale "0.5" 
 	set $uv2Scale "1" 
 	set $uvMinMaxDetailScale "3.7 0.15" 
+	set $uvMinMaxDetailW "1 1" 
 	
     technique
     {
@@ -56,6 +57,7 @@ material 2t_vc_material_static
 				param_named uvSpreadScale float $uvSpreadScale
 				param_named uv2Scale float $uv2Scale
 				param_named uvMinMaxDetailScale float2 $uvMinMaxDetailScale
+				param_named uvMinMaxDetailW float2 $uvMinMaxDetailW
 				
 				param_named specular2Weight float $specular2Weight
             }

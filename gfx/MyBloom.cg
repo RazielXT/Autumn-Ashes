@@ -16,21 +16,22 @@ float4 Brightcheck_fp
 		float2 uv: TEXCOORD0,
 		uniform sampler2D scene: register(s0),
 		uniform sampler2D sceneLum: register(s1),
-		uniform sampler2D transLum: register(s2)
+		uniform sampler2D transLum: register(s2),
+		uniform float bloomAdd
 	) : COLOR
 {
 	float4 sharp = tex2D(scene,uv);
 	sharp.rbg-=0.4-sharp.a*0.4;
 
-	float matBrightness = tex2D(sceneLum,uv).a;
+	float matBrightness = bloomAdd + tex2D(sceneLum,uv).a;
 	float2 transBrightness = tex2D(transLum,uv).ba;
 	
-	matBrightness = lerp(matBrightness, transBrightness.x, transBrightness.y);
+	matBrightness = lerp(matBrightness, bloomAdd + transBrightness.x, transBrightness.y);
 	
 	//b > 0.8 -> 0.5-10
 	matBrightness = max(matBrightness, (matBrightness-0.75)*30);
 
-	sharp*=2*matBrightness;
+	sharp*=2*(1 + bloomAdd)*matBrightness;
 
 	return  sharp;
 }
@@ -68,20 +69,19 @@ static const float pos[11] =
  1.5
 };
 
-#define bloomSize 15;
+#define bloomRadius 15
 
 float4 MyBloomX_fp
     (
-         float2 uv: TEXCOORD0,
-		 uniform float2 invTexSize,
-         uniform sampler2D scene: register(s0),
+        float2 uv: TEXCOORD0,
+		uniform float2 invTexSize,
+        uniform float bloomSize,
+        uniform sampler2D scene: register(s0),
 		uniform sampler2D brightness: register(s1)
-         
     ) : COLOR
-
 {
 	float t= 1 - tex2D(brightness, uv).r;
-   float b=t*bloomSize + 0.1;
+   float b=t*bloomRadius*bloomSize + 0.1;
 
     float4 sum = 0;
    for (int i = 0; i < 11; i++)
@@ -94,16 +94,16 @@ float4 MyBloomX_fp
 
 float4 MyBloomY_fp
     (
-         float2 uv: TEXCOORD0,
-		 uniform float2 invTexSize,
-         uniform sampler2D blurX: register(s0),
-		uniform sampler2D brightness: register(s1)
-         
+        float2 uv: TEXCOORD0,
+		uniform float2 invTexSize,
+		uniform float bloomSize,
+        uniform sampler2D blurX: register(s0),
+		uniform sampler2D brightness: register(s1)        
     ) : COLOR
 
 {
 	float t= 1 - tex2D(brightness, uv).r;
-   float b=t*bloomSize + 0.1;
+   float b=t*bloomRadius*bloomSize + 0.1;
    
    float4 sum = 0;
    for (int i = 0; i < 11; i++)
@@ -115,16 +115,16 @@ float4 MyBloomY_fp
 
 float4 MyBloomYF_fp
     (
-         float2 uv: TEXCOORD0,
-		 uniform float2 invTexSize,
-         uniform sampler2D blurX: register(s0),
+        float2 uv: TEXCOORD0,
+		uniform float2 invTexSize,
+        uniform float bloomSize,
+        uniform sampler2D blurX: register(s0),
 	    uniform sampler2D brightness: register(s1)
-         
     ) : COLOR
 
 {
 	float t= 1 - tex2D(brightness, uv).r;
-   float b=t*bloomSize + 0.1;
+   float b=t*bloomRadius*bloomSize + 0.1;
 
    float4 sum = 0;
    for (int i = 0; i < 11; i++)

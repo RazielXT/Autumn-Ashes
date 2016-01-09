@@ -1,0 +1,122 @@
+fragment_program MBFinal_fp cg
+{
+	source  myMotionBlur.cg
+	entry_point  MBFinal_fp
+
+	profiles ps_2_x
+
+  default_params
+    {
+        param_named invViewProjMatrix float4x4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
+	   param_named prevViewProjMatrix float4x4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
+
+    }
+
+}
+
+
+material MBFinal
+{
+	technique
+	{
+		pass
+		{
+
+				   vertex_program_ref givs_vs 
+                        {
+                        }
+
+                        fragment_program_ref  MBFinal_fp 
+                        {
+                        }
+
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                
+                        }
+
+
+				   texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering none
+                        }
+
+                }
+        }
+}
+
+
+fragment_program MBFinalExtra_fp cg
+{
+	source  myMotionBlurExtra.cg
+	entry_point  MBFinalExtra_fp
+
+	profiles ps_2_x
+
+  default_params
+    {
+        param_named invViewProjMatrix float4x4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
+	   param_named prevViewProjMatrix float4x4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
+	   param_named radialHorizBlurShade float3 0 0 0
+
+	   param_named_auto time time_0_x 4
+    }
+
+}
+
+
+material MBFinalExtra
+{
+	technique
+	{
+		pass
+		{
+
+				   vertex_program_ref givs_vs 
+                        {
+                        }
+
+                        fragment_program_ref  MBFinalExtra_fp 
+                        {
+                        }
+
+                        texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                
+                        }
+
+
+				   texture_unit map
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering none
+                        }
+
+ 				   texture_unit rand
+                        {
+                                tex_coord_set 0
+                                filtering bilinear
+								texture rot2.png
+                        }
+					
+					texture_unit shade
+                        {
+                                tex_coord_set 0
+                                filtering bilinear
+								texture aa_shade.png
+                        }
+						
+
+
+
+                }
+        }
+}
+

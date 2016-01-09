@@ -14,6 +14,13 @@ import 1t_vc_material_static from "general_1tex_vc.material"
 import leaf_material_dynamic_op from "general_Leaf.material"
 import billboard_material_op from "general_Billboard.material"
 
+import soft_transparent_material from "soft_smoke.material"
+
+material  smokeMat: soft_transparent_material
+{
+	set_texture_alias diffuseMap particle_cloud.png
+}
+
 material  billboardTest: billboard_material_op
 {
 	set_texture_alias diffuseMap hackberry_tree.png
@@ -124,6 +131,25 @@ material fallenLeaves : 1t_material_static
 	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "16"
 
+}
+
+material whiteConcreteMat : 1t_material_static 
+{
+	set_texture_alias diffuseMap ConcreteNew0007_2_S.bmp
+	set_texture_alias normalMap ConcreteNew0007_2_S_NORM.tga
+	//set_texture_alias dispMap NZjZrKrvsTA_DISP.bmp
+	//set_texture_alias normalDetailMap 05_NORMAL.jpg
+	
+	set $uvScale "0.75"
+	set $detailScale "5"
+	
+	set $diffuseCol "1 1 1"
+	// specular colour multiplier (for example, red-ish)
+
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	// specular power (shininess) (the higher, the sharper the highlights)
+	set $shininess "16"
 }
 
 material concreteMat : 1tEnv_material_static 
@@ -268,6 +294,30 @@ material wood00png : 1t_material_static
 	set $shininess "32"
 }
 
+material road1Mat : wood00png
+{
+}
+
+material steel1Mat : wood00png
+{
+}
+ 
+material BushMat : wood00png
+{
+}
+
+material building4Mat : wood00png
+{
+}
+
+material marble2Mat : wood00png
+{
+}
+
+material housesMat : wood00png
+{
+}
+
 material wood07png : 1t_material_static 
 {
 	set_texture_alias diffuseMap wood.png
@@ -320,6 +370,33 @@ material terrainGrassRock : 2t_material_static
 
 }
 
+material rockWall : 2t_vc_material_static
+{
+	set $uvScale "2"
+	set $uv2Scale "2"
+
+	set_texture_alias diffuseMap 3.jpg
+	set_texture_alias normalMap 3_NORM.tga
+	set_texture_alias dispMap 3_DISP.bmp
+
+	set_texture_alias normalDetailMap ConcreteNew0007_2_S_NORM.tga
+	
+	set_texture_alias spreadMap spread.png
+
+	set_texture_alias diffuseMap2 3.jpg
+	set_texture_alias normalMap2 3_NORM.tga
+	set $diffuseCol "1 1 1"
+	// specular colour multiplier (for example, red-ish)
+
+	set $specularCol "0.106281215 0.106281215 0.15081215"
+	set $specular2Weight "0"
+	
+	set $brightness "0.015"
+	// specular power (shininess) (the higher, the sharper the highlights)
+	set $shininess "64"
+
+}
+
 material terrainRock : 2t_vc_material_static
 {
 	set $uvScale "2"
@@ -328,14 +405,19 @@ material terrainRock : 2t_vc_material_static
 	//set_texture_alias diffuseMap ConcreteNew0007_2_S.bmp
 	//set_texture_alias normalMap ConcreteNew0007_2_S_NORM.tga
 
-	set_texture_alias diffuseMap2 rock2.png
-	set_texture_alias normalMap2 rock2_NORM.tga
-	set_texture_alias normalDetailMap rock3_NORM_NORM.tga
+	set_texture_alias diffuseMap rock2.png
+	set_texture_alias normalMap rock2_NORM.tga
 	set_texture_alias dispMap rock2_DISP.png
+	
+	//set_texture_alias diffuseMap 3.jpg
+	//set_texture_alias normalMap 3_NORM.tga
+	//set_texture_alias dispMap 3_DISP.bmp
+	
+	set_texture_alias normalDetailMap rock3_NORM_NORM.tga
 	set_texture_alias spreadMap spread.png
 
-	set_texture_alias diffuseMap SilveryBlue.jpg
-	set_texture_alias normalMap SilveryBlue_NORM.tga
+	set_texture_alias diffuseMap2 SilveryBlue.jpg
+	set_texture_alias normalMap2 SilveryBlue_NORM.tga
 
 	set $diffuseCol "1 1 1"
 	// specular colour multiplier (for example, red-ish)

@@ -167,6 +167,7 @@ void diffuse_ps(
 	uniform float uvSpreadScale,
 	uniform float uv2Scale,
 	uniform float2 uvMinMaxDetailScale,
+	uniform float2 uvMinMaxDetailW,
 	uniform float specular2Weight,
 	uniform float3 camPos,
 	uniform float ambientWeight,
@@ -211,7 +212,7 @@ void diffuse_ps(
 	
 	//spread
 	//////////////////////////////////////////////////
-	float spreadVC = IN.vc.w;
+	float spreadVC = 1 - IN.vc.w;
 	float inside=smoothstep(0.25,1,spreadVC);
 	//inside+=smoothstep(0.381385,1,spreadVC);
 
@@ -236,7 +237,8 @@ void diffuse_ps(
 	//base normal+detail
 	float3 normalTex = tex2D(normalMap, texCoordBase).rgb;
 	float3 normalTex2 = tex2D(normalDetailMap, texCoordDetail).rgb;
-	normalTex = color_blend(normalTex,normalTex2).rgb;
+	//normalTex = color_blend(normalTex,normalTex2).rgb;
+	float detailN = lerp(1,pow(normalTex2.r + normalTex2.g,2),uvMinMaxDetailW.x);
 	
 	//lerp with 2. normal
 	normalTex2 = tex2D(normalMap2, texCoordBase2).rgb;
@@ -244,7 +246,7 @@ void diffuse_ps(
 
 	//blend with max detail normal
 	normalTex2 = tex2D(normalDetailMap, texCoordMax).rgb;
-	normalTex.rgb = lerp(normalTex.rgb, color_blend(normalTex,normalTex2).rgb, IN.wp.w);
+	normalTex = lerp(normalTex, color_blend(normalTex,normalTex2).rgb,uvMinMaxDetailW.y);//lerp(normalTex.rgb, color_blend(normalTex,normalTex2).rgb, IN.wp.w);
 	
 	//lighting
 	float3x3 tbn = float3x3(IN.t.xyz, IN.b.xyz, IN.n.xyz);
@@ -293,7 +295,7 @@ void diffuse_ps(
 		float adder = 1;
 
 		if (norm < 0.5)
-			adder += (0.5 - norm) * 3;
+			adder += (0.5 - norm) * shFil*5;
 
 
 		if (IN.uv.z <= 12)                                                                     
@@ -303,15 +305,15 @@ void diffuse_ps(
 		}
 		else if (IN.uv.z <= 30)
 		{
-			shadowing = shadowSmooth(shadowMap1, IN.LightPosition1, 0.00000018*adder, shTex);
+			shadowing = shadowSmooth(shadowMap1, IN.LightPosition1, 0.000000235*adder, shTex);
 		}
-		else if (IN.uv.z <= 130)
+		else if (IN.uv.z <= 120)
 		{
-			shadowing = shadowSmooth(shadowMap2, IN.LightPosition2, 0.0000002*adder, shTex);
+			shadowing = shadowSmooth(shadowMap2, IN.LightPosition2, 0.00000037*adder, shTex);
 		}
 		else if (IN.uv.z <= 600)
 		{
-			shadowing = shadowSmooth(shadowMap3, IN.LightPosition3, 0.0000002, shTex);
+			shadowing = shadowSmooth(shadowMap3, IN.LightPosition3, 0.00000032, shTex);
 		}
 
 		if (norm < 0.5)
@@ -325,16 +327,16 @@ void diffuse_ps(
 	//slight gi normal mapping
 	diffuseLight = abs(max(diffuseLight,diffuseLight/2));
 
-	float3 diffuseContrib = saturate(diffuseLight* lightDif0.rgb + vertexLight);
+	float3 diffuseContrib = saturate(diffuseLight* lightDif0.rgb + vertexLight)*detailN;
 	float specWeight = lerp(specular2Weight, 1, inter);
 	float3 specularContrib = ((specular + specular2*3) * matSpec0.rgb*specWeight );
-	float3 rawColor = (diffuseContrib + specularContrib);
+	float3 rawColor = (diffuseContrib + specularContrib)*diffuseTex;
 	
 	float3 directLight = saturate(shadowing + vertexLight);
 	
 	float3 darkness = max(shadowing.xxx,vertexLight);
 	float3 ambientLight = (vertexLight);
-	float4 output = float4(rawColor*diffuseTex*lerp(ambientLight, max(directLight,vertexLight),darkness),1);
+	float4 output = float4(rawColor*lerp(ambientLight, max(directLight,vertexLight),darkness),1);
 	
 	//distance fog
 	float insideFog = saturate((dist - fogParams.y) / fogParams.z)*fogColor.a;

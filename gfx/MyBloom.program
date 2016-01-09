@@ -12,6 +12,11 @@ fragment_program Brightcheck_fp cg
 	entry_point  Brightcheck_fp
 
 	profiles ps_2_0 arbfp1
+		
+	default_params
+	{
+		param_named bloomAdd float 1
+	}
 }
 
 fragment_program MySmokeBloomX_fp cg
@@ -49,10 +54,11 @@ fragment_program MyBloomX_fp cg
 
 	profiles ps_2_0 arbfp1
 
-	 default_params
-        {
-           param_named_auto invTexSize inverse_texture_size 0
-        }
+	default_params
+    {
+		param_named_auto invTexSize inverse_texture_size 0
+		param_named bloomSize float 1
+    }
 }
 
 fragment_program MyBloomY_fp cg
@@ -62,10 +68,11 @@ fragment_program MyBloomY_fp cg
 
 	profiles ps_2_0 arbfp1
 
-	 default_params
-        {
-            param_named_auto invTexSize inverse_texture_size 0
-        }
+	default_params
+	{
+		param_named_auto invTexSize inverse_texture_size 0
+		param_named bloomSize float 1
+	}
 }
 
 
@@ -76,9 +83,10 @@ fragment_program MyBloomYF_fp cg
 
 	profiles ps_2_0 arbfp1
 
-	 default_params
+	default_params
 	{
-	   param_named_auto invTexSize inverse_texture_size 0
+		param_named_auto invTexSize inverse_texture_size 0
+		param_named bloomSize float 1
 	}
 }
 

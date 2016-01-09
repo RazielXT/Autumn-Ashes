@@ -24,6 +24,8 @@ void softsmoke_vs(uniform float4x4 wpmat,
 
 
 void softsmoke_ps(
+	uniform float depthFade,
+	uniform float closeFade,
 	uniform float3 camPos,
 	uniform float4 fogColor,
 	uniform float4 fogParams,
@@ -64,8 +66,8 @@ void softsmoke_ps(
 	float4 color=tex2D(material, uv.xy)*float4(0.75,0.5,0.35,1);
 	if(color.a==0) discard;
 
-	float camScale=2;
-	float scale=5;
+	float camScale=closeFade;
+	float scale=depthFade;
 
 	/*float roz=saturate(abs(depthCloud-depthEnv)/scale);
 	roz*=0.8;

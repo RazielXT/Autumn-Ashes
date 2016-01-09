@@ -341,7 +341,7 @@ col = colorgrade_shadows(col,ColouringShift.rgb);
 col=lerp(colourOverlaying.rgb,col.rgb,colourOverlaying.a);
 uv.y -= time*6;
 float3 noise = tex2D(noiseTex,uv*5).rgb;
-col=lerp(col,col*noise*2,ContSatuSharpNoise.w);
+col=lerp(col,col*noise*2,ContSatuSharpNoise.w*(1-bright));
 
 return float4(col,luma);
 }

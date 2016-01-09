@@ -1,0 +1,27 @@
+vertex_program softsmoke_vs cg
+{
+    source soft_smoke.cg
+    profiles vs_3_0
+    entry_point softsmoke_vs
+
+	default_params
+    {
+		param_named_auto wpmat 	worldviewproj_matrix
+		param_named_auto wmat 	world_matrix
+    }
+
+}
+
+fragment_program softsmoke_ps cg
+{
+    source soft_smoke.cg
+    profiles ps_3_0
+    entry_point softsmoke_ps
+
+	default_params
+    {
+		param_named_auto camPos	camera_position
+		param_named_auto fogColor fog_colour
+		param_named_auto fogParams fog_params
+    }
+}
