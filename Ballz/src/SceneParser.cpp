@@ -649,7 +649,7 @@ void loadPlane(const XMLElement* planeElement, SceneNode* node, Ogre::SceneManag
     node->attachObject(ent);
     ent->setCastShadows(getBool(planeElement->Attribute("castShadows")));
     ent->setMaterialName(planeElement->Attribute("material"));
-    ent->setVisibilityFlags(1);
+    ent->setVisibilityFlags(VisibilityFlag_Normal);
 
     Ogre::uint8 renderQueue = ParseRenderQueue(GetStringAttribute(planeElement, "renderQueue"));
     ent->setRenderQueueGroup(renderQueue);
@@ -935,8 +935,8 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
     bool usesDensityMap = (!densityMaps.empty());
     bool usesColorMap = (!colorMaps.empty());
 
-    Forests::PagedGeometry *grass = new Forests::PagedGeometry(mSceneMgr->getCamera("Camera"), (float)pageSize);
-    grass->setVisibilityFlags(ent->getVisibilityFlags());
+    Forests::PagedGeometry *grass = new Forests::PagedGeometry(mSceneMgr->getCamera("Camera"), (float)pageSize, RenderQueueGroupID(RenderQueue_Grass));
+    grass->setVisibilityFlags(VisibilityFlag_Normal);
     grass->addDetailLevel<Forests::GrassPage>((float)maxRange, (float)transLength);
 
     TerrainHeightQueryData* offsets = new TerrainHeightQueryData();
@@ -1026,11 +1026,12 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
         myLog->logMessage("Grass Area ended loading layer number " + Ogre::StringConverter::toString(i), LML_NORMAL);
     }
 
+    Global::gameMgr->geometryMgr->addPagedGeometry(grass, node->getName());
+
     node->detachObject(ent);
     mSceneMgr->destroyEntity(ent);
     mSceneMgr->destroySceneNode(node);
 
-    Global::gameMgr->geometryMgr->addPagedGeometry(grass);
     myLog->logMessage("Grass Area Loaded", LML_NORMAL);
 }
 
@@ -1078,6 +1079,7 @@ void loadInstance(const XMLElement* element, Ogre::Entity* ent, SceneNode* node,
         trees->addDetailLevel<Forests::ImpostorPage>((float)iMax, (float)tran);	//Use impostors up to 400 units, and for for 50 more units
         Forests::TreeLoader3D *treeLoader = new Forests::TreeLoader3D(trees, Forests::TBounds(-1500, -1500, 1500, 1500));
         trees->setPageLoader(treeLoader);	//Assign the "treeLoader" to be used to load geometry for the PagedGeometry instance
+        trees->setVisibilityFlags(VisibilityFlag_Normal);
         Global::gameMgr->geometryMgr->addPagedGeometry(trees);
         LoadedInstanceForests lf;
         lf.gm = gMax;
@@ -1907,6 +1909,19 @@ void setModifierEnd(const XMLElement* rootElement, Entity** ent, SceneNode** nod
     }
 }
 
+bool isBasicTransparentMaterial(Ogre::MaterialPtr mat)
+{
+    if (mat->getTechnique(0)->getNumPasses() == 1)
+    {
+        auto pass = mat->getTechnique(0)->getPass(0);
+
+        if (!pass->getDepthWriteEnabled() && pass->getDestBlendFactor() != SBF_ZERO)
+            return true;
+    }
+
+    return false;
+}
+
 void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, Ogre::SceneManager *mSceneMgr, OgreNewt::World* mWorld,
                 EventsManager* mEventMgr, WorldMaterials* wMaterials)
 {
@@ -1917,25 +1932,18 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 
     Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Entity " + ent->getName(), LML_NORMAL);
 
+    bool castShadows = getBool(GetStringAttribute(entityElement, "castShadows"));
+    ent->setCastShadows(castShadows);
 
-    String str = GetStringAttribute(entityElement, "castShadows");
-    if (!str.empty() && !getBool(str)) ent->setCastShadows(false);
-    else ent->setCastShadows(true);
-
-    String str2 = GetStringAttribute(entityElement, "visibilityFlags");
-    if (!str2.empty())
-    {
-        ent->setVisibilityFlags(Ogre::StringConverter::parseLong(str2));
-    }
-    else
-    {
-        ent->setVisibilityFlags(1);
-    }
+    auto visFlagsStr = GetStringAttribute(entityElement, "visibilityFlags");
+    auto visFlags = visFlagsStr.empty() ? VisibilityFlag_Normal : Ogre::StringConverter::parseLong(visFlagsStr);
+    ent->setVisibilityFlags(visFlags);
 
     Ogre::uint8 renderQueue = ParseRenderQueue(GetStringAttribute(entityElement, "renderQueue"));
     ent->setRenderQueueGroup(renderQueue);
 
-    bool waterFlag = false;
+    bool waterType = false;
+    bool transparentType = false;
     const XMLElement* subentityElement = entityElement->FirstChildElement("subentities");
     const XMLElement* childElement = 0;
     while (childElement = IterateChildElements(subentityElement, childElement))
@@ -1948,14 +1956,31 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 
         auto matPtr = ent->getSubEntity(index)->getMaterial();
 
-        for (int i = 0; i < matPtr->getNumTechniques() && !waterFlag; i++)
+        for (int i = 0; i < matPtr->getNumTechniques() && !waterType; i++)
         {
-            waterFlag = (matPtr->getTechnique(i)->getSchemeName() == "WaterDepth");
+            waterType = (matPtr->getTechnique(i)->getSchemeName() == "WaterDepth");
         }
+
+        for (int i = 0; i < matPtr->getNumTechniques() && !transparentType; i++)
+        {
+            transparentType = (matPtr->getTechnique(i)->getSchemeName() == "Transparent");
+        }
+
+        if (isBasicTransparentMaterial(matPtr))
+            ent->getSubEntity(index)->setRenderQueueGroup(RenderQueue_BasicTransparent);
     }
 
-    if (waterFlag)
-        ent->setVisibilityFlags(ent->getVisibilityFlags() | VisibilityFlag_Water);
+    if (waterType)
+    {
+        ent->setRenderQueueGroup(RenderQueue_Water);
+        ent->setVisibilityFlags(VisibilityFlag_Water);
+    }
+
+    if (transparentType)
+    {
+        ent->setRenderQueueGroup(RenderQueue_Transparent);
+        ent->setVisibilityFlags(VisibilityFlag_Transparent);
+    }
 
     const XMLElement* userdataElement = entityElement->FirstChildElement("userData");
 
@@ -2331,7 +2356,6 @@ void loadAnimations(const XMLElement* element, Ogre::SceneNode* node, Ogre::Scen
 
 void loadNode(const XMLElement* nodeElement)
 {
-
     SceneNode* node;
     Ogre::String name;
     name = nodeElement->Attribute("name");
@@ -2668,10 +2692,12 @@ void reloadScene(Ogre::String filename)
         {
             auto type = getUserDataType(childElement);
 
-            if (type == "DetailGeometryMask")
+            if (type == "DetailGeometryMask" || type == "GrassArea")
                 loadNode(childElement);
         }
     }
+
+    summarizeLevelEvents();
 
     Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("RELOADING COMPLETED :: filename \"" + filename + "\"", LML_NORMAL);
     Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("-----------------------------------------------------------", LML_NORMAL);

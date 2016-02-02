@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 #include <vector>
+#include <map>
 #include "DetailGeometry.h"
 
 using VCEditFunc = std::function<void(Ogre::Entity*, float*, float*, Ogre::RGBA*, void* userData)>;
@@ -12,6 +13,8 @@ public:
 
     void forgetPagedGeometry(Forests::PagedGeometry *g);
     void addPagedGeometry(Forests::PagedGeometry *g);
+    void addPagedGeometry(Forests::PagedGeometry *g, std::string name);
+
     void clear();
     void update();
 
@@ -31,6 +34,7 @@ private:
 
     void generateGeometryMask(Ogre::Entity* maskEnt, MaskGrid& grid, Ogre::Vector2& size);
 
+    std::map<std::string, Forests::PagedGeometry *> namedPagedGeometries;
     std::vector<Forests::PagedGeometry *> pagedGeometries;
 };
 
