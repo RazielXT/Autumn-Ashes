@@ -19,7 +19,7 @@ protected:
 
 public:
 
-    static void finish()
+    static void buildAll()
     {
         for (auto dgi : mdg)
         {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "FilteredRaycast.h"
 
 using namespace Ogre;
 
@@ -39,21 +40,18 @@ struct RayInfo
 
 inline bool getRayFilteredInfo(Vector3 start, Vector3 end, RayInfo& minfo, OgreNewt::Body* target)
 {
-    OgreNewt::BasicRaycast ray(Global::mWorld, start, end, true);
+    FilteredRaycast ray(Global::mWorld, start, end, false, target);
 
-    for (int i = 0; i < ray.getHitCount(); i++)
+    if(ray.getHitCount()>0)
     {
         OgreNewt::BasicRaycast::BasicRaycastInfo& info = ray.getFirstHit();
 
-        if (info.getBody() == target)
-        {
-            minfo.normal = info.getNormal();
-            minfo.pos = end* info.getDistance() + start*(1 - info.getDistance());
-            minfo.body = info.getBody();
-            minfo.offset = info.getDistance();
+        minfo.normal = info.getNormal();
+        minfo.pos = end* info.getDistance() + start*(1 - info.getDistance());
+        minfo.body = info.getBody();
+        minfo.offset = info.getDistance();
 
-            return true;
-        }
+        return true;
     }
 
     return false;

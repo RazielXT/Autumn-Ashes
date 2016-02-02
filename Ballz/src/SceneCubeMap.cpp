@@ -40,6 +40,9 @@ void SceneCubeMap::init(std::string name, int size, bool editable, float minRend
     mReflectCam->setFOVy(Ogre::Radian(Ogre::Math::PI / 2));
     mReflectCam->setAspectRatio(1);
     mReflectCam->lookAt(0, 0, -1);
+
+    unsigned int iFlag = VisibilityFlag_NeedCompositor;
+    mReflectCam->setVisibilityFlags(VisibilityFlag_Normal);
     //mReflectCam->setVisibilityFlags(2);
 
     mReflectCamNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
@@ -98,6 +101,7 @@ void SceneCubeMap::loadGpuTexture()
         v->setClearEveryFrame(true);
         v->setBackgroundColour(ColourValue::Black);
         v->setShadowsEnabled(true);
+        v->setVisibilityMask(VisibilityFlag_Normal);
         //v->setMaterialScheme("CubemapRender");
     }
 }

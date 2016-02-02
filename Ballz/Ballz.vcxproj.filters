@@ -296,6 +296,9 @@
     <ClCompile Include="src\PlayerTimeshift.cpp">
       <Filter>Files\Player</Filter>
     </ClCompile>
+    <ClCompile Include="src\FilteredRaycast.cpp">
+      <Filter>Files\Core\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -594,6 +597,9 @@
     </ClInclude>
     <ClInclude Include="include\PlayerTimeshift.h">
       <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FilteredRaycast.h">
+      <Filter>Files\Core\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

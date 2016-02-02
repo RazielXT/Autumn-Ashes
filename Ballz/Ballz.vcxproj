@@ -146,6 +146,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClCompile Include="src\EntityMovementReaction.cpp" />
     <ClCompile Include="src\EventsManager.cpp" />
     <ClCompile Include="src\EventTask.cpp" />
+    <ClCompile Include="src\FilteredRaycast.cpp" />
     <ClCompile Include="src\GameStateManager.cpp" />
     <ClCompile Include="src\GameUi.cpp" />
     <ClCompile Include="src\Gate.cpp" />
@@ -230,6 +231,7 @@ copy "D:\AA\AAsvn\Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</C
     <ClInclude Include="include\Energy.h" />
     <ClInclude Include="include\EntityMovementTask.h" />
     <ClInclude Include="include\EventsManager.h" />
+    <ClInclude Include="include\FilteredRaycast.h" />
     <ClInclude Include="include\GameConfig.h" />
     <ClInclude Include="include\DetailGeometry.h" />
     <ClInclude Include="include\GameUi.h" />

@@ -32,6 +32,7 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
         static int msgCount = 0;
         sg = Global::mSceneMgr->createStaticGeometry("manDG" + std::to_string(msgCount++));
         sg->setCastShadows(true);
+        sg->setVisibilityFlags(VisibilityFlag_Normal);
 
         float staticEntitiesGridSize = info.gridSize;
         Ogre::Vector3 gridRegion(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize);

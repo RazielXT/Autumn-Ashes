@@ -26,6 +26,7 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 
     sg = Global::mSceneMgr->createStaticGeometry("basicDG" + std::to_string(sgCount++));
     sg->setCastShadows(true);
+    sg->setVisibilityFlags(VisibilityFlag_Normal);
 
     float staticEntitiesGridSize = info.gridSize;
     Ogre::Vector3 gridRegion(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize);
@@ -65,12 +66,9 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
                 float scale = info.generalScale*scaleMask*Ogre::Math::RangeRandom(params.minmaxScale.x, params.minmaxScale.y);
                 placeObject(ray.pos, MUtils::quaternionFromNormal(ray.normal), scale, params.color);
 
-
                 bgc++;
             }
         }
-
-    sg->setVisibilityFlags(1);
 
     sg->build();
 

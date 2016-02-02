@@ -55,15 +55,23 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs)
     info.path = "../../media/testLvl/";
     info.sceneFile = "test.scene";
     info.init = createTestLevel;
-    info.ambientColor = ColourValue(0.25f, 0.35f, 0.4f);
-    info.ColorShift = Ogre::Vector4(0.9f, 1.0f, 1.05f, 0);
+    info.fogColor = Ogre::ColourValue(0.5f, 0.55f, 0.65f, 0.5f);
+    info.fogStartDistance = 80;
+    info.fogEndDistance = 150;
+    info.ColorShift = Ogre::Vector4(1.0f, 1.0f, 1.02f, 1);
+    info.ContSatuSharpNoise = Ogre::Vector4(0, 0, 0, 0);
+    info.ambientColor = ColourValue(0.35f, 0.35f, 0.35f);
+    info.skyboxName = "TCENoonSkyBox";
+    info.bloomStr = 1.1f;
+    info.bloomDepth = 0.38f;
+    info.bloomAdd = 0.45f;
+    info.bloomSize = 1.5f;
     levels[4] = info;
 
     info.name = "Test2";
     info.path = "../../media/testLvl2/";
     info.sceneFile = "test.scene";
     info.init = createTestLevel2;
-    info.ambientColor = ColourValue(0.2f, 0.2f, 0.1f);
     levels[5] = info;
 
     dbg = new DebugKeys();

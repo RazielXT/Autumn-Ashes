@@ -17,6 +17,32 @@ void GeometryManager::forgetPagedGeometry(Forests::PagedGeometry *g)
 
     if (it != pagedGeometries.end())
         pagedGeometries.erase(it);
+
+    for (auto it2 = namedPagedGeometries.begin(); it2 != namedPagedGeometries.end(); it2++)
+    {
+        if (it2->second == g)
+        {
+            namedPagedGeometries.erase(it2);
+            break;
+        }
+    }
+}
+
+void GeometryManager::addPagedGeometry(Forests::PagedGeometry *g, std::string name)
+{
+    auto it = namedPagedGeometries.find(name);
+
+    if (it != namedPagedGeometries.end())
+    {
+        auto f = it->second;
+        forgetPagedGeometry(f);
+        delete f->getPageLoader();
+        delete f;
+    }
+
+    namedPagedGeometries[name] = g;
+
+    addPagedGeometry(g);
 }
 
 void GeometryManager::addPagedGeometry(Forests::PagedGeometry *g)
@@ -26,16 +52,14 @@ void GeometryManager::addPagedGeometry(Forests::PagedGeometry *g)
 
 void GeometryManager::clear()
 {
-    auto it = pagedGeometries.begin();
-
-    while(it != pagedGeometries.end())
+    for(auto g : pagedGeometries)
     {
-        delete (*it)->getPageLoader();
-        delete (*it);
-        it++;
+        delete g->getPageLoader();
+        delete g;
     }
 
     pagedGeometries.clear();
+    namedPagedGeometries.clear();
 
     for (auto g : detailGeometries)
     {
@@ -49,17 +73,14 @@ void GeometryManager::clear()
 
 void GeometryManager::postLoad()
 {
-    ManualDetailGeometry::finish();
+    ManualDetailGeometry::buildAll();
 }
 
 void GeometryManager::update()
 {
-    auto it = pagedGeometries.begin();
-
-    while(it != pagedGeometries.end())
+    for(auto g : pagedGeometries)
     {
-        (*it)->update();
-        it++;
+        g->update();
     }
 }
 
