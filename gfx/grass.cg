@@ -169,5 +169,5 @@ void main_fp(float4 uv			: TEXCOORD0,
 	oColor = float4(clr, diffTex.a)*iColor*float4(1.2,0.95,0.75,1);
 	oColor1= float4(0.5,0.5,0.3,0);
 	oColor2= float4(0,0,0,diffTex.a);
-	oColor3= float4(1 - uv.z/uv.w,uv.z,0,0);
+	oColor3= float4(1 - uv.z/uv.w,uv.z,0,1);
 }

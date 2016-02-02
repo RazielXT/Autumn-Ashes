@@ -3,6 +3,7 @@ import glass_material_dynamic_op from "general_glass.material"
 
 import material_water_dynamic from "water_dynamic.material"
 import material_water_static from "water_static.material"
+import material_transparent from "general_transparent.material"
 
 import 2tProj_vc_material_static from "general_2texProj_vc.material"
 import 2t_vc_material_static from "general_2tex_vc.material"
@@ -15,6 +16,7 @@ import leaf_material_dynamic_op from "general_Leaf.material"
 import billboard_material_op from "general_Billboard.material"
 
 import soft_transparent_material from "soft_smoke.material"
+
 
 material  smokeMat: soft_transparent_material
 {
@@ -46,6 +48,20 @@ material underwaterSand : 2tProj_vc_material_static
 	set $brightness "0.1"
 	set $diffuseCol "1 1 1"
 	set $specularCol "0.01 0.01 0.005"
+}
+
+material gateTransparent : material_transparent
+{
+	set_texture_alias diffuseMap water.png
+	set_texture_alias normalMap 05_NORMAL.jpg
+
+	set $difUV "1.0 1.0"
+	set $diffuseCol "0.5 0.5 0.6"
+	// specular colour multiplier (for example, red-ish)
+
+	set $specularCol "10.967 10.97 10.98"
+	// specular power (shininess) (the higher, the sharper the highlights)
+	set $shininess "128"
 }
 
 material waterWaves : material_water_dynamic
@@ -91,12 +107,12 @@ material waterSheer : material_water_static
 
 material grassMat : 1t_material_static 
 {
-	//set_texture_alias diffuseMap Moss0162_10_S.jpg
-	//set_texture_alias normalMap Moss0162_10_S_NORM.tga
-	//set_texture_alias dispMap Moss0162_10_S_DISP.bmp
-	//set_texture_alias normalDetailMap SilveryBlue_NORM.tga
+	set_texture_alias diffuseMap Moss0162_10_S.jpg
+	set_texture_alias normalMap Moss0162_10_S_NORM.tga
+	set_texture_alias dispMap Moss0162_10_S_DISP.bmp
+	set_texture_alias normalDetailMap SilveryBlue_NORM.tga
 
-	set_texture_alias diffuseMap NZjZrKrvsTA.jpg
+	//set_texture_alias diffuseMap NZjZrKrvsTA.jpg
 	//set_texture_alias normalMap NZjZrKrvsTA_NORM.tga
 	//set_texture_alias dispMap NZjZrKrvsTA_DISP.bmp
 	//set_texture_alias normalDetailMap SilveryBlue_NORM.tga
@@ -215,7 +231,7 @@ material  branch_summerpng: leaf_material_dynamic_op
 	set_texture_alias normalMap bush_a_NORM.tga
 
 	set $enlighten "1.4"
-	set $specularCol "1 1 0.5"
+	set $specularCol "1 1 1"
 }
 
 material  bushMat: leaf_material_dynamic_op
@@ -224,10 +240,8 @@ material  bushMat: leaf_material_dynamic_op
 	set_texture_alias normalMap bush_NORM.tga
 
 	set $enlighten "1.5"
-	set $diffuseCol "1.5 1.0 0.5"
+	set $diffuseCol "0.8 0.8 0.75"
 	set $vcWeight "0.5"
-	//set $enlighten "0.8"
-	//set $diffuseCol "1.5 1.0 0.2"
 	set $specularCol "1 1 0.5"
 }
 

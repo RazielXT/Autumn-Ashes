@@ -1,0 +1,65 @@
+material material_transparent
+{
+    set $diffuseCol "1 1 1 1"
+    set $specularCol "1 1 1"
+    set $shininess "32"
+    set $difUV "2 2"
+
+    technique
+    {
+        scheme Transparent
+				
+		pass
+		{
+			lighting off
+			colour_write off
+
+			vertex_program_ref myvs_vs
+		   {
+		   }
+		}
+		
+        pass
+        {
+			cull_hardware none
+			//scene_blend alpha_blend
+			//depth_write on
+
+            vertex_program_ref general_transparent_vs
+            {
+            }
+ 
+            fragment_program_ref general_transparent_ps
+            {
+				param_named scaleDiff float2 $difUV
+            }
+ 
+            diffuse $diffuseCol
+			specular $specularCol $shininess
+            ambient 0 0 0 0
+		 
+            texture_unit diffuseMap
+            {
+                texture white.bmp
+            }
+  
+            texture_unit normalMap
+            {
+		      texture flat_n.png
+            }
+			
+			texture_unit reflectionMap
+            {
+				filtering anisotropic
+				max_anisotropy 8
+				 texture ANGMAP11.JPG
+            }
+
+			texture_unit depthMap
+            {
+				content_type compositor ScaryBloomNoSSAO rt0 3
+            }
+
+        }		
+    }
+}

@@ -1,0 +1,29 @@
+vertex_program general_transparent_vs cg
+{
+    source general_transparent.cg
+	profiles vs_3_0 arbvp1
+    entry_point wdiffuse_vs_op
+
+    default_params
+    {
+        param_named_auto wMat world_matrix
+        param_named_auto wvpMat worldviewproj_matrix
+		param_named_auto camPos camera_position_object_space
+    }
+}
+  
+fragment_program general_transparent_ps cg
+{
+    source general_transparent.cg
+    profiles ps_3_0 arbfp1
+    entry_point wdiffuse_ps_op
+ 
+    default_params
+    {
+        param_named_auto camPos camera_position
+        param_named_auto lightPos0 light_position 0
+        param_named_auto iTWMat inverse_transpose_world_matrix
+		param_named_auto fogColor fog_colour
+		param_named_auto fogParams fog_params
+    }
+}

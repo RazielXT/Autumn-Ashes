@@ -33,121 +33,7 @@ fragment_program skybox_ps_d cg
 
 }
 
-material TCENoonSkyBoxToDark
-{
-
-    technique
-    {
-        pass
-        {
-
-            vertex_program_ref skybox_vs
-            {
-            }
-
-            fragment_program_ref skybox_ps_d
-            {
-            }
-
-		lighting off
-		depth_write off
-
-			texture_unit
-			{
-				//stormydays.tga 
-				cubic_texture sky8m.jpg separateUV 
-				tex_address_mode clamp
-			}
-
-
-        }
-    }
-
-
-technique
-    {
-
-	scheme ssaoScheme
-
-	pass
-        {	 
-            vertex_program_ref SSAO/GBuffer_vp
-            {
-                param_named_auto cWorldViewProj worldviewproj_matrix
-                param_named_auto cWorldView worldview_matrix
-            }
-
-            fragment_program_ref SSAO/GBuffer_fp
-            {
-                param_named_auto cNearClipDistance near_clip_distance
-                param_named_auto cFarClipDistance far_clip_distance
-            }
-        }
-	
-
-    }
-
-
-}
-
-material TCENoonSkyBox2
-{
-
-    technique
-    {
-        pass
-        {
-
-            vertex_program_ref skybox_vs
-            {
-            }
-
-            fragment_program_ref skybox_ps
-            {
-            }
-
-		lighting off
-		depth_write off
-
-			texture_unit
-			{
-				//stormydays.tga 
-				cubic_texture sunset02.jpg separateUV 
-				tex_address_mode clamp
-			}
-
-
-        }
-    }
-
-
-technique
-    {
-
-	scheme ssaoScheme
-
-	pass
-        {	 
-            vertex_program_ref SSAO/GBuffer_vp
-            {
-                param_named_auto cWorldViewProj worldviewproj_matrix
-                param_named_auto cWorldView worldview_matrix
-            }
-
-            fragment_program_ref SSAO/GBuffer_fp
-            {
-                param_named_auto cNearClipDistance near_clip_distance
-                param_named_auto cFarClipDistance far_clip_distance
-            }
-        }
-	
-
-    }
-
-
-}
-
-material TCENoonSkyBox
+material SkyboxMaterial
 {
     technique
     {
@@ -162,105 +48,35 @@ material TCENoonSkyBox
             {
             }
 
-		lighting off
-		depth_write off
+			depth_write off
 
-			texture_unit
+			texture_unit skybox
 			{
 				//stormydays.tga 
 				//amethyst.jpg
+				//sunset02.jpg
+				//stormy.jpg
+				//morning.jpg
+				//sky8m.jpg
 				cubic_texture clouds.png separateUV
 				tex_address_mode clamp
 			}
 
-
         }
     }
 }
 
-material CloundyNoonSkyBox
+material TCENoonSkyBox : SkyboxMaterial
 {
-    technique
-    {
-        pass
-        {
-
-            vertex_program_ref skybox_vs
-            {
-            }
-
-            fragment_program_ref skybox_ps
-            {
-            }
-
-		lighting off
-		depth_write off
-
-			texture_unit
-			{
-				//stormydays.tga 
-				cubic_texture stormy.jpg separateUV 
-				tex_address_mode clamp
-			}
-
-
-        }
-    }
+	set_texture_alias skybox sky8m.jpg
 }
 
-material MorningSkyBox
+material MorningSkyBox : SkyboxMaterial
 {
+	set_texture_alias skybox morning.jpg
+}
 
-    technique
-    {
-        pass
-        {
-
-            vertex_program_ref skybox_vs
-            {
-            }
-
-            fragment_program_ref skybox_ps
-            {
-            }
-
-		lighting off
-		depth_write off
-
-			texture_unit
-			{
-				//stormydays.tga 
-				cubic_texture morning.jpg separateUV 
-				tex_address_mode clamp
-			}
-
-
-        }
-    }
-
-
-technique
-    {
-
-	scheme ssaoScheme
-
-	pass
-        {	 
-            vertex_program_ref SSAO/GBuffer_vp
-            {
-                param_named_auto cWorldViewProj worldviewproj_matrix
-                param_named_auto cWorldView worldview_matrix
-            }
-
-            fragment_program_ref SSAO/GBuffer_fp
-            {
-                param_named_auto cNearClipDistance near_clip_distance
-                param_named_auto cFarClipDistance far_clip_distance
-            }
-        }
-	
-
-    }
-
-
+material CloundyMorning : SkyboxMaterial
+{
+	set_texture_alias skybox clouds.png
 }

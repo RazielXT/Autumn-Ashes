@@ -2,6 +2,8 @@ material soft_transparent_material
 {
 	set $depthFade "5"
 	set $closeFade "2" 
+	set $diffuse "1 1 1" 
+	set $alphaMul "1" 
 	
     technique
     {
@@ -22,6 +24,8 @@ material soft_transparent_material
 			{
 				param_named depthFade float $depthFade
 				param_named closeFade float $closeFade
+				param_named diffuseColor float3 $diffuse
+				param_named alphaMul float $alphaMul
 			}
 
 			texture_unit diffuseMap
