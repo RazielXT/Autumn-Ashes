@@ -131,8 +131,8 @@ void GameStateManager::switchToLevel(int lvl)
 
     SceneParser::loadScene(lvlInfo.path + lvlInfo.sceneFile);
     lvlInfo.init();
-    Global::gameMgr->materialEdits.applyChanges();
-    Global::gameMgr->geometryMgr->update();
+    materialEdits.applyChanges();
+    geometryMgr->update();
     SceneCubeMap::renderAll();
 
     Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
@@ -314,4 +314,6 @@ void GameStateManager::clearLevel()
     VolumeDetectionManager::get.reset();
     SceneEnergies::reset();
     Gate::reset();
+
+    materialEdits.particleSiblings.children.clear();
 }

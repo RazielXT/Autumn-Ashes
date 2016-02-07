@@ -267,6 +267,7 @@
 
 <class name="Particle" usage="object">
 	<data name="Name" type="string" defaultValue="Examples/Smoke"/>
+	<data name="Parent" type="string" defaultValue=""/>
 	<data name="RenderGroup" type="int" defaultValue="91"/>
 	
 	<data name="EditParams" displayName="Edit Params" type="bool" groupName="Params" defaultValue="false"/>
@@ -283,8 +284,6 @@
 	<data name="Emmision" displayName="Emmision" type="int" defaultValue="0" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
 	<data name="Velocity" displayName="Velocity" type="int2" defaultValue="0,0" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
 	<data name="Lifespan" displayName="Lifespan" type="int2" defaultValue="0,0" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
-
-	<data name="MaterialShader" displayName="Material Shader Params(var=val)" type="string" defaultValue="" groupName="Shader" editWidth="300" editHeight="100"/>
 </class>
 
 <class name="CrowLanding" usage="object">

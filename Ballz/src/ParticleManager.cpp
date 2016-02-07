@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ParticleManager.h"
+#include "player.h"
 
 void ParticleManager::clear()
 {
@@ -13,9 +14,24 @@ void ParticleManager::addParticle(Ogre::ParticleSystem* ps)
 
 Ogre::ParticleSystem* ParticleManager::getClosestParticle()
 {
-    if (particles.empty())
-        return nullptr;
-    else
-        return particles[0];
+    Ogre::ParticleSystem* ps = nullptr;
+
+    if (!particles.empty())
+    {
+        float closestDist = 99999;
+        auto pos = Global::player->getCameraPosition();
+
+        for (auto p : particles)
+        {
+            float cdist = p->getParentSceneNode()->getPosition().squaredDistance(pos);
+            if (cdist < closestDist)
+            {
+                closestDist = cdist;
+                ps = p;
+            }
+        }
+    }
+
+    return ps;
 }
 

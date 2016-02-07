@@ -471,6 +471,7 @@ bool LoadedMaterialEdit::queryParticle()
 
 void LoadedMaterialEdit::loadMaterial()
 {
+    edit.psVariables.clear();
     edit.originMatName = ptr->getName();
     int pass = ptr->getTechnique(0)->getNumPasses() - 1;
     auto params = ptr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters();
@@ -502,4 +503,10 @@ void LoadedMaterialEdit::setMaterialParam(MaterialEdit::MaterialVariable& var)
 void LoadedMaterialEdit::setParticleParam(MaterialEdit::MaterialVariable& var)
 {
     edit.setParticleParam(ps, var);
+
+    auto children = Global::gameMgr->materialEdits.particleSiblings.getChildren(ps->getName());
+    for (auto child : children)
+    {
+        edit.setParticleParam(child, var);
+    }
 }

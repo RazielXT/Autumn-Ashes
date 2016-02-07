@@ -589,12 +589,50 @@ void loadCrowLanding(const XMLElement* rootElement, Entity* ent, SceneNode* node
 
 void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
 {
-    Ogre::String name = getElementValue(rootElement, "Name");
-    int rGroup = getElementIntValue(rootElement, "RenderQroup", RenderQueue_Particles);
+    Ogre::String ps_name = getElementValue(rootElement, "Name");
+    int rGroup = std::max<int>(RenderQueue_Particles, getElementIntValue(rootElement, "RenderQroup", RenderQueue_Particles));
 
-    Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem("PS_" + ent->getName(), name);
+    std::string name = "PS_" + ent->getName();
+    Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem(name, ps_name);
     ps->setRenderQueueGroup(rGroup);
     ps->setVisibilityFlags(VisibilityFlag_SoftParticles);
+
+    auto parent = getElementValue(rootElement, "Parent");
+    if (!parent.empty())
+        Global::gameMgr->materialEdits.particleSiblings.connectSiblings("PS_" + parent, name);
+
+    if (getElementBoolValue(rootElement, "EditEmmiter"))
+    {
+        auto emmiter = ps->getEmitter(0);
+
+        auto type = getElementValue(rootElement, "EmmiterType");
+        if (type == "Box")
+        {
+            auto newEmitter = ps->addEmitter(type);
+
+            auto size = ent->getBoundingBox().getSize();
+            size *= node->getScale();
+
+            auto center = ent->getBoundingBox().getCenter();
+
+            newEmitter->setParameter("width", std::to_string(size.x));
+            newEmitter->setParameter("height", std::to_string(size.y));
+            newEmitter->setParameter("depth", std::to_string(size.z));
+            newEmitter->setDirection(Ogre::Vector3(0,-1,0));
+
+            newEmitter->setAngle(emmiter->getAngle());
+            newEmitter->setEmissionRate(emmiter->getEmissionRate());
+            newEmitter->setTimeToLive(emmiter->getTimeToLive());
+            newEmitter->setParticleVelocity(emmiter->getMinParticleVelocity(), emmiter->getMaxParticleVelocity());
+            newEmitter->setColour(emmiter->getColour());
+
+            newEmitter->setPosition(Ogre::Vector3(0, size.y*0.5f, 0));
+
+            ps->removeEmitter(0);
+            emmiter = newEmitter;
+        }
+    }
+
     if (getElementBoolValue(rootElement, "EditParams"))
     {
         auto mat = getElementValue(rootElement, "Material");
@@ -604,10 +642,12 @@ void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
         if (psize.x != 0) ps->setDefaultDimensions(psize.x, psize.y);
     }
 
-    Global::gameMgr->particleMgr.addParticle(ps);
+    if (parent.empty())
+        Global::gameMgr->particleMgr.addParticle(ps);
 
     node->detachAllObjects();
     Global::mSceneMgr->destroyEntity(ent);
+
     node->attachObject(ps);
 }
 

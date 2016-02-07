@@ -192,25 +192,46 @@ void MaterialEditsLibrary::applyChanges()
     {
         if (Global::mSceneMgr->hasParticleSystem(ps.first))
         {
+            if (!particleSiblings.getParent(ps.first).empty())
+                continue;
+
             auto p = Global::mSceneMgr->getParticleSystem(ps.first);
             auto curMatName = p->getMaterialName();
+
+            std::vector<std::string> particles = { ps.first };
+            if (particleSiblings.isParent(ps.first))
+            {
+                auto& ch = particleSiblings.children[ps.first];
+                particles.insert(particles.end(), ch.begin(), ch.end());
+            }
 
             if (ps.second.originMatName == curMatName)
             {
                 Ogre::MaterialPtr newMat = Ogre::MaterialManager::getSingleton().getByName(curMatName);
                 newMat = newMat->clone(curMatName + std::to_string(idCounter++));
 
-                p->setMaterialName(newMat->getName());
-
                 for (auto& var : ps.second.psVariables)
                 {
                     int pass = newMat->getTechnique(0)->getNumPasses() - 1;
-                    newMat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+
+                    if (var.name != "ambientWeight")
+                        newMat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+                    else
+                        ps.second.psVariables.erase(ps.second.psVariables.end()-1);
                 }
 
-                for (auto& var : ps.second.moreParams)
+                for (auto& particle : particles)
                 {
-                    ps.second.setParticleParam(p, var);
+                    if (!Global::mSceneMgr->hasParticleSystem(particle))
+                        continue;
+
+                    p = Global::mSceneMgr->getParticleSystem(particle);
+                    p->setMaterialName(newMat->getName());
+
+                    for (auto& var : ps.second.moreParams)
+                    {
+                        ps.second.setParticleParam(p, var);
+                    }
                 }
             }
         }
@@ -282,7 +303,46 @@ void MaterialEditsLibrary::removeParticleEdit(std::string particleName)
             editParticleHistory.erase(ent);
             break;
         }
+
+        ent++;
     }
 
     saveFile(Global::gameMgr->getCurrentLvlInfo()->path);
+}
+
+std::string ParticleSiblings::getParent(std::string name)
+{
+    for (auto ch : children)
+    {
+        if (std::find(ch.second.begin(), ch.second.end(), name) != ch.second.end())
+            return ch.first;
+    }
+
+    return "";
+}
+
+void ParticleSiblings::connectSiblings(std::string parent, std::string child)
+{
+    children[parent].push_back(child);
+}
+
+bool ParticleSiblings::isParent(std::string name)
+{
+    return children.find(name) != children.end();
+}
+
+std::vector<Ogre::ParticleSystem*> ParticleSiblings::getChildren(std::string parent)
+{
+    std::vector<Ogre::ParticleSystem*> out;
+
+    if (isParent(parent))
+        for (auto ch : children[parent])
+        {
+            if (Global::mSceneMgr->hasParticleSystem(ch))
+            {
+                out.push_back(Global::mSceneMgr->getParticleSystem(ch));
+            }
+        }
+
+    return out;
 }

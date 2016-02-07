@@ -50,6 +50,16 @@ struct MaterialEdit
     void generateParticleParams(Ogre::ParticleSystem* ps);
 };
 
+struct ParticleSiblings
+{
+    std::map<std::string, std::vector<std::string>> children;
+
+    std::vector<Ogre::ParticleSystem*> getChildren(std::string parent);
+    bool isParent(std::string name);
+    std::string getParent(std::string name);
+    void connectSiblings(std::string parent, std::string child);
+};
+
 class MaterialEditsLibrary
 {
 public:
@@ -79,6 +89,8 @@ public:
         ar & editHistory;
         ar & editParticleHistory;
     }
+
+    ParticleSiblings particleSiblings;
 
 private:
 
