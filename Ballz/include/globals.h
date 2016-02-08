@@ -8,6 +8,9 @@ class PostProcessMgr;
 class AudioLibrary;
 class CameraShaker;
 
+#define MAX_DEBUG_LINES 15
+#define DEBUG_VARIABLES_COUNT 7
+
 enum GameState { GAME, PAUSE, MENU, CONSOLE, UNDEFINED };
 enum VisibilityFlag { VisibilityFlag_Normal = 1, VisibilityFlag_Water = 16, VisibilityFlag_Transparent = 4, VisibilityFlag_SoftParticles = 8, VisibilityFlag_NeedCompositor = VisibilityFlag_Water | VisibilityFlag_SoftParticles | VisibilityFlag_Transparent };
 enum RenderQueueID { RenderQueue_Grass = 70, RenderQueue_BasicTransparent = 71, RenderQueue_Water = 81, RenderQueue_Transparent = 82, RenderQueue_Particles = 91 };
@@ -27,16 +30,9 @@ extern Ogre::Camera* mCamera;
 extern Player* player;
 extern float timestep;
 extern AudioLibrary* audioLib;
-extern float fallSoundOffsetH;
-extern float fallSoundOffsetL;
-
 extern CameraShaker* shaker;
 
 extern std::map<std::string, void*>* globalData;
-
-
-#define MAX_DEBUG_LINES 15
-#define DEBUG_VARIABLES_COUNT 7
 
 };
 

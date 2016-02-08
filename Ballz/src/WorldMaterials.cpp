@@ -113,7 +113,7 @@ void WorldMaterials::initCollisions(OgreNewt::World* mWorld)
     material_pair = new OgreNewt::MaterialPair(mWorld, mWorld->getDefaultMaterialID(), plBlock_mat);
     material_pair->setDefaultCollidable(0);
 
-    DefaultObjectContactCallback* callb = new DefaultObjectContactCallback(Global::soundEngine);
+    DefaultObjectContactCallback* callb = new DefaultObjectContactCallback();
 
     //SELF_IGNORE
     material_pair = new OgreNewt::MaterialPair(mWorld, selfIgnore_mat, selfIgnore_mat);

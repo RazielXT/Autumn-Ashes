@@ -12,7 +12,7 @@ class GuiOverlay
 {
 public:
 
-    GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs, irrklang::ISoundEngine* eng);
+    GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs);
     ~GuiOverlay()
     {
         clear();
@@ -99,7 +99,7 @@ private:
 
     char movingDir;
     bool moving, lvlMoving;
-    irrklang::ISoundEngine* engine;
+    irrklang::ISoundEngine* soundEngine;
     Ogre::Real atm;
     Ogre::SceneManager * mSceneMgr;
     std::vector<Gorilla::Caption*> mMenuButtons;

@@ -8,11 +8,13 @@
 #include "Energy.h"
 #include "Gate.h"
 
-GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs)
+GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : audioLib(cam)
 {
+	Global::audioLib = &audioLib;
+
     gameConfig.loadCfg();
 
-    myMenu = new GuiOverlay(&gameConfig, cam, Global::mWindow, rs, Global::soundEngine);
+    myMenu = new GuiOverlay(&gameConfig, cam, Global::mWindow, rs);
 
     wMaterials.init();
 
@@ -252,6 +254,7 @@ void GameStateManager::update(float tslf)
         switch (gameState)
         {
         case GAME:
+			audioLib.update(tslf);
             myMenu->setDebugValue(Global::mWindow->getLastFPS(), GUtils::debug, dbg->debugVars, dbg->debugVarsLine);
             myMenu->updateIngame(tslf);
             break;
@@ -262,15 +265,6 @@ void GameStateManager::update(float tslf)
             myMenu->updateMainMenu(tslf);
             break;
         }
-
-    if (Global::fallSoundOffsetH > 0)
-    {
-        Global::fallSoundOffsetH -= tslf;
-    }
-    if (Global::fallSoundOffsetL > 0)
-    {
-        Global::fallSoundOffsetL -= tslf;
-    }
 }
 
 void GameStateManager::escapePressed()

@@ -27,7 +27,6 @@ public:
         delete geometryMgr;
         delete gameMgr;
 
-        engine->drop();
         mBufferFlush.stop();
 
         delete postProcMgr;
@@ -51,9 +50,6 @@ public:
         geometryMgr = new GeometryManager();
         mBufferFlush.start(1);
 
-        engine = irrklang::createIrrKlangDevice();
-        engine->setListenerPosition(irrklang::vec3df(0,0,0), irrklang::vec3df(0,0,1));
-
         mSceneMgr=sceneMgr;
         mWindow=mWin;
         mWorld=nWorld;
@@ -65,8 +61,6 @@ public:
         Global::mWorld = mWorld;
         Global::mWindow = mWindow;
         Global::mEventsMgr = mEventMgr;
-        Global::soundEngine = engine;
-        Global::audioLib = new AudioLibrary(engine);
         Global::shaker = new CameraShaker();
 
         gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem());
@@ -103,11 +97,6 @@ public:
         if(gameMgr->gameState==GAME)
         {
             Global::player->update(tslf);
-
-            Vector3 pos=mCamera->getDerivedPosition();
-            Vector3 or=mCamera->getDerivedOrientation()*Vector3(0,0,1);
-            engine->setListenerPosition(irrklang::vec3df(pos.x,pos.y,pos.z), irrklang::vec3df(or.x,or.y,or.z));
-
             nListener.frameStarted(tslf);
         }
 
@@ -186,7 +175,6 @@ public:
 private:
     OIS::Keyboard *mKeyboard;
     OIS::Mouse *mMouse;
-    irrklang::ISoundEngine* engine;
     SceneManager * mSceneMgr;
     Camera* mCamera;
     OgreNewt::World* mWorld;

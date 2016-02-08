@@ -15,12 +15,15 @@ std::string AudioLibrary::getPath(std::string file, SoundType type)
 }
 
 
-AudioLibrary::AudioLibrary(irrklang::ISoundEngine* engine)
+AudioLibrary::AudioLibrary(Ogre::Camera* cam)
 {
     fillMaterialAudio();
     fillMoveAudio();
 
-    soundEngine = engine;
+	camera = cam;
+	soundEngine = irrklang::createIrrKlangDevice();
+	soundEngine->setListenerPosition(irrklang::vec3df(0, 0, 0), irrklang::vec3df(0, 0, 1));
+	Global::soundEngine = soundEngine;
 }
 
 AudioLibrary::~AudioLibrary()
@@ -45,6 +48,27 @@ AudioLibrary::~AudioLibrary()
             delete audio.second;
         }
     }
+
+	soundEngine->drop();
+}
+
+void AudioLibrary::update(float time)
+{
+	Vector3 pos = camera->getDerivedPosition();
+	Vector3 or = camera->getDerivedOrientation()*Vector3(0, 0, 1);
+	soundEngine->setListenerPosition(irrklang::vec3df(pos.x, pos.y, pos.z), irrklang::vec3df(or.x, or.y, or.z));
+
+	if (physicsAudio)
+	{
+		if (physicsAudio->fallSoundOffsetH > 0)
+		{
+			physicsAudio->fallSoundOffsetH -= time;
+		}
+		if (physicsAudio->fallSoundOffsetL > 0)
+		{
+			physicsAudio->fallSoundOffsetL -= time;
+		}
+	}
 }
 
 void AudioLibrary::playRandom3D(std::vector<std::string>& sounds, Ogre::Vector3& pos, float maxDistance, float volume)
@@ -71,8 +95,6 @@ void AudioLibrary::play3D(const char* name, Vector3& pos, float maxDistance, flo
 }
 void AudioLibrary::playWalkingSound(float x, float y, float z, int groundID, float volume)
 {
-    auto soundEngine = Global::soundEngine;
-
     auto sounds = movementAudio.find(groundID);
     if (sounds == movementAudio.end()) return;
 
@@ -94,7 +116,6 @@ void AudioLibrary::playWalkingSound(float x, float y, float z, int groundID, flo
 
 void AudioLibrary::playFallSound(float x, float y, float z, int groundID)
 {
-    auto soundEngine = Global::soundEngine;
     irrklang::ISound* music;
 
     switch (groundID)

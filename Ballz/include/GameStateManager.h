@@ -42,7 +42,7 @@ class GameStateManager
 {
 public:
 
-    GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs);
+	GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs);
     ~GameStateManager();
 
     LevelInfo* getLvlInfo(int id);
@@ -86,6 +86,8 @@ private:
     float switchStateTimer;
 
     int lastLVL;
+
+	AudioLibrary audioLib;
 
     DebugKeys* dbg;
 };

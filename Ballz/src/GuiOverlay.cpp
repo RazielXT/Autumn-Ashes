@@ -26,7 +26,7 @@ using namespace Ogre;
 
 void GuiOverlay::showOptions()
 {
-    engine->play2D(OPEN_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+    soundEngine->play2D(OPEN_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
     atm=380;
     currentMenu=TOOM;
     oMenuState=RESOLUTION;
@@ -46,7 +46,7 @@ void GuiOverlay::showOptions()
 
 void GuiOverlay::showLevels()
 {
-    engine->play2D(OPEN_LEVELS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+    soundEngine->play2D(OPEN_LEVELS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
     atm=340;
     currentMenu=TOSM;
     movingDir=-1;
@@ -63,7 +63,7 @@ void GuiOverlay::showLevels()
 
 void GuiOverlay::closeOptions()
 {
-    engine->play2D(CLOSE_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+    soundEngine->play2D(CLOSE_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
 
     atm=380;
     currentMenu=FROM;
@@ -82,7 +82,7 @@ void GuiOverlay::closeOptions()
 
 void GuiOverlay::closeLevels()
 {
-    engine->play2D(CLOSE_LEVELS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+    soundEngine->play2D(CLOSE_LEVELS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
 
     atm=340;
     currentMenu=FRSM;
@@ -149,11 +149,11 @@ int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
     return 0;
 }
 
-GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs, irrklang::ISoundEngine* eng)
+GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs)
 {
     materialUi = new GuiMaterialEdit();
 
-    engine=eng;
+	soundEngine = Global::soundEngine;
 
     gConfig = gameConfig;
 
@@ -544,7 +544,7 @@ void GuiOverlay::mouseMoveUpdate(int x,int y)
                         cButton->value->colour(Ogre::ColourValue(1, 1, 1, 1));
                         cOptionButtonA->value->colour(Ogre::ColourValue(1, 1, 1, 1));
 
-                        engine->play2D(OVER_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                        soundEngine->play2D(OVER_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                     }
                 }
             }
@@ -577,7 +577,7 @@ int GuiOverlay::mainMenuPressed()
                         movingDir=1;
                         moving=true;
                         mMenuState=mMenuState->previous;
-                        engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                        soundEngine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                     }
                     else if ((mMenuState->value == START && Ogre::StringUtil::match(c->text(), "Options")) ||
                              (mMenuState->value == OPTIONS && Ogre::StringUtil::match(c->text(), "Quit")) ||
@@ -587,7 +587,7 @@ int GuiOverlay::mainMenuPressed()
                         movingDir=-1;
                         moving=true;
                         mMenuState=mMenuState->next;
-                        engine->play2D(SWITCH_MENU_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                        soundEngine->play2D(SWITCH_MENU_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                     }
                     else if(Ogre::StringUtil::match(c->text(),"Quit"))
                     {
@@ -614,7 +614,7 @@ int GuiOverlay::mainMenuPressed()
                         movingDir=1;
                         moving=true;
                         gMenuState=gMenuState->previous;
-                        engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                        soundEngine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                     }
                     else if ((gMenuState->value == QUIT && Ogre::StringUtil::match(c->text(), "Start")) ||
                              (gMenuState->value == START && Ogre::StringUtil::match(c->text(), "Resume")) ||
@@ -626,7 +626,7 @@ int GuiOverlay::mainMenuPressed()
                         movingDir=-1;
                         moving=true;
                         gMenuState=gMenuState->next;
-                        engine->play2D(SWITCH_MENU_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                        soundEngine->play2D(SWITCH_MENU_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                     }
                     else if(Ogre::StringUtil::match(c->text(),"Quit"))
                     {
@@ -680,7 +680,7 @@ int GuiOverlay::mainMenuPressed()
                     gConfig->height = resolutionsLoop->value.h;
                     gConfig->width = resolutionsLoop->value.w;
 
-                    engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                    soundEngine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                 }
                 if(c->width()==601 || c->width()==351)
                 {
@@ -695,7 +695,7 @@ int GuiOverlay::mainMenuPressed()
                         gConfig->fs = true;
                     }
 
-                    engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                    soundEngine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                     /*if(gConfig->fshadowR)
                     {cOptionButtonA->mButton->text("Low"); mSceneMgr->setShadowTextureSettings(512,4, PF_FLOAT32_R);}
                     else
@@ -724,7 +724,7 @@ int GuiOverlay::mainMenuPressed()
                         gConfig->shadow = 0;
                     }
 
-                    engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                    soundEngine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                 }
                 if(c->width()==603 || c->width()==353)
                 {
@@ -739,7 +739,7 @@ int GuiOverlay::mainMenuPressed()
                         gConfig->ssao = true;
                     }
 
-                    engine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                    soundEngine->play2D(SWITCH_OPTIONS_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                 }
             }
         }
@@ -754,12 +754,12 @@ int GuiOverlay::mainMenuPressed()
                 {
                     if(b->unlocked)
                     {
-                        engine->play2D(LEVEL_START_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                        soundEngine->play2D(LEVEL_START_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                         return b->id;
                     }
                     else
                     {
-                        engine->play2D(LEVEL_LOCKED_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                        soundEngine->play2D(LEVEL_LOCKED_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
                         return 0;
                     }
                 }
@@ -768,7 +768,7 @@ int GuiOverlay::mainMenuPressed()
 
                     lvlMoving = true;
                     atm=400;
-                    engine->play2D(LEVEL_SWITCH_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
+                    soundEngine->play2D(LEVEL_SWITCH_SOUND, false, false, false, irrklang::ESM_NO_STREAMING, false);
 
                     if(b->id > curLvlButton->id)
                     {

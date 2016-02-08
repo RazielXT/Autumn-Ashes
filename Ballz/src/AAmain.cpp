@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "player.h"
+#include "Player.h"
 #include "MainListener.h"
 
 using namespace Ogre;
@@ -29,8 +29,8 @@ public:
             OIS::InputManager::destroyInputSystem(mInputManager);
         }
 
-        if (m_World)
-            delete m_World;
+        if (mWorld)
+            delete mWorld;
         if (mListener)
             delete mListener;
         if (mRoot)
@@ -45,7 +45,7 @@ private:
     OIS::InputManager *mInputManager = nullptr;
     MainListener *mListener = nullptr;
     SceneManager *mSceneMgr = nullptr;
-    OgreNewt::World* m_World = nullptr;
+    OgreNewt::World* mWorld = nullptr;
 
     void createRoot()
     {
@@ -76,7 +76,6 @@ private:
 
     void setupRenderSystem()
     {
-
         const Ogre::RenderSystemList& lRenderSystemList = mRoot->getAvailableRenderers();
         Ogre::RenderSystem *lRenderSystem = lRenderSystemList[0];
 
@@ -111,7 +110,6 @@ private:
 
     void setupScene();
 
-
     void setupInputSystem()
     {
         size_t windowHnd = 0;
@@ -128,7 +126,6 @@ private:
         {
             mKeyboard = static_cast<OIS::Keyboard*>(mInputManager->createInputObject(OIS::OISKeyboard, true));
             mMouse = static_cast<OIS::Mouse*>(mInputManager->createInputObject(OIS::OISMouse, true));
-            //mJoy = static_cast<OIS::JoyStick*>(mInputManager->createInputObject(OIS::OISJoyStick, false));
         }
         catch (const OIS::Exception &e)
         {
@@ -138,7 +135,7 @@ private:
 
     void createFrameListener()
     {
-        mListener = new MainListener(mKeyboard, mMouse, mSceneMgr,m_World,mRoot,mWindow);
+        mListener = new MainListener(mKeyboard, mMouse, mSceneMgr,mWorld,mRoot,mWindow);
         mRoot->addFrameListener(mListener);
     }
 

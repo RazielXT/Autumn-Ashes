@@ -1,19 +1,17 @@
 #include "stdafx.h"
 
 float Global::timestep = 1;
-AudioLibrary* Global::audioLib = 0;
-float Global::fallSoundOffsetH = 0;
-float Global::fallSoundOffsetL = 0;
-EventsManager* Global::mEventsMgr = 0;
-Ogre::SceneManager* Global::mSceneMgr = 0;
-Ogre::Camera* Global::mCamera = 0;
-CameraShaker* Global::shaker = 0;
-Ogre::RenderWindow* Global::mWindow = 0;
-OgreNewt::World* Global::mWorld = 0;
-irrklang::ISoundEngine* Global::soundEngine = 0;
-Player* Global::player = 0;
-GameStateManager* Global::gameMgr = 0;
-PostProcessMgr* Global::mPPMgr = 0;
+AudioLibrary* Global::audioLib = nullptr;
+EventsManager* Global::mEventsMgr = nullptr;
+Ogre::SceneManager* Global::mSceneMgr = nullptr;
+Ogre::Camera* Global::mCamera = nullptr;
+CameraShaker* Global::shaker = nullptr;
+Ogre::RenderWindow* Global::mWindow = nullptr;
+OgreNewt::World* Global::mWorld = nullptr;
+irrklang::ISoundEngine* Global::soundEngine = nullptr;
+Player* Global::player = nullptr;
+GameStateManager* Global::gameMgr = nullptr;
+PostProcessMgr* Global::mPPMgr = nullptr;
 std::map<std::string,void*>* Global::globalData = new std::map<std::string,void*>();
 
 bool continueExecution = true;
