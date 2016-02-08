@@ -213,11 +213,7 @@ void MaterialEditsLibrary::applyChanges()
                 for (auto& var : ps.second.psVariables)
                 {
                     int pass = newMat->getTechnique(0)->getNumPasses() - 1;
-
-                    if (var.name != "ambientWeight")
-                        newMat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
-                    else
-                        ps.second.psVariables.erase(ps.second.psVariables.end()-1);
+                    newMat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
                 }
 
                 for (auto& particle : particles)

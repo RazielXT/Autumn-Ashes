@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ParticleManager.h"
-#include "player.h"
+#include "Player.h"
 
 void ParticleManager::clear()
 {

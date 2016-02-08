@@ -259,10 +259,9 @@
 </class>
 
 <enum name="emitterType" type="string">
-	   <enumItem name="Default" value="Default" />
 	   <enumItem name="Point" value="Point" />
        <enumItem name="Box" value="Box" />
-	   <enumItem name="Ellipsoid" value="Box" />
+	   <enumItem name="Ellipsoid" value="Ellipsoid" />
 </enum>
 
 <class name="Particle" usage="object">
@@ -270,20 +269,22 @@
 	<data name="Parent" type="string" defaultValue=""/>
 	<data name="RenderGroup" type="int" defaultValue="91"/>
 	
+	<data name="EditMaterial" displayName="Edit Material" type="bool" groupName="Material" defaultValue="false"/>
+	<data name="Material" displayName="Material" type="string" groupName="Material" visibilityParentName="EditMaterial"/>
+		
 	<data name="EditParams" displayName="Edit Params" type="bool" groupName="Params" defaultValue="false"/>
-	<data name="Material" displayName="Material" type="string" groupName="Params" visibilityParentName="EditParams"/>
+	<data name="Speed" displayName="Speed" type="float" groupName="Params" visibilityParentName="EditParams" defaultValue="1"/>
 	<data name="Size" displayName="Size" type="int2" groupName="Params" visibilityParentName="EditParams" defaultValue="0,0"/>
 	<data name="Quota" displayName="Quota" type="int" groupName="Params" visibilityParentName="EditParams" defaultValue="0"/>
-	<data name="MoreParams" displayName="More Params" type="bool" groupName="Params" visibilityParentName="EditParams" defaultValue="false"/>
-	<data name="Sorted" displayName="Sorted" type="bool" groupName="Params" visibilityParentName="MoreParams" defaultValue="false"/>
-	<data name="CullEach" displayName="Cull Each" type="bool" groupName="Params" visibilityParentName="MoreParams" defaultValue="false"/>
+	<data name="Sorted" displayName="Sorted" type="bool" groupName="Params" visibilityParentName="EditParams" defaultValue="false"/>
+	<data name="CullEach" displayName="Cull Each" type="bool" groupName="Params" visibilityParentName="EditParams" defaultValue="false"/>
 	
 	<data name="EditEmmiter" displayName="Edit Emmiter" type="bool" groupName="Emmiter" defaultValue="false"/>
 	<data name="EmmiterType" displayName="Type" type="emitterType" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
-	<data name="Angle" displayName="Angle" type="int" defaultValue="0" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
-	<data name="Emmision" displayName="Emmision" type="int" defaultValue="0" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
-	<data name="Velocity" displayName="Velocity" type="int2" defaultValue="0,0" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
-	<data name="Lifespan" displayName="Lifespan" type="int2" defaultValue="0,0" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
+	<data name="EditDir" displayName="Edit Direction" type="bool" groupName="Emmiter" visibilityParentName="EditEmmiter" defaultValue="false"/>
+	<data name="Relative" displayName="Relative" type="bool" groupName="Emmiter" visibilityParentName="EditDir" defaultValue="false"/>
+	<data name="Direction" displayName="Direction" type="float3" groupName="Emmiter" visibilityParentName="EditDir" defaultValue="0,-1,0"/>
+	
 </class>
 
 <class name="CrowLanding" usage="object">

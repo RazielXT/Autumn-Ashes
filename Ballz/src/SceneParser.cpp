@@ -1,8 +1,9 @@
 #pragma once
 
 #include "stdafx.h"
+
 #include "SceneParser.h"
-#include <tinyxml2.h>
+#include "tinyxml2.h"
 #include "GrassHeightFunction.h"
 #include "BridgeMaker.h"
 #include "Tasks.h"
@@ -10,12 +11,11 @@
 #include "Slide.h"
 #include "TopSlide.h"
 #include "ZipLineSlide.h"
-#include "player.h"
+#include "Player.h"
 #include "Crows.h"
 #include "MUtils.h"
 #include "SUtils.h"
 #include "WaterCurrent.h"
-#include "Player.h"
 #include "PlayerSliding.h"
 #include "SceneCubeMap.h"
 #include "DetailGeometry.h"
@@ -609,16 +609,12 @@ void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
         if (type == "Box")
         {
             auto newEmitter = ps->addEmitter(type);
-
             auto size = ent->getBoundingBox().getSize();
             size *= node->getScale();
-
-            auto center = ent->getBoundingBox().getCenter();
 
             newEmitter->setParameter("width", std::to_string(size.x));
             newEmitter->setParameter("height", std::to_string(size.y));
             newEmitter->setParameter("depth", std::to_string(size.z));
-            newEmitter->setDirection(Ogre::Vector3(0,-1,0));
 
             newEmitter->setAngle(emmiter->getAngle());
             newEmitter->setEmissionRate(emmiter->getEmissionRate());
@@ -631,15 +627,37 @@ void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
             ps->removeEmitter(0);
             emmiter = newEmitter;
         }
+
+		if (getElementBoolValue(rootElement, "EditDir"))
+		{
+			auto dir = getElementV3Value(rootElement, "Direction");
+
+			if (getElementBoolValue(rootElement, "Relative"))
+			{
+				dir = node->getOrientation()*dir;
+			}
+
+			emmiter->setDirection(dir);
+		}
     }
+
+	if (getElementBoolValue(rootElement, "EditMaterial"))
+	{
+		auto mat = getElementValue(rootElement, "Material");
+		if (!mat.empty()) ps->setMaterialName(mat);
+	}
 
     if (getElementBoolValue(rootElement, "EditParams"))
     {
-        auto mat = getElementValue(rootElement, "Material");
-        if (!mat.empty()) ps->setMaterialName(mat);
-
         auto psize = getElementV2Value(rootElement, "Size");
         if (psize.x != 0) ps->setDefaultDimensions(psize.x, psize.y);
+
+		auto quota = getElementFloatValue(rootElement, "Quota");
+		if (quota != 0) ps->setParticleQuota(quota);
+
+		ps->setSpeedFactor(getElementFloatValue(rootElement, "Speed"));
+		ps->setSortingEnabled(getElementBoolValue(rootElement, "Sorted"));
+		ps->setCullIndividually(getElementBoolValue(rootElement, "CullEach"));
     }
 
     if (parent.empty())
