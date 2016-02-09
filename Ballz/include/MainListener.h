@@ -22,7 +22,6 @@ public:
 
     ~MainListener()
     {
-        delete Global::audioLib;
         delete mEventMgr;
         delete geometryMgr;
         delete gameMgr;
