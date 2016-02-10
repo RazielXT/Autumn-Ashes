@@ -60,6 +60,12 @@
     <Filter Include="Files\Core\Utils">
       <UniqueIdentifier>{79beb400-fdc2-4299-8b2a-162a6e2b7ee7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\Core\SceneEdit">
+      <UniqueIdentifier>{f182d1b3-de0f-4a7d-b5f6-7c416ef92a5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Core\SceneEdit\Edits">
+      <UniqueIdentifier>{fd2f772b-1602-4e68-b0ba-27c84f2a7c67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CrowPath.cpp">
@@ -298,6 +304,9 @@
     </ClCompile>
     <ClCompile Include="src\FilteredRaycast.cpp">
       <Filter>Files\Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MaterialEdit.cpp">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -600,6 +609,21 @@
     </ClInclude>
     <ClInclude Include="include\FilteredRaycast.h">
       <Filter>Files\Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiSceneEdit.h">
+      <Filter>Files\Core\SceneEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Edit.h">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MaterialEdit.h">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ParticleEdit.h">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneEditsLibrary.h">
+      <Filter>Files\Core\SceneEdit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

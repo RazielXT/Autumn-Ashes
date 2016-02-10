@@ -485,7 +485,7 @@ void LoadedMaterialEdit::loadMaterial()
 
         if (c.second.constType <= 4)
         {
-            MaterialEdit::MaterialVariable var;
+            MaterialEdit_::MaterialVariable var;
             var.name = c.first;
             var.size = c.second.constType;
             memcpy(var.buffer, params->getFloatPointer(c.second.physicalIndex), 4 * var.size);
@@ -495,12 +495,12 @@ void LoadedMaterialEdit::loadMaterial()
     }
 }
 
-void LoadedMaterialEdit::setMaterialParam(MaterialEdit::MaterialVariable& var)
+void LoadedMaterialEdit::setMaterialParam(MaterialEdit_::MaterialVariable& var)
 {
     edit.setMaterialParam(ptr, var);
 }
 
-void LoadedMaterialEdit::setParticleParam(MaterialEdit::MaterialVariable& var)
+void LoadedMaterialEdit::setParticleParam(MaterialEdit_::MaterialVariable& var)
 {
     edit.setParticleParam(ps, var);
 

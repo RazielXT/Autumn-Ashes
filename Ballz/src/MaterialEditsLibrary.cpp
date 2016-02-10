@@ -5,7 +5,7 @@
 #include <iostream>
 #include "SUtils.h"
 
-static void mergeParams(std::vector<MaterialEdit::MaterialVariable>& from, std::vector<MaterialEdit::MaterialVariable>& target, bool addNotExisting)
+static void mergeParams(std::vector<MaterialEdit_::MaterialVariable>& from, std::vector<MaterialEdit_::MaterialVariable>& target, bool addNotExisting)
 {
     for (auto& var : from)
     {
@@ -24,7 +24,7 @@ static void mergeParams(std::vector<MaterialEdit::MaterialVariable>& from, std::
 
             if (!found && addNotExisting)
             {
-                MaterialEdit::MaterialVariable mvar;
+                MaterialEdit_::MaterialVariable mvar;
                 mvar.edited = true;
                 mvar.name = var.name;
                 mvar.size = var.size;
@@ -37,7 +37,7 @@ static void mergeParams(std::vector<MaterialEdit::MaterialVariable>& from, std::
     }
 }
 
-void MaterialEdit::mergeChanges(MaterialEdit& r, bool addNotExisting)
+void MaterialEdit_::mergeChanges(MaterialEdit_& r, bool addNotExisting)
 {
     originMatName = r.originMatName;
 
@@ -46,7 +46,7 @@ void MaterialEdit::mergeChanges(MaterialEdit& r, bool addNotExisting)
     mergeParams(r.psVariables, psVariables, addNotExisting);
 }
 
-void MaterialEdit::setMaterialParam(Ogre::MaterialPtr ptr, MaterialEdit::MaterialVariable& var)
+void MaterialEdit_::setMaterialParam(Ogre::MaterialPtr ptr, MaterialEdit_::MaterialVariable& var)
 {
     if (ptr.isNull())
         return;
@@ -56,7 +56,7 @@ void MaterialEdit::setMaterialParam(Ogre::MaterialPtr ptr, MaterialEdit::Materia
     ptr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
 }
 
-void MaterialEdit::setParticleParam(Ogre::ParticleSystem* ps, MaterialEdit::MaterialVariable& var)
+void MaterialEdit_::setParticleParam(Ogre::ParticleSystem* ps, MaterialEdit_::MaterialVariable& var)
 {
     if (var.name == "Angle")
         ps->getEmitter(0)->setAngle(Ogre::Degree(var.buffer[0]));
@@ -70,10 +70,10 @@ void MaterialEdit::setParticleParam(Ogre::ParticleSystem* ps, MaterialEdit::Mate
         ps->setDefaultDimensions(var.buffer[0], var.buffer[1]);
 }
 
-void MaterialEdit::generateParticleParams(Ogre::ParticleSystem* ps)
+void MaterialEdit_::generateParticleParams(Ogre::ParticleSystem* ps)
 {
     moreParams.clear();
-    MaterialEdit::MaterialVariable var;
+    MaterialEdit_::MaterialVariable var;
 
     var.name = "Angle";
     var.size = 1;
@@ -104,7 +104,7 @@ void MaterialEdit::generateParticleParams(Ogre::ParticleSystem* ps)
     moreParams.push_back(var);
 }
 
-void MaterialEditsLibrary::addEdit(MaterialEdit& edit, std::string entName)
+void MaterialEditsLibrary::addEdit(MaterialEdit_& edit, std::string entName)
 {
     auto& ent = editHistory[entName];
 
@@ -132,7 +132,7 @@ void MaterialEditsLibrary::removeEdit(std::string entName)
     saveFile(Global::gameMgr->getCurrentLvlInfo()->path);
 }
 
-bool MaterialEditsLibrary::loadSavedChanges(MaterialEdit& edit, std::string entName)
+bool MaterialEditsLibrary::loadSavedChanges(MaterialEdit_& edit, std::string entName)
 {
     auto& ent = editHistory.begin();
 
@@ -258,7 +258,7 @@ void MaterialEditsLibrary::loadFile(std::string path)
     }
 }
 
-bool MaterialEditsLibrary::loadSavedParticleChanges(MaterialEdit& edit, std::string particleName)
+bool MaterialEditsLibrary::loadSavedParticleChanges(MaterialEdit_& edit, std::string particleName)
 {
     auto& particle = editParticleHistory.begin();
 
@@ -276,7 +276,7 @@ bool MaterialEditsLibrary::loadSavedParticleChanges(MaterialEdit& edit, std::str
     return false;
 }
 
-void MaterialEditsLibrary::addParticleEdit(MaterialEdit& edit, std::string particleName)
+void MaterialEditsLibrary::addParticleEdit(MaterialEdit_& edit, std::string particleName)
 {
     auto& ent = editParticleHistory[particleName];
 

@@ -10,7 +10,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/string.hpp>
 
-struct MaterialEdit
+struct MaterialEdit_
 {
     struct MaterialVariable
     {
@@ -44,9 +44,9 @@ struct MaterialEdit
         ar & moreParams;
     }
 
-    void mergeChanges(MaterialEdit& r, bool ignoreNotExisting);
-    void setMaterialParam(Ogre::MaterialPtr ptr, MaterialEdit::MaterialVariable& var);
-    void setParticleParam(Ogre::ParticleSystem* ps, MaterialEdit::MaterialVariable& var);
+    void mergeChanges(MaterialEdit_& r, bool ignoreNotExisting);
+    void setMaterialParam(Ogre::MaterialPtr ptr, MaterialEdit_::MaterialVariable& var);
+    void setParticleParam(Ogre::ParticleSystem* ps, MaterialEdit_::MaterialVariable& var);
     void generateParticleParams(Ogre::ParticleSystem* ps);
 };
 
@@ -70,12 +70,12 @@ public:
     }
 
 
-    bool loadSavedChanges(MaterialEdit& edit, std::string entName);
-    void addEdit(MaterialEdit& edit, std::string entName);
+    bool loadSavedChanges(MaterialEdit_& edit, std::string entName);
+    void addEdit(MaterialEdit_& edit, std::string entName);
     void removeEdit(std::string entName);
 
-    bool loadSavedParticleChanges(MaterialEdit& edit, std::string particleName);
-    void addParticleEdit(MaterialEdit& edit, std::string particleName);
+    bool loadSavedParticleChanges(MaterialEdit_& edit, std::string particleName);
+    void addParticleEdit(MaterialEdit_& edit, std::string particleName);
     void removeParticleEdit(std::string particleName);
 
     void saveFile(std::string path);
@@ -94,10 +94,10 @@ public:
 
 private:
 
-    using EditedEntities = std::map < std::string, MaterialEdit >;
+    using EditedEntities = std::map < std::string, MaterialEdit_ >;
     EditedEntities editHistory;
 
-    using EditedParticles = std::map < std::string, MaterialEdit >;
+    using EditedParticles = std::map < std::string, MaterialEdit_ >;
     EditedParticles editParticleHistory;
 
     int idCounter = 500;

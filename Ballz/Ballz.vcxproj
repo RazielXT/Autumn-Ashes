@@ -164,6 +164,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\GuiOverlay.cpp" />
     <ClCompile Include="src\GeometryManager.cpp" />
     <ClCompile Include="src\ManualDetailGeometry.cpp" />
+    <ClCompile Include="src\MaterialEdit.cpp" />
     <ClCompile Include="src\MaterialEditsLibrary.cpp" />
     <ClCompile Include="src\GUtils.cpp" />
     <ClCompile Include="src\ParticleManager.cpp" />
@@ -209,6 +210,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\ZipLineSlide.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GuiSceneEdit.h" />
     <ClInclude Include="include\AnimatedTrack.h" />
     <ClInclude Include="include\AnimationBlender.h" />
     <ClInclude Include="include\AudioLibrary.h" />
@@ -227,6 +229,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\DefShadowCamera.h" />
     <ClInclude Include="include\DetailGeometryInfo.h" />
     <ClInclude Include="include\DetailGeometryMaterial.h" />
+    <ClInclude Include="include\Edit.h" />
     <ClInclude Include="include\EffectsTasks.h" />
     <ClInclude Include="include\Energy.h" />
     <ClInclude Include="include\EntityMovementTask.h" />
@@ -259,10 +262,12 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\lvl_update.h" />
     <ClInclude Include="include\GuiOverlay.h" />
     <ClInclude Include="include\ManualDetailGeometry.h" />
+    <ClInclude Include="include\MaterialEdit.h" />
     <ClInclude Include="include\MaterialEditsLibrary.h" />
     <ClInclude Include="include\MUtils.h" />
     <ClInclude Include="include\NewtonListener.h" />
     <ClInclude Include="include\GeometryManager.h" />
+    <ClInclude Include="include\ParticleEdit.h" />
     <ClInclude Include="include\ParticleManager.h" />
     <ClInclude Include="include\PgDetailGeometry.h" />
     <ClInclude Include="include\PlayerAbilities.h" />
@@ -285,6 +290,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\CommonTasks.h" />
     <ClInclude Include="include\Reflection.h" />
     <ClInclude Include="include\SceneCubeMap.h" />
+    <ClInclude Include="include\SceneEditsLibrary.h" />
     <ClInclude Include="include\SceneParser.h" />
     <ClInclude Include="include\SlidesAutoTarget.h" />
     <ClInclude Include="include\SUtils.h" />

@@ -5,7 +5,7 @@
 
 struct LoadedMaterialEdit
 {
-    MaterialEdit edit;
+    MaterialEdit_ edit;
 
     bool changed = false;
     bool matInstance = false;
@@ -23,8 +23,8 @@ struct LoadedMaterialEdit
     bool queryWorld();
     bool queryParticle();
 
-    void setMaterialParam(MaterialEdit::MaterialVariable& var);
-    void setParticleParam(MaterialEdit::MaterialVariable& var);
+    void setMaterialParam(MaterialEdit_::MaterialVariable& var);
+    void setParticleParam(MaterialEdit_::MaterialVariable& var);
 };
 
 class GuiMaterialEdit
