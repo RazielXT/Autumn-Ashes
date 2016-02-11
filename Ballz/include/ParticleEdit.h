@@ -5,6 +5,8 @@
 
 struct ParticleEdit : public MaterialEdit
 {
+	virtual ~ParticleEdit() {}
+
 	std::vector<EditVariable> particleParams;
 
 	template<class Archive>

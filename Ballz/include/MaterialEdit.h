@@ -5,6 +5,8 @@
 
 struct MaterialEdit : public Edit
 {
+	virtual ~MaterialEdit() {}
+
 	std::vector<EditVariable> psVariables;
 	std::vector<EditVariable> vsVariables;
 

@@ -30,6 +30,8 @@ using EditBaseRows = std::vector<EditRow>;
 
 struct Edit
 {
+	virtual ~Edit() {}
+
 	static int idCounter;
 
 	std::string originName;
