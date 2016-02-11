@@ -72,7 +72,7 @@ public:
 
     bool loadSavedChanges(MaterialEdit_& edit, std::string entName);
     void addEdit(MaterialEdit_& edit, std::string entName);
-    void removeEdit(std::string entName);
+    void removeEdit_(std::string entName);
 
     bool loadSavedParticleChanges(MaterialEdit_& edit, std::string particleName);
     void addParticleEdit(MaterialEdit_& edit, std::string particleName);

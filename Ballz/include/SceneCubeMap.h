@@ -19,19 +19,7 @@ public:
     float posessionRadius;
     float materialWPOffset;
 
-    static void renderAll()
-    {
-        for (auto cubemap : cubeMaps)
-        {
-            cubemap.second->update();
-        }
-
-        //double reflection
-        for (auto cubemap : cubeMaps)
-        {
-            cubemap.second->update();
-        }
-    }
+	static void renderAll();
 
     struct CubemapedMats
     {
@@ -42,66 +30,9 @@ public:
 
     static std::vector<CubemapedMats> appliedMaterials;
 
-    static Ogre::MaterialPtr applyCubemap(Ogre::MaterialPtr mat, Ogre::Vector3 pos)
-    {
-        SceneCubeMap* r = nullptr;
-        float closestToCenter;
-        float closestToRadius;
+	static Ogre::MaterialPtr applyCubemap(Ogre::MaterialPtr mat, Ogre::Vector3 pos);
 
-        for (auto cubemap : cubeMaps)
-        {
-            auto cm = cubemap.second;
-
-            float distToCenter = cm->position.distance(pos);
-            float distToRadius = std::max(0.0f, distToCenter - cm->posessionRadius);
-
-            if (!r || (distToRadius < closestToRadius || (distToRadius == 0 && distToCenter < closestToCenter)))
-            {
-                r = cm;
-                closestToRadius = distToRadius;
-                closestToCenter = distToCenter;
-            }
-        }
-
-        if (!r)
-            return mat;
-
-
-        for (auto appliedMat : appliedMaterials)
-        {
-            if (appliedMat.matOriginalName == mat->getName() && appliedMat.cm == r)
-                return Ogre::MaterialManager::getSingletonPtr()->getByName(appliedMat.matName);
-        }
-
-        //create new
-        static int mid = 0;
-        auto newMat = mat->clone(mat->getName() + std::to_string(mid++));
-
-        auto pass = newMat->getTechnique(0)->getPass(1);
-        Ogre::TextureUnitState* t = pass->getTextureUnitState("envCubeMap");
-        if (r->detectedEdited)
-            t->setCubicTextureName(r->getTextureNamePrefix() + ".png", true);
-        else
-            t->setTexture(r->texture);
-
-        pass->getFragmentProgramParameters()->setNamedConstant("cubemapWPOffset", Ogre::Vector4(r->position.x, r->position.y, r->position.z, r->materialWPOffset));
-
-        CubemapedMats matInfo;
-        matInfo.matName = newMat->getName();
-        matInfo.cm = r;
-        matInfo.matOriginalName = mat->getName();
-        appliedMaterials.push_back(matInfo);
-
-        return newMat;
-    }
-
-    static void clearAll()
-    {
-        for (auto cubemap : cubeMaps)
-            delete cubemap.second;
-
-        cubeMaps.clear();
-    }
+	static void clearAll();
 
     static std::map<std::string, SceneCubeMap*> cubeMaps;
 

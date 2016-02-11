@@ -116,7 +116,7 @@ void MaterialEditsLibrary::addEdit(MaterialEdit_& edit, std::string entName)
     saveFile(Global::gameMgr->getCurrentLvlInfo()->path);
 }
 
-void MaterialEditsLibrary::removeEdit(std::string entName)
+void MaterialEditsLibrary::removeEdit_(std::string entName)
 {
     auto& ent = editHistory.begin();
 

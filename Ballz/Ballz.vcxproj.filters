@@ -308,6 +308,15 @@
     <ClCompile Include="src\MaterialEdit.cpp">
       <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClCompile>
+    <ClCompile Include="src\ParticleEdit.cpp">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GuiSceneEdit.cpp">
+      <Filter>Files\Core\SceneEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneEditsLibrary.cpp">
+      <Filter>Files\Core\SceneEdit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -610,9 +619,6 @@
     <ClInclude Include="include\FilteredRaycast.h">
       <Filter>Files\Core\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="GuiSceneEdit.h">
-      <Filter>Files\Core\SceneEdit</Filter>
-    </ClInclude>
     <ClInclude Include="include\Edit.h">
       <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClInclude>
@@ -623,6 +629,9 @@
       <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClInclude>
     <ClInclude Include="include\SceneEditsLibrary.h">
+      <Filter>Files\Core\SceneEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GuiSceneEdit.h">
       <Filter>Files\Core\SceneEdit</Filter>
     </ClInclude>
   </ItemGroup>

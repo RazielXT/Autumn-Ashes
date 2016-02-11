@@ -77,7 +77,7 @@ bool GuiMaterialEdit::pressedKey(const OIS::KeyEvent &arg)
                 if (curMatEdit.changed)
                     Global::gameMgr->materialEdits.addEdit(curMatEdit.edit, curMatEdit.entity->getName());
                 else
-                    Global::gameMgr->materialEdits.removeEdit(curMatEdit.entity->getName());
+                    Global::gameMgr->materialEdits.removeEdit_(curMatEdit.entity->getName());
             }
 
         }

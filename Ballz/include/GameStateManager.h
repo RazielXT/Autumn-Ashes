@@ -5,6 +5,7 @@
 #include "GeometryManager.h"
 #include "MaterialEditsLibrary.h"
 #include "ParticleManager.h"
+#include "SceneEditsLibrary.h"
 
 class GuiOverlay;
 class DebugKeys;
@@ -69,6 +70,7 @@ public:
     GeometryManager* geometryMgr;
     ParticleManager particleMgr;
     MaterialEditsLibrary materialEdits;
+	SceneEditsLibrary sceneEdits;
 
     std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
 

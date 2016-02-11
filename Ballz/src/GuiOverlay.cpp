@@ -8,8 +8,8 @@
 #include "MUtils.h"
 #include "SUtils.h"
 #include "GameStateManager.h"
-#include "GuiMaterialEdit.h"
 #include "GameUi.h"
+#include "GuiSceneEdit.h"
 
 using namespace Ogre;
 
@@ -104,11 +104,9 @@ void GuiOverlay::clear()
     delete resolutionsLoop;
 }
 
-int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
+bool GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
 {
-    if (materialUi->pressedKey(arg))
-        return 1;
-
+    if (!editUi->pressedKey(arg))
     if(currentMenu==MAINM && !moving)
     {
         switch (arg.key)
@@ -129,12 +127,10 @@ int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
                 mMenuState=mMenuState->next;
             }
             break;
-
         case OIS::KC_RETURN:
             if (mMenuState->value == QUIT)
             {
-                gConfig->saveCfg();
-                return 1;
+                gConfig->saveCfg();   
             }
             if (mMenuState->value == OPTIONS)
             {
@@ -142,16 +138,16 @@ int GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
             }
             break;
         default:
-            break;
+			return false;
         }
     }
 
-    return 0;
+    return true;
 }
 
 GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs)
 {
-    materialUi = new GuiMaterialEdit();
+	editUi = new GuiSceneEdit();
 
 	soundEngine = Global::soundEngine;
 
@@ -273,7 +269,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
         debugVarCaption[i]->align(Gorilla::TextAlign_Left);
     }
 
-    materialUi->initUi(mouseLayer);
+	editUi->initUi(mouseLayer);
 
     showDebug(false);
 }
@@ -838,17 +834,17 @@ void GuiOverlay::showDebug(bool show)
     debugVarCaption[3]->colour(Ogre::ColourValue(1, 1, 0, alpha));
 
     if (show)
-        materialUi->setVisible(0);
+		editUi->setVisible(0);
 }
 
 void GuiOverlay::showMaterialDebug()
 {
-    materialUi->queryMaterial();
+	editUi->queryMaterial();
 }
 
 void GuiOverlay::showParticleDebug()
 {
-    materialUi->queryParticle();
+	editUi->queryParticle();
 }
 
 void GuiOverlay::updateLevelsMove(Ogre::Real time)

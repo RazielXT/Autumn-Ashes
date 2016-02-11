@@ -21,18 +21,26 @@ struct EditVariable
 
 using EditVariables = std::vector<EditVariable>;
 
-struct EditCategory
+struct EditRow
 {
 	std::string name;
-	bool hasParams;
+	enum {Params, Static, Save} type;
 };
-using EditCategories = std::vector<EditCategory>;
+using EditBaseRows = std::vector<EditRow>;
 
 struct Edit
 {
+	static int idCounter;
+
+	std::string originName;
+
 	virtual bool query() = 0;
-	virtual EditCategories getCategories() = 0;
+	virtual EditBaseRows getBaseRows() = 0;
 	virtual EditVariables* getParams(int id) = 0;
 	virtual void editChanged(EditVariable& var, int id) = 0;
 	virtual void save() = 0;
+
+protected:
+
+	void mergeParams(std::vector<EditVariable>& from, std::vector<EditVariable>& target, bool addNotExisting);
 };

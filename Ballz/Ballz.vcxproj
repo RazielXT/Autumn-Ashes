@@ -154,6 +154,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\Gorilla.cpp" />
     <ClCompile Include="src\GrassDetailGeometry.cpp" />
     <ClCompile Include="src\GuiMaterialEdit.cpp" />
+    <ClCompile Include="src\GuiSceneEdit.cpp" />
     <ClCompile Include="src\HandGripReaction.cpp" />
     <ClCompile Include="src\HeadTransition.cpp" />
     <ClCompile Include="src\ImpostorRenderer.cpp" />
@@ -167,6 +168,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\MaterialEdit.cpp" />
     <ClCompile Include="src\MaterialEditsLibrary.cpp" />
     <ClCompile Include="src\GUtils.cpp" />
+    <ClCompile Include="src\ParticleEdit.cpp" />
     <ClCompile Include="src\ParticleManager.cpp" />
     <ClCompile Include="src\PgDetailGeometry.cpp" />
     <ClCompile Include="src\PlayerAbilities.cpp" />
@@ -181,6 +183,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\PostProcessMgr.cpp" />
     <ClCompile Include="src\BasicDetailGeometry.cpp" />
     <ClCompile Include="src\SceneCubeMap.cpp" />
+    <ClCompile Include="src\SceneEditsLibrary.cpp" />
     <ClCompile Include="src\SceneParser.cpp" />
     <ClCompile Include="src\SlidesAutoTarget.cpp" />
     <ClCompile Include="src\PlayerPostProcess.cpp" />
@@ -210,7 +213,6 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\ZipLineSlide.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GuiSceneEdit.h" />
     <ClInclude Include="include\AnimatedTrack.h" />
     <ClInclude Include="include\AnimationBlender.h" />
     <ClInclude Include="include\AudioLibrary.h" />
@@ -243,6 +245,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\GateLock.h" />
     <ClInclude Include="include\GrassDetailGeometry.h" />
     <ClInclude Include="include\GuiMaterialEdit.h" />
+    <ClInclude Include="include\GuiSceneEdit.h" />
     <ClInclude Include="include\GUtils.h" />
     <ClInclude Include="include\HeadTransition.h" />
     <ClInclude Include="include\ImpostorRenderer.h" />

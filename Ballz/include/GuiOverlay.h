@@ -5,7 +5,7 @@
 #include "DebugKeys.h"
 #include "GameUiActions.h"
 
-class GuiMaterialEdit;
+class GuiSceneEdit;
 class GameUi;
 
 class GuiOverlay
@@ -27,7 +27,7 @@ public:
     void setDebugValue(Ogre::Real value1, std::vector<std::string>& values, std::vector<DebugVar>& debugVars, int debugVarsLine);
     void updateMainMenu(Ogre::Real time);
     int mainMenuPressed();
-    int pressedKey(const OIS::KeyEvent &arg);
+    bool pressedKey(const OIS::KeyEvent &arg);
     void mouseMoveUpdate(int x,int y);
     void clearMenu();
 
@@ -38,7 +38,7 @@ public:
 
 private:
 
-    GuiMaterialEdit* materialUi;
+	GuiSceneEdit* editUi;
 
     GameConfig* gConfig;
 
