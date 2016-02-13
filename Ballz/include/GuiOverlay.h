@@ -38,7 +38,7 @@ public:
 
 private:
 
-	GuiSceneEdit* editUi;
+    GuiSceneEdit* editUi;
 
     GameConfig* gConfig;
 

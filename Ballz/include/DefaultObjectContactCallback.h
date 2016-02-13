@@ -15,6 +15,6 @@ public:
 
 private:
 
-	irrklang::ISoundEngine* soundEngine;
-	PhysicsAudio audio;
+    irrklang::ISoundEngine* soundEngine;
+    PhysicsAudio audio;
 };

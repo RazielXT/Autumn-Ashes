@@ -13,20 +13,20 @@ struct ObjectAudio;
 
 struct PhysicsAudio
 {
-	float fallSoundOffsetH;
-	float fallSoundOffsetL;
+    float fallSoundOffsetH;
+    float fallSoundOffsetL;
 };
 
 class AudioLibrary
 {
 public:
 
-	PhysicsAudio* physicsAudio = nullptr;
+    PhysicsAudio* physicsAudio = nullptr;
 
-	AudioLibrary(Ogre::Camera* cam);
+    AudioLibrary(Ogre::Camera* cam);
     ~AudioLibrary();
 
-	void update(float time);
+    void update(float time);
 
     void play3D(const char* name, Ogre::Vector3& pos, float maxDistance = 10000000.f, float volume = 1.0f);
     void playRandom3D(std::vector<std::string>& sounds, Ogre::Vector3& pos, float maxDistance = 10000000.f, float volume = 1.0f);
@@ -43,7 +43,7 @@ private:
     void fillMaterialAudio();
     void fillMoveAudio();
 
-	Ogre::Camera* camera;
+    Ogre::Camera* camera;
     irrklang::ISoundEngine* soundEngine;
 
     std::map<int, std::vector<Ogre::String>* > movementAudio;

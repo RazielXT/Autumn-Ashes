@@ -23,77 +23,77 @@ SceneCubeMap::~SceneCubeMap()
 
 void SceneCubeMap::renderAll()
 {
-	for (auto cubemap : cubeMaps)
-	{
-		cubemap.second->update();
-	}
+    for (auto cubemap : cubeMaps)
+    {
+        cubemap.second->update();
+    }
 
-	//double reflection
-	for (auto cubemap : cubeMaps)
-	{
-		cubemap.second->update();
-	}
+    //double reflection
+    for (auto cubemap : cubeMaps)
+    {
+        cubemap.second->update();
+    }
 }
 
 Ogre::MaterialPtr SceneCubeMap::applyCubemap(Ogre::MaterialPtr mat, Ogre::Vector3 pos)
 {
-	SceneCubeMap* r = nullptr;
-	float closestToCenter;
-	float closestToRadius;
+    SceneCubeMap* r = nullptr;
+    float closestToCenter;
+    float closestToRadius;
 
-	for (auto cubemap : cubeMaps)
-	{
-		auto cm = cubemap.second;
+    for (auto cubemap : cubeMaps)
+    {
+        auto cm = cubemap.second;
 
-		float distToCenter = cm->position.distance(pos);
-		float distToRadius = std::max(0.0f, distToCenter - cm->posessionRadius);
+        float distToCenter = cm->position.distance(pos);
+        float distToRadius = std::max(0.0f, distToCenter - cm->posessionRadius);
 
-		if (!r || (distToRadius < closestToRadius || (distToRadius == 0 && distToCenter < closestToCenter)))
-		{
-			r = cm;
-			closestToRadius = distToRadius;
-			closestToCenter = distToCenter;
-		}
-	}
+        if (!r || (distToRadius < closestToRadius || (distToRadius == 0 && distToCenter < closestToCenter)))
+        {
+            r = cm;
+            closestToRadius = distToRadius;
+            closestToCenter = distToCenter;
+        }
+    }
 
-	if (!r)
-		return mat;
+    if (!r)
+        return mat;
 
 
-	for (auto appliedMat : appliedMaterials)
-	{
-		if (appliedMat.matOriginalName == mat->getName() && appliedMat.cm == r)
-			return Ogre::MaterialManager::getSingletonPtr()->getByName(appliedMat.matName);
-	}
+    for (auto appliedMat : appliedMaterials)
+    {
+        if (appliedMat.matOriginalName == mat->getName() && appliedMat.cm == r)
+            return Ogre::MaterialManager::getSingletonPtr()->getByName(appliedMat.matName);
+    }
 
-	//create new
-	static int mid = 0;
-	auto newMat = mat->clone(mat->getName() + std::to_string(mid++));
+    //create new
+    static int mid = 0;
+    auto newMat = mat->clone(mat->getName() + std::to_string(mid++));
 
-	auto pass = newMat->getTechnique(0)->getPass(1);
-	Ogre::TextureUnitState* t = pass->getTextureUnitState("envCubeMap");
-	if (r->detectedEdited)
-		t->setCubicTextureName(r->getTextureNamePrefix() + ".png", true);
-	else
-		t->setTexture(r->texture);
+    auto pass = newMat->getTechnique(0)->getPass(1);
+    Ogre::TextureUnitState* t = pass->getTextureUnitState("envCubeMap");
+    if (r->detectedEdited)
+        t->setCubicTextureName(r->getTextureNamePrefix() + ".png", true);
+    else
+        t->setTexture(r->texture);
 
-	pass->getFragmentProgramParameters()->setNamedConstant("cubemapWPOffset", Ogre::Vector4(r->position.x, r->position.y, r->position.z, r->materialWPOffset));
+    pass->getFragmentProgramParameters()->setNamedConstant("cubemapWPOffset", Ogre::Vector4(r->position.x, r->position.y, r->position.z, r->materialWPOffset));
 
-	CubemapedMats matInfo;
-	matInfo.matName = newMat->getName();
-	matInfo.cm = r;
-	matInfo.matOriginalName = mat->getName();
-	appliedMaterials.push_back(matInfo);
+    CubemapedMats matInfo;
+    matInfo.matName = newMat->getName();
+    matInfo.cm = r;
+    matInfo.matOriginalName = mat->getName();
+    appliedMaterials.push_back(matInfo);
 
-	return newMat;
+    return newMat;
 }
 
 void SceneCubeMap::clearAll()
 {
-	for (auto cubemap : cubeMaps)
-		delete cubemap.second;
+    for (auto cubemap : cubeMaps)
+        delete cubemap.second;
 
-	cubeMaps.clear();
+    cubeMaps.clear();
 }
 
 void SceneCubeMap::init(std::string name, int size, bool editable, float minRenderDistance)
@@ -141,7 +141,7 @@ std::string SceneCubeMap::getTexturePath(bool edited)
 
 std::string SceneCubeMap::getTextureNamePrefix()
 {
-	return Global::gameMgr->getCurrentLvlInfo()->name + "_" + name;
+    return Global::gameMgr->getCurrentLvlInfo()->name + "_" + name;
 }
 
 void SceneCubeMap::loadGpuTexture()

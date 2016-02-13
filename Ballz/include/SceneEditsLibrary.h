@@ -12,46 +12,52 @@
 #include <boost/serialization/string.hpp>
 
 
-
-struct ParticleChildren
-{
-	std::map<std::string, std::vector<std::string>> children;
-
-	std::vector<Ogre::ParticleSystem*> getChildren(std::string parent);
-	bool isParent(std::string particle);
-	std::string getParent(std::string child);
-	void connectChild(std::string parent, std::string child);
-};
-
 class SceneEditsLibrary
 {
 public:
 
-	bool loadSavedChanges(MaterialEdit& edit, std::string entName);
-	void addEdit(MaterialEdit& edit, std::string entName);
-	void removeMaterialEdit(std::string entName);
+    bool loadSavedMaterialChanges(MaterialEdit& edit, std::string entName);
+    void addMaterialEdit(MaterialEdit& edit, std::string entName);
+    void removeMaterialEdit(std::string entName);
 
-	bool loadSavedParticleChanges(ParticleEdit& edit, std::string particleName);
-	void addParticleEdit(ParticleEdit& edit, std::string particleName);
-	void removeParticleEdit(std::string particleName);
+    bool loadSavedParticleChanges(ParticleEdit& edit, std::string particleName);
+    void addParticleEdit(ParticleEdit& edit, std::string particleName);
+    void removeParticleEdit(std::string particleName);
 
-	void saveMaterialHistory(std::string path);
-	void loadMaterialHistory(std::string path);
-
-	void saveParticleHistory(std::string path);
-	void loadParticleHistory(std::string path);
-
-	void applyChanges();
-
-	ParticleChildren particleChildren;
+    void loadChanges();
+    void clear();
 
 private:
 
-	using EditedEntities = std::map < std::string, MaterialEdit >;
-	EditedEntities editMaterialHistory;
+    void saveMaterialHistory(std::string path);
+    void loadMaterialHistory(std::string path);
 
-	using EditedParticles = std::map < std::string, ParticleEdit >;
-	EditedParticles editParticleHistory;
+    void saveParticleHistory(std::string path);
+    void loadParticleHistory(std::string path);
 
-	int idCounter = 500;
+    struct EditedEntities
+    {
+        std::map < std::string, MaterialEdit > data;
+
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & data;
+        }
+    }
+    materialEditHistory;
+
+    struct EditedParticles
+    {
+        std::map < std::string, ParticleEdit > data;
+
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & data;
+        }
+    }
+    particleEditHistory;
+
+    int idCounter = 500;
 };

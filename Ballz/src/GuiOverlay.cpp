@@ -107,49 +107,49 @@ void GuiOverlay::clear()
 bool GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
 {
     if (!editUi->pressedKey(arg))
-    if(currentMenu==MAINM && !moving)
-    {
-        switch (arg.key)
+        if(currentMenu==MAINM && !moving)
         {
-        case OIS::KC_LEFT:
-            if(!moving)
+            switch (arg.key)
             {
-                movingDir=1;
-                moving=true;
-                mMenuState=mMenuState->previous;
+            case OIS::KC_LEFT:
+                if(!moving)
+                {
+                    movingDir=1;
+                    moving=true;
+                    mMenuState=mMenuState->previous;
+                }
+                break;
+            case OIS::KC_RIGHT:
+                if(!moving)
+                {
+                    movingDir=-1;
+                    moving=true;
+                    mMenuState=mMenuState->next;
+                }
+                break;
+            case OIS::KC_RETURN:
+                if (mMenuState->value == QUIT)
+                {
+                    gConfig->saveCfg();
+                }
+                if (mMenuState->value == OPTIONS)
+                {
+                    showOptions();
+                }
+                break;
+            default:
+                return false;
             }
-            break;
-        case OIS::KC_RIGHT:
-            if(!moving)
-            {
-                movingDir=-1;
-                moving=true;
-                mMenuState=mMenuState->next;
-            }
-            break;
-        case OIS::KC_RETURN:
-            if (mMenuState->value == QUIT)
-            {
-                gConfig->saveCfg();   
-            }
-            if (mMenuState->value == OPTIONS)
-            {
-                showOptions();
-            }
-            break;
-        default:
-			return false;
         }
-    }
 
     return true;
 }
 
 GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs)
 {
-	editUi = new GuiSceneEdit();
+    editUi = new GuiSceneEdit();
 
-	soundEngine = Global::soundEngine;
+    soundEngine = Global::soundEngine;
 
     gConfig = gameConfig;
 
@@ -269,7 +269,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
         debugVarCaption[i]->align(Gorilla::TextAlign_Left);
     }
 
-	editUi->initUi(mouseLayer);
+    editUi->initUi(mouseLayer);
 
     showDebug(false);
 }
@@ -834,17 +834,17 @@ void GuiOverlay::showDebug(bool show)
     debugVarCaption[3]->colour(Ogre::ColourValue(1, 1, 0, alpha));
 
     if (show)
-		editUi->setVisible(0);
+        editUi->setVisible(0);
 }
 
 void GuiOverlay::showMaterialDebug()
 {
-	editUi->queryMaterial();
+    editUi->queryMaterial();
 }
 
 void GuiOverlay::showParticleDebug()
 {
-	editUi->queryParticle();
+    editUi->queryParticle();
 }
 
 void GuiOverlay::updateLevelsMove(Ogre::Real time)

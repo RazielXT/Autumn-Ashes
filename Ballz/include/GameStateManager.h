@@ -43,7 +43,7 @@ class GameStateManager
 {
 public:
 
-	GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs);
+    GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs);
     ~GameStateManager();
 
     LevelInfo* getLvlInfo(int id);
@@ -70,7 +70,7 @@ public:
     GeometryManager* geometryMgr;
     ParticleManager particleMgr;
     MaterialEditsLibrary materialEdits;
-	SceneEditsLibrary sceneEdits;
+    SceneEditsLibrary sceneEdits;
 
     std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
 
@@ -89,7 +89,7 @@ private:
 
     int lastLVL;
 
-	AudioLibrary audioLib;
+    AudioLibrary audioLib;
 
     DebugKeys* dbg;
 };

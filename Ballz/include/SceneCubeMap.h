@@ -19,7 +19,7 @@ public:
     float posessionRadius;
     float materialWPOffset;
 
-	static void renderAll();
+    static void renderAll();
 
     struct CubemapedMats
     {
@@ -30,9 +30,9 @@ public:
 
     static std::vector<CubemapedMats> appliedMaterials;
 
-	static Ogre::MaterialPtr applyCubemap(Ogre::MaterialPtr mat, Ogre::Vector3 pos);
+    static Ogre::MaterialPtr applyCubemap(Ogre::MaterialPtr mat, Ogre::Vector3 pos);
 
-	static void clearAll();
+    static void clearAll();
 
     static std::map<std::string, SceneCubeMap*> cubeMaps;
 

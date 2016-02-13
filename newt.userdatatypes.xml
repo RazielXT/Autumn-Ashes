@@ -281,9 +281,8 @@
 	
 	<data name="EditEmmiter" displayName="Edit Emmiter" type="bool" groupName="Emmiter" defaultValue="false"/>
 	<data name="EmmiterType" displayName="Type" type="emitterType" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
-	<data name="EditDir" displayName="Edit Direction" type="bool" groupName="Emmiter" visibilityParentName="EditEmmiter" defaultValue="false"/>
-	<data name="Relative" displayName="Relative" type="bool" groupName="Emmiter" visibilityParentName="EditDir" defaultValue="false"/>
-	<data name="Direction" displayName="Direction" type="float3" groupName="Emmiter" visibilityParentName="EditDir" defaultValue="0,-1,0"/>
+	<data name="EditDir" displayName="Edit Direction" type="bool" groupName="Emmiter" visibilityParentName="EditEmmiter" defaultValue="true"/>
+	<data name="Direction" displayName="Base Direction" type="float3" groupName="Emmiter" visibilityParentName="EditDir" minValue="-1" maxValue="1" defaultValue="0,-1,0"/>
 	
 </class>
 

@@ -10,7 +10,7 @@
 
 GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : audioLib(cam)
 {
-	Global::audioLib = &audioLib;
+    Global::audioLib = &audioLib;
 
     gameConfig.loadCfg();
 
@@ -133,7 +133,8 @@ void GameStateManager::switchToLevel(int lvl)
 
     SceneParser::loadScene(lvlInfo.path + lvlInfo.sceneFile);
     lvlInfo.init();
-    materialEdits.applyChanges();
+
+    sceneEdits.loadChanges();
     geometryMgr->update();
     SceneCubeMap::renderAll();
 
@@ -254,7 +255,7 @@ void GameStateManager::update(float tslf)
         switch (gameState)
         {
         case GAME:
-			audioLib.update(tslf);
+            audioLib.update(tslf);
             myMenu->setDebugValue(Global::mWindow->getLastFPS(), GUtils::debug, dbg->debugVars, dbg->debugVarsLine);
             myMenu->updateIngame(tslf);
             break;
@@ -308,6 +309,5 @@ void GameStateManager::clearLevel()
     VolumeDetectionManager::get.reset();
     SceneEnergies::reset();
     Gate::reset();
-
-    materialEdits.particleSiblings.children.clear();
+    sceneEdits.clear();
 }

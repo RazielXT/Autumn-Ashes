@@ -69,6 +69,7 @@ public:
     {
     }
 
+    void importToScene();
 
     bool loadSavedChanges(MaterialEdit_& edit, std::string entName);
     void addEdit(MaterialEdit_& edit, std::string entName);
@@ -94,11 +95,11 @@ public:
 
 private:
 
-    using EditedEntities = std::map < std::string, MaterialEdit_ >;
-    EditedEntities editHistory;
+    using EditedEntities_ = std::map < std::string, MaterialEdit_ >;
+    EditedEntities_ editHistory;
 
-    using EditedParticles = std::map < std::string, MaterialEdit_ >;
-    EditedParticles editParticleHistory;
+    using EditedParticles_ = std::map < std::string, MaterialEdit_ >;
+    EditedParticles_ editParticleHistory;
 
     int idCounter = 500;
 };

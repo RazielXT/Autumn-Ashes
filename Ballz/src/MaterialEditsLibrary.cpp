@@ -132,6 +132,45 @@ void MaterialEditsLibrary::removeEdit_(std::string entName)
     saveFile(Global::gameMgr->getCurrentLvlInfo()->path);
 }
 
+void MaterialEditsLibrary::importToScene()
+{
+    auto& sceneEdit = Global::gameMgr->sceneEdits;
+
+    for (auto& it : editParticleHistory)
+    {
+        ParticleEdit edit;
+
+        auto& ent = it.first;
+        auto& vars = it.second;
+
+        edit.originName = vars.originMatName;
+
+        for (auto& oVar : vars.psVariables)
+        {
+            EditVariable var;
+            var.name = oVar.name;
+            var.edited = oVar.edited;
+            var.size = oVar.size;
+            memcpy(var.buffer, oVar.buffer, 4 * oVar.size);
+
+            edit.psVariables.push_back(var);
+        }
+
+        for (auto& oVar : vars.moreParams)
+        {
+            EditVariable var;
+            var.name = oVar.name;
+            var.edited = oVar.edited;
+            var.size = oVar.size;
+            memcpy(var.buffer, oVar.buffer, 4 * oVar.size);
+
+            edit.particleParams.push_back(var);
+        }
+
+        //sceneEdit.particleEditHistory.data[ent] = edit;
+    }
+}
+
 bool MaterialEditsLibrary::loadSavedChanges(MaterialEdit_& edit, std::string entName)
 {
     auto& ent = editHistory.begin();

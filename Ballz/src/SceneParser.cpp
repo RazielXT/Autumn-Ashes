@@ -599,7 +599,7 @@ void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
 
     auto parent = getElementValue(rootElement, "Parent");
     if (!parent.empty())
-        Global::gameMgr->materialEdits.particleSiblings.connectSiblings("PS_" + parent, name);
+        ParticleEdit::particleChildren.connectChild("PS_" + parent, name);
 
     if (getElementBoolValue(rootElement, "EditEmmiter"))
     {
@@ -628,36 +628,31 @@ void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
             emmiter = newEmitter;
         }
 
-		if (getElementBoolValue(rootElement, "EditDir"))
-		{
-			auto dir = getElementV3Value(rootElement, "Direction");
+        if (getElementBoolValue(rootElement, "EditDir"))
+        {
+            auto dir = getElementV3Value(rootElement, "Direction");
 
-			if (getElementBoolValue(rootElement, "Relative"))
-			{
-				dir = node->getOrientation()*dir;
-			}
-
-			emmiter->setDirection(dir);
-		}
+            emmiter->setDirection(dir);
+        }
     }
 
-	if (getElementBoolValue(rootElement, "EditMaterial"))
-	{
-		auto mat = getElementValue(rootElement, "Material");
-		if (!mat.empty()) ps->setMaterialName(mat);
-	}
+    if (getElementBoolValue(rootElement, "EditMaterial"))
+    {
+        auto mat = getElementValue(rootElement, "Material");
+        if (!mat.empty()) ps->setMaterialName(mat);
+    }
 
     if (getElementBoolValue(rootElement, "EditParams"))
     {
         auto psize = getElementV2Value(rootElement, "Size");
         if (psize.x != 0) ps->setDefaultDimensions(psize.x, psize.y);
 
-		auto quota = getElementFloatValue(rootElement, "Quota");
-		if (quota != 0) ps->setParticleQuota(quota);
+        auto quota = getElementIntValue(rootElement, "Quota");
+        if (quota != 0) ps->setParticleQuota(quota);
 
-		ps->setSpeedFactor(getElementFloatValue(rootElement, "Speed"));
-		ps->setSortingEnabled(getElementBoolValue(rootElement, "Sorted"));
-		ps->setCullIndividually(getElementBoolValue(rootElement, "CullEach"));
+        ps->setSpeedFactor(getElementFloatValue(rootElement, "Speed"));
+        ps->setSortingEnabled(getElementBoolValue(rootElement, "Sorted"));
+        ps->setCullIndividually(getElementBoolValue(rootElement, "CullEach"));
     }
 
     if (parent.empty())
