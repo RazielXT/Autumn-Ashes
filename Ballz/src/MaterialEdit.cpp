@@ -37,10 +37,8 @@ void Edit::mergeParams(std::vector<EditVariable>& from, std::vector<EditVariable
     }
 }
 
-bool MaterialEdit::query()
+MaterialEdit* MaterialEdit::query()
 {
-    reset();
-
     GUtils::RayInfo out;
     if (GUtils::getRayInfo(Global::player->getCameraPosition(), Global::player->getFacingDirection(), 1000, out))
     {
@@ -53,20 +51,25 @@ bool MaterialEdit::query()
 
             if (mat->getTechnique(0)->getNumPasses() > 0)
             {
-                entity = ent;
-                ptr = mat;
+                auto edit = new MaterialEdit(ent);
 
-                loadMaterial();
-                changed = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, entity->getName());
-
-                rows = { { originName,EditRow::Caption },{ "Save",EditRow::Custom },{ "VS",EditRow::Static },{ "PS",EditRow::Params } };
-
-                return psVariables.size() > 0;
+                return edit;
             }
         }
     }
 
-    return false;
+    return nullptr;
+}
+
+MaterialEdit::MaterialEdit(Ogre::Entity* ent)
+{
+    entity = ent;
+    materialPtr = ent->getSubEntity(0)->getMaterial();
+
+    loadMaterial();
+    changed = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, entity->getName());
+
+    rows = { { ent->getName(),EditRow::Caption } , { originName,EditRow::Caption },{ "Save",EditRow::Custom },{ "VS",EditRow::Static },{ "PS",EditRow::Params } };
 }
 
 EditVariables* MaterialEdit::getParams(int row)
@@ -85,13 +88,13 @@ void MaterialEdit::editChanged(EditVariable& var, int row)
     {
         var.edited = true;
 
-        if (ptr.isNull())
+        if (materialPtr.isNull())
             return;
 
         materialChanged();
 
-        int pass = ptr->getTechnique(0)->getNumPasses() - 1;
-        ptr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+        int pass = materialPtr->getTechnique(0)->getNumPasses() - 1;
+        materialPtr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
     }
 }
 
@@ -137,46 +140,35 @@ void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& ch
     }
 }
 
-void MaterialEdit::reset()
-{
-    ptr.setNull();
-    entity = nullptr;
-    changed = false;
-    matInstance = false;
-
-    psVariables.clear();
-    vsVariables.clear();
-}
-
 void MaterialEdit::materialChanged()
 {
     if (!changed)
     {
         changed = true;
 
-        auto newMat = ptr->clone(ptr->getName() + std::to_string(idCounter++));
+        materialPtr = materialPtr->clone(materialPtr->getName() + std::to_string(idCounter++));
 
         if (entity)
-            entity->setMaterial(newMat);
-
-        ptr = newMat;
+            entity->setMaterial(materialPtr);
     }
 }
 
 void MaterialEdit::resetMaterial()
 {
-    entity->setMaterialName(originName);
     changed = false;
     matInstance = false;
-    ptr = entity->getSubEntity(0)->getMaterial();
+    materialPtr = Ogre::MaterialManager::getSingleton().getByName(originName);
+
+    if (entity)
+        entity->setMaterialName(originName);
 }
 
 void MaterialEdit::loadMaterial()
 {
     psVariables.clear();
-    originName = ptr->getName();
-    int pass = ptr->getTechnique(0)->getNumPasses() - 1;
-    auto params = ptr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters();
+    originName = materialPtr->getName();
+    int pass = materialPtr->getTechnique(0)->getNumPasses() - 1;
+    auto params = materialPtr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters();
     auto& l = params->getConstantDefinitions();
     bool skip = true;
 

@@ -5,6 +5,8 @@
 
 struct MaterialEdit : public Edit
 {
+    MaterialEdit() {}
+    MaterialEdit(Ogre::Entity* ent);
     virtual ~MaterialEdit() {}
 
     std::vector<EditVariable> psVariables;
@@ -18,23 +20,23 @@ struct MaterialEdit : public Edit
         ar & vsVariables;
     }
 
-    virtual bool query();
     virtual EditVariables* getParams(int row);
     virtual void editChanged(EditVariable& var, int row);
     virtual void customAction(std::string name);
     void merge(MaterialEdit& r, bool addNotExisting);
 
+    static MaterialEdit* query();
     static void applyChanges(const std::map < std::string, MaterialEdit >& changes);
 
 protected:
 
-    void resetMaterial();
     void loadMaterial();
-    void materialChanged();
-    void reset();
+
+    virtual void resetMaterial();
+    virtual void materialChanged();
 
     bool changed = false;
     bool matInstance = false;
-    Ogre::MaterialPtr ptr;
-    Ogre::Entity* entity;
+    Ogre::MaterialPtr materialPtr;
+    Ogre::Entity* entity = nullptr;
 };

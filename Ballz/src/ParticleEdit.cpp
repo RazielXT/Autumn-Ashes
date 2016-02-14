@@ -4,14 +4,24 @@
 
 ParticleChildren ParticleEdit::particleChildren;
 
-bool ParticleEdit::query()
+ParticleEdit* ParticleEdit::query()
 {
-    ps = Global::gameMgr->particleMgr.getClosestParticle();
+    auto ps = Global::gameMgr->particleMgr.getClosestParticle();
 
     if (!ps || ps->getNumEmitters() == 0)
-        return false;
+        return nullptr;
 
-    ptr = Ogre::MaterialManager::getSingleton().getByName(ps->getMaterialName());
+    ParticleEdit* edit = new ParticleEdit(ps);
+
+    return edit;
+}
+
+ParticleEdit::ParticleEdit(Ogre::ParticleSystem* particle)
+{
+    ps = particle;
+    entity = nullptr;
+
+    materialPtr = Ogre::MaterialManager::getSingleton().getByName(ps->getMaterialName());
 
     loadMaterial();
 
@@ -19,9 +29,7 @@ bool ParticleEdit::query()
 
     generateParticleParams();
 
-    rows = { { originName,EditRow::Caption },{ "Save",EditRow::Custom },{ "Restart",EditRow::Custom },{ "Particle",EditRow::Params },{ "PS",EditRow::Params } };
-
-    return true;
+    rows = { { ps->getName(),EditRow::Caption },{ originName,EditRow::Caption },{ "Save",EditRow::Custom },{ "Restart",EditRow::Custom },{ "Particle",EditRow::Params },{ "PS",EditRow::Params } };
 }
 
 EditVariables* ParticleEdit::getParams(int row)
@@ -186,18 +194,31 @@ void ParticleEdit::generateParticleParams()
     particleParams.push_back(var);
 }
 
+void ParticleEdit::resetMaterial()
+{
+    MaterialEdit::resetMaterial();
+
+    ps->setMaterialName(materialPtr->getName());
+
+    auto children = particleChildren.getChildren(ps->getName());
+    for (auto child : children)
+    {
+        child->setMaterialName(materialPtr->getName());
+    }
+}
+
 void ParticleEdit::materialChanged()
 {
     if (!changed)
     {
         MaterialEdit::materialChanged();
 
-        ps->setMaterialName(ptr->getName());
+        ps->setMaterialName(materialPtr->getName());
 
         auto children = particleChildren.getChildren(ps->getName());
         for (auto child : children)
         {
-            child->setMaterialName(ptr->getName());
+            child->setMaterialName(materialPtr->getName());
         }
     }
 }

@@ -195,12 +195,6 @@ void GuiSceneEdit::setVisible(int lvl)
     float alpha = show ? 1.0f : 0.0f;
     Ogre::ColourValue bckColor(0, 0, 0, show ? 0.8f : 0);
 
-    for (size_t i = 2; i < EDIT_BASE_ROWS_MAX; i++)
-    {
-        baseRowsCaption[i]->colour(Ogre::ColourValue(1, 1, 1, alpha));
-        baseRowsCaption[i]->background(bckColor);
-    }
-
     updateBase();
 
     baseRowsCaption[activeBaseId]->colour(Ogre::ColourValue(1, activeLvl == 1 ? 0.0f : 1.0f, 0, alpha));
@@ -232,9 +226,9 @@ void GuiSceneEdit::queryMaterial()
     if (currentEdit)
         delete currentEdit;
 
-    currentEdit = new MaterialEdit();
+    currentEdit = MaterialEdit::query();
 
-    if (currentEdit->query())
+    if (currentEdit)
     {
         setVisible(1);
         updateState();
@@ -248,9 +242,9 @@ void GuiSceneEdit::queryParticle()
     if (currentEdit)
         delete currentEdit;
 
-    currentEdit = new ParticleEdit();
+    currentEdit = ParticleEdit::query();
 
-    if (currentEdit->query())
+    if (currentEdit)
     {
         setVisible(1);
         updateState();
@@ -261,6 +255,11 @@ void GuiSceneEdit::queryParticle()
 
 void GuiSceneEdit::updateBase()
 {
+    for (size_t i = 0; i < EDIT_BASE_ROWS_MAX; i++)
+    {
+        baseRowsCaption[i]->text("");
+    }
+
     if (currentEdit)
     {
         base = currentEdit->getBaseRows();

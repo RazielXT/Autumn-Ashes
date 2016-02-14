@@ -36,7 +36,6 @@ struct Edit
 
     std::string originName;
 
-    virtual bool query() = 0;
     EditBaseRows getBaseRows()
     {
         return rows;

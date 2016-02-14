@@ -15,6 +15,8 @@ struct ParticleChildren
 
 struct ParticleEdit : public MaterialEdit
 {
+    ParticleEdit() {}
+    ParticleEdit(Ogre::ParticleSystem* ps);
     virtual ~ParticleEdit() {}
 
     std::vector<EditVariable> particleParams;
@@ -27,7 +29,6 @@ struct ParticleEdit : public MaterialEdit
         ar & particleParams;
     }
 
-    virtual bool query();
     virtual EditVariables* getParams(int row);
     virtual void editChanged(EditVariable& var, int row);
     virtual void customAction(std::string name);
@@ -35,12 +36,15 @@ struct ParticleEdit : public MaterialEdit
 
     void setParticleParam(Ogre::ParticleSystem* ps, EditVariable& var);
 
+    static ParticleEdit* query();
     static void applyChanges(std::map < std::string, ParticleEdit >& changes);
     static ParticleChildren particleChildren;
 
 protected:
 
-    void materialChanged();
+    virtual void resetMaterial();
+    virtual void materialChanged();
+
     void generateParticleParams();
 
     Ogre::ParticleSystem* ps;

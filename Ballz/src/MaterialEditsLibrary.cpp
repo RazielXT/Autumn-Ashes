@@ -138,35 +138,36 @@ void MaterialEditsLibrary::importToScene()
 
     for (auto& it : editParticleHistory)
     {
-        ParticleEdit edit;
+        /*
+           ParticleEdit edit;
 
-        auto& ent = it.first;
-        auto& vars = it.second;
+           auto& ent = it.first;
+           auto& vars = it.second;
 
-        edit.originName = vars.originMatName;
+           edit.originName = vars.originMatName;
 
-        for (auto& oVar : vars.psVariables)
-        {
-            EditVariable var;
-            var.name = oVar.name;
-            var.edited = oVar.edited;
-            var.size = oVar.size;
-            memcpy(var.buffer, oVar.buffer, 4 * oVar.size);
+           for (auto& oVar : vars.psVariables)
+           {
+               EditVariable var;
+               var.name = oVar.name;
+               var.edited = oVar.edited;
+               var.size = oVar.size;
+               memcpy(var.buffer, oVar.buffer, 4 * oVar.size);
 
-            edit.psVariables.push_back(var);
-        }
+               edit.psVariables.push_back(var);
+           }
 
-        for (auto& oVar : vars.moreParams)
-        {
-            EditVariable var;
-            var.name = oVar.name;
-            var.edited = oVar.edited;
-            var.size = oVar.size;
-            memcpy(var.buffer, oVar.buffer, 4 * oVar.size);
+           for (auto& oVar : vars.moreParams)
+           {
+               EditVariable var;
+               var.name = oVar.name;
+               var.edited = oVar.edited;
+               var.size = oVar.size;
+               memcpy(var.buffer, oVar.buffer, 4 * oVar.size);
 
-            edit.particleParams.push_back(var);
-        }
-
+               edit.particleParams.push_back(var);
+           }
+        */
         //sceneEdit.particleEditHistory.data[ent] = edit;
     }
 }
