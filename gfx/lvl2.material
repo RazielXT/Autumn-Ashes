@@ -17,10 +17,9 @@ import billboard_material_op from "general_Billboard.material"
 
 import soft_transparent_material from "soft_smoke.material"
 
-
 material  smokeMat: soft_transparent_material
 {
-	set_texture_alias diffuseMap particle_cloud.png
+	set_texture_alias diffuseMap smoke_PNG966.png
 }
 
 material  billboardTest: billboard_material_op

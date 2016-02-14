@@ -12,7 +12,8 @@ void pp_vp(
 
 float4 combineSmoke(float4 scene, float4 smoke)
 {
-	return float4(lerp(scene.rgb,clamp(smoke.rgb,0,1),saturate(smoke.a)),smoke.a);
+	smoke.a = saturate(smoke.a);
+	return float4(lerp(scene.rgb,clamp(smoke.rgb,0,1),smoke.a),smoke.a);
 }
 
 float3x3 getRotationMatrixX(float angle)

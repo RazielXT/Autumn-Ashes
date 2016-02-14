@@ -54,7 +54,7 @@ void softsmoke_ps(
 	
 	d/=d.w;
 	
-	float depthCloud = distance(wpos.xyz,camPos);
+	float depthCloud = distance(wpos.xyz,camPos) - depthFade*0.5;
 	
 	float2 depthTexCoord = d.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
 	depthTexCoord+=float2(0.5f/1280.0f,0.5f/768.0f);
@@ -79,8 +79,8 @@ void softsmoke_ps(
 	float objBlend = saturate((depthEnv-depthCloud)/scale);
 	float camBlend = saturate(depthCloud/camScale);
 	
-	color0=color.rgbr*objBlend*camBlend*uv.z;
-	color0.a *= alphaMul;
+	color0=color.rgba;
+	color0.a *= alphaMul*objBlend*camBlend*uv.z;
 	
 	//distance fog
 	float insideFog = saturate((depthCloud - fogParams.y) / fogParams.z)*fogColor.a;

@@ -188,8 +188,7 @@ float4 MySmokeBloomX_fp
 		sum += t * samplesSmoke[i];
 	}
 
-	float s = sum.r + sum.g + sum.b;
-   	sum.a = (s + sum.a + maxAlpha)/3;
+   	sum.a = (sum.a + maxAlpha)/2;
 	//if(ini.a>sum.a) sum=(ini+sum)/2; 
 	return sum;
 }
@@ -215,8 +214,7 @@ float4 MySmokeBloomY_fp
 		sum +=t * samplesSmoke[i];
 	}
 
-		float s = sum.r + sum.g + sum.b;
-   	sum.a = (s + sum.a + maxAlpha)/3;
+   	sum.a = ( sum.a + maxAlpha)/2;
 	//if(ini.a>sum.a) sum=(ini+sum)/2; 
 
 	return sum;

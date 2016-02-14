@@ -4,14 +4,14 @@ material soft_transparent_material
 	set $closeFade "2" 
 	set $diffuse "1 1 1" 
 	set $alphaMul "1" 
-	
+
     technique
     {
         pass
         {
+			//scene_blend alpha_blend
+			separate_scene_blend src_alpha one_minus_src_alpha one one_minus_src_alpha
 
-			//scene_blend colour_blend
-			scene_blend one one_minus_src_alpha
 			depth_write off
 			cull_hardware none
 			lighting off
@@ -30,7 +30,7 @@ material soft_transparent_material
 
 			texture_unit diffuseMap
 			{
-				texture particle_cloud.png
+				texture smoke_PNG966.png
 			}
 
 			texture_unit
@@ -46,4 +46,15 @@ material soft_transparent_material
 			}
         }
     }
+}
+
+material soft_transparent_material_ab
+{
+	technique
+    {
+        pass
+        {
+			scene_blend alpha_blend
+		}
+	}
 }
