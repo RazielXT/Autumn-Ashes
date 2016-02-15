@@ -17,8 +17,8 @@ class SceneEditsLibrary
 {
 public:
 
-	void loadChanges();
-	void clear();
+    void loadChanges();
+    void clear();
 
     bool loadSavedMaterialChanges(MaterialEdit& edit, std::string entName);
     void addMaterialEdit(MaterialEdit& edit, std::string entName);
@@ -28,15 +28,15 @@ public:
     void addParticleEdit(ParticleEdit& edit, std::string particleName);
     void removeParticleEdit(std::string particleName);
 
-	LevelEdit* getLevelEdit();
-	void saveLevelEdit();
+    LevelEdit* getLevelEdit();
+    void saveLevelEdit();
 
 private:
 
-	void saveLevelEdit(std::string path);
-	void loadLevelEdit(std::string path);
+    void saveLevelEdit(std::string path);
+    void loadLevelEdit(std::string path);
 
-	LevelEdit levelEdits;
+    LevelEdit levelEdits;
 
     void saveMaterialHistory(std::string path);
     void loadMaterialHistory(std::string path);
@@ -53,8 +53,8 @@ private:
     }
     materialEditHistory;
 
-	void saveParticleHistory(std::string path);
-	void loadParticleHistory(std::string path);
+    void saveParticleHistory(std::string path);
+    void loadParticleHistory(std::string path);
 
     struct EditedParticles
     {

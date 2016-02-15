@@ -23,8 +23,9 @@ public:
 
     void showParticleDebug();
     void showMaterialDebug();
-    void showDebug(bool show);
-    void setDebugValue(Ogre::Real value1, std::vector<std::string>& values, std::vector<DebugVar>& debugVars, int debugVarsLine);
+    void showLevelDebug();
+
+    void setDebugValue(Ogre::Real value1, std::vector<std::string>& values);
     void updateMainMenu(Ogre::Real time);
     int mainMenuPressed();
     bool pressedKey(const OIS::KeyEvent &arg);
@@ -111,7 +112,6 @@ private:
     Gorilla::Layer*         mLayer, *gameLayer, *mouseLayer, *mLvlsLayer;
     Gorilla::Caption*       fpsCaption;
     Gorilla::Caption*       debugCaption[MAX_DEBUG_LINES];
-    Gorilla::Caption*       debugVarCaption[DEBUG_VARIABLES_COUNT];
     Gorilla::Rectangle*     mousePointer;
 
     bool ingamemenu;

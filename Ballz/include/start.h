@@ -41,7 +41,7 @@ void Application::setupScene()
     float aspect = mWindow->getWidth() / (float)mWindow->getHeight();
 
     mWorld = new OgreNewt::World();
-    mWorld->setWorldSize(Vector3(-3000,-3000,-3000),Vector3(3000,3000,3000));
+
     cam->setFOVy(Degree(70));
     cam->setAspectRatio(aspect);
     cam->setPosition(Vector3(0,0,0));

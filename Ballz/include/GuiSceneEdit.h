@@ -14,7 +14,7 @@ public:
     void initUi(Gorilla::Layer* layer);
     bool pressedKey(const OIS::KeyEvent &arg);
 
-	void queryLevel();
+    void queryLevel();
     void queryMaterial();
     void queryParticle();
 

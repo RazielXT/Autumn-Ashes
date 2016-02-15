@@ -63,7 +63,7 @@ bool SceneEditsLibrary::loadSavedMaterialChanges(MaterialEdit& edit, std::string
 
 void SceneEditsLibrary::loadChanges()
 {
-	auto path = Global::gameMgr->getCurrentLvlInfo()->path;
+    auto path = Global::gameMgr->getCurrentLvlInfo()->path;
 
     loadMaterialHistory(path);
     MaterialEdit::applyChanges(materialEditHistory.data);
@@ -71,39 +71,41 @@ void SceneEditsLibrary::loadChanges()
     loadParticleHistory(path);
     ParticleEdit::applyChanges(particleEditHistory.data);
 
-	loadLevelEdit(path);
-	levelEdits.applyChanges();
+    loadLevelEdit(path);
+    levelEdits.applyChanges();
 }
 
 void SceneEditsLibrary::clear()
 {
-	materialEditHistory.data.clear();
-	particleEditHistory.data.clear();
+    materialEditHistory.data.clear();
+    particleEditHistory.data.clear();
     ParticleEdit::particleChildren.children.clear();
 }
 
 void SceneEditsLibrary::saveLevelEdit(std::string path)
 {
-	std::ofstream ofs(path + "Level.edit", std::ios::binary);
-	boost::archive::binary_oarchive oa(ofs);
-	oa << levelEdits;
+    std::ofstream ofs(path + "Level.edit", std::ios::binary);
+    boost::archive::binary_oarchive oa(ofs);
+    oa << levelEdits;
 }
 
 void SceneEditsLibrary::saveLevelEdit()
 {
-	saveLevelEdit(Global::gameMgr->getCurrentLvlInfo()->path);
+    saveLevelEdit(Global::gameMgr->getCurrentLvlInfo()->path);
 }
 
 void SceneEditsLibrary::loadLevelEdit(std::string path)
 {
-	std::ifstream ifs(path + "Level.edit", std::ios::binary);
+    levelEdits.init();
 
-	if (ifs.good())
-	{
-		boost::archive::binary_iarchive ia(ifs);
+    std::ifstream ifs(path + "Level.edit", std::ios::binary);
 
-		ia >> levelEdits;
-	}
+    if (ifs.good())
+    {
+        boost::archive::binary_iarchive ia(ifs);
+
+        ia >> levelEdits;
+    }
 }
 
 void SceneEditsLibrary::saveMaterialHistory(std::string path)
@@ -194,5 +196,5 @@ void SceneEditsLibrary::removeParticleEdit(std::string particleName)
 
 LevelEdit* SceneEditsLibrary::getLevelEdit()
 {
-	return &levelEdits;
+    return &levelEdits;
 }

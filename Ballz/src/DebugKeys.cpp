@@ -7,28 +7,6 @@
 #include "MUtils.h"
 #include "GUtils.h"
 
-void DebugKeys::reloadVariables()
-{
-    debugVars.clear();
-    debugVarsLine = 0;
-
-    debugVars.push_back(DebugVar("ColorShift R", &Global::mPPMgr->vars.ColouringShift.x, 0.02f));
-    debugVars.push_back(DebugVar("ColorShift G", &Global::mPPMgr->vars.ColouringShift.y, 0.02f));
-    debugVars.push_back(DebugVar("ColorShift B", &Global::mPPMgr->vars.ColouringShift.z, 0.02f));
-
-    debugVars.push_back(DebugVar("Bloom Str", &Global::mPPMgr->vars.bloomStrDepAddSize.x, 0.1f));
-    debugVars.push_back(DebugVar("Bloom Depth", &Global::mPPMgr->vars.bloomStrDepAddSize.y, 0.1f));
-    debugVars.push_back(DebugVar("Bloom Add", &Global::mPPMgr->vars.bloomStrDepAddSize.z, 0.05f));
-    debugVars.push_back(DebugVar("Bloom Size", &Global::mPPMgr->vars.bloomStrDepAddSize.w, 0.05f));
-    debugVars.push_back(DebugVar("Horiz Blur", &Global::mPPMgr->vars.radialHorizBlurVignette.y, 0.1f));
-
-    debugVars.push_back(DebugVar("Contrast", &Global::mPPMgr->vars.ContSatuSharpNoise.x, 0.05f));
-    debugVars.push_back(DebugVar("Saturation", &Global::mPPMgr->vars.ContSatuSharpNoise.y, 0.05f));
-    debugVars.push_back(DebugVar("Sharpness", &Global::mPPMgr->vars.ContSatuSharpNoise.z, 0.05f));
-
-    debugVars.push_back(DebugVar("Timestep", &Global::timestep, 0.1f));
-}
-
 void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 {
     auto postProcMgr = Global::mPPMgr;
@@ -39,22 +17,6 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
     switch (arg.key)
     {
 
-    case OIS::KC_NUMPAD9:
-    {
-        static bool shownDebug = false;
-
-        shownDebug = !shownDebug;
-        Global::gameMgr->myMenu->showDebug(shownDebug);
-    }
-    break;
-
-    case OIS::KC_MULTIPLY:
-    {
-        auto& var = debugVars[debugVarsLine];
-        *var.target += var.step;
-    }
-    break;
-
     case OIS::KC_NUMPAD6:
     {
         Global::gameMgr->myMenu->showMaterialDebug();
@@ -64,6 +26,12 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
     case OIS::KC_NUMPAD5:
     {
         Global::gameMgr->myMenu->showParticleDebug();
+    }
+    break;
+
+    case OIS::KC_NUMPAD4:
+    {
+        Global::gameMgr->myMenu->showLevelDebug();
     }
     break;
 
@@ -84,25 +52,6 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
     {
         if (Global::gameMgr->gameState == GAME)
             makecube();
-    }
-    break;
-
-    case OIS::KC_DIVIDE:
-    {
-        auto& var = debugVars[debugVarsLine];
-        *var.target -= var.step;
-    }
-    break;
-
-    case OIS::KC_ADD:
-    {
-        debugVarsLine = (debugVarsLine + 1) % debugVars.size();
-    }
-    break;
-
-    case OIS::KC_SUBTRACT:
-    {
-        debugVarsLine = (debugVarsLine - 1) % debugVars.size();
     }
     break;
 

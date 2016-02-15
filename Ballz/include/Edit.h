@@ -18,13 +18,13 @@ struct EditVariable
         ar & boost::serialization::make_array(buffer, 4);
     }
 
-	EditVariable() {}
-	EditVariable(std::string name, Ogre::Vector3 vec);
-	EditVariable(std::string name, Ogre::Vector4 vec);
-	EditVariable(std::string name, Ogre::ColourValue);
-	EditVariable(std::string name, float x, float y, float z);
-	EditVariable(std::string name, float x, float y);
-	EditVariable(std::string name, float x);
+    EditVariable() {}
+    EditVariable(std::string name, Ogre::Vector3 vec);
+    EditVariable(std::string name, Ogre::Vector4 vec);
+    EditVariable(std::string name, Ogre::ColourValue);
+    EditVariable(std::string name, float x, float y, float z);
+    EditVariable(std::string name, float x, float y);
+    EditVariable(std::string name, float x);
 };
 
 using EditVariables = std::vector<EditVariable>;
@@ -42,6 +42,7 @@ struct Edit
 
     static int idCounter;
 
+    bool persistent = false;
     std::string originName;
 
     EditBaseRows getBaseRows()
@@ -55,5 +56,5 @@ struct Edit
 protected:
 
     EditBaseRows rows;
-    void mergeParams(std::vector<EditVariable>& from, std::vector<EditVariable>& target, bool addNotExisting);
+    void mergeParams(const std::vector<EditVariable>& from, std::vector<EditVariable>& target, bool addNotExisting);
 };

@@ -10,6 +10,7 @@
 #include "GameStateManager.h"
 #include "GameUi.h"
 #include "GuiSceneEdit.h"
+#include "GUtils.h"
 
 using namespace Ogre;
 
@@ -261,17 +262,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
         debugCaption[i]->align(Gorilla::TextAlign_Left);
     }
 
-    for (size_t i = 0; i < DEBUG_VARIABLES_COUNT; i++)
-    {
-        debugVarCaption[i] = mouseLayer->createCaption(48, 1450, 150 + 20 * (float)i, "");
-        debugVarCaption[i]->size(500, 50);
-        debugVarCaption[i]->setScale(0.3f);
-        debugVarCaption[i]->align(Gorilla::TextAlign_Left);
-    }
-
     editUi->initUi(mouseLayer);
-
-    showDebug(false);
 }
 
 
@@ -790,7 +781,7 @@ int GuiOverlay::mainMenuPressed()
     return 0;
 }
 
-void GuiOverlay::setDebugValue(Ogre::Real value1, std::vector<std::string>& values, std::vector<DebugVar>& debugVars, int debugVarsLine)
+void GuiOverlay::setDebugValue(Ogre::Real value1, std::vector<std::string>& values)
 {
     fpsCaption->text(Ogre::StringConverter::toString(value1));
 
@@ -803,38 +794,11 @@ void GuiOverlay::setDebugValue(Ogre::Real value1, std::vector<std::string>& valu
     {
         debugCaption[i]->text("");
     }
-
-    int debugVarPos = debugVarsLine-3;
-    if (debugVarPos < 0) debugVarPos += debugVars.size();
-
-    for (size_t i = 0; i < debugVars.size() && i < DEBUG_VARIABLES_COUNT; i++)
-    {
-        std::string txt = debugVars[debugVarPos].name + ":  " + std::to_string(*debugVars[debugVarPos].target);
-        debugVarCaption[i]->text(txt);
-        debugVarPos = (debugVarPos + 1) % debugVars.size();
-    }
 }
 
-void GuiOverlay::showDebug(bool show)
+void GuiOverlay::showLevelDebug()
 {
-    float alpha = show ? 1.0f : 0.0f;
-
-    fpsCaption->colour(Ogre::ColourValue(1, 1, 0.5f, alpha));
-
-    for (size_t i = 0; i < MAX_DEBUG_LINES; i++)
-    {
-        debugCaption[i]->colour(Ogre::ColourValue(1, 1, 1, alpha));
-    }
-
-    for (size_t i = 0; i < DEBUG_VARIABLES_COUNT; i++)
-    {
-        debugVarCaption[i]->colour(Ogre::ColourValue(1, 1, 1, alpha));
-    }
-
-    debugVarCaption[3]->colour(Ogre::ColourValue(1, 1, 0, alpha));
-
-    if (show)
-        editUi->setVisible(0);
+    editUi->queryLevel();
 }
 
 void GuiOverlay::showMaterialDebug()
@@ -993,6 +957,8 @@ void GuiOverlay::updateMainMenu(Ogre::Real time)
 
 void GuiOverlay::updateIngame(Ogre::Real time)
 {
+    setDebugValue(Global::mWindow->getLastFPS(), GUtils::debug);
+
     gameLayer->show();
 
     gameUi->update(time);

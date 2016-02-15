@@ -28,7 +28,6 @@ struct LevelInfo
     Ogre::ColourValue fogColor;
     float fogStartDistance;
     float fogEndDistance;
-
     Ogre::ColourValue ambientColor;
 
     Ogre::Vector4 ContSatuSharpNoise;
@@ -37,6 +36,9 @@ struct LevelInfo
     float bloomSize = 1;
     float bloomStr;
     float bloomDepth;
+
+    void applyPostProcessing();
+    void applyFog();
 };
 
 class GameStateManager
@@ -54,8 +56,7 @@ public:
 
     void restartLevel();
     void reloadLevel();
-	void updatePPSettings();
-    void reloadSceneSettings();
+    void loadSceneSettings();
 
     void switchState(int target, float time = 1.0f);
 
@@ -74,8 +75,6 @@ public:
     SceneEditsLibrary sceneEdits;
 
     std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
-
-    void addDebugKey(std::string name, float* target, float step = 0.2f);
 
 private:
 

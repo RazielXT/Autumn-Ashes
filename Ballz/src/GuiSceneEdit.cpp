@@ -224,23 +224,18 @@ void GuiSceneEdit::setVisible(int lvl)
 
 void GuiSceneEdit::queryLevel()
 {
-	if (currentEdit)
-		delete currentEdit;
+    if (currentEdit && !currentEdit->persistent)
+        delete currentEdit;
 
-	currentEdit = LevelEdit::query();
+    currentEdit = LevelEdit::query();
 
-	if (currentEdit)
-	{
-		setVisible(1);
-		updateState();
-	}
-	else
-		setVisible(0);
+    setVisible(1);
+    updateState();
 }
 
 void GuiSceneEdit::queryMaterial()
 {
-    if (currentEdit)
+    if (currentEdit && !currentEdit->persistent)
         delete currentEdit;
 
     currentEdit = MaterialEdit::query();
@@ -256,7 +251,7 @@ void GuiSceneEdit::queryMaterial()
 
 void GuiSceneEdit::queryParticle()
 {
-    if (currentEdit)
+    if (currentEdit && !currentEdit->persistent)
         delete currentEdit;
 
     currentEdit = ParticleEdit::query();
