@@ -29,12 +29,12 @@ ParticleEdit::ParticleEdit(Ogre::ParticleSystem* particle)
 
     generateParticleParams();
 
-    rows = { { ps->getName(),EditRow::Caption },{ originName,EditRow::Caption },{ "Save",EditRow::Custom },{ "Restart",EditRow::Custom },{ "Particle",EditRow::Params },{ "PS",EditRow::Params } };
+    rows = { { ps->getName(),EditRow::Caption },{ originName,EditRow::Caption },{ "Save",EditRow::Action },{ "Restart",EditRow::Action },{ "Particle",EditRow::Params },{ "PS",EditRow::Params } };
 }
 
-EditVariables* ParticleEdit::getParams(int row)
+EditVariables* ParticleEdit::getParams(const std::string& row)
 {
-    if (rows[row].name == "Particle")
+    if (row == "Particle")
     {
         return &particleParams;
     }
@@ -42,9 +42,9 @@ EditVariables* ParticleEdit::getParams(int row)
         return MaterialEdit::getParams(row);
 }
 
-void ParticleEdit::editChanged(EditVariable& var, int row)
+void ParticleEdit::editChanged(EditVariable& var, const std::string& row)
 {
-    if (rows[row].name == "Particle")
+    if (row == "Particle")
     {
         var.edited = true;
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Gorilla.h"
-#include "SceneEditsLibrary.h"
+#include "Edit.h"
 
 #define EDIT_BASE_ROWS_MAX 6
 #define EDIT_PARAMS_ROWS_MAX 7
@@ -14,6 +14,7 @@ public:
     void initUi(Gorilla::Layer* layer);
     bool pressedKey(const OIS::KeyEvent &arg);
 
+	void queryLevel();
     void queryMaterial();
     void queryParticle();
 

@@ -317,6 +317,12 @@
     <ClCompile Include="src\SceneEditsLibrary.cpp">
       <Filter>Files\Core\SceneEdit</Filter>
     </ClCompile>
+    <ClCompile Include="include\LevelEdit.cpp">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Edit.cpp">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -633,6 +639,9 @@
     </ClInclude>
     <ClInclude Include="include\GuiSceneEdit.h">
       <Filter>Files\Core\SceneEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LevelEdit.h">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

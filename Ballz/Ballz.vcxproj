@@ -125,6 +125,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\LevelEdit.cpp" />
     <ClCompile Include="src\AAmain.cpp" />
     <ClCompile Include="src\AnimatedTrack.cpp" />
     <ClCompile Include="src\AnimationBlender.cpp" />
@@ -141,6 +142,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\DefaultObjectContactCallback.cpp" />
     <ClCompile Include="src\DefShadowCamera.cpp" />
     <ClCompile Include="src\DynamicRope.cpp" />
+    <ClCompile Include="src\Edit.cpp" />
     <ClCompile Include="src\EffectsTasks.cpp" />
     <ClCompile Include="src\Energy.cpp" />
     <ClCompile Include="src\EntityMovementReaction.cpp" />
@@ -243,6 +245,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\GameUiActions.h" />
     <ClInclude Include="include\Gate.h" />
     <ClInclude Include="include\GateLock.h" />
+    <ClInclude Include="include\LevelEdit.h" />
     <ClInclude Include="include\GrassDetailGeometry.h" />
     <ClInclude Include="include\GuiMaterialEdit.h" />
     <ClInclude Include="include\GuiSceneEdit.h" />

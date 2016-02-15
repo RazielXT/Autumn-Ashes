@@ -2733,8 +2733,6 @@ void reloadScene(Ogre::String filename)
     if (sceneElement)
         parseSceneSettings(sceneElement);
 
-    Global::gameMgr->reloadSceneSettings();
-
     String elementName;
     const XMLElement* childElement = 0;
     while (childElement = IterateChildElements(nodesElement, childElement))
@@ -2775,8 +2773,6 @@ void loadScene(Ogre::String filename)
 
     if (sceneElement)
         parseSceneSettings(sceneElement);
-
-    Global::gameMgr->reloadSceneSettings();
 
     std::vector<const XMLElement*> compBodies;
     String elementName;

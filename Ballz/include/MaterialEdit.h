@@ -20,8 +20,8 @@ struct MaterialEdit : public Edit
         ar & vsVariables;
     }
 
-    virtual EditVariables* getParams(int row);
-    virtual void editChanged(EditVariable& var, int row);
+    virtual EditVariables* getParams(const std::string& row);
+    virtual void editChanged(EditVariable& var, const std::string& row);
     virtual void customAction(std::string name);
     void merge(MaterialEdit& r, bool addNotExisting);
 

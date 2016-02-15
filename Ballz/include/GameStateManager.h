@@ -54,6 +54,7 @@ public:
 
     void restartLevel();
     void reloadLevel();
+	void updatePPSettings();
     void reloadSceneSettings();
 
     void switchState(int target, float time = 1.0f);

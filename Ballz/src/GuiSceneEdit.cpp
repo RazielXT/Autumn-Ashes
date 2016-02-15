@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GuiSceneEdit.h"
+#include "SceneEditsLibrary.h"
 #include "MUtils.h"
 #include "GUtils.h"
 #include "Player.h"
@@ -62,14 +63,14 @@ bool GuiSceneEdit::pressedKey(const OIS::KeyEvent &arg)
     }
     break;
     case OIS::KC_RIGHT:
-        if (activeLvl == 1 && base[activeBaseId].type == EditRow::Custom)
+        if (activeLvl == 1 && base[activeBaseId].type == EditRow::Action)
         {
             currentEdit->customAction(base[activeBaseId].name);
         }
         else
         {
             if (activeLvl == 1 && base[activeBaseId].type == EditRow::Params)
-                currentVars = currentEdit->getParams(activeBaseId);
+                currentVars = currentEdit->getParams(base[activeBaseId].name);
 
             if(currentVars)
                 activeLvl = Ogre::Math::Clamp(activeLvl + 1, 1, 3);
@@ -128,7 +129,7 @@ bool GuiSceneEdit::pressedKey(const OIS::KeyEvent &arg)
             auto& var = currentVars->at(activeVarId);
             for (int i = 0; i < var.size; i++)
                 var.buffer[i] = 1.0f;
-            currentEdit->editChanged(var, activeBaseId);
+            currentEdit->editChanged(var, base[activeBaseId].name);
         }
         break;
     case OIS::KC_END:
@@ -137,7 +138,7 @@ bool GuiSceneEdit::pressedKey(const OIS::KeyEvent &arg)
             auto& var = currentVars->at(activeVarId);
             for (int i = 0; i < var.size; i++)
                 var.buffer[i] = var.buffer[activeParamId];
-            currentEdit->editChanged(var, activeBaseId);
+            currentEdit->editChanged(var, base[activeBaseId].name);
         }
         break;
     case OIS::KC_SUBTRACT:
@@ -145,7 +146,7 @@ bool GuiSceneEdit::pressedKey(const OIS::KeyEvent &arg)
         {
             auto& var = currentVars->at(activeVarId);
             var.buffer[activeParamId] -= 0.1f;
-            currentEdit->editChanged(var, activeBaseId);
+            currentEdit->editChanged(var, base[activeBaseId].name);
         }
         break;
     case OIS::KC_ADD:
@@ -153,7 +154,7 @@ bool GuiSceneEdit::pressedKey(const OIS::KeyEvent &arg)
         {
             auto& var = currentVars->at(activeVarId);
             var.buffer[activeParamId] += 0.1f;
-            currentEdit->editChanged(var, activeBaseId);
+            currentEdit->editChanged(var, base[activeBaseId].name);
         }
         break;
     case OIS::KC_MULTIPLY:
@@ -161,7 +162,7 @@ bool GuiSceneEdit::pressedKey(const OIS::KeyEvent &arg)
         {
             auto& var = currentVars->at(activeVarId);
             var.buffer[activeParamId] *= 1.5f;
-            currentEdit->editChanged(var, activeBaseId);
+            currentEdit->editChanged(var, base[activeBaseId].name);
         }
         break;
     case OIS::KC_DIVIDE:
@@ -169,7 +170,7 @@ bool GuiSceneEdit::pressedKey(const OIS::KeyEvent &arg)
         {
             auto& var = currentVars->at(activeVarId);
             var.buffer[activeParamId] /= 1.5f;
-            currentEdit->editChanged(var, activeBaseId);
+            currentEdit->editChanged(var, base[activeBaseId].name);
         }
         break;
     default:
@@ -219,6 +220,22 @@ void GuiSceneEdit::setVisible(int lvl)
     }
 
     variableParamsCaption[activeParamId]->colour(Ogre::ColourValue(1, activeLvl == 3 ? 0.0f : 1.0f, 0, alpha));
+}
+
+void GuiSceneEdit::queryLevel()
+{
+	if (currentEdit)
+		delete currentEdit;
+
+	currentEdit = LevelEdit::query();
+
+	if (currentEdit)
+	{
+		setVisible(1);
+		updateState();
+	}
+	else
+		setVisible(0);
 }
 
 void GuiSceneEdit::queryMaterial()
@@ -272,7 +289,7 @@ void GuiSceneEdit::updateBase()
                 baseRowsCaption[i]->colour(Ogre::ColourValue(0.3f, 0.85f, 1.0, 1));
             else if (base[i].type == EditRow::Params)
                 baseRowsCaption[i]->colour(Ogre::ColourValue(1, 1, 1, 1));
-            else if (base[i].type == EditRow::Custom)
+            else if (base[i].type == EditRow::Action)
                 baseRowsCaption[i]->colour(Ogre::ColourValue(0.3f, 1, 0.2f, 1));
             else
                 baseRowsCaption[i]->colour(Ogre::ColourValue(0.2f, 0.6f, 0.6f, 1));

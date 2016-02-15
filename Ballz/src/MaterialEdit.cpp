@@ -4,39 +4,6 @@
 #include "GUtils.h"
 #include "Player.h"
 
-int Edit::idCounter = 5000;
-
-void Edit::mergeParams(std::vector<EditVariable>& from, std::vector<EditVariable>& target, bool addNotExisting)
-{
-    for (auto& var : from)
-    {
-        if (var.edited)
-        {
-            bool found = false;
-
-            for (auto& mvar : target)
-            {
-                if (mvar.name == var.name && mvar.size == var.size)
-                {
-                    memcpy(mvar.buffer, var.buffer, 4 * var.size);
-                    found = true;
-                }
-            }
-
-            if (!found && addNotExisting)
-            {
-                EditVariable mvar;
-                mvar.edited = true;
-                mvar.name = var.name;
-                mvar.size = var.size;
-                memcpy(mvar.buffer, var.buffer, 4 * var.size);
-
-                target.push_back(mvar);
-            }
-        }
-    }
-}
-
 MaterialEdit* MaterialEdit::query()
 {
     GUtils::RayInfo out;
@@ -69,12 +36,12 @@ MaterialEdit::MaterialEdit(Ogre::Entity* ent)
     loadMaterial();
     changed = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, entity->getName());
 
-    rows = { { ent->getName(),EditRow::Caption } , { originName,EditRow::Caption },{ "Save",EditRow::Custom },{ "VS",EditRow::Static },{ "PS",EditRow::Params } };
+    rows = { { ent->getName(),EditRow::Caption } , { originName,EditRow::Caption },{ "Save",EditRow::Action },{ "VS",EditRow::Static },{ "PS",EditRow::Params } };
 }
 
-EditVariables* MaterialEdit::getParams(int row)
+EditVariables* MaterialEdit::getParams(const std::string& row)
 {
-    if (rows[row].name == "PS")
+    if (row == "PS")
     {
         return &psVariables;
     }
@@ -82,9 +49,9 @@ EditVariables* MaterialEdit::getParams(int row)
     return nullptr;
 }
 
-void MaterialEdit::editChanged(EditVariable& var, int row)
+void MaterialEdit::editChanged(EditVariable& var, const std::string& row)
 {
-    if (rows[row].name == "PS")
+    if (row == "PS")
     {
         var.edited = true;
 

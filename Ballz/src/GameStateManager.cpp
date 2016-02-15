@@ -132,9 +132,11 @@ void GameStateManager::switchToLevel(int lvl)
     auto& lvlInfo = levels[lvl];
 
     SceneParser::loadScene(lvlInfo.path + lvlInfo.sceneFile);
-    lvlInfo.init();
 
     sceneEdits.loadChanges();
+	reloadSceneSettings();
+	lvlInfo.init();
+
     geometryMgr->update();
     SceneCubeMap::renderAll();
 
@@ -146,17 +148,11 @@ void GameStateManager::reloadSceneSettings()
     auto& lvlInfo = levels[lastLVL];
 
     Global::mSceneMgr->setAmbientLight(lvlInfo.ambientColor);
-    PostProcessMgr* postProcMgr = Global::mPPMgr;
-    postProcMgr->vars.ColouringShift = lvlInfo.ColorShift;
-    postProcMgr->vars.ContSatuSharpNoise = lvlInfo.ContSatuSharpNoise;
-    postProcMgr->vars.bloomStrDepAddSize.z = lvlInfo.bloomAdd;
-    postProcMgr->vars.bloomStrDepAddSize.x = lvlInfo.bloomStr;
-    postProcMgr->vars.bloomStrDepAddSize.y = lvlInfo.bloomDepth;
-    postProcMgr->vars.bloomStrDepAddSize.w = lvlInfo.bloomSize;
     Global::mSceneMgr->setSkyBox(true, lvlInfo.skyboxName);
     Global::mSceneMgr->setFog(FOG_LINEAR, lvlInfo.fogColor, 1, lvlInfo.fogStartDistance, lvlInfo.fogEndDistance);
-
     Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
+
+	updatePPSettings();
 }
 
 void GameStateManager::restartLevel()
@@ -167,6 +163,19 @@ void GameStateManager::restartLevel()
 void GameStateManager::reloadLevel()
 {
     SceneParser::reloadScene(levels[lastLVL].path + levels[lastLVL].sceneFile);
+}
+
+void GameStateManager::updatePPSettings()
+{
+	auto& lvlInfo = levels[lastLVL];
+	PostProcessMgr* postProcMgr = Global::mPPMgr;
+
+	postProcMgr->vars.ColouringShift = lvlInfo.ColorShift;
+	postProcMgr->vars.ContSatuSharpNoise = lvlInfo.ContSatuSharpNoise;
+	postProcMgr->vars.bloomStrDepAddSize.z = lvlInfo.bloomAdd;
+	postProcMgr->vars.bloomStrDepAddSize.x = lvlInfo.bloomStr;
+	postProcMgr->vars.bloomStrDepAddSize.y = lvlInfo.bloomDepth;
+	postProcMgr->vars.bloomStrDepAddSize.w = lvlInfo.bloomSize;
 }
 
 bool GameStateManager::insideMenuPressed()
