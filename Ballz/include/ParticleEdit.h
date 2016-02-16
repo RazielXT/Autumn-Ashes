@@ -29,12 +29,11 @@ struct ParticleEdit : public MaterialEdit
         ar & particleParams;
     }
 
-    virtual EditVariables* getParams(const std::string& row);
-    virtual void editChanged(EditVariable& var, const std::string& row);
-    virtual void customAction(std::string name);
-    void merge(ParticleEdit& r, bool addNotExisting);
+    virtual EditVariables* getParams(const std::string& row) override;
+    virtual void editChanged(EditVariable& var, const std::string& row) override;
+    virtual void customAction(std::string name) override;
 
-    void setParticleParam(Ogre::ParticleSystem* ps, EditVariable& var);
+    void merge(ParticleEdit& r, bool addNotExisting);
 
     static ParticleEdit* query();
     static void applyChanges(std::map < std::string, ParticleEdit >& changes);
@@ -42,9 +41,10 @@ struct ParticleEdit : public MaterialEdit
 
 protected:
 
-    virtual void resetMaterial();
-    virtual void materialChanged();
+    virtual void resetMaterial() override;
+    virtual void materialChanged() override;
 
+	void setParticleParam(Ogre::ParticleSystem* ps, EditVariable& var);
     void generateParticleParams();
 
     Ogre::ParticleSystem* ps;

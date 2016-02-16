@@ -21,9 +21,9 @@ struct LevelEdit : public Edit
         ar & reserved;
     }
 
-    virtual EditVariables* getParams(const std::string& row);
-    virtual void editChanged(EditVariable& var, const std::string& row);
-    virtual void customAction(std::string name);
+    virtual EditVariables* getParams(const std::string& row) override;
+    virtual void editChanged(EditVariable& var, const std::string& row) override;
+    virtual void customAction(std::string name) override;
 
     static LevelEdit* query();
     void applyChanges();
