@@ -85,7 +85,7 @@ void softsmoke_ps(
 	//distance fog
 	float insideFog = saturate((depthCloud - fogParams.y) / fogParams.z)*fogColor.a;
 	
-	float3 atmFog = fogColor.rgb*color0.a;
+	float3 atmFog = fogColor.rgb*color0.rgb;
 	color0.rgb = lerp(color0.rgb, atmFog, insideFog);
 	
 	//float dim=1;
