@@ -590,12 +590,13 @@ void loadCrowLanding(const XMLElement* rootElement, Entity* ent, SceneNode* node
 void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
 {
     Ogre::String ps_name = getElementValue(rootElement, "Name");
-    int rGroup = std::max<int>(RenderQueue_Particles, getElementIntValue(rootElement, "RenderQroup", RenderQueue_Particles));
+    int rGroup = getElementIntValue(rootElement, "RenderQroup", RenderQueue_SoftParticles);
 
     std::string name = "PS_" + ent->getName();
     Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem(name, ps_name);
     ps->setRenderQueueGroup(rGroup);
-    ps->setVisibilityFlags(VisibilityFlag_SoftParticles);
+
+	ps->setVisibilityFlags(rGroup >= RenderQueue_SoftParticles ? VisibilityFlag_SoftParticles : VisibilityFlag_Normal);
 
     auto parent = getElementValue(rootElement, "Parent");
     if (!parent.empty())
