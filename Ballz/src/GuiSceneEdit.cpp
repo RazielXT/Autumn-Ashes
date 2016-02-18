@@ -145,7 +145,7 @@ bool GuiSceneEdit::pressedKey(const OIS::KeyEvent &arg)
         if (activeLvl == 3)
         {
             auto& var = currentVars->at(activeVarId);
-            var.buffer[activeParamId] -= 0.1f;
+            var.buffer[activeParamId] -= var.step;
             currentEdit->editChanged(var, base[activeBaseId].name);
         }
         break;
@@ -153,7 +153,7 @@ bool GuiSceneEdit::pressedKey(const OIS::KeyEvent &arg)
         if (activeLvl == 3)
         {
             auto& var = currentVars->at(activeVarId);
-            var.buffer[activeParamId] += 0.1f;
+            var.buffer[activeParamId] += var.step;
             currentEdit->editChanged(var, base[activeBaseId].name);
         }
         break;

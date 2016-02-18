@@ -8,6 +8,7 @@ struct EditVariable
     int size = 0;
     float buffer[4];
 
+    float step = 0.1f;
     bool edited = false;
 
     template<class Archive>
@@ -19,9 +20,9 @@ struct EditVariable
     }
 
     EditVariable() {}
-    EditVariable(std::string name, Ogre::Vector3 vec);
-    EditVariable(std::string name, Ogre::Vector4 vec);
-    EditVariable(std::string name, Ogre::ColourValue);
+    EditVariable(std::string name, Ogre::Vector3 vec, float step = 0.1f);
+    EditVariable(std::string name, Ogre::Vector4 vec, float step = 0.1f);
+    EditVariable(std::string name, Ogre::ColourValue, float step = 0.1f);
     EditVariable(std::string name, float x, float y, float z);
     EditVariable(std::string name, float x, float y);
     EditVariable(std::string name, float x);

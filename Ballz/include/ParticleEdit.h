@@ -44,7 +44,7 @@ protected:
     virtual void resetMaterial() override;
     virtual void materialChanged() override;
 
-	void setParticleParam(Ogre::ParticleSystem* ps, EditVariable& var);
+    void setParticleParam(Ogre::ParticleSystem* ps, EditVariable& var);
     void generateParticleParams();
 
     Ogre::ParticleSystem* ps;

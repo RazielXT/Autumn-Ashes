@@ -83,11 +83,11 @@ void LevelEdit::generateParams()
     ppVariables.push_back({ "BloomSize" , level->bloomSize });
     ppVariables.push_back({ "BloomDepth" , level->bloomDepth });
     ppVariables.push_back({ "BloomStr" , level->bloomStr });
-    ppVariables.push_back({ "ColorShift" , level->ColorShift });
-    ppVariables.push_back({ "ContSatSharpNoise", level->ContSatuSharpNoise });
+    ppVariables.push_back({ "ColorShift" , level->ColorShift, 0.01f });
+    ppVariables.push_back({ "ContSatSharpNoise", level->ContSatuSharpNoise, 0.01f });
 
-    envVariables.push_back({ "Ambient", level->ambientColor });
-    envVariables.push_back({ "FogColor", level->fogColor });
+    envVariables.push_back({ "Ambient", level->ambientColor, 0.025f });
+    envVariables.push_back({ "FogColor", level->fogColor, 0.025f });
     envVariables.push_back({ "FogStartEnd", level->fogStartDistance, level->fogEndDistance});
 }
 

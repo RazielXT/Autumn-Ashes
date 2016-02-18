@@ -3,25 +3,29 @@
 
 int Edit::idCounter = 5000;
 
-EditVariable::EditVariable(std::string name_, Ogre::ColourValue color)
+EditVariable::EditVariable(std::string name_, Ogre::ColourValue color, float step_)
 {
     name = name_;
     size = 3;
     buffer[0] = color.r;
     buffer[1] = color.g;
     buffer[2] = color.b;
+
+    step = step_;
 }
 
-EditVariable::EditVariable(std::string name_, Ogre::Vector3 vec)
+EditVariable::EditVariable(std::string name_, Ogre::Vector3 vec, float step_)
 {
     name = name_;
     size = 3;
     buffer[0] = vec.x;
     buffer[1] = vec.y;
     buffer[2] = vec.z;
+
+    step = step_;
 }
 
-EditVariable::EditVariable(std::string name_, Ogre::Vector4 vec)
+EditVariable::EditVariable(std::string name_, Ogre::Vector4 vec, float step_)
 {
     name = name_;
     size = 4;
@@ -29,6 +33,8 @@ EditVariable::EditVariable(std::string name_, Ogre::Vector4 vec)
     buffer[1] = vec.y;
     buffer[2] = vec.z;
     buffer[3] = vec.w;
+
+    step = step_;
 }
 
 EditVariable::EditVariable(std::string name_, float x, float y, float z)
