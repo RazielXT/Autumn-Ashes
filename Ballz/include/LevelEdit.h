@@ -13,6 +13,8 @@ struct LevelEdit : public Edit
     std::vector<EditVariable> envVariables;
     std::vector<EditVariable> reserved;
 
+    std::vector<EditVariable> tempVariables;
+
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {

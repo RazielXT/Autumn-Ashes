@@ -13,6 +13,8 @@ EditVariables* LevelEdit::getParams(const std::string& row)
         return &ppVariables;
     if (row == "Scene")
         return &envVariables;
+    if (row == "Temp")
+        return &tempVariables;
 
     return nullptr;
 }
@@ -27,6 +29,11 @@ void LevelEdit::editChanged(EditVariable& var, const std::string& row)
     if (row == "Scene")
     {
         mergeParams({ var }, envVariables, true);
+        applySceneEdit(var);
+    }
+    if (row == "Temp")
+    {
+        mergeParams({ var }, tempVariables, true);
         applySceneEdit(var);
     }
 }
@@ -63,6 +70,7 @@ void LevelEdit::clear()
 {
     envVariables.clear();
     ppVariables.clear();
+    tempVariables.clear();
 }
 
 void LevelEdit::init()
@@ -70,10 +78,13 @@ void LevelEdit::init()
     level = Global::gameMgr->getCurrentLvlInfo();
     originName = level->name;
 
-    rows = { { originName,EditRow::Caption } ,{ "Save",EditRow::Action },{ "PP",EditRow::Params },{ "Scene",EditRow::Params } };
+    rows = { { originName,EditRow::Caption } ,{ "Save",EditRow::Action },{ "Temp",EditRow::Params },{ "PP",EditRow::Params } , { "Scene",EditRow::Params } };
 
     generateParams();
 }
+
+static float yaw;
+static float pitch;
 
 void LevelEdit::generateParams()
 {
@@ -89,6 +100,13 @@ void LevelEdit::generateParams()
     envVariables.push_back({ "Ambient", level->ambientColor, 0.025f });
     envVariables.push_back({ "FogColor", level->fogColor, 0.025f });
     envVariables.push_back({ "FogStartEnd", level->fogStartDistance, level->fogEndDistance});
+
+    auto& sunOr = Global::mSceneMgr->getLight("Sun")->getParentSceneNode()->getOrientation();
+    EditVariable var( "SunDir", sunOr.getPitch().valueDegrees(), sunOr.getYaw().valueDegrees());
+    var.step = 5.0f;
+    tempVariables.push_back(var);
+    yaw = var.buffer[0];
+    pitch = var.buffer[1];
 }
 
 void LevelEdit::applyPPEdit(EditVariable& var)
@@ -128,6 +146,23 @@ void LevelEdit::applySceneEdit(EditVariable& var)
         level->fogEndDistance = var.buffer[1];
 
         level->applyFog();
+    }
+    if (var.name == "SunDir")
+    {
+        auto sunNode = Global::mSceneMgr->getLight("Sun")->getParentSceneNode();
+        auto sunOr = sunNode->getOrientation();
+
+        if (var.buffer[0] != yaw)
+        {
+            sunNode->yaw(Ogre::Degree(yaw- var.buffer[0]));
+            var.buffer[0] = yaw;
+        }
+
+        if (var.buffer[1] != pitch)
+        {
+            sunNode->pitch(Ogre::Degree(pitch - var.buffer[1]));
+            var.buffer[1] = pitch;
+        }
     }
 }
 

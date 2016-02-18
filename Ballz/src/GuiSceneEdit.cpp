@@ -70,7 +70,11 @@ bool GuiSceneEdit::pressedKey(const OIS::KeyEvent &arg)
         else
         {
             if (activeLvl == 1 && base[activeBaseId].type == EditRow::Params)
+            {
+                activeVarId = 0;
+                activeParamId = 0;
                 currentVars = currentEdit->getParams(base[activeBaseId].name);
+            }
 
             if(currentVars)
                 activeLvl = Ogre::Math::Clamp(activeLvl + 1, 1, 3);
@@ -306,7 +310,7 @@ void GuiSceneEdit::updateText()
         {
             int id = (activeVarId - selectedOffset + i);
 
-            id = (id < 0) ? id + currentVars->size() : id % currentVars->size();
+            id = (id < 0) ? std::max<int>(0,id + currentVars->size()) : id % currentVars->size();
 
             variablesCaption[i]->text(currentVars->at(id).name);
         }

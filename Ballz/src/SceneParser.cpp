@@ -596,7 +596,7 @@ void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
     Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem(name, ps_name);
     ps->setRenderQueueGroup(rGroup);
 
-	ps->setVisibilityFlags(rGroup >= RenderQueue_SoftParticles ? VisibilityFlag_SoftParticles : VisibilityFlag_Normal);
+    ps->setVisibilityFlags(rGroup >= RenderQueue_SoftParticles ? VisibilityFlag_SoftParticles : VisibilityFlag_Normal);
 
     auto parent = getElementValue(rootElement, "Parent");
     if (!parent.empty())
