@@ -42,6 +42,7 @@ Player::Player(WorldMaterials* wMaterials)
     moving=false;
     onGround = true;
     sprinting = false;
+    levitating = false;
 
     hanging=false;
     climbing = 0;
@@ -241,6 +242,9 @@ void Player::releasedKey(const OIS::KeyEvent &arg)
         break;
     case OIS::KC_LSHIFT:
         sprinting = false;
+        break;
+    case OIS::KC_SPACE:
+        levitating = false;
         break;
     }
 }
@@ -492,6 +496,11 @@ void Player::updateStats()
     updateGroundStats();
 
     bodyVelocityL = body->getVelocity().length();
+    if (bodyVelocityL > 20)
+    {
+        bodyVelocityL = 20;
+        body->setVelocity(20 * body->getVelocity() / bodyVelocityL);
+    }
 
     pSwimming->update(tslf);
     pAbilities->update(tslf);

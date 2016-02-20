@@ -309,7 +309,7 @@ void GameStateManager::clearLevel()
     Global::mWorld->destroyAllBodies();
     Global::mSceneMgr->clearScene();
     Global::mEventsMgr->clear();
-    Global::soundEngine->removeAllSoundSources();
+    Global::audioLib->reset();
     Global::mPPMgr->resetValues();
     VolumeDetectionManager::get.reset();
     SceneEnergies::reset();

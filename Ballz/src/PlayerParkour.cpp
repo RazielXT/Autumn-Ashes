@@ -223,7 +223,7 @@ void PlayerParkour::doRoll()
     {
         rolling = p->shaker->doRoll(1.2f, p->headnode, p->necknode);
 
-        Global::audioLib->play3D("pullup.wav", p->bodyPosition, 5, 0.3f);
+        Global::audioLib->playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
     }
 }
 

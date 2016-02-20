@@ -56,6 +56,9 @@ void Player::updateDirectionForce()
         pParkour->updateRolling(tslf);
     }
 
+    if (levitating)
+        forceDirection.y += 10;
+
     if (moving && onGround)
     {
         float sprintFactor = sprinting ? 1.5f : 1.0f;
@@ -96,15 +99,17 @@ void Player::jump()
             Vector3 vel = body->getVelocity();
             body->setVelocity(vel + Vector3(0, 9, 0));
         }
+        else
+            levitating = true;
     }
 }
 
 void Player::manageFall()
 {
-    fallVelocity = abs(bodyVelocityL) * 2;
+    fallVelocity = bodyVelocityL * 3;
     pParkour->hitGround();
 
-    if (fallVelocity > 45)
+    if (fallVelocity >= 60)
     {
         if (!immortal && fallVelocity > 75)
         {
@@ -122,14 +127,14 @@ void Player::manageFall()
             if (!fallPitch)
                 fallVelocity = 80;
 
-            slowingDown = 0;
+            slowingDown = 1;
 
-            Global::audioLib->play3D("pad.wav", bodyPosition, 10);
+            Global::audioLib->playHurtSound(bodyPosition.x, bodyPosition.y, bodyPosition.z);
 
             Global::shaker->startShaking(1.5, 1.5, 0.5, 1, 1, 0.7, 0.35, 1, true);
         }
         else
-            slowingDown = 1 - fallVelocity/100.0f;
+            slowingDown = 1;// -fallVelocity / 100.0f;
     }
 
     if (!fallPitch)
@@ -192,6 +197,8 @@ void Player::updateMovement()
             {
                 ebd = 1 / (bodyVelocityL - 8);
             }
+            if (bodyVelocityL < 2)
+                ebd = 3 - bodyVelocityL;
 
             forceDirection *= movespeed*ebd*slowingDown;
         }
@@ -212,7 +219,7 @@ void Player::updateMovement()
     }
     //midair
     else
-        forceDirection *= 5;// 3 / (1 + bodyVelocity);
+        forceDirection *= 1.5;// 3 / (1 + bodyVelocity);
 }
 
 void Player::updateHead()
@@ -416,15 +423,24 @@ void Player::updateGroundStats()
         else
             groundID = 3;
 
-        if (!onGround) manageFall();
+        if (!onGround)
+            manageFall();
+
         onGround = true;
         body->setLinearDamping(4);
     }
-    else if (onGround)
+    else
     {
-        groundID = -1;
-        onGround = false;
-        body->setLinearDamping(0.0);
-        gNormal = 0;
+        if(levitating)
+            body->setLinearDamping(0.15f);
+        else
+            body->setLinearDamping(0.0);
+
+        if (onGround)
+        {
+            groundID = -1;
+            onGround = false;
+            gNormal = 0;
+        }
     }
 }

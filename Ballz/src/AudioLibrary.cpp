@@ -2,28 +2,15 @@
 
 using namespace Ogre;
 
-std::string AudioLibrary::getPath(std::string file, SoundType type)
-{
-    switch (type)
-    {
-    case Music:
-        return std::string("../../media/audio/music/" + file);
-    case SoundEffect:
-    default:
-        return std::string("../../media/audio/effects/" + file);
-    }
-}
-
 
 AudioLibrary::AudioLibrary(Ogre::Camera* cam)
 {
+    Global::soundEngine = soundEngine = irrklang::createIrrKlangDevice();
+    soundEngine->setListenerPosition(irrklang::vec3df(0, 0, 0), irrklang::vec3df(0, 0, 1));
+    camera = cam;
+
     fillMaterialAudio();
     fillMoveAudio();
-
-    camera = cam;
-    soundEngine = irrklang::createIrrKlangDevice();
-    soundEngine->setListenerPosition(irrklang::vec3df(0, 0, 0), irrklang::vec3df(0, 0, 1));
-    Global::soundEngine = soundEngine;
 }
 
 AudioLibrary::~AudioLibrary()
@@ -42,10 +29,10 @@ AudioLibrary::~AudioLibrary()
     deleted.clear();
     for (auto audio : movementAudio)
     {
-        if (std::find(deleted.begin(), deleted.end(), audio.second) == deleted.end())
+        if (std::find(deleted.begin(), deleted.end(), audio) == deleted.end())
         {
-            deleted.push_back(audio.second);
-            delete audio.second;
+            deleted.push_back(audio);
+            delete audio;
         }
     }
 
@@ -69,6 +56,14 @@ void AudioLibrary::update(float time)
             physicsAudio->fallSoundOffsetL -= time;
         }
     }
+}
+
+void AudioLibrary::reset()
+{
+    soundEngine->removeAllSoundSources();
+
+    preloadedSounds.clear();
+    fillMoveAudio();
 }
 
 void AudioLibrary::playRandom3D(std::vector<std::string>& sounds, Ogre::Vector3& pos, float maxDistance, float volume)
@@ -95,13 +90,15 @@ void AudioLibrary::play3D(const char* name, Vector3& pos, float maxDistance, flo
 }
 void AudioLibrary::playWalkingSound(float x, float y, float z, int groundID, float volume)
 {
-    auto sounds = movementAudio.find(groundID);
-    if (sounds == movementAudio.end()) return;
+    if (groundID > MaterialsTypesMax)
+        return;
 
-    int randID = (int)Ogre::Math::RangeRandom(0, sounds->second->size() - 0.01f);
+    auto sounds = *movementAudio[groundID];
 
-    auto sound = sounds->second->at(randID);
-    auto music = soundEngine->play3D(sound.c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, false);
+    int randID = (int)Ogre::Math::RangeRandom(0, sounds.size() - 0.01f);
+
+    auto sound = sounds[randID];
+    auto music = soundEngine->play3D(sound, irrklang::vec3df(x, y, z), false, false, true, false);
     //music = soundEngine->play2D(sound.c_str(), false, false, true, irrklang::ESM_AUTO_DETECT, false);
 
     music->setVolume(volume);
@@ -114,36 +111,39 @@ void AudioLibrary::playWalkingSound(float x, float y, float z, int groundID, flo
     music->drop();
 }
 
+irrklang::ISound* AudioLibrary::playSound(irrklang::ISoundSource* sound, float x, float y, float z, bool drop, float maxDistance, float volume)
+{
+    irrklang::ISound* music = soundEngine->play3D(sound, irrklang::vec3df(x, y, z), false, false, true, true);
+    music->setMaxDistance(maxDistance);
+    music->setVolume(volume);
+    music->setPlaybackSpeed(Global::timestep);
+
+    if (Global::timestep < 1)
+        music->getSoundEffectControl()->enableWavesReverbSoundEffect(0, -10 * Global::timestep, 2600, 0.5);
+
+    if (drop)
+        music->drop();
+
+    return music;
+}
+
+void AudioLibrary::playHurtSound(float x, float y, float z)
+{
+    playSound(hurtAudio, x, y, z, true, 10);
+}
+
+void AudioLibrary::playClimbSound(float x, float y, float z)
+{
+    playSound(climbAudio, x, y, z, true, 5, 0.3f);
+}
+
 void AudioLibrary::playFallSound(float x, float y, float z, int groundID)
 {
-    irrklang::ISound* music;
+    if (groundID > MaterialsTypesMax)
+        return;
 
-    switch (groundID)
-    {
-    case 1:
-        music = soundEngine->play3D(getPath("Stone_Hard_Walk_02.wav").c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
-        music->setMaxDistance(10);
-        break;
-    case 0:
-    case 2:
-    case 8:
-        music = soundEngine->play3D(getPath("grass_run_02.wav").c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
-        music->setMaxDistance(10);
-        break;
-    case 4:
-    case 5:
-    case 6:
-        music = soundEngine->play3D(getPath("wood_run_02.wav").c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
-        music->setMaxDistance(10);
-        break;
-    case 3:
-    default:
-        music = soundEngine->play3D(getPath("metalgrate1.wav").c_str(), irrklang::vec3df(x, y, z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
-        music->setMaxDistance(10);
-        break;
-
-    }
-
+    irrklang::ISound* music  = soundEngine->play3D(fallAudio[groundID], irrklang::vec3df(x, y, z), false, false, true, true);
+    music->setMaxDistance(10);
     music->setPlaybackSpeed(Global::timestep);
 
     if (Global::timestep < 1)
@@ -180,37 +180,65 @@ void AudioLibrary::fillMaterialAudio()
     dynamicsAudio["Bush"] = audio;
 }
 
+irrklang::ISoundSource* AudioLibrary::getSound(std::string path)
+{
+    auto s = preloadedSounds.find(path);
+    auto sound = s->second;
+
+    if (s == preloadedSounds.end())
+        sound = preloadSound(path);
+
+    return sound;
+}
+
+irrklang::ISoundSource* AudioLibrary::preloadSound(std::string path)
+{
+    auto sound = soundEngine->addSoundSourceFromFile(path.c_str(), irrklang::ESM_AUTO_DETECT, true);
+
+    if (sound)
+        preloadedSounds[path] = sound;
+
+    return sound;
+}
+
+void AudioLibrary::addPossibleSounds(std::vector<irrklang::ISoundSource*>* sounds, std::vector<std::string> soundFiles)
+{
+    for (auto& soundFile : soundFiles)
+    {
+        auto sound = getSound(soundFile);
+
+        if (sound)
+            sounds->push_back(sound);
+    }
+}
+
 void AudioLibrary::fillMoveAudio()
 {
-    std::vector<Ogre::String>* sounds = new std::vector<Ogre::String>();
-    sounds->push_back(getPath("Stone_Hard_Walk_01.wav"));
-    sounds->push_back(getPath("Stone_Hard_Walk_02.wav"));
-    sounds->push_back(getPath("Stone_Hard_Walk_03.wav"));
+    movementAudio.resize(MaterialsTypesMax + 1);
+    std::vector<irrklang::ISoundSource*>* sounds = new std::vector<irrklang::ISoundSource*>();
+    addPossibleSounds(sounds, { getPath("Stone_Hard_Walk_01.wav"), getPath("Stone_Hard_Walk_02.wav"), getPath("Stone_Hard_Walk_03.wav") });
     movementAudio[1] = sounds;
 
-    sounds = new std::vector<Ogre::String>();
-    sounds->push_back(getPath("grass_walk_01.wav"));
-    sounds->push_back(getPath("grass_walk_02.wav"));
-    sounds->push_back(getPath("grass_walk_03.wav"));
-    sounds->push_back(getPath("dirt_walk_02.wav"));
-    sounds->push_back(getPath("Dirt_Walk_03.wav"));
-    movementAudio[2] = sounds;
-    movementAudio[0] = sounds;
-    movementAudio[8] = sounds;
+    sounds = new std::vector<irrklang::ISoundSource*>();
+    addPossibleSounds(sounds, { getPath("grass_walk_01.wav"), getPath("grass_walk_02.wav") , getPath("grass_walk_03.wav"), getPath("dirt_walk_02.wav") ,getPath("Dirt_Walk_03.wav") });
+    movementAudio[2] = movementAudio[0] = movementAudio[8] = sounds;
 
-    sounds = new std::vector<Ogre::String>();
-    sounds->push_back(getPath("metalgrate1.wav"));
-    sounds->push_back(getPath("metalgrate2.wav"));
-    sounds->push_back(getPath("metalgrate3.wav"));
-    sounds->push_back(getPath("metalgrate4.wav"));
-    movementAudio[3] = sounds;
-    movementAudio[7] = sounds;
+    sounds = new std::vector<irrklang::ISoundSource*>();
+    addPossibleSounds(sounds, { getPath("metalgrate1.wav"),getPath("metalgrate2.wav"),getPath("metalgrate3.wav"),getPath("metalgrate4.wav") });
+    movementAudio[3] = movementAudio[7] = sounds;
 
-    sounds = new std::vector<Ogre::String>();
-    sounds->push_back(getPath("wood_walk_01.wav"));
-    sounds->push_back(getPath("wood_walk_02.wav"));
-    sounds->push_back(getPath("wood_walk_03.wav"));
-    movementAudio[4] = sounds;
-    movementAudio[5] = sounds;
-    movementAudio[6] = sounds;
+    sounds = new std::vector<irrklang::ISoundSource*>();
+    addPossibleSounds(sounds, { getPath("wood_walk_01.wav"),getPath("wood_walk_02.wav"),getPath("wood_walk_03.wav") });
+    movementAudio[4] = movementAudio[5] = movementAudio[6] = sounds;
+
+    //-------------------------------------
+
+    fallAudio.resize(MaterialsTypesMax + 1);
+    fallAudio[1] = getSound(getPath("Stone_Hard_Walk_01.wav"));
+    fallAudio[0] = fallAudio[2] = fallAudio[8] = getSound(getPath("grass_run_02.wav"));
+    fallAudio[4] = fallAudio[5] = fallAudio[6] = getSound(getPath("wood_run_02.wav"));
+    fallAudio[3] = fallAudio[7] = getSound(getPath("metalgrate1.wav"));
+
+    hurtAudio = getSound(getPath("pad.wav"));
+    climbAudio = getSound(getPath("pad.wav"));
 }
