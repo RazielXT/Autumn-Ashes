@@ -171,6 +171,7 @@ void diffuse_ps(
 	uniform float4 fogParams,
 	uniform float3 ambientColor,
 	uniform float specular2Weight,
+	uniform float ambientWeight,
 	uniform float4x4 iTWMat,
 	uniform float4x4 viewMat,
 	uniform float4 cubemapWPOffset,
@@ -301,8 +302,9 @@ void diffuse_ps(
 
 	}
 
-	ambientColor = float3(0.5,0.5,0.6);
-		
+	//ambientColor = float3(0.5,0.5,0.6);
+	ambientColor *= ambientWeight;
+	
 	float3 underShadow = max(shadowing.xxx,ambientColor);
 	//ambient lighting
 	//float3 ambDifLight = saturate(-diffuseLight)*ambientColor;

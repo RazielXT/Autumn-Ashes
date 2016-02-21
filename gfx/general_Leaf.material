@@ -1,6 +1,6 @@
 material leaf_material_dynamic_op
 {
-    set $diffuseCol "1 1 1 1"
+    set $diffuseCol "1 1 1"
     set $specularCol "1 1 1"
     set $shininess "32"
     set $brightness "0.05"
@@ -49,9 +49,7 @@ material leaf_material_dynamic_op
 			depth_write off
 			cull_hardware none
 
-            diffuse $diffuseCol
             specular $specularCol $brightness $shininess
-            ambient 0 0 0 0
 			
             vertex_program_ref diffuse_vs_bopLeaf
             {
@@ -62,6 +60,7 @@ material leaf_material_dynamic_op
 				param_named alphaTest float $alphaTest
 				param_named enlighten float $enlighten
 				param_named vcWeight float $vcWeight
+				param_named diffuseColor float3 $diffuseCol
             }
 
 			texture_unit diffuseMap

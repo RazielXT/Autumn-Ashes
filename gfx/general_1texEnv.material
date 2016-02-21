@@ -19,7 +19,7 @@ material 1tEnv_material_static
     set $specularCol "1 1 1"
     set $shininess "32"
     set $brightness "0.5"  
-
+	set $ambientWeight "1"
 	set $uvScale "1"
 	set $detailScale "5" 
 	
@@ -49,7 +49,8 @@ material 1tEnv_material_static
             {
 				param_named uvScale float $uvScale
 				param_named detailScale float $detailScale
-				
+				param_named ambientWeight float $ambientWeight
+								
 				param_named specular2Weight float $specular2Weight
 				param_named cubemapWPOffset float4 0 0 0 0
             }
