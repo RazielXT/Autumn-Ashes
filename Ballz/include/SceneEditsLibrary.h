@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MaterialEdit.h"
+#include "OptimizedGroupEdit.h"
 #include "ParticleEdit.h"
 #include "LevelEdit.h"
 #include "DetailGeometryEdit.h"

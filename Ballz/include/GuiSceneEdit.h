@@ -16,6 +16,7 @@ public:
 
     void queryLevel();
     void queryMaterial();
+    void queryOptGroup();
     void queryParticle();
     void queryDetailGeometry();
 

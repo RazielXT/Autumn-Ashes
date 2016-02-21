@@ -171,8 +171,15 @@ void optimizeEntities()
 
         std::map < mvec, std::vector<Entity*>, comparator> grid;
 
+        Ogre::MaterialPtr usedMat = Ogre::MaterialManager::getSingletonPtr()->getByName(it.first);
+        auto newMat = usedMat->clone(it.first + "_opt");
+        Ogre::AxisAlignedBox bBox;
+
         for (auto e : entities)
         {
+            bBox.merge(e->getParentNode()->getPosition());
+            e->setMaterial(newMat);
+
             Ogre::Quaternion eQ = e->getParentNode()->_getDerivedOrientation();
             Ogre::Vector3 bbCenterOffset = eQ*e->getBoundingBox().getHalfSize() - eQ*e->getBoundingBox().getCenter();
             Ogre::Vector3 gridPos = (e->getParentNode()->_getDerivedPosition() - bbCenterOffset) / staticEntitiesGridSize;
@@ -184,6 +191,8 @@ void optimizeEntities()
 
             grid[mgridPos].push_back(e);
         }
+
+        Global::gameMgr->geometryMgr->addOptimizedGroup({bBox, newMat});
 
         Ogre::StaticGeometry* sg = nullptr;
 

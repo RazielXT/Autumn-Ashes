@@ -171,6 +171,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\MaterialEdit.cpp" />
     <ClCompile Include="src\MaterialEditsLibrary.cpp" />
     <ClCompile Include="src\GUtils.cpp" />
+    <ClCompile Include="src\OptimizedGroupEdit.cpp" />
     <ClCompile Include="src\ParticleEdit.cpp" />
     <ClCompile Include="src\ParticleManager.cpp" />
     <ClCompile Include="src\PgDetailGeometry.cpp" />
@@ -275,6 +276,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\MUtils.h" />
     <ClInclude Include="include\NewtonListener.h" />
     <ClInclude Include="include\GeometryManager.h" />
+    <ClInclude Include="include\OptimizedGroupEdit.h" />
     <ClInclude Include="include\ParticleEdit.h" />
     <ClInclude Include="include\ParticleManager.h" />
     <ClInclude Include="include\PgDetailGeometry.h" />

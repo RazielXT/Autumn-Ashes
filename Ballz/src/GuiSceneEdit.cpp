@@ -269,6 +269,22 @@ void GuiSceneEdit::queryMaterial()
         setVisible(0);
 }
 
+void GuiSceneEdit::queryOptGroup()
+{
+    if (currentEdit && !currentEdit->persistent)
+        delete currentEdit;
+
+    currentEdit = OptimizedGroupEdit::query();
+
+    if (currentEdit)
+    {
+        setVisible(1);
+        updateState();
+    }
+    else
+        setVisible(0);
+}
+
 void GuiSceneEdit::queryParticle()
 {
     if (currentEdit && !currentEdit->persistent)

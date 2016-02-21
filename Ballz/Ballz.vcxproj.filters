@@ -326,6 +326,9 @@
     <ClCompile Include="src\DetailGeometryEdit.cpp">
       <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClCompile>
+    <ClCompile Include="src\OptimizedGroupEdit.cpp">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -647,6 +650,9 @@
       <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClInclude>
     <ClInclude Include="include\DetailGeometryEdit.h">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OptimizedGroupEdit.h">
       <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClInclude>
   </ItemGroup>

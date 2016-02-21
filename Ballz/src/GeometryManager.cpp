@@ -5,6 +5,7 @@
 #include "GrassDetailGeometry.h"
 #include "ManualDetailGeometry.h"
 #include "BillboardDetailGeometry.h"
+#include "Player.h"
 
 using namespace Ogre;
 
@@ -69,6 +70,8 @@ void GeometryManager::clear()
     detailGeometries.clear();
 
     DetailGeometryMaterial::reset();
+
+    optimizedGroups.clear();
 }
 
 void GeometryManager::postLoad()
@@ -277,4 +280,28 @@ void GeometryManager::generateGeometryMask(Ogre::Entity* maskEnt, MaskGrid& posG
     }
 
     vbuf->unlock();
+}
+
+void GeometryManager::addOptimizedGroup(OptimizedGroup group)
+{
+    optimizedGroups.push_back(group);
+}
+
+OptimizedGroup GeometryManager::getClosestOptGroup()
+{
+    auto pos = Global::player->getCameraPosition();
+    OptimizedGroup out;
+    float closest = 999999;
+
+    for (auto& g : optimizedGroups)
+    {
+        float dist = g.bbox.getCenter().squaredDistance(pos);
+        if (dist < closest)
+        {
+            out = g;
+            closest = dist;
+        }
+    }
+
+    return out;
 }

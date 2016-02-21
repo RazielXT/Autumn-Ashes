@@ -7,6 +7,12 @@
 
 using VCEditFunc = std::function<void(Ogre::Entity*, float*, float*, Ogre::RGBA*, void* userData)>;
 
+struct OptimizedGroup
+{
+    Ogre::AxisAlignedBox bbox;
+    Ogre::MaterialPtr mat;
+};
+
 class GeometryManager
 {
 public:
@@ -27,7 +33,12 @@ public:
     //editFunc = (entity*, pos*, tc*, vc*)
     bool modifyVertexBuffer(Ogre::Entity* ent, VCEditFunc editFunc, void* data = nullptr);
 
+    void addOptimizedGroup(OptimizedGroup group);
+    OptimizedGroup getClosestOptGroup();
+
 private:
+
+    std::vector<OptimizedGroup> optimizedGroups;
 
     std::vector<DetailGeometry *> detailGeometries;
     DetailGeometry* getInstance(std::string name);

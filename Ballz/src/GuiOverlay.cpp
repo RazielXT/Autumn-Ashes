@@ -807,7 +807,7 @@ void GuiOverlay::showLevelDebug()
 
 void GuiOverlay::showMaterialDebug()
 {
-    editUi->queryMaterial();
+    editUi->queryOptGroup();
 }
 
 void GuiOverlay::showDetailGeometryDebug()
