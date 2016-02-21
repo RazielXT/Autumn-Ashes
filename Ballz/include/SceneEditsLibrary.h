@@ -3,6 +3,7 @@
 #include "MaterialEdit.h"
 #include "ParticleEdit.h"
 #include "LevelEdit.h"
+#include "DetailGeometryEdit.h"
 
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
@@ -12,6 +13,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/version.hpp>
+
 
 class SceneEditsLibrary
 {
@@ -27,6 +29,10 @@ public:
     bool loadSavedParticleChanges(ParticleEdit& edit, std::string particleName);
     void addParticleEdit(ParticleEdit& edit, std::string particleName);
     void removeParticleEdit(std::string particleName);
+
+    bool loadSavedDetailGeometryChanges(DetailGeometryEdit& edit, std::string name);
+    void addDetailGeometryEdit(DetailGeometryEdit& edit, std::string name);
+    void removeDetailGeometryEdit(std::string name);
 
     LevelEdit* getLevelEdit();
     void saveLevelEdit();

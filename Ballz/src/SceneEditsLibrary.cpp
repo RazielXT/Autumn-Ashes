@@ -194,6 +194,21 @@ void SceneEditsLibrary::removeParticleEdit(std::string particleName)
     saveParticleHistory(Global::gameMgr->getCurrentLvlInfo()->path);
 }
 
+bool SceneEditsLibrary::loadSavedDetailGeometryChanges(DetailGeometryEdit& edit, std::string name)
+{
+    return true;
+}
+
+void SceneEditsLibrary::addDetailGeometryEdit(DetailGeometryEdit& edit, std::string name)
+{
+
+}
+
+void SceneEditsLibrary::removeDetailGeometryEdit(std::string name)
+{
+
+}
+
 LevelEdit* SceneEditsLibrary::getLevelEdit()
 {
     return &levelEdits;

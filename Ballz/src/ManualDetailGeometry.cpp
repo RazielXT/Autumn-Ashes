@@ -7,6 +7,7 @@
 using namespace Ogre;
 
 std::map<int, ManualDetailGeometry*> ManualDetailGeometry::mdg;
+std::vector<LoadedManualDG> ManualDetailGeometry::loadedMDG;
 
 void ManualDetailGeometry::build()
 {
@@ -14,6 +15,7 @@ void ManualDetailGeometry::build()
         return;
 
     sg->build();
+    loadedMDG.push_back({ bbox , sg , id, name, mats.getGeneratedMaterials() });
 
     for (auto e : usedEntities)
     {
@@ -25,6 +27,8 @@ void ManualDetailGeometry::build()
 
 void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bool keepMesh, Vector3 color)
 {
+    bbox.merge(node->getPosition());
+
     auto info = DetailGeometryInfo::get(type);
 
     if (sg == nullptr)
@@ -57,6 +61,9 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
             sg->addEntity(ent, node->getPosition(), node->getOrientation()*qCorrect, info.generalScale*node->getScale());
             usedEntities.push_back(ent);
         }
+
+        if (name.empty())
+            name = type;
     }
     else
     {
@@ -66,5 +73,8 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
         mats.updateMaterial(ent, color,info);
         sg->addEntity(ent, node->getPosition(), node->getOrientation()*qCorrect, node->getScale());
         usedEntities.push_back(ent);
+
+        if (name.empty())
+            name = ent->getName();
     }
 }

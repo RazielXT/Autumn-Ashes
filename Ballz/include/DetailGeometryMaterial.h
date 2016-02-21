@@ -49,7 +49,7 @@ public:
         }
     }
 
-    void updateMaterial(Ogre::Entity* ent, Ogre::Vector3& color, DetailGeometryInfo& info)
+    void updateMaterial(Ogre::Entity* ent, Ogre::Vector3&, DetailGeometryInfo& info)
     {
         if (editVCMeshes.find(ent->getMesh()->getName()) != editVCMeshes.end())
         {
@@ -62,8 +62,6 @@ public:
             }
         }
 
-
-        if (color.x != 1 || color.y != 1 || color.z != 1)
         {
             auto name = ent->getSubEntity(0)->getMaterialName();
             static int matID = 0;
@@ -72,7 +70,7 @@ public:
             {
                 auto mat = (Ogre::Material*)Ogre::MaterialManager::getSingleton().getByName(name).get();
                 auto newMat = mat->clone(mat->getName() + "MGen" + std::to_string(++matID)).get();
-                newMat->setDiffuse(Ogre::ColourValue(color.x, color.y, color.z, 1));
+                //newMat->setDiffuse(Ogre::ColourValue(color.x, color.y, color.z, 1));
 
                 materials[name] = newMat;
             }
@@ -80,5 +78,17 @@ public:
             auto mat = materials[name];
             ent->getSubEntity(0)->setMaterialName(mat->getName());
         }
+    }
+
+    std::vector<Ogre::Material*> getGeneratedMaterials()
+    {
+        std::vector<Ogre::Material*> out;
+
+        for (auto& it : materials)
+        {
+            out.push_back(it.second);
+        }
+
+        return out;
     }
 };

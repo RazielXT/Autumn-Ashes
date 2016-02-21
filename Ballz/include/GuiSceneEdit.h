@@ -17,6 +17,7 @@ public:
     void queryLevel();
     void queryMaterial();
     void queryParticle();
+    void queryDetailGeometry();
 
     void setVisible(int lvl = 1);
     void updateState();

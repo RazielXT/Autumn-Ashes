@@ -237,6 +237,22 @@ void GuiSceneEdit::queryLevel()
     updateState();
 }
 
+void GuiSceneEdit::queryDetailGeometry()
+{
+    if (currentEdit && !currentEdit->persistent)
+        delete currentEdit;
+
+    currentEdit = DetailGeometryEdit::query();
+
+    if (currentEdit)
+    {
+        setVisible(1);
+        updateState();
+    }
+    else
+        setVisible(0);
+}
+
 void GuiSceneEdit::queryMaterial()
 {
     if (currentEdit && !currentEdit->persistent)

@@ -323,6 +323,9 @@
     <ClCompile Include="src\Edit.cpp">
       <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClCompile>
+    <ClCompile Include="src\DetailGeometryEdit.cpp">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -641,6 +644,9 @@
       <Filter>Files\Core\SceneEdit</Filter>
     </ClInclude>
     <ClInclude Include="include\LevelEdit.h">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DetailGeometryEdit.h">
       <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClInclude>
   </ItemGroup>

@@ -24,6 +24,7 @@ public:
     void showParticleDebug();
     void showMaterialDebug();
     void showLevelDebug();
+    void showDetailGeometryDebug();
 
     void setDebugValue(Ogre::Real value1, std::vector<std::string>& values);
     void updateMainMenu(Ogre::Real time);

@@ -141,6 +141,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\DebugKeys.cpp" />
     <ClCompile Include="src\DefaultObjectContactCallback.cpp" />
     <ClCompile Include="src\DefShadowCamera.cpp" />
+    <ClCompile Include="src\DetailGeometryEdit.cpp" />
     <ClCompile Include="src\DynamicRope.cpp" />
     <ClCompile Include="src\Edit.cpp" />
     <ClCompile Include="src\EffectsTasks.cpp" />
@@ -231,6 +232,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\DebugKeys.h" />
     <ClInclude Include="include\DefaultObjectContactCallback.h" />
     <ClInclude Include="include\DefShadowCamera.h" />
+    <ClInclude Include="include\DetailGeometryEdit.h" />
     <ClInclude Include="include\DetailGeometryInfo.h" />
     <ClInclude Include="include\DetailGeometryMaterial.h" />
     <ClInclude Include="include\Edit.h" />

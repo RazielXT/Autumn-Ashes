@@ -4,11 +4,22 @@
 #include "DetailGeometry.h"
 #include "DetailGeometryMaterial.h"
 
+struct LoadedManualDG
+{
+    Ogre::AxisAlignedBox bbox;
+    Ogre::StaticGeometry* sg;
+    int id;
+    std::string name;
+    std::vector<Ogre::Material*> usedMats;
+};
+
 class ManualDetailGeometry
 {
 
 protected:
 
+    Ogre::AxisAlignedBox bbox;
+    std::string name;
     DetailGeometryMaterial mats;
 
     std::vector<Ogre::Entity*> usedEntities;
@@ -16,11 +27,32 @@ protected:
     void build();
 
     static std::map<int, ManualDetailGeometry*> mdg;
+    static std::vector<LoadedManualDG> loadedMDG;
 
 public:
 
+    ManualDetailGeometry(int id_)
+    {
+        id = id_;
+    }
+    int id;
+
+    static LoadedManualDG* getClosest()
+    {
+        LoadedManualDG* dgOut = nullptr;
+
+        for (auto& dg : loadedMDG)
+        {
+            dgOut = &dg;
+        }
+
+        return dgOut;
+    }
+
     static void buildAll()
     {
+        loadedMDG.clear();
+
         for (auto dgi : mdg)
         {
             auto dg = dgi.second;
@@ -39,7 +71,7 @@ public:
         }
         else
         {
-            ManualDetailGeometry* dg = new ManualDetailGeometry();
+            ManualDetailGeometry* dg = new ManualDetailGeometry(id);
             mdg[id] = dg;
             return dg;
         }

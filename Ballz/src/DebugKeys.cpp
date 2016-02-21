@@ -10,12 +10,31 @@
 void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 {
     auto postProcMgr = Global::mPPMgr;
+    static Ogre::Vector3 debugPos;
 
     if (Global::gameMgr->myMenu->pressedKey(arg))
         return;
 
     switch (arg.key)
     {
+
+    case OIS::KC_C:
+    {
+        debugPos = Global::player->bodyPosition;
+    }
+    break;
+
+    case OIS::KC_V:
+    {
+        Global::player->setPosition(debugPos);
+    }
+    break;
+
+    case OIS::KC_NUMPAD7:
+    {
+        Global::gameMgr->myMenu->showDetailGeometryDebug();
+    }
+    break;
 
     case OIS::KC_NUMPAD6:
     {

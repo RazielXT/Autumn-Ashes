@@ -59,7 +59,7 @@ void ParticleEdit::editChanged(EditVariable& var, const std::string& row)
         changed = true;
     }
     else
-        return MaterialEdit::editChanged(var, row);
+        MaterialEdit::editChanged(var, row);
 }
 
 void ParticleEdit::customAction(std::string name)

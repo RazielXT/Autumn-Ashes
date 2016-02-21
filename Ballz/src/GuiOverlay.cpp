@@ -107,41 +107,45 @@ void GuiOverlay::clear()
 
 bool GuiOverlay::pressedKey(const OIS::KeyEvent &arg)
 {
-    if (!editUi->pressedKey(arg))
-        if(currentMenu==MAINM && !moving)
+    if (editUi->pressedKey(arg))
+        return true;
+
+    if (currentMenu == MAINM && !moving)
+    {
+        switch (arg.key)
         {
-            switch (arg.key)
+        case OIS::KC_LEFT:
+            if (!moving)
             {
-            case OIS::KC_LEFT:
-                if(!moving)
-                {
-                    movingDir=1;
-                    moving=true;
-                    mMenuState=mMenuState->previous;
-                }
-                break;
-            case OIS::KC_RIGHT:
-                if(!moving)
-                {
-                    movingDir=-1;
-                    moving=true;
-                    mMenuState=mMenuState->next;
-                }
-                break;
-            case OIS::KC_RETURN:
-                if (mMenuState->value == QUIT)
-                {
-                    gConfig->saveCfg();
-                }
-                if (mMenuState->value == OPTIONS)
-                {
-                    showOptions();
-                }
-                break;
-            default:
-                return false;
+                movingDir = 1;
+                moving = true;
+                mMenuState = mMenuState->previous;
             }
+            break;
+        case OIS::KC_RIGHT:
+            if (!moving)
+            {
+                movingDir = -1;
+                moving = true;
+                mMenuState = mMenuState->next;
+            }
+            break;
+        case OIS::KC_RETURN:
+            if (mMenuState->value == QUIT)
+            {
+                gConfig->saveCfg();
+            }
+            if (mMenuState->value == OPTIONS)
+            {
+                showOptions();
+            }
+            break;
+        default:
+            return false;
         }
+    }
+    else
+        return false;
 
     return true;
 }
@@ -804,6 +808,11 @@ void GuiOverlay::showLevelDebug()
 void GuiOverlay::showMaterialDebug()
 {
     editUi->queryMaterial();
+}
+
+void GuiOverlay::showDetailGeometryDebug()
+{
+    editUi->queryDetailGeometry();
 }
 
 void GuiOverlay::showParticleDebug()
