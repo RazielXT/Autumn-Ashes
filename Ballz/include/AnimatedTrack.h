@@ -33,7 +33,7 @@ protected:
     Ogre::Quaternion getDirectionState();
     Ogre::TransformKeyFrame getCurrentState();
 
-    bool placePointOnLine(Ogre::Vector3& point);
+    bool startFromPosition(Ogre::Vector3& point);
 
 
     Ogre::NodeAnimationTrack* track;

@@ -243,7 +243,7 @@ Ogre::TransformKeyFrame AnimatedTrack::getCurrentState()
 
 #define MAX_PLAYER_DISTANCE_SQ 4*4
 
-bool AnimatedTrack::placePointOnLine(Ogre::Vector3& point)
+bool AnimatedTrack::startFromPosition(Ogre::Vector3& point)
 {
     //auto log = Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log");
 

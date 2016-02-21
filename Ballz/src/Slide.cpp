@@ -104,14 +104,17 @@ bool Slide::start(Vector3& pos, bool withJump)
     if (mTrackerState == nullptr)
         mTrackerState = Global::mSceneMgr->createAnimationState(animName);
 
-    if (placePointOnLine(pos))
+    if (startFromPosition(pos))
     {
         setCorrectDirection(bidirectional);
         removeControlFromPlayer();
 
+        /*
         auto pdir = Global::player->getFacingDirection();
         auto slDir = getDirectionState()*Vector3(0, 0, -1);
         currentSpeed = Global::player->bodyVelocityL * std::max(0.0f, pdir.dotProduct(slDir));//  Global::player->bodyVelocity / avgSpeed;
+        */
+        currentSpeed = avgSpeed;
 
         if (withJump)
             startJumpToSlide();
@@ -133,7 +136,8 @@ bool Slide::start(float startOffset, bool withJump, float headArrivalTimer)
 
     setCorrectDirection(bidirectional, startOffset);
 
-    currentSpeed = 0;
+    currentSpeed = avgSpeed;
+    updateSlidingSpeed(1.0f);
 
     removeControlFromPlayer();
 
@@ -228,7 +232,7 @@ void Slide::release(bool returnControl, bool manualJump)
         else
             Global::player->body->setVelocity(10 * Global::player->getFacingDirection() + Vector3(0, 5, 0));
 
-        Global::shaker->startShaking(0.85, 1.0, 0.25, 1, 1, 0.5, 0.35, 1, true);
+        Global::shaker->startShaking(0.65, 1.0, 0.25, 1, 1, 0.5, 0.35, 1, true);
 
         enablePlayerControl = true;
     }
