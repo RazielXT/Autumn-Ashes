@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "Player.h"
 #include "MainListener.h"
 
 using namespace Ogre;

@@ -185,9 +185,6 @@
     <ClCompile Include="src\tinyxml2.cpp">
       <Filter>Files\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\AAmain.cpp">
-      <Filter>Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\stdafx.cpp">
       <Filter>Files</Filter>
     </ClCompile>
@@ -328,6 +325,12 @@
     </ClCompile>
     <ClCompile Include="src\OptimizedGroupEdit.cpp">
       <Filter>Files\Core\SceneEdit\Edits</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MainListener.cpp">
+      <Filter>Files\Listeners</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

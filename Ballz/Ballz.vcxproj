@@ -126,7 +126,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="include\LevelEdit.cpp" />
-    <ClCompile Include="src\AAmain.cpp" />
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\AnimatedTrack.cpp" />
     <ClCompile Include="src\AnimationBlender.cpp" />
     <ClCompile Include="src\AudioLibrary.cpp" />
@@ -167,6 +167,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\lvl_update.cpp" />
     <ClCompile Include="src\GuiOverlay.cpp" />
     <ClCompile Include="src\GeometryManager.cpp" />
+    <ClCompile Include="src\MainListener.cpp" />
     <ClCompile Include="src\ManualDetailGeometry.cpp" />
     <ClCompile Include="src\MaterialEdit.cpp" />
     <ClCompile Include="src\MaterialEditsLibrary.cpp" />
