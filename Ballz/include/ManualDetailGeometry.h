@@ -27,17 +27,17 @@ protected:
     Ogre::StaticGeometry* sg = nullptr;
     void build();
 
-    static std::map<int, ManualDetailGeometry*> mdg;    
+    static std::map<int, ManualDetailGeometry*> mdg;
 
 public:
 
-	ManualDetailGeometry(int id);
+    ManualDetailGeometry(int id);
     int id;
 
-	static std::vector<LoadedManualDG> loadedMDG;
-	static LoadedManualDG* getClosest();
-	static void buildAll();
-	static ManualDetailGeometry* get(int id);
+    static std::vector<LoadedManualDG> loadedMDG;
+    static LoadedManualDG* getClosest();
+    static void buildAll();
+    static ManualDetailGeometry* get(int id);
 
     void addObject(Ogre::SceneNode* node, std::string type, bool keepMesh, Ogre::Vector3 color);
 

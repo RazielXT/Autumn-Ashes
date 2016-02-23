@@ -20,6 +20,7 @@ public:
         ar & vsVariables;
     }
 
+    virtual void editChanged(EditVariable& var, const std::string& row) override;
     virtual void customAction(std::string name) override;
 
     static OptimizedGroupEdit* query();
@@ -27,6 +28,6 @@ public:
 
 protected:
 
-    bool varsChanged = false;
-	std::string groupId;
+    bool ogChanged = false;
+    std::string groupName;
 };

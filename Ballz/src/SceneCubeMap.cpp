@@ -5,6 +5,7 @@
 using namespace Ogre;
 
 int SceneCubeMap::id = 0;
+int SceneCubeMap::matId = 0;
 std::map<std::string, SceneCubeMap*> SceneCubeMap::cubeMaps;
 std::vector<SceneCubeMap::CubemapedMats> SceneCubeMap::appliedMaterials;
 
@@ -67,8 +68,7 @@ Ogre::MaterialPtr SceneCubeMap::applyCubemap(Ogre::MaterialPtr mat, Ogre::Vector
     }
 
     //create new
-    static int mid = 0;
-    auto newMat = mat->clone(mat->getName() + std::to_string(mid++));
+    auto newMat = mat->clone(mat->getName() + "_CM" + std::to_string(matId++));
 
     auto pass = newMat->getTechnique(0)->getPass(1);
     Ogre::TextureUnitState* t = pass->getTextureUnitState("envCubeMap");
@@ -94,6 +94,9 @@ void SceneCubeMap::clearAll()
         delete cubemap.second;
 
     cubeMaps.clear();
+
+    id = 0;
+    matId = 0;
 }
 
 void SceneCubeMap::init(std::string name, int size, bool editable, float minRenderDistance)

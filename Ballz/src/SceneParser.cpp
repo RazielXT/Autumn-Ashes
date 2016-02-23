@@ -192,7 +192,7 @@ void optimizeEntities()
             grid[mgridPos].push_back(e);
         }
 
-		std::string optGroupName = it.first;
+        std::string optGroupName = it.first;
         Global::gameMgr->geometryMgr->addOptimizedGroup({bBox, newMat, optGroupName });
 
         Ogre::StaticGeometry* sg = nullptr;

@@ -23,9 +23,9 @@ ParticleEdit::ParticleEdit(Ogre::ParticleSystem* particle)
 
     materialPtr = Ogre::MaterialManager::getSingleton().getByName(ps->getMaterialName());
 
-    loadMaterial();
+    loadMaterialInfo();
 
-    changed = Global::gameMgr->sceneEdits.loadSavedParticleChanges(*this, ps->getName());
+    changedMaterial = Global::gameMgr->sceneEdits.loadSavedParticleChanges(*this, ps->getName());
 
     generateParticleParams();
 
@@ -56,7 +56,7 @@ void ParticleEdit::editChanged(EditVariable& var, const std::string& row)
             setParticleParam(child, var);
         }
 
-        changed = true;
+        changedParticle = true;
     }
     else
         MaterialEdit::editChanged(var, row);
@@ -66,7 +66,7 @@ void ParticleEdit::customAction(std::string name)
 {
     if (name == "Save")
     {
-        if (changed)
+        if (changedMaterial || changedParticle)
             Global::gameMgr->sceneEdits.addParticleEdit(*this, ps->getName());
         else
             Global::gameMgr->sceneEdits.removeParticleEdit(ps->getName());
@@ -209,7 +209,7 @@ void ParticleEdit::resetMaterial()
 
 void ParticleEdit::materialChanged()
 {
-    if (!changed)
+    if (!changedMaterial)
     {
         MaterialEdit::materialChanged();
 

@@ -11,7 +11,7 @@ struct DetailGeometryEdit : public MaterialEdit
     virtual ~DetailGeometryEdit() {}
 
     std::vector<EditVariable> geometryParams;
-	std::string dgName;
+    std::string dgName;
 
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)

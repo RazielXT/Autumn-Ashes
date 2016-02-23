@@ -11,7 +11,7 @@ struct OptimizedGroup
 {
     Ogre::AxisAlignedBox bbox;
     Ogre::MaterialPtr mat;
-	std::string id;
+    std::string name;
 };
 
 class GeometryManager
@@ -36,7 +36,7 @@ public:
 
     void addOptimizedGroup(OptimizedGroup group);
     OptimizedGroup getClosestOptGroup();
-	std::vector<OptimizedGroup>& getOptGroups();
+    std::vector<OptimizedGroup>& getOptGroups();
 
 private:
 

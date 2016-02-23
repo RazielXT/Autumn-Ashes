@@ -11,7 +11,7 @@ std::vector<LoadedManualDG> ManualDetailGeometry::loadedMDG;
 
 ManualDetailGeometry::ManualDetailGeometry(int _id)
 {
-	id = _id;
+    id = _id;
 }
 
 void ManualDetailGeometry::build()
@@ -20,7 +20,7 @@ void ManualDetailGeometry::build()
         return;
 
     sg->build();
-	auto uniqueName = name + "_" + std::to_string(id);
+    auto uniqueName = name + "_" + std::to_string(id);
     loadedMDG.push_back({ bbox , sg , id, uniqueName, mats.getGeneratedMaterials() });
 
     for (auto e : usedEntities)
@@ -87,48 +87,48 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
 
 LoadedManualDG* ManualDetailGeometry::getClosest()
 {
-	LoadedManualDG* dgOut = nullptr;
-	float closest = 999999;
-	auto pos = Global::player->getCameraPosition();
+    LoadedManualDG* dgOut = nullptr;
+    float closest = 999999;
+    auto pos = Global::player->getCameraPosition();
 
-	for (auto& dg : loadedMDG)
-	{
-		float dist = pos.squaredDistance(dg.bbox.getCenter());
+    for (auto& dg : loadedMDG)
+    {
+        float dist = pos.squaredDistance(dg.bbox.getCenter());
 
-		if (dist < closest)
-		{
-			dgOut = &dg;
-			closest = dist;
-		}
-	}
+        if (dist < closest)
+        {
+            dgOut = &dg;
+            closest = dist;
+        }
+    }
 
-	return dgOut;
+    return dgOut;
 }
 
 void ManualDetailGeometry::buildAll()
 {
-	loadedMDG.clear();
+    loadedMDG.clear();
 
-	for (auto dgi : mdg)
-	{
-		auto dg = dgi.second;
-		dg->build();
-		delete dg;
-	}
+    for (auto dgi : mdg)
+    {
+        auto dg = dgi.second;
+        dg->build();
+        delete dg;
+    }
 
-	mdg.clear();
+    mdg.clear();
 }
 
 ManualDetailGeometry* ManualDetailGeometry::get(int id)
 {
-	if (mdg.find(id) != mdg.end())
-	{
-		return mdg[id];
-	}
-	else
-	{
-		ManualDetailGeometry* dg = new ManualDetailGeometry(id);
-		mdg[id] = dg;
-		return dg;
-	}
+    if (mdg.find(id) != mdg.end())
+    {
+        return mdg[id];
+    }
+    else
+    {
+        ManualDetailGeometry* dg = new ManualDetailGeometry(id);
+        mdg[id] = dg;
+        return dg;
+    }
 }

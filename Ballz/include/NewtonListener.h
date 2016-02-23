@@ -1,10 +1,12 @@
+#pragma once
+
 #include "stdafx.h"
 
 class NewtonListener
 {
 public:
-    NewtonListener() : m_World(nullptr) {}
 
+    NewtonListener() : m_World(nullptr) {}
 
     void init(OgreNewt::World* W)
     {
@@ -38,7 +40,8 @@ public:
     }
 
 private:
+
     OgreNewt::World* m_World;
-    Real m_elapsed;
-    Real m_update;
+    Ogre::Real m_elapsed;
+    Ogre::Real m_update;
 };

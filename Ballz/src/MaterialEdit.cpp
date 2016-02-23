@@ -33,8 +33,8 @@ MaterialEdit::MaterialEdit(Ogre::Entity* ent)
     entity = ent;
     materialPtr = ent->getSubEntity(0)->getMaterial();
 
-    loadMaterial();
-    changed = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, entity->getName());
+    loadMaterialInfo();
+    changedMaterial = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, entity->getName());
 
     rows = { { ent->getName(),EditRow::Caption } , { originName,EditRow::Caption },{ "Save",EditRow::Action },{ "VS",EditRow::Static },{ "PS",EditRow::Params } };
 }
@@ -69,7 +69,7 @@ void MaterialEdit::customAction(std::string name)
 {
     if (name == "Save")
     {
-        if (changed)
+        if (changedMaterial)
             Global::gameMgr->sceneEdits.addMaterialEdit(*this, entity->getName());
         else
             Global::gameMgr->sceneEdits.removeMaterialEdit(entity->getName());
@@ -97,7 +97,7 @@ void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& ch
                 auto newMat = curMat->clone(curMat->getName() + std::to_string(idCounter++));
                 e->setMaterial(newMat);
 
-				applyMaterialChanges(newMat, ent.second);
+                applyMaterialChanges(newMat, ent.second);
             }
         }
     }
@@ -105,18 +105,18 @@ void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& ch
 
 void MaterialEdit::applyMaterialChanges(Ogre::MaterialPtr mat, const MaterialEdit& changes)
 {
-	for (auto& var : changes.psVariables)
-	{
-		int pass = mat->getTechnique(0)->getNumPasses() - 1;
-		mat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
-	}
+    for (auto& var : changes.psVariables)
+    {
+        int pass = mat->getTechnique(0)->getNumPasses() - 1;
+        mat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+    }
 }
 
 void MaterialEdit::materialChanged()
 {
-    if (!changed)
+    if (!changedMaterial)
     {
-        changed = true;
+        changedMaterial = true;
 
         materialPtr = materialPtr->clone(materialPtr->getName() + std::to_string(idCounter++));
 
@@ -127,7 +127,7 @@ void MaterialEdit::materialChanged()
 
 void MaterialEdit::resetMaterial()
 {
-    changed = false;
+    changedMaterial = false;
     matInstance = false;
     materialPtr = Ogre::MaterialManager::getSingleton().getByName(originName);
 
@@ -135,7 +135,7 @@ void MaterialEdit::resetMaterial()
         entity->setMaterialName(originName);
 }
 
-void MaterialEdit::loadMaterial()
+void MaterialEdit::loadMaterialInfo()
 {
     psVariables.clear();
     originName = materialPtr->getName();

@@ -58,7 +58,7 @@ public:
 
 private:
 
-	irrklang::ISoundSource* preloadSound(std::string path);
+    irrklang::ISoundSource* preloadSound(std::string path);
 
     void fillMaterialAudio();
     void fillMoveAudio();

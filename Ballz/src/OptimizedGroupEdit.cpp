@@ -6,23 +6,34 @@
 OptimizedGroupEdit::OptimizedGroupEdit(OptimizedGroup* group)
 {
     materialPtr = group->mat;
+    groupName = group->name;
+    changedMaterial = true;
 
-    loadMaterial();
-    changed = true;
-    varsChanged = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, entity->getName());
-	groupId = group->id;
+    loadMaterialInfo();
 
-    rows = { { "Opt_" + groupId,EditRow::Caption } ,{ originName,EditRow::Caption },{ "Save",EditRow::Action },{ "VS",EditRow::Static },{ "PS",EditRow::Params } };
+    ogChanged = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, groupName);
+
+    rows = { { "Opt_" + groupName,EditRow::Caption } ,{ originName,EditRow::Caption },{ "Save",EditRow::Action },{ "VS",EditRow::Static },{ "PS",EditRow::Params } };
+}
+
+void OptimizedGroupEdit::editChanged(EditVariable& var, const std::string& row)
+{
+    if (row == "PS")
+    {
+        ogChanged = true;
+    }
+
+    MaterialEdit::editChanged(var, row);
 }
 
 void OptimizedGroupEdit::customAction(std::string name)
 {
     if (name == "Save")
     {
-    	if (varsChanged)
-    		Global::gameMgr->sceneEdits.addOptimizedGroupEdit(*this, groupId);
-    	else
-    		Global::gameMgr->sceneEdits.removeOptimizedGroupEdit(groupId);
+        if (ogChanged)
+            Global::gameMgr->sceneEdits.addOptimizedGroupEdit(*this, groupName);
+        else
+            Global::gameMgr->sceneEdits.removeOptimizedGroupEdit(groupName);
     }
 }
 
@@ -45,16 +56,16 @@ OptimizedGroupEdit* OptimizedGroupEdit::query()
 
 void OptimizedGroupEdit::applyChanges(const std::map < std::string, OptimizedGroupEdit >& changes)
 {
-	auto groups = Global::gameMgr->geometryMgr->getOptGroups();
+    auto groups = Global::gameMgr->geometryMgr->getOptGroups();
 
-	for (auto& g : groups)
-	{
-		auto it = changes.find(g.id);
+    for (auto& g : groups)
+    {
+        auto it = changes.find(g.name);
 
-		if (it != changes.end())
-		{
-			applyMaterialChanges(g.mat, it->second);
-		}
-	}
+        if (it != changes.end())
+        {
+            applyMaterialChanges(g.mat, it->second);
+        }
+    }
 }
 

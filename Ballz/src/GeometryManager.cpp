@@ -289,7 +289,7 @@ void GeometryManager::addOptimizedGroup(OptimizedGroup group)
 
 std::vector<OptimizedGroup>& GeometryManager::getOptGroups()
 {
-	return optimizedGroups;
+    return optimizedGroups;
 }
 
 OptimizedGroup GeometryManager::getClosestOptGroup()

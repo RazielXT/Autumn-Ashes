@@ -58,4 +58,5 @@ private:
     float minRenderDistance;
 
     static int id;
+    static int matId;
 };

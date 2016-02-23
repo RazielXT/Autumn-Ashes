@@ -73,6 +73,9 @@ void SceneEditsLibrary::loadChanges()
 
     loadLevelEdit(path);
     levelEdits.applyChanges();
+
+    loadOgHistory(path);
+    OptimizedGroupEdit::applyChanges(ogEditHistory.data);
 }
 
 void SceneEditsLibrary::clear()
@@ -148,40 +151,40 @@ void SceneEditsLibrary::loadParticleHistory(std::string path)
 
 void SceneEditsLibrary::saveDgHistory(std::string path)
 {
-	std::ofstream ofs(path + "DetailGeometries.edit", std::ios::binary);
-	boost::archive::binary_oarchive oa(ofs);
-	oa << dgEditHistory;
+    std::ofstream ofs(path + "DetailGeometries.edit", std::ios::binary);
+    boost::archive::binary_oarchive oa(ofs);
+    oa << dgEditHistory;
 }
 
 void SceneEditsLibrary::loadDgHistory(std::string path)
 {
-	std::ifstream ifs(path + "DetailGeometries.edit", std::ios::binary);
+    std::ifstream ifs(path + "DetailGeometries.edit", std::ios::binary);
 
-	if (ifs.good())
-	{
-		boost::archive::binary_iarchive ia(ifs);
+    if (ifs.good())
+    {
+        boost::archive::binary_iarchive ia(ifs);
 
-		ia >> dgEditHistory;
-	}
+        ia >> dgEditHistory;
+    }
 }
 
 void SceneEditsLibrary::saveOgHistory(std::string path)
 {
-	std::ofstream ofs(path + "OptimizedGroups.edit", std::ios::binary);
-	boost::archive::binary_oarchive oa(ofs);
-	oa << ogEditHistory;
+    std::ofstream ofs(path + "OptimizedGroups.edit", std::ios::binary);
+    boost::archive::binary_oarchive oa(ofs);
+    oa << ogEditHistory;
 }
 
 void SceneEditsLibrary::loadOgHistory(std::string path)
 {
-	std::ifstream ifs(path + "OptimizedGroups.edit", std::ios::binary);
+    std::ifstream ifs(path + "OptimizedGroups.edit", std::ios::binary);
 
-	if (ifs.good())
-	{
-		boost::archive::binary_iarchive ia(ifs);
+    if (ifs.good())
+    {
+        boost::archive::binary_iarchive ia(ifs);
 
-		ia >> ogEditHistory;
-	}
+        ia >> ogEditHistory;
+    }
 }
 
 bool SceneEditsLibrary::loadSavedParticleChanges(ParticleEdit& edit, std::string particleName)
@@ -234,116 +237,116 @@ void SceneEditsLibrary::removeParticleEdit(std::string particleName)
 
 bool SceneEditsLibrary::loadSavedDetailGeometryChanges(DetailGeometryEdit& edit, std::string name)
 {
-	auto& dg = dgEditHistory.data.begin();
+    auto& dg = dgEditHistory.data.begin();
 
-	while (dg != dgEditHistory.data.end())
-	{
-		if (dg->first == name)
-		{
-			//dgs have unique mats
-			if (edit.originName != dg->second.originName)
-			{
-				//old save, erase it
-				dgEditHistory.data.erase(dg);
-				return false;
-			}
-			else
-				edit.merge(dg->second, false);
+    while (dg != dgEditHistory.data.end())
+    {
+        if (dg->first == name)
+        {
+            //dgs have unique mats
+            if (edit.originName != dg->second.originName)
+            {
+                //old save, erase it
+                dgEditHistory.data.erase(dg);
+                return false;
+            }
+            else
+                edit.merge(dg->second, false);
 
-			return true;
-		}
+            return true;
+        }
 
-		dg++;
-	}
+        dg++;
+    }
 
-	return false;
+    return false;
 }
 
 void SceneEditsLibrary::addDetailGeometryEdit(DetailGeometryEdit& edit, std::string name)
 {
-	auto& dg = dgEditHistory.data[name];
+    auto& dg = dgEditHistory.data[name];
 
-	if (dg.dgName.empty())
-		dg.dgName = edit.dgName;
-		
-	dg.merge(edit, true);
+    if (dg.dgName.empty())
+        dg.dgName = edit.dgName;
 
-	saveDgHistory(Global::gameMgr->getCurrentLvlInfo()->path);
+    dg.merge(edit, true);
+
+    saveDgHistory(Global::gameMgr->getCurrentLvlInfo()->path);
 }
 
 void SceneEditsLibrary::removeDetailGeometryEdit(std::string name)
 {
-	auto& dg = dgEditHistory.data.begin();
+    auto& dg = dgEditHistory.data.begin();
 
-	while (dg != dgEditHistory.data.end())
-	{
-		if (dg->first == name)
-		{
-			dgEditHistory.data.erase(dg);
-			break;
-		}
+    while (dg != dgEditHistory.data.end())
+    {
+        if (dg->first == name)
+        {
+            dgEditHistory.data.erase(dg);
+            break;
+        }
 
-		dg++;
-	}
+        dg++;
+    }
 
-	saveDgHistory(Global::gameMgr->getCurrentLvlInfo()->path);
+    saveDgHistory(Global::gameMgr->getCurrentLvlInfo()->path);
 }
 
 bool SceneEditsLibrary::loadSavedOptimizedGroupChanges(OptimizedGroupEdit& edit, std::string name)
 {
-	auto& ent = ogEditHistory.data.begin();
+    auto& ent = ogEditHistory.data.begin();
 
-	while (ent != ogEditHistory.data.end())
-	{
-		if (ent->first == name)
-		{
-			//must have at least copy name of saved origin
-			if (!SUtils::startsWith(edit.originName, ent->second.originName))
-			{
-				//old save, erase it
-				ogEditHistory.data.erase(ent);
-				return false;
-			}
-			else
-				edit.merge(ent->second, false);
+    while (ent != ogEditHistory.data.end())
+    {
+        if (ent->first == name)
+        {
+            //must have at least copy name of saved origin
+            if (!SUtils::startsWith(edit.originName, ent->second.originName))
+            {
+                //old save, erase it
+                ogEditHistory.data.erase(ent);
+                return false;
+            }
+            else
+                edit.merge(ent->second, false);
 
-			return true;
-		}
+            return true;
+        }
 
-		ent++;
-	}
+        ent++;
+    }
 
-	return false;
+    return false;
 }
 
 void SceneEditsLibrary::addOptimizedGroupEdit(OptimizedGroupEdit& edit, std::string name)
 {
-	auto& og = ogEditHistory.data[name];
+    auto& og = ogEditHistory.data[name];
 
-	if (og.originName.empty())
-		og.originName = edit.originName;
+    if (og.originName.empty())
+        og.originName = edit.originName;
 
-	og.merge(edit, true);
+    og.merge(edit, true);
 
-	saveOgHistory(Global::gameMgr->getCurrentLvlInfo()->path);
+    saveOgHistory(Global::gameMgr->getCurrentLvlInfo()->path);
 }
 
 void SceneEditsLibrary::removeOptimizedGroupEdit(std::string name)
 {
-	auto& og = ogEditHistory.data.begin();
+    auto& og = ogEditHistory.data.begin();
 
-	while (og != ogEditHistory.data.end())
-	{
-		if (og->first == name)
-		{
-			ogEditHistory.data.erase(og);
-			break;
-		}
+    while (og != ogEditHistory.data.end())
+    {
+        if (og->first == name)
+        {
+            ogEditHistory.data.erase(og);
+            break;
+        }
 
-		og++;
-	}
+        og++;
+    }
 
-	saveOgHistory(Global::gameMgr->getCurrentLvlInfo()->path);
+    saveOgHistory(Global::gameMgr->getCurrentLvlInfo()->path);
 }
 
 LevelEdit* SceneEditsLibrary::getLevelEdit()

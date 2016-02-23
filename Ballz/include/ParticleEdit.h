@@ -41,6 +41,7 @@ struct ParticleEdit : public MaterialEdit
 
 protected:
 
+    bool changedParticle = false;
     virtual void resetMaterial() override;
     virtual void materialChanged() override;
 
