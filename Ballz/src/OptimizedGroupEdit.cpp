@@ -9,20 +9,21 @@ OptimizedGroupEdit::OptimizedGroupEdit(OptimizedGroup* group)
 
     loadMaterial();
     changed = true;
-    //varsChanged = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, entity->getName());
+    varsChanged = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, entity->getName());
+	groupId = group->id;
 
-    rows = { { "Opt",EditRow::Caption } ,{ originName,EditRow::Caption },{ "Save",EditRow::Action },{ "VS",EditRow::Static },{ "PS",EditRow::Params } };
+    rows = { { "Opt_" + groupId,EditRow::Caption } ,{ originName,EditRow::Caption },{ "Save",EditRow::Action },{ "VS",EditRow::Static },{ "PS",EditRow::Params } };
 }
 
 void OptimizedGroupEdit::customAction(std::string name)
 {
-    /*if (name == "Save")
+    if (name == "Save")
     {
-    	if (changed)
-    		Global::gameMgr->sceneEdits.addMaterialEdit(*this, entity->getName());
+    	if (varsChanged)
+    		Global::gameMgr->sceneEdits.addOptimizedGroupEdit(*this, groupId);
     	else
-    		Global::gameMgr->sceneEdits.removeMaterialEdit(entity->getName());
-    }*/
+    		Global::gameMgr->sceneEdits.removeOptimizedGroupEdit(groupId);
+    }
 }
 
 OptimizedGroupEdit* OptimizedGroupEdit::query()
@@ -44,6 +45,16 @@ OptimizedGroupEdit* OptimizedGroupEdit::query()
 
 void OptimizedGroupEdit::applyChanges(const std::map < std::string, OptimizedGroupEdit >& changes)
 {
+	auto groups = Global::gameMgr->geometryMgr->getOptGroups();
 
+	for (auto& g : groups)
+	{
+		auto it = changes.find(g.id);
+
+		if (it != changes.end())
+		{
+			applyMaterialChanges(g.mat, it->second);
+		}
+	}
 }
 

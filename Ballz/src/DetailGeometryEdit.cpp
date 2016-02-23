@@ -10,7 +10,7 @@ DetailGeometryEdit::DetailGeometryEdit(LoadedManualDG* manualDG, int matID)
     materialPtr = Ogre::MaterialManager::getSingleton().getByName(manualDG->usedMats[matID]->getName());
 
     loadMaterial();
-    dgName = manualDG->name + "_" + std::to_string(manualDG->id);
+    dgName = manualDG->name;
 
     changed = Global::gameMgr->sceneEdits.loadSavedDetailGeometryChanges(*this, dgName + originName);
 
@@ -52,26 +52,34 @@ DetailGeometryEdit* DetailGeometryEdit::query()
 
 void DetailGeometryEdit::applyChanges(std::map < std::string, DetailGeometryEdit >& changes)
 {
-    /*for (auto& dg : changes)
+    for (auto& dg : changes)
     {
-    	if (Global::mSceneMgr->hasEntity(ent.first))
+		auto& loadedDg = ManualDetailGeometry::loadedMDG;
+
+		LoadedManualDG* dgInfo = nullptr;
+		for (auto ldg : loadedDg)
+		{
+			if (ldg.name == dg.first)
+			{
+				dgInfo = &ldg;
+			}
+		}
+
+    	if (dgInfo)
     	{
-    		auto e = Global::mSceneMgr->getEntity(ent.first);
-    		auto curMat = e->getSubEntity(0)->getMaterial();
-
-    		if (ent.second.originName == curMat->getName())
-    		{
-    			auto newMat = curMat->clone(curMat->getName() + std::to_string(idCounter++));
-    			e->setMaterial(newMat);
-
-    			for (auto& var : ent.second.psVariables)
-    			{
-    				int pass = newMat->getTechnique(0)->getNumPasses() - 1;
-    				newMat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
-    			}
-    		}
+			for (auto mat : dgInfo->usedMats)
+			{
+				if (dg.second.originName == mat->getName())
+				{
+					for (auto& var : dg.second.psVariables)
+					{
+						int pass = mat->getTechnique(0)->getNumPasses() - 1;
+						mat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+					}
+				}
+			}
     	}
-    }*/
+    }
 }
 
 void DetailGeometryEdit::resetMaterial()

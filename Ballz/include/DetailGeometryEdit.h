@@ -11,11 +11,12 @@ struct DetailGeometryEdit : public MaterialEdit
     virtual ~DetailGeometryEdit() {}
 
     std::vector<EditVariable> geometryParams;
+	std::string dgName;
 
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {
-        ar & originName;
+        ar & dgName;
         ar & psVariables;
         ar & geometryParams;
     }
@@ -33,5 +34,5 @@ protected:
     virtual void materialChanged() override;
 
     Ogre::StaticGeometry* sg;
-    std::string dgName;
+
 };

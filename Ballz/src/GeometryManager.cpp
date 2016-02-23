@@ -287,6 +287,11 @@ void GeometryManager::addOptimizedGroup(OptimizedGroup group)
     optimizedGroups.push_back(group);
 }
 
+std::vector<OptimizedGroup>& GeometryManager::getOptGroups()
+{
+	return optimizedGroups;
+}
+
 OptimizedGroup GeometryManager::getClosestOptGroup()
 {
     auto pos = Global::player->getCameraPosition();

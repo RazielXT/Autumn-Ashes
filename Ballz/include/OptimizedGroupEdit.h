@@ -28,4 +28,5 @@ public:
 protected:
 
     bool varsChanged = false;
+	std::string groupId;
 };

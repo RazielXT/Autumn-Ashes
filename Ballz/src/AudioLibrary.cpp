@@ -180,7 +180,7 @@ void AudioLibrary::fillMaterialAudio()
     dynamicsAudio["Bush"] = audio;
 }
 
-irrklang::ISoundSource* AudioLibrary::getSound(std::string path)
+irrklang::ISoundSource* AudioLibrary::getSoundSource(std::string path)
 {
     auto s = preloadedSounds.find(path);
     auto sound = s->second;
@@ -205,7 +205,7 @@ void AudioLibrary::addPossibleSounds(std::vector<irrklang::ISoundSource*>* sound
 {
     for (auto& soundFile : soundFiles)
     {
-        auto sound = getSound(soundFile);
+        auto sound = getSoundSource(soundFile);
 
         if (sound)
             sounds->push_back(sound);
@@ -234,11 +234,11 @@ void AudioLibrary::fillMoveAudio()
     //-------------------------------------
 
     fallAudio.resize(MaterialsTypesMax + 1);
-    fallAudio[1] = getSound(getPath("Stone_Hard_Walk_01.wav"));
-    fallAudio[0] = fallAudio[2] = fallAudio[8] = getSound(getPath("grass_run_02.wav"));
-    fallAudio[4] = fallAudio[5] = fallAudio[6] = getSound(getPath("wood_run_02.wav"));
-    fallAudio[3] = fallAudio[7] = getSound(getPath("metalgrate1.wav"));
+    fallAudio[1] = getSoundSource(getPath("Stone_Hard_Walk_01.wav"));
+    fallAudio[0] = fallAudio[2] = fallAudio[8] = getSoundSource(getPath("grass_run_02.wav"));
+    fallAudio[4] = fallAudio[5] = fallAudio[6] = getSoundSource(getPath("wood_run_02.wav"));
+    fallAudio[3] = fallAudio[7] = getSoundSource(getPath("metalgrate1.wav"));
 
-    hurtAudio = getSound(getPath("pad.wav"));
-    climbAudio = getSound(getPath("pad.wav"));
+    hurtAudio = getSoundSource(getPath("pad.wav"));
+    climbAudio = getSoundSource(getPath("pad.wav"));
 }

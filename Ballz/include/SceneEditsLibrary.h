@@ -35,6 +35,10 @@ public:
     void addDetailGeometryEdit(DetailGeometryEdit& edit, std::string name);
     void removeDetailGeometryEdit(std::string name);
 
+	bool loadSavedOptimizedGroupChanges(OptimizedGroupEdit& edit, std::string name);
+	void addOptimizedGroupEdit(OptimizedGroupEdit& edit, std::string name);
+	void removeOptimizedGroupEdit(std::string name);
+
     LevelEdit* getLevelEdit();
     void saveLevelEdit();
 
@@ -42,38 +46,36 @@ private:
 
     void saveLevelEdit(std::string path);
     void loadLevelEdit(std::string path);
-
     LevelEdit levelEdits;
 
-    void saveMaterialHistory(std::string path);
-    void loadMaterialHistory(std::string path);
 
-    struct EditedEntities
+	template <class T>
+    struct EditedData
     {
-        std::map < std::string, MaterialEdit > data;
+        std::map < std::string, T > data;
 
         template<class Archive>
         void serialize(Archive & ar, const unsigned int version)
         {
             ar & data;
         }
-    }
-    materialEditHistory;
+	};
+
+	void saveMaterialHistory(std::string path);
+	void loadMaterialHistory(std::string path);
+	EditedData<MaterialEdit> materialEditHistory;
 
     void saveParticleHistory(std::string path);
     void loadParticleHistory(std::string path);
+	EditedData<ParticleEdit> particleEditHistory;
 
-    struct EditedParticles
-    {
-        std::map < std::string, ParticleEdit > data;
+	void saveDgHistory(std::string path);
+	void loadDgHistory(std::string path);
+	EditedData<DetailGeometryEdit> dgEditHistory;
 
-        template<class Archive>
-        void serialize(Archive & ar, const unsigned int version)
-        {
-            ar & data;
-        }
-    }
-    particleEditHistory;
+	void saveOgHistory(std::string path);
+	void loadOgHistory(std::string path);
+	EditedData<OptimizedGroupEdit> ogEditHistory;
 
     int idCounter = 500;
 };

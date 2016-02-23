@@ -97,14 +97,19 @@ void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& ch
                 auto newMat = curMat->clone(curMat->getName() + std::to_string(idCounter++));
                 e->setMaterial(newMat);
 
-                for (auto& var : ent.second.psVariables)
-                {
-                    int pass = newMat->getTechnique(0)->getNumPasses() - 1;
-                    newMat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
-                }
+				applyMaterialChanges(newMat, ent.second);
             }
         }
     }
+}
+
+void MaterialEdit::applyMaterialChanges(Ogre::MaterialPtr mat, const MaterialEdit& changes)
+{
+	for (auto& var : changes.psVariables)
+	{
+		int pass = mat->getTechnique(0)->getNumPasses() - 1;
+		mat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+	}
 }
 
 void MaterialEdit::materialChanged()

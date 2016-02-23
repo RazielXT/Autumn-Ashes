@@ -42,8 +42,7 @@ public:
 
     std::map<Ogre::String, ObjectAudio*> dynamicsAudio;
 
-    irrklang::ISoundSource* getSound(std::string path);
-    irrklang::ISoundSource* preloadSound(std::string path);
+    irrklang::ISoundSource* getSoundSource(std::string path);
 
     static std::string getPath(std::string file, SoundType type = SoundEffect)
     {
@@ -58,6 +57,8 @@ public:
     }
 
 private:
+
+	irrklang::ISoundSource* preloadSound(std::string path);
 
     void fillMaterialAudio();
     void fillMoveAudio();

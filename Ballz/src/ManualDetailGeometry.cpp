@@ -9,13 +9,19 @@ using namespace Ogre;
 std::map<int, ManualDetailGeometry*> ManualDetailGeometry::mdg;
 std::vector<LoadedManualDG> ManualDetailGeometry::loadedMDG;
 
+ManualDetailGeometry::ManualDetailGeometry(int _id)
+{
+	id = _id;
+}
+
 void ManualDetailGeometry::build()
 {
     if (sg == nullptr)
         return;
 
     sg->build();
-    loadedMDG.push_back({ bbox , sg , id, name, mats.getGeneratedMaterials() });
+	auto uniqueName = name + "_" + std::to_string(id);
+    loadedMDG.push_back({ bbox , sg , id, uniqueName, mats.getGeneratedMaterials() });
 
     for (auto e : usedEntities)
     {
@@ -53,8 +59,8 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
 
         while (!meshName.empty())
         {
-            auto name = SUtils::strtok_str(meshName, ';');
-            auto ent = Global::mSceneMgr->createEntity(name);
+            auto mname = SUtils::strtok_str(meshName, ';');
+            auto ent = Global::mSceneMgr->createEntity(mname);
             //node->attachObject(ent);
 
             mats.updateMaterial(ent, color, info);
@@ -77,4 +83,52 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
         if (name.empty())
             name = ent->getName();
     }
+}
+
+LoadedManualDG* ManualDetailGeometry::getClosest()
+{
+	LoadedManualDG* dgOut = nullptr;
+	float closest = 999999;
+	auto pos = Global::player->getCameraPosition();
+
+	for (auto& dg : loadedMDG)
+	{
+		float dist = pos.squaredDistance(dg.bbox.getCenter());
+
+		if (dist < closest)
+		{
+			dgOut = &dg;
+			closest = dist;
+		}
+	}
+
+	return dgOut;
+}
+
+void ManualDetailGeometry::buildAll()
+{
+	loadedMDG.clear();
+
+	for (auto dgi : mdg)
+	{
+		auto dg = dgi.second;
+		dg->build();
+		delete dg;
+	}
+
+	mdg.clear();
+}
+
+ManualDetailGeometry* ManualDetailGeometry::get(int id)
+{
+	if (mdg.find(id) != mdg.end())
+	{
+		return mdg[id];
+	}
+	else
+	{
+		ManualDetailGeometry* dg = new ManualDetailGeometry(id);
+		mdg[id] = dg;
+		return dg;
+	}
 }

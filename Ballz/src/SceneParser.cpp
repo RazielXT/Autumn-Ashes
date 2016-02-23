@@ -192,7 +192,8 @@ void optimizeEntities()
             grid[mgridPos].push_back(e);
         }
 
-        Global::gameMgr->geometryMgr->addOptimizedGroup({bBox, newMat});
+		std::string optGroupName = it.first;
+        Global::gameMgr->geometryMgr->addOptimizedGroup({bBox, newMat, optGroupName });
 
         Ogre::StaticGeometry* sg = nullptr;
 
@@ -205,7 +206,7 @@ void optimizeEntities()
 
             if (!sg)
             {
-                sg = Global::mSceneMgr->createStaticGeometry("sg" + std::to_string(sgCount++));
+                sg = Global::mSceneMgr->createStaticGeometry("sgOpt" + std::to_string(sgCount++));
                 sg->setRegionDimensions(Ogre::Vector3(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize));
                 sg->setOrigin(Ogre::Vector3(0, 0, 0));
                 sg->setCastShadows(true);
