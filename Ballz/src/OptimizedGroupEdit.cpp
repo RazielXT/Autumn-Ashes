@@ -9,7 +9,7 @@ OptimizedGroupEdit::OptimizedGroupEdit(OptimizedGroup* group)
     groupName = group->name;
     changedMaterial = true;
 
-    loadMaterialInfo();
+    loadMaterial();
 
     ogChanged = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, groupName);
 

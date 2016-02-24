@@ -18,24 +18,24 @@ class ManualDetailGeometry
 {
 public:
 
-	ManualDetailGeometry(int id);
+    ManualDetailGeometry(int id);
 
-	void addObject(Ogre::SceneNode* node, std::string type, bool keepMesh, Ogre::Vector3 color);
+    void addObject(Ogre::SceneNode* node, std::string type, bool keepMesh, Ogre::Vector3 color);
 
 
-	static std::vector<LoadedManualDG*> loadedMDG;
-	static LoadedManualDG* getClosest();
-	static void buildAll();
-	static ManualDetailGeometry* get(int id);
+    static std::vector<LoadedManualDG> loadedMDG;
+    static LoadedManualDG* getClosest();
+    static void buildAll();
+    static ManualDetailGeometry* get(int id);
 
 protected:
 
-	LoadedManualDG info;
-	std::vector<Ogre::Entity*> usedEntities;
-	DetailGeometryMaterial materialHelper;
-	
-	void build();
+    LoadedManualDG info;
+    std::vector<Ogre::Entity*> usedEntities;
+    DetailGeometryMaterial materialHelper;
 
-	static std::map<int, ManualDetailGeometry*> mdg;
+    void build();
+
+    static std::map<int, ManualDetailGeometry*> mdg;
 
 };

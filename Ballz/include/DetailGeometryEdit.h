@@ -25,7 +25,7 @@ struct DetailGeometryEdit : public MaterialEdit
     virtual void editChanged(EditVariable& var, const std::string& row) override;
     virtual void customAction(std::string name) override;
 
-	void merge(DetailGeometryEdit& r, bool addNotExisting);
+    void merge(DetailGeometryEdit& r, bool addNotExisting);
 
     static DetailGeometryEdit* query();
     static void applyChanges(std::map < std::string, DetailGeometryEdit >& changes);
@@ -37,8 +37,8 @@ protected:
 
     Ogre::StaticGeometry* sg;
 
-	std::map<std::string, std::vector<EditVariable>> psVariablesMap;
+    std::map<std::string, std::vector<EditVariable>> psVariablesMap;
 
-	std::vector<Ogre::MaterialPtr> matsArray;
-	int currentMatId = 0;
+    std::vector<Ogre::MaterialPtr> matsArray;
+    int currentMatId = 0;
 };

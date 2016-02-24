@@ -9,7 +9,7 @@ class VolumeDetectionManager : public EventTask
 {
 public:
 
-    static VolumeDetectionManager get;
+    static VolumeDetectionManager instance;
 
     void reset();
     void registerVolume(VolumeDetection* volume);
@@ -30,7 +30,7 @@ protected:
 
     VolumeDetection()
     {
-        VolumeDetectionManager::get.registerVolume(this);
+        VolumeDetectionManager::instance.registerVolume(this);
     }
 
     void registerDetection()

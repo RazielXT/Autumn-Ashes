@@ -76,6 +76,9 @@ void SceneEditsLibrary::loadChanges()
 
     loadOgHistory(path);
     OptimizedGroupEdit::applyChanges(ogEditHistory.data);
+
+    loadDgHistory(path);
+    DetailGeometryEdit::applyChanges(dgEditHistory.data);
 }
 
 void SceneEditsLibrary::clear()

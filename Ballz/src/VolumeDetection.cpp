@@ -2,7 +2,7 @@
 #include "VolumeDetection.h"
 #include "Player.h"
 
-VolumeDetectionManager VolumeDetectionManager::get;
+VolumeDetectionManager VolumeDetectionManager::instance;
 
 void VolumeDetectionManager::registerVolume(VolumeDetection* volume)
 {

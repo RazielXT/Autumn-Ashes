@@ -311,10 +311,11 @@ void GameStateManager::clearLevel()
     Global::mEventsMgr->clear();
     Global::audioLib->reset();
     Global::mPPMgr->resetValues();
-    VolumeDetectionManager::get.reset();
+    VolumeDetectionManager::instance.reset();
     SceneEnergies::reset();
     Gate::reset();
     sceneEdits.clear();
+    particleMgr.clear();
 
     Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
 }

@@ -23,7 +23,7 @@ ParticleEdit::ParticleEdit(Ogre::ParticleSystem* particle)
 
     materialPtr = Ogre::MaterialManager::getSingleton().getByName(ps->getMaterialName());
 
-    loadMaterialInfo();
+    loadMaterial();
 
     changedMaterial = Global::gameMgr->sceneEdits.loadSavedParticleChanges(*this, ps->getName());
 

@@ -33,7 +33,7 @@ MaterialEdit::MaterialEdit(Ogre::Entity* ent)
     entity = ent;
     materialPtr = ent->getSubEntity(0)->getMaterial();
 
-    loadMaterialInfo();
+    loadMaterial();
     changedMaterial = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, entity->getName());
 
     rows = { { ent->getName(),EditRow::Caption } , { originName,EditRow::Caption },{ "Save",EditRow::Action },{ "VS",EditRow::Static },{ "PS",EditRow::Params } };
@@ -137,34 +137,34 @@ void MaterialEdit::resetMaterial()
 
 std::vector<EditVariable> MaterialEdit::generatePsParams(Ogre::MaterialPtr matPtr)
 {
-	std::vector<EditVariable> vars;
+    std::vector<EditVariable> vars;
 
-	int pass = materialPtr->getTechnique(0)->getNumPasses() - 1;
-	auto params = materialPtr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters();
-	auto& l = params->getConstantDefinitions();
-	bool skip = true;
+    int pass = matPtr->getTechnique(0)->getNumPasses() - 1;
+    auto params = matPtr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters();
+    auto& l = params->getConstantDefinitions();
+    bool skip = true;
 
-	for (auto c : l.map)
-	{
-		skip = !skip;
-		if (skip) continue;
+    for (auto c : l.map)
+    {
+        skip = !skip;
+        if (skip) continue;
 
-		if (c.second.constType <= 4)
-		{
-			EditVariable var;
-			var.name = c.first;
-			var.size = c.second.constType;
-			memcpy(var.buffer, params->getFloatPointer(c.second.physicalIndex), 4 * var.size);
+        if (c.second.constType <= 4)
+        {
+            EditVariable var;
+            var.name = c.first;
+            var.size = c.second.constType;
+            memcpy(var.buffer, params->getFloatPointer(c.second.physicalIndex), 4 * var.size);
 
-			vars.push_back(var);
-		}
-	}
+            vars.push_back(var);
+        }
+    }
 
-	return vars;
+    return vars;
 }
 
 void MaterialEdit::loadMaterial()
 {
     originName = materialPtr->getName();
-	psVariables = generatePsParams(materialPtr);
+    psVariables = generatePsParams(materialPtr);
 }
