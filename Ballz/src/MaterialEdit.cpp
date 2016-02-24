@@ -135,28 +135,36 @@ void MaterialEdit::resetMaterial()
         entity->setMaterialName(originName);
 }
 
-void MaterialEdit::loadMaterialInfo()
+std::vector<EditVariable> MaterialEdit::generatePsParams(Ogre::MaterialPtr matPtr)
 {
-    psVariables.clear();
+	std::vector<EditVariable> vars;
+
+	int pass = materialPtr->getTechnique(0)->getNumPasses() - 1;
+	auto params = materialPtr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters();
+	auto& l = params->getConstantDefinitions();
+	bool skip = true;
+
+	for (auto c : l.map)
+	{
+		skip = !skip;
+		if (skip) continue;
+
+		if (c.second.constType <= 4)
+		{
+			EditVariable var;
+			var.name = c.first;
+			var.size = c.second.constType;
+			memcpy(var.buffer, params->getFloatPointer(c.second.physicalIndex), 4 * var.size);
+
+			vars.push_back(var);
+		}
+	}
+
+	return vars;
+}
+
+void MaterialEdit::loadMaterial()
+{
     originName = materialPtr->getName();
-    int pass = materialPtr->getTechnique(0)->getNumPasses() - 1;
-    auto params = materialPtr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters();
-    auto& l = params->getConstantDefinitions();
-    bool skip = true;
-
-    for (auto c : l.map)
-    {
-        skip = !skip;
-        if (skip) continue;
-
-        if (c.second.constType <= 4)
-        {
-            EditVariable var;
-            var.name = c.first;
-            var.size = c.second.constType;
-            memcpy(var.buffer, params->getFloatPointer(c.second.physicalIndex), 4 * var.size);
-
-            psVariables.push_back(var);
-        }
-    }
+	psVariables = generatePsParams(materialPtr);
 }

@@ -33,7 +33,8 @@ struct MaterialEdit : public Edit
 
 protected:
 
-    void loadMaterialInfo();
+	std::vector<EditVariable> generatePsParams(Ogre::MaterialPtr matPtr);
+    void loadMaterial();
 
     virtual void resetMaterial();
     virtual void materialChanged();

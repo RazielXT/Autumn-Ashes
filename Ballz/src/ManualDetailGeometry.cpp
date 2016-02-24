@@ -7,21 +7,23 @@
 using namespace Ogre;
 
 std::map<int, ManualDetailGeometry*> ManualDetailGeometry::mdg;
-std::vector<LoadedManualDG> ManualDetailGeometry::loadedMDG;
+std::vector<LoadedManualDG*> ManualDetailGeometry::loadedMDG;
 
-ManualDetailGeometry::ManualDetailGeometry(int _id)
+ManualDetailGeometry::ManualDetailGeometry(int id)
 {
-    id = _id;
+	info.id = id;
 }
 
 void ManualDetailGeometry::build()
 {
-    if (sg == nullptr)
+    if (info.sg == nullptr)
         return;
 
-    sg->build();
-    auto uniqueName = name + "_" + std::to_string(id);
-    loadedMDG.push_back({ bbox , sg , id, uniqueName, mats.getGeneratedMaterials() });
+	info.sg->build();
+	info.name = info.name + "_" + std::to_string(info.id);
+	info.usedMats = materialHelper.getGeneratedMaterials();
+
+    loadedMDG.push_back(&info);
 
     for (auto e : usedEntities)
     {
@@ -33,29 +35,29 @@ void ManualDetailGeometry::build()
 
 void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bool keepMesh, Vector3 color)
 {
-    bbox.merge(node->getPosition());
+	info.bbox.merge(node->getPosition());
 
-    auto info = DetailGeometryInfo::get(type);
+    auto dgTypeInfo = DetailGeometryInfo::get(type);
 
-    if (sg == nullptr)
+    if (info.sg == nullptr)
     {
         static int msgCount = 0;
-        sg = Global::mSceneMgr->createStaticGeometry("manDG" + std::to_string(msgCount++));
-        sg->setCastShadows(true);
-        sg->setVisibilityFlags(VisibilityFlag_Normal);
+        info.sg = Global::mSceneMgr->createStaticGeometry("manDG" + std::to_string(msgCount++));
+		info.sg->setCastShadows(true);
+		info.sg->setVisibilityFlags(VisibilityFlag_Normal);
 
-        float staticEntitiesGridSize = info.gridSize;
+        float staticEntitiesGridSize = dgTypeInfo.gridSize;
         Ogre::Vector3 gridRegion(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize);
-        sg->setRegionDimensions(gridRegion);
+		info.sg->setRegionDimensions(gridRegion);
         //sg->setOrigin(gridRegion / 2.0f + gridInfo.node->getPosition());
-        sg->setRenderingDistance(info.maxDistance);
+		info.sg->setRenderingDistance(dgTypeInfo.maxDistance);
     }
 
     Quaternion qCorrect(Degree(180), Vector3(1, 0, 0));
 
     if (!keepMesh)
     {
-        String meshName = info.possibleEntities[(int)Math::RangeRandom(0, info.possibleEntities.size() - 0.01f)];
+        String meshName = dgTypeInfo.possibleEntities[(int)Math::RangeRandom(0, dgTypeInfo.possibleEntities.size() - 0.01f)];
 
         while (!meshName.empty())
         {
@@ -63,46 +65,46 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
             auto ent = Global::mSceneMgr->createEntity(mname);
             //node->attachObject(ent);
 
-            mats.updateMaterial(ent, color, info);
-            sg->addEntity(ent, node->getPosition(), node->getOrientation()*qCorrect, info.generalScale*node->getScale());
+            materialHelper.updateMaterial(ent, color, dgTypeInfo);
+			info.sg->addEntity(ent, node->getPosition(), node->getOrientation()*qCorrect, dgTypeInfo.generalScale*node->getScale());
             usedEntities.push_back(ent);
         }
 
-        if (name.empty())
-            name = type;
+        if (info.name.empty())
+			info.name = type;
     }
     else
     {
         auto ent = (Entity*)node->getAttachedObject(0);
         node->detachAllObjects();
 
-        mats.updateMaterial(ent, color,info);
-        sg->addEntity(ent, node->getPosition(), node->getOrientation()*qCorrect, node->getScale());
+        materialHelper.updateMaterial(ent, color, dgTypeInfo);
+		info.sg->addEntity(ent, node->getPosition(), node->getOrientation()*qCorrect, node->getScale());
         usedEntities.push_back(ent);
 
-        if (name.empty())
-            name = ent->getName();
+        if (info.name.empty())
+			info.name = ent->getName();
     }
 }
 
 LoadedManualDG* ManualDetailGeometry::getClosest()
 {
-    LoadedManualDG* dgOut = nullptr;
-    float closest = 999999;
-    auto pos = Global::player->getCameraPosition();
+	LoadedManualDG* dgOut = nullptr;
+	float closest = 999999;
+	auto pos = Global::player->getCameraPosition();
 
-    for (auto& dg : loadedMDG)
-    {
-        float dist = pos.squaredDistance(dg.bbox.getCenter());
+	for (auto& dg : loadedMDG)
+	{
+		float dist = pos.squaredDistance(dg->bbox.getCenter());
 
-        if (dist < closest)
-        {
-            dgOut = &dg;
-            closest = dist;
-        }
-    }
+		if (dist < closest)
+		{
+			dgOut = dg;
+			closest = dist;
+		}
+	}
 
-    return dgOut;
+	return dgOut;
 }
 
 void ManualDetailGeometry::buildAll()
