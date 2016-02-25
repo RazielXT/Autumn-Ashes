@@ -7,14 +7,14 @@ class LoadNextPart : public EventTask
 {
 public:
 
-    LoadNextPart(Ogre::String target);
+	LoadNextPart(Ogre::String target);
 
-    bool start();
-    bool update(Ogre::Real tslf);
+	bool start();
+	bool update(Ogre::Real tslf);
 
 private:
 
-    float timer;
-    bool loadNext;
-    Ogre::String target;
+	float timer;
+	bool loadNext;
+	Ogre::String target;
 };

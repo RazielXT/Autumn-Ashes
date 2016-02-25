@@ -7,10 +7,10 @@ class WalkableSlide : public Slide
 
 public:
 
-    WalkableSlide(const std::string& zipName, bool looped, bool isWalkable, float speed, bool slidingAllowed = true) : Slide(zipName, looped, isWalkable, speed), allowSliding(slidingAllowed) {};
-    virtual ~WalkableSlide();
+	WalkableSlide(const std::string& zipName, bool looped, bool isWalkable, float speed, bool slidingAllowed = true) : Slide(zipName, looped, isWalkable, speed), allowSliding(slidingAllowed) {};
+	virtual ~WalkableSlide();
 
 protected:
 
-    bool allowSliding;
+	bool allowSliding;
 };

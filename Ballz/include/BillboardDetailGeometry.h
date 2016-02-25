@@ -9,19 +9,19 @@ class BillboardDetailGeometry : public DetailGeometry
 {
 public:
 
-    virtual ~BillboardDetailGeometry() {}
+	virtual ~BillboardDetailGeometry() {}
 
-    virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryParams& info);
-    virtual void clear();
+	virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryParams& info);
+	virtual void clear();
 
 protected:
 
-    virtual void init(DetailGeometryParams& info);
+	virtual void init(DetailGeometryParams& info);
 
-    virtual bool acceptsWeight(float w) const;
-    void placeObject(Ogre::Vector3 pos, Ogre::Quaternion or, float scale, Ogre::Vector3 color);
-    Ogre::BillboardSet* getSet(std::string name);
-    std::map<std::string, Ogre::BillboardSet*> mySets;
+	virtual bool acceptsWeight(float w) const;
+	void placeObject(Ogre::Vector3 pos, Ogre::Quaternion or, float scale, Ogre::Vector3 color);
+	Ogre::BillboardSet* getSet(std::string name);
+	std::map<std::string, Ogre::BillboardSet*> mySets;
 
-    DetailGeometryInfo info;
+	DetailGeometryInfo info;
 };

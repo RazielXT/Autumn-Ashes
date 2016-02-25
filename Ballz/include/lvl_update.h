@@ -11,11 +11,11 @@ class LvlMenuUpdate : public EventTask
 {
 public:
 
-    LvlMenuUpdate(Ogre::SceneNode* cRot,Forests::PagedGeometry *gr);
-    //~Lvl2Update ();
-    bool update(Ogre::Real tslf);
+	LvlMenuUpdate(Ogre::SceneNode* cRot,Forests::PagedGeometry *gr);
+	//~Lvl2Update ();
+	bool update(Ogre::Real tslf);
 
 private:
-    Forests::PagedGeometry *grass;
-    Ogre::SceneNode* cRotator;
+	Forests::PagedGeometry *grass;
+	Ogre::SceneNode* cRotator;
 };

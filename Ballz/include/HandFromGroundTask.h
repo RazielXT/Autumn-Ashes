@@ -8,19 +8,19 @@ class HandFromGroundReaction : public EventTask
 {
 public:
 
-    HandFromGroundReaction();
-    ~HandFromGroundReaction();
+	HandFromGroundReaction();
+	~HandFromGroundReaction();
 
-    void setUserData(void* data);
-    bool start();
-    bool update(Ogre::Real tslf);
-    void reaction();
+	void setUserData(void* data);
+	bool start();
+	bool update(Ogre::Real tslf);
+	void reaction();
 
 private:
 
-    OgreNewt::Body* mBody;
-    bool running;
-    float timer;
+	OgreNewt::Body* mBody;
+	bool running;
+	float timer;
 };
 
 #endif //HANDEVENTR_H

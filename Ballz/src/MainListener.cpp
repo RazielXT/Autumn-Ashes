@@ -19,152 +19,152 @@ using namespace Ogre;
 
 MainListener::~MainListener()
 {
-    delete mEventMgr;
-    delete geometryMgr;
-    delete gameMgr;
+	delete mEventMgr;
+	delete geometryMgr;
+	delete gameMgr;
 
-    mBufferFlush.stop();
+	mBufferFlush.stop();
 
-    delete postProcMgr;
+	delete postProcMgr;
 }
 
 MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneManager * sceneMgr, OgreNewt::World* nWorld, Ogre::Root *mRoot, Ogre::RenderWindow* mWin)
 {
-    /*
-    W->setMinimumFrameRate(30);
-    W->setThreadCount(2);
-    W->setUpdateFPS(60,1);
-    W->setMultithreadSolverOnSingleIsland(1);
-    W->setPlatformArchitecture(2);
-    W->setFrictionModel(1);
-    W->setSolverModel(1);
-    */
+	/*
+	W->setMinimumFrameRate(30);
+	W->setThreadCount(2);
+	W->setUpdateFPS(60,1);
+	W->setMultithreadSolverOnSingleIsland(1);
+	W->setPlatformArchitecture(2);
+	W->setFrictionModel(1);
+	W->setSolverModel(1);
+	*/
 
-    nListener.init(nWorld);
+	nListener.init(nWorld);
 
-    mEventMgr = new EventsManager();
-    geometryMgr = new GeometryManager();
-    mBufferFlush.start(1);
+	mEventMgr = new EventsManager();
+	geometryMgr = new GeometryManager();
+	mBufferFlush.start(1);
 
-    mSceneMgr = sceneMgr;
-    mWindow = mWin;
-    mWorld = nWorld;
-    mWorld->setSolverModel(3);
-    mCamera = mSceneMgr->getCamera("Camera");
+	mSceneMgr = sceneMgr;
+	mWindow = mWin;
+	mWorld = nWorld;
+	mWorld->setSolverModel(3);
+	mCamera = mSceneMgr->getCamera("Camera");
 
-    Global::mCamera = mCamera;
-    Global::mSceneMgr = mSceneMgr;
-    Global::mWorld = mWorld;
-    Global::mWindow = mWindow;
-    Global::mEventsMgr = mEventMgr;
-    Global::shaker = new CameraShaker();
+	Global::mCamera = mCamera;
+	Global::mSceneMgr = mSceneMgr;
+	Global::mWorld = mWorld;
+	Global::mWindow = mWindow;
+	Global::mEventsMgr = mEventMgr;
+	Global::shaker = new CameraShaker();
 
-    gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem());
-    Global::gameMgr = gameMgr;
-    Global::gameMgr->geometryMgr = geometryMgr;
+	gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem());
+	Global::gameMgr = gameMgr;
+	Global::gameMgr->geometryMgr = geometryMgr;
 
-    postProcMgr = new PostProcessMgr(mCamera);
-    postProcMgr->setToScaryBloom();
-    Global::mPPMgr = postProcMgr;
+	postProcMgr = new PostProcessMgr(mCamera);
+	postProcMgr->setToScaryBloom();
+	Global::mPPMgr = postProcMgr;
 
-    mKeyboard = keyboard;
-    mMouse = mouse;
-    if (mMouse)
-        mMouse->setEventCallback(this);
-    if (mKeyboard)
-        mKeyboard->setEventCallback(this);
+	mKeyboard = keyboard;
+	mMouse = mouse;
+	if (mMouse)
+		mMouse->setEventCallback(this);
+	if (mKeyboard)
+		mKeyboard->setEventCallback(this);
 
-    gameMgr->switchToMainMenu();
+	gameMgr->switchToMainMenu();
 }
 
 bool MainListener::frameStarted(const FrameEvent& evt)
 {
-    float tslf = std::min(0.1f, evt.timeSinceLastFrame);
+	float tslf = std::min(0.1f, evt.timeSinceLastFrame);
 
-    postProcMgr->update(tslf);
-    geometryMgr->update();
-    mEventMgr->update(tslf);
+	postProcMgr->update(tslf);
+	geometryMgr->update();
+	mEventMgr->update(tslf);
 
-    mKeyboard->capture();
-    mMouse->capture();
+	mKeyboard->capture();
+	mMouse->capture();
 
-    gameMgr->update(tslf);
+	gameMgr->update(tslf);
 
-    if (gameMgr->gameState == GAME)
-    {
-        Global::player->update(tslf);
-        nListener.frameStarted(tslf);
-    }
+	if (gameMgr->gameState == GAME)
+	{
+		Global::player->update(tslf);
+		nListener.frameStarted(tslf);
+	}
 
-    return continueExecution;
+	return continueExecution;
 }
 
 bool MainListener::keyPressed(const OIS::KeyEvent &arg)
 {
-    Global::mEventsMgr->listenersKeyPressed(arg);
+	Global::mEventsMgr->listenersKeyPressed(arg);
 
-    if (gameMgr->gameState == GAME)
-        Global::player->pressedKey(arg);
+	if (gameMgr->gameState == GAME)
+		Global::player->pressedKey(arg);
 
-    switch (arg.key)
-    {
+	switch (arg.key)
+	{
 
-    case OIS::KC_ESCAPE:
-    {
-        gameMgr->escapePressed();
+	case OIS::KC_ESCAPE:
+	{
+		gameMgr->escapePressed();
 
-        if (gameMgr->gameState == MENU)
-            continueExecution = false;
+		if (gameMgr->gameState == MENU)
+			continueExecution = false;
 
-        break;
-    }
+		break;
+	}
 
-    default:
-        break;
-    }
-    return true;
+	default:
+		break;
+	}
+	return true;
 }
 
 bool MainListener::keyReleased(const OIS::KeyEvent &arg)
 {
-    Global::mEventsMgr->listenersKeyReleased(arg);
+	Global::mEventsMgr->listenersKeyReleased(arg);
 
-    if (gameMgr->gameState == GAME)
-        Global::player->releasedKey(arg);
+	if (gameMgr->gameState == GAME)
+		Global::player->releasedKey(arg);
 
-    return true;
+	return true;
 }
 
 bool MainListener::mouseMoved(const OIS::MouseEvent &e)
 {
-    Global::mEventsMgr->listenersMouseMoved(e);
+	Global::mEventsMgr->listenersMouseMoved(e);
 
-    if (gameMgr->gameState == GAME)
-        Global::player->movedMouse(e);
-    else
-        gameMgr->insideMenuMoved(e.state.X.rel, e.state.Y.rel);
+	if (gameMgr->gameState == GAME)
+		Global::player->movedMouse(e);
+	else
+		gameMgr->insideMenuMoved(e.state.X.rel, e.state.Y.rel);
 
 
-    return true;
+	return true;
 }
 
 bool MainListener::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
 
-    if (gameMgr->gameState == GAME)
-        Global::player->pressedMouse(arg, id);
-    else
-        continueExecution = gameMgr->insideMenuPressed();
+	if (gameMgr->gameState == GAME)
+		Global::player->pressedMouse(arg, id);
+	else
+		continueExecution = gameMgr->insideMenuPressed();
 
-    return true;
+	return true;
 }
 
 bool MainListener::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
-    if (gameMgr->gameState == GAME)
-        Global::player->releasedMouse(arg, id);
+	if (gameMgr->gameState == GAME)
+		Global::player->releasedMouse(arg, id);
 
-    return true;
+	return true;
 }
 
 

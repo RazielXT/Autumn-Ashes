@@ -9,42 +9,42 @@ class VolumeDetectionManager : public EventTask
 {
 public:
 
-    static VolumeDetectionManager instance;
+	static VolumeDetectionManager instance;
 
-    void reset();
-    void registerVolume(VolumeDetection* volume);
+	void reset();
+	void registerVolume(VolumeDetection* volume);
 
-    virtual bool update(Ogre::Real tslf);
+	virtual bool update(Ogre::Real tslf);
 
 private:
 
-    std::vector<VolumeDetection*> registeredVolumes;
+	std::vector<VolumeDetection*> registeredVolumes;
 };
 
 
 class VolumeDetection
 {
-    friend VolumeDetectionManager;
+	friend VolumeDetectionManager;
 
 protected:
 
-    VolumeDetection()
-    {
-        VolumeDetectionManager::instance.registerVolume(this);
-    }
+	VolumeDetection()
+	{
+		VolumeDetectionManager::instance.registerVolume(this);
+	}
 
-    void registerDetection()
-    {
-        detectionRegistered = true;
-    }
+	void registerDetection()
+	{
+		detectionRegistered = true;
+	}
 
-    void unregisterDetection()
-    {
-        detectionRegistered = false;
-    }
+	void unregisterDetection()
+	{
+		detectionRegistered = false;
+	}
 
-    virtual void playerInside() = 0;
+	virtual void playerInside() = 0;
 
-    bool detectionRegistered = false;
-    Volume volume;
+	bool detectionRegistered = false;
+	Volume volume;
 };

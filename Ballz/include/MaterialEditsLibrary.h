@@ -12,94 +12,94 @@
 
 struct MaterialEdit_
 {
-    struct MaterialVariable
-    {
-        std::string name;
-        int size = 0;
-        float buffer[4];
+	struct MaterialVariable
+	{
+		std::string name;
+		int size = 0;
+		float buffer[4];
 
-        bool edited = false;
+		bool edited = false;
 
-        template<class Archive>
-        void serialize(Archive & ar, const unsigned int version)
-        {
-            ar & name;
-            ar & size;
-            ar & boost::serialization::make_array(buffer, 4);
-        }
-    };
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version)
+		{
+			ar & name;
+			ar & size;
+			ar & boost::serialization::make_array(buffer, 4);
+		}
+	};
 
-    std::string originMatName;
-    std::vector<MaterialVariable> psVariables;
-    std::vector<MaterialVariable> vsVariables;
+	std::string originMatName;
+	std::vector<MaterialVariable> psVariables;
+	std::vector<MaterialVariable> vsVariables;
 
-    std::vector<MaterialVariable> moreParams;
+	std::vector<MaterialVariable> moreParams;
 
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-        ar & originMatName;
-        ar & psVariables;
-        ar & vsVariables;
-        ar & moreParams;
-    }
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		ar & originMatName;
+		ar & psVariables;
+		ar & vsVariables;
+		ar & moreParams;
+	}
 
-    void mergeChanges(MaterialEdit_& r, bool ignoreNotExisting);
-    void setMaterialParam(Ogre::MaterialPtr ptr, MaterialEdit_::MaterialVariable& var);
-    void setParticleParam(Ogre::ParticleSystem* ps, MaterialEdit_::MaterialVariable& var);
-    void generateParticleParams(Ogre::ParticleSystem* ps);
+	void mergeChanges(MaterialEdit_& r, bool ignoreNotExisting);
+	void setMaterialParam(Ogre::MaterialPtr ptr, MaterialEdit_::MaterialVariable& var);
+	void setParticleParam(Ogre::ParticleSystem* ps, MaterialEdit_::MaterialVariable& var);
+	void generateParticleParams(Ogre::ParticleSystem* ps);
 };
 
 struct ParticleSiblings
 {
-    std::map<std::string, std::vector<std::string>> children;
+	std::map<std::string, std::vector<std::string>> children;
 
-    std::vector<Ogre::ParticleSystem*> getChildren(std::string parent);
-    bool isParent(std::string name);
-    std::string getParent(std::string name);
-    void connectSiblings(std::string parent, std::string child);
+	std::vector<Ogre::ParticleSystem*> getChildren(std::string parent);
+	bool isParent(std::string name);
+	std::string getParent(std::string name);
+	void connectSiblings(std::string parent, std::string child);
 };
 
 class MaterialEditsLibrary
 {
 public:
 
-    MaterialEditsLibrary();
-    ~MaterialEditsLibrary()
-    {
-    }
+	MaterialEditsLibrary();
+	~MaterialEditsLibrary()
+	{
+	}
 
-    void importToScene();
+	void importToScene();
 
-    bool loadSavedChanges(MaterialEdit_& edit, std::string entName);
-    void addEdit(MaterialEdit_& edit, std::string entName);
-    void removeEdit_(std::string entName);
+	bool loadSavedChanges(MaterialEdit_& edit, std::string entName);
+	void addEdit(MaterialEdit_& edit, std::string entName);
+	void removeEdit_(std::string entName);
 
-    bool loadSavedParticleChanges(MaterialEdit_& edit, std::string particleName);
-    void addParticleEdit(MaterialEdit_& edit, std::string particleName);
-    void removeParticleEdit(std::string particleName);
+	bool loadSavedParticleChanges(MaterialEdit_& edit, std::string particleName);
+	void addParticleEdit(MaterialEdit_& edit, std::string particleName);
+	void removeParticleEdit(std::string particleName);
 
-    void saveFile(std::string path);
-    void loadFile(std::string path);
+	void saveFile(std::string path);
+	void loadFile(std::string path);
 
-    void applyChanges();
+	void applyChanges();
 
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-        ar & editHistory;
-        ar & editParticleHistory;
-    }
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		ar & editHistory;
+		ar & editParticleHistory;
+	}
 
-    ParticleSiblings particleSiblings;
+	ParticleSiblings particleSiblings;
 
 private:
 
-    using EditedEntities_ = std::map < std::string, MaterialEdit_ >;
-    EditedEntities_ editHistory;
+	using EditedEntities_ = std::map < std::string, MaterialEdit_ >;
+	EditedEntities_ editHistory;
 
-    using EditedParticles_ = std::map < std::string, MaterialEdit_ >;
-    EditedParticles_ editParticleHistory;
+	using EditedParticles_ = std::map < std::string, MaterialEdit_ >;
+	EditedParticles_ editParticleHistory;
 
-    int idCounter = 500;
+	int idCounter = 500;
 };

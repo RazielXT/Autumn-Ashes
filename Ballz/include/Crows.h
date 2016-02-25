@@ -8,21 +8,21 @@ class CrowsManager : public EventTask
 {
 public:
 
-    static CrowsManager* get();
+	static CrowsManager* get();
 
-    ~CrowsManager();
+	~CrowsManager();
 
-    bool update(Ogre::Real tslf);
+	bool update(Ogre::Real tslf);
 
-    void addCrowFlight(int num_crows, float randomYaw, float mFlightAvgTime, float mSwitchAvgTime, Ogre::SceneNode* node, int id);
-    void addCrowLanding(int num_crows, int mMaxCrows, float mGroundAvgTime, bool mAllowWalk, Ogre::SceneNode* node, int id);
+	void addCrowFlight(int num_crows, float randomYaw, float mFlightAvgTime, float mSwitchAvgTime, Ogre::SceneNode* node, int id);
+	void addCrowLanding(int num_crows, int mMaxCrows, float mGroundAvgTime, bool mAllowWalk, Ogre::SceneNode* node, int id);
 
-    Crow* getRandomCrow() const;
+	Crow* getRandomCrow() const;
 
 private:
 
-    CrowsManager() {};
-    static CrowsManager* ptr;
+	CrowsManager() {};
+	static CrowsManager* ptr;
 
-    std::vector<CrowsGroup*> subGroups;
+	std::vector<CrowsGroup*> subGroups;
 };

@@ -9,16 +9,16 @@ class TestReaction : public EventTask
 {
 public:
 
-    TestReaction();
-    ~TestReaction();
+	TestReaction();
+	~TestReaction();
 
-    void setUserData(void* data);
-    bool start();
-    bool update(Ogre::Real tslf);
+	void setUserData(void* data);
+	bool start();
+	bool update(Ogre::Real tslf);
 
 private:
 
-    Volume volume;
+	Volume volume;
 };
 
 #endif //TEVENTR_H

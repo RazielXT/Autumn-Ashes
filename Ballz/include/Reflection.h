@@ -8,20 +8,20 @@ class ReflectionTask : public EventTask
 {
 public:
 
-    ReflectionTask();
-    ~ReflectionTask();
+	ReflectionTask();
+	~ReflectionTask();
 
-    bool start();
-    bool update(Ogre::Real tslf);
+	bool start();
+	bool update(Ogre::Real tslf);
 
-    void init(Ogre::Entity* water, int visibilityFlag);
+	void init(Ogre::Entity* water, int visibilityFlag);
 
 private:
 
-    Ogre::TexturePtr texture;
-    Ogre::Camera* mReflectCam;
-    Ogre::Entity* mEntity;
-    int visibilityFlag;
+	Ogre::TexturePtr texture;
+	Ogre::Camera* mReflectCam;
+	Ogre::Entity* mEntity;
+	int visibilityFlag;
 
-    static int id;
+	static int id;
 };

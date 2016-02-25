@@ -38,83 +38,83 @@ namespace Ogre
 class PSSMShadowCameraSetup2 : public Ogre::DefaultShadowCameraSetup2
 {
 public:
-    typedef vector<Real>::type SplitPointList;
-    typedef vector<Real>::type OptimalAdjustFactorList;
+	typedef vector<Real>::type SplitPointList;
+	typedef vector<Real>::type OptimalAdjustFactorList;
 
 protected:
-    size_t mSplitCount;
-    SplitPointList mSplitPoints;
-    OptimalAdjustFactorList mOptimalAdjustFactors;
-    Real mSplitPadding;
-    Ogre::MaterialPtr mat;
+	size_t mSplitCount;
+	SplitPointList mSplitPoints;
+	OptimalAdjustFactorList mOptimalAdjustFactors;
+	Real mSplitPadding;
+	Ogre::MaterialPtr mat;
 
-    mutable size_t mCurrentIteration;
+	mutable size_t mCurrentIteration;
 
 public:
-    /// Constructor, defaults to 3 splits
-    PSSMShadowCameraSetup2();
-    ~PSSMShadowCameraSetup2();
+	/// Constructor, defaults to 3 splits
+	PSSMShadowCameraSetup2();
+	~PSSMShadowCameraSetup2();
 
-    /** Calculate a new splitting scheme.
-    @param splitCount The number of splits to use
-    @param nearDist The near plane to use for the first split
-    @param farDist The far plane to use for the last split
-    @param lambda Factor to use to reduce the split size
-    */
-    void calculateSplitPoints(size_t splitCount, Real nearDist, Real farDist, Real lambda = 0.95);
+	/** Calculate a new splitting scheme.
+	@param splitCount The number of splits to use
+	@param nearDist The near plane to use for the first split
+	@param farDist The far plane to use for the last split
+	@param lambda Factor to use to reduce the split size
+	*/
+	void calculateSplitPoints(size_t splitCount, Real nearDist, Real farDist, Real lambda = 0.95);
 
-    /** Manually configure a new splitting scheme.
-    @param newSplitPoints A list which is splitCount + 1 entries long, containing the
-    	split points. The first value is the near point, the last value is the
-    	far point, and each value in between is both a far point of the previous
-    	split, and a near point for the next one.
-    */
-    void setSplitPoints(const SplitPointList& newSplitPoints);
+	/** Manually configure a new splitting scheme.
+	@param newSplitPoints A list which is splitCount + 1 entries long, containing the
+		split points. The first value is the near point, the last value is the
+		far point, and each value in between is both a far point of the previous
+		split, and a near point for the next one.
+	*/
+	void setSplitPoints(const SplitPointList& newSplitPoints);
 
-    /** Set the LiSPSM optimal adjust factor for a given split (call after
-    	configuring splits).
-    */
-    void setOptimalAdjustFactor(size_t splitIndex, Real factor);
+	/** Set the LiSPSM optimal adjust factor for a given split (call after
+		configuring splits).
+	*/
+	void setOptimalAdjustFactor(size_t splitIndex, Real factor);
 
-    /** Set the padding factor to apply to the near & far distances when matching up
-    	splits to one another, to avoid 'cracks'.
-    */
-    void setSplitPadding(Real pad)
-    {
-        mSplitPadding = pad;
-    }
+	/** Set the padding factor to apply to the near & far distances when matching up
+		splits to one another, to avoid 'cracks'.
+	*/
+	void setSplitPadding(Real pad)
+	{
+		mSplitPadding = pad;
+	}
 
-    /** Get the padding factor to apply to the near & far distances when matching up
-    	splits to one another, to avoid 'cracks'.
-    */
-    Real getSplitPadding() const
-    {
-        return mSplitPadding;
-    }
-    /// Get the number of splits.
-    size_t getSplitCount() const
-    {
-        return mSplitCount;
-    }
+	/** Get the padding factor to apply to the near & far distances when matching up
+		splits to one another, to avoid 'cracks'.
+	*/
+	Real getSplitPadding() const
+	{
+		return mSplitPadding;
+	}
+	/// Get the number of splits.
+	size_t getSplitCount() const
+	{
+		return mSplitCount;
+	}
 
-    /// Returns a LiSPSM shadow camera with PSSM splits base on iteration.
-    virtual void getShadowCamera(const Ogre::SceneManager *sm, const Ogre::Camera *cam,
-                                 const Ogre::Viewport *vp, const Ogre::Light *light, Ogre::Camera *texCam, size_t iteration) const;
+	/// Returns a LiSPSM shadow camera with PSSM splits base on iteration.
+	virtual void getShadowCamera(const Ogre::SceneManager *sm, const Ogre::Camera *cam,
+	                             const Ogre::Viewport *vp, const Ogre::Light *light, Ogre::Camera *texCam, size_t iteration) const;
 
-    /// Returns the calculated split points.
-    inline const SplitPointList& getSplitPoints() const
-    {
-        return mSplitPoints;
-    }
+	/// Returns the calculated split points.
+	inline const SplitPointList& getSplitPoints() const
+	{
+		return mSplitPoints;
+	}
 
-    /// Returns the optimal adjust factor for a given split.
-    inline Real getOptimalAdjustFactor(size_t splitIndex) const
-    {
-        return mOptimalAdjustFactors[splitIndex];
-    }
+	/// Returns the optimal adjust factor for a given split.
+	inline Real getOptimalAdjustFactor(size_t splitIndex) const
+	{
+		return mOptimalAdjustFactors[splitIndex];
+	}
 
-    /// Overridden, recommended internal use only since depends on current iteration
-    Real getOptimalAdjustFactor() const;
+	/// Overridden, recommended internal use only since depends on current iteration
+	Real getOptimalAdjustFactor() const;
 
 };
 

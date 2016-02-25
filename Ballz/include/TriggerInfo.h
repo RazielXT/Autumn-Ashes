@@ -9,34 +9,34 @@ class TriggerInfo
 {
 public:
 
-    TriggerInfo(short pA,float cd)
-    {
-        cooldown=cd;
-        timer=0;
-        activationType=1;
+	TriggerInfo(short pA,float cd)
+	{
+		cooldown=cd;
+		timer=0;
+		activationType=1;
 
-        if(pA==0)
-            pA=-1;
+		if(pA==0)
+			pA=-1;
 
-        playerAction=pA;
+		playerAction=pA;
 
-    };
+	};
 
-    TriggerInfo()
-    {
-        cooldown=0;
-        timer=0;
-        activationType=1;
-        playerAction=-1;
-    };
+	TriggerInfo()
+	{
+		cooldown=0;
+		timer=0;
+		activationType=1;
+		playerAction=-1;
+	};
 
-    std::map<short,std::vector<EventTask*>> tasks;
+	std::map<short,std::vector<EventTask*>> tasks;
 
-    float timer;
-    float cooldown;
-    short playerAction;
-    //0-switch,1-touch,2-volume
-    char activationType;
+	float timer;
+	float cooldown;
+	short playerAction;
+	//0-switch,1-touch,2-volume
+	char activationType;
 
 };
 

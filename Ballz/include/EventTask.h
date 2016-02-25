@@ -8,15 +8,15 @@ class EventTask
 {
 public:
 
-    EventTask() {};
-    virtual ~EventTask() {};
+	EventTask() {};
+	virtual ~EventTask() {};
 
-    virtual void setUserData(void* data);
-    virtual bool start();
-    virtual bool update(Ogre::Real tslf);
+	virtual void setUserData(void* data);
+	virtual bool start();
+	virtual bool update(Ogre::Real tslf);
 
-    float taskDelay = 0;
-    GameState stateExecution = GAME;
+	float taskDelay = 0;
+	GameState stateExecution = GAME;
 
 };
 

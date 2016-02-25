@@ -7,14 +7,14 @@ class ParticleManager
 {
 public:
 
-    void clear();
-    Ogre::ParticleSystem* getClosestParticle();
+	void clear();
+	Ogre::ParticleSystem* getClosestParticle();
 
-    void addParticle(Ogre::ParticleSystem* ps);
+	void addParticle(Ogre::ParticleSystem* ps);
 
 private:
 
-    std::vector<Ogre::ParticleSystem *> particles;
+	std::vector<Ogre::ParticleSystem *> particles;
 
 };
 

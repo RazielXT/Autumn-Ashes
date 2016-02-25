@@ -6,22 +6,22 @@ class Player;
 
 class PlayerGrab
 {
-    friend class Player;
+	friend class Player;
 
-    Player* p;
-    OgreNewt::Body* body;
+	Player* p;
+	OgreNewt::Body* body;
 
-    //grabbed obj
-    Ogre::Vector3 gADT;
-    Ogre::Real gLDT;
-    OgreNewt::Body* Gbody;
+	//grabbed obj
+	Ogre::Vector3 gADT;
+	Ogre::Real gLDT;
+	OgreNewt::Body* Gbody;
 
 public:
 
-    void grabbed_callback(OgreNewt::Body* me, float timeStep, int threadIndex);
+	void grabbed_callback(OgreNewt::Body* me, float timeStep, int threadIndex);
 
-    PlayerGrab(Player* player);
+	PlayerGrab(Player* player);
 
-    void tryToGrab();
-    void releaseObj();
+	void tryToGrab();
+	void releaseObj();
 };

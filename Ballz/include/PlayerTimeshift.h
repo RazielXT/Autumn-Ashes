@@ -9,18 +9,18 @@ class Energy;
 
 class PlayerTimeshift
 {
-    Player* p;
-    PlayerEnergies* pEnergies;
-    Energy* chargedEnergy = nullptr;
+	Player* p;
+	PlayerEnergies* pEnergies;
+	Energy* chargedEnergy = nullptr;
 
-    PlayerStateInfo playerHistory;
+	PlayerStateInfo playerHistory;
 
-    void setShiftTime();
+	void setShiftTime();
 
 public:
 
-    PlayerTimeshift(Player* player, PlayerEnergies* energies);
+	PlayerTimeshift(Player* player, PlayerEnergies* energies);
 
-    void shiftBack();
-    void updateStateHistory(float tslf);
+	void shiftBack();
+	void updateStateHistory(float tslf);
 };

@@ -18,101 +18,101 @@ PlayerAbilities::~PlayerAbilities()
 
 void PlayerAbilities::update(float tslf)
 {
-    pEnergies.update(tslf);
+	pEnergies.update(tslf);
 
-    timeshift.updateStateHistory(tslf);
-    flash.update(tslf);
+	timeshift.updateStateHistory(tslf);
+	flash.update(tslf);
 }
 
 bool PlayerAbilities::pressedKey(const OIS::KeyEvent &arg)
 {
-    if (pEnergies.pressedKey(arg))
-        return true;
+	if (pEnergies.pressedKey(arg))
+		return true;
 
-    switch (arg.key)
-    {
-    case OIS::KC_F:
-        flash.portForward();
-        break;
+	switch (arg.key)
+	{
+	case OIS::KC_F:
+		flash.portForward();
+		break;
 
-    case OIS::KC_R:
-        timeshift.shiftBack();
-        break;
+	case OIS::KC_R:
+		timeshift.shiftBack();
+		break;
 
-    default:
-        return false;
-    }
+	default:
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 bool PlayerAbilities::releasedKey(const OIS::KeyEvent &arg)
 {
-    if (pEnergies.releasedKey(arg))
-        return true;
+	if (pEnergies.releasedKey(arg))
+		return true;
 
-    return false;
+	return false;
 }
 
 bool PlayerAbilities::pressedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
-    return (pEnergies.pressedMouse(arg, id));
+	return (pEnergies.pressedMouse(arg, id));
 }
 
 bool PlayerAbilities::releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
-    return (pEnergies.releasedMouse(arg, id));
+	return (pEnergies.releasedMouse(arg, id));
 }
 
 
 void PlayerFlash::portForward()
 {
-    auto target = pEnergies->facingEnergy();
-    auto e = pEnergies->getAvailableEnergy();
+	auto target = pEnergies->facingEnergy();
+	auto e = pEnergies->getAvailableEnergy();
 
-    if (target && e)
-    {
-        target->startUsage(energyRechargeTime, Energy::Recharging, true);
-        e->startUsage(energyRechargeTime, Energy::Recharging, true);
+	if (target && e)
+	{
+		target->startUsage(energyRechargeTime, Energy::Recharging, true);
+		e->startUsage(energyRechargeTime, Energy::Recharging, true);
 
-        portingTimer = 0;
+		portingTimer = 0;
 
-        cameraPortNode->setPosition(p->camnode->_getDerivedPosition());
-        cameraPortNode->setOrientation(p->camnode->_getDerivedOrientation());
-        cameraPortNode->attachObject(p->detachCamera());
+		cameraPortNode->setPosition(p->camnode->_getDerivedPosition());
+		cameraPortNode->setOrientation(p->camnode->_getDerivedOrientation());
+		cameraPortNode->attachObject(p->detachCamera());
 
-        portStartPos = cameraPortNode->getPosition();
-        portTargetPos = target->position;
-    }
+		portStartPos = cameraPortNode->getPosition();
+		portTargetPos = target->position;
+	}
 }
 
 void PlayerFlash::update(float tslf)
 {
-    if (portingTimer >= 0)
-    {
-        const float portTime = 0.1f;
-        portingTimer += tslf;
+	if (portingTimer >= 0)
+	{
+		const float portTime = 0.1f;
+		portingTimer += tslf;
 
-        if (portingTimer >= portTime)
-        {
-            Global::mPPMgr->vars.radialHorizBlurVignette.x = 0;
-            p->attachCamera(true);
-            p->bodyPosition = portTargetPos;
-            p->body->setPositionOrientation(portTargetPos, Ogre::Quaternion::IDENTITY);
-            p->body->setVelocity(p->getFacingDirection() * 10);
-            portingTimer = -1;
-        }
-        else
-        {
-            Global::mPPMgr->vars.radialHorizBlurVignette.x = 1;
-            cameraPortNode->setPosition(MUtils::lerp(portStartPos, portTargetPos, portingTimer / portTime));
-        }
-    }
+		if (portingTimer >= portTime)
+		{
+			Global::mPPMgr->vars.radialHorizBlurVignette.x = 0;
+			p->attachCamera(true);
+			p->bodyPosition = portTargetPos;
+			p->body->setPositionOrientation(portTargetPos, Ogre::Quaternion::IDENTITY);
+			p->body->setVelocity(p->getFacingDirection() * 10);
+			portingTimer = -1;
+		}
+		else
+		{
+			Global::mPPMgr->vars.radialHorizBlurVignette.x = 1;
+			cameraPortNode->setPosition(MUtils::lerp(portStartPos, portTargetPos, portingTimer / portTime));
+		}
+	}
 }
 
 PlayerFlash::PlayerFlash(Player* player, PlayerEnergies* energies)
 {
-    p = player;
-    pEnergies = energies;
-    cameraPortNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	p = player;
+	pEnergies = energies;
+	cameraPortNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
 }

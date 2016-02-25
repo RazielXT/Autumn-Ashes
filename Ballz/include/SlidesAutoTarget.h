@@ -7,39 +7,39 @@
 
 struct TargetSlideInfo
 {
-    Slide* targetSlide = nullptr;
-    float targetSlidePosOffset;
-    Ogre::Vector3 targetSlidePos;
+	Slide* targetSlide = nullptr;
+	float targetSlidePosOffset;
+	Ogre::Vector3 targetSlidePos;
 };
 
 class SlidesAutoTargetAsync
 {
 public:
 
-    SlidesAutoTargetAsync();
-    ~SlidesAutoTargetAsync();
+	SlidesAutoTargetAsync();
+	~SlidesAutoTargetAsync();
 
-    void updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance, bool allowAutoAttach, Slide* ignoredSlide = nullptr);
+	void updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance, bool allowAutoAttach, Slide* ignoredSlide = nullptr);
 
-    bool pressedAction();
+	bool pressedAction();
 
-    TargetSlideInfo targetInfo;
+	TargetSlideInfo targetInfo;
 
-    std::vector<Slide*> loadedSlides;
+	std::vector<Slide*> loadedSlides;
 
 private:
 
-    Slide* lastUnavailableSlide = nullptr;
+	Slide* lastUnavailableSlide = nullptr;
 
-    Slide* preparedSlide;
-    float preparedSlideOffset;
-    Ogre::Vector3 preparedSlidePos;
+	Slide* preparedSlide;
+	float preparedSlideOffset;
+	Ogre::Vector3 preparedSlidePos;
 
-    float targetTimer;
+	float targetTimer;
 
-    std::future<bool> targetResult;
-    bool getTargetSlideFunc(Vector3 pos, Vector3 dir, float rayDistance, bool allowAutoAttach, Slide* ignoredSlide);
+	std::future<bool> targetResult;
+	bool getTargetSlideFunc(Vector3 pos, Vector3 dir, float rayDistance, bool allowAutoAttach, Slide* ignoredSlide);
 
-    bool getTargetSlideRay(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide);
-    bool getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide* ignoredSlide);
+	bool getTargetSlideRay(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide);
+	bool getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide* ignoredSlide);
 };

@@ -10,62 +10,62 @@ class ParkToDreamReaction : public EventTask
 {
 public:
 
-    ParkToDreamReaction();
+	ParkToDreamReaction();
 
-    void setUserData(void* data);
-    bool start();
-    bool update(Ogre::Real tslf);
+	void setUserData(void* data);
+	bool start();
+	bool update(Ogre::Real tslf);
 
 private:
 
-    float timer;
+	float timer;
 };
 
 class NearParkEndReaction : public EventTask
 {
 public:
 
-    NearParkEndReaction();
+	NearParkEndReaction();
 
-    void setUserData(void* data);
-    bool start();
-    bool update(Ogre::Real tslf);
+	void setUserData(void* data);
+	bool start();
+	bool update(Ogre::Real tslf);
 
 private:
 
-    irrklang::ISound* noiseSound;
-    PostProcessMgr* mgr;
-    float timer;
-    bool doneEffect, doneEffect0;
+	irrklang::ISound* noiseSound;
+	PostProcessMgr* mgr;
+	float timer;
+	bool doneEffect, doneEffect0;
 };
 
 class ParkEndReaction : public EventTask
 {
 public:
 
-    ParkEndReaction();
+	ParkEndReaction();
 
-    void setUserData(void* data);
-    bool start();
-    bool update(Ogre::Real tslf);
+	void setUserData(void* data);
+	bool start();
+	bool update(Ogre::Real tslf);
 
 private:
 
-    irrklang::ISound* sound;
-    PostProcessMgr* mgr;
-    float timer;
-    bool doneEffect1 , doneEffect2, doneEffect3;
-    Ogre::AnimationState *mAnim1,*mAnim2,*mAnim3,*mAnim4;
+	irrklang::ISound* sound;
+	PostProcessMgr* mgr;
+	float timer;
+	bool doneEffect1 , doneEffect2, doneEffect3;
+	Ogre::AnimationState *mAnim1,*mAnim2,*mAnim3,*mAnim4;
 };
 
 class OutOfCave : public EventTask
 {
 public:
 
-    OutOfCave();
+	OutOfCave();
 
-    void setUserData(void* data);
-    bool start();
+	void setUserData(void* data);
+	bool start();
 };
 
 #endif

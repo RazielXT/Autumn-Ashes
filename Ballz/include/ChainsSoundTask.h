@@ -8,18 +8,18 @@ class ChainsSoundTask : public EventTask
 {
 public:
 
-    ChainsSoundTask();
+	ChainsSoundTask();
 
-    void setUserData(void* data);
-    bool start();
-    bool update(Ogre::Real tslf);
+	void setUserData(void* data);
+	bool start();
+	bool update(Ogre::Real tslf);
 
 private:
 
-    OgreNewt::Body* mBody;
-    irrklang::ISound* s;
-    bool playing;
-    bool running;
+	OgreNewt::Body* mBody;
+	irrklang::ISound* s;
+	bool playing;
+	bool running;
 };
 
 #endif

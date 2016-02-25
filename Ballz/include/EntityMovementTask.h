@@ -8,20 +8,20 @@ class EntityMovementReaction : public EventTask
 {
 public:
 
-    EntityMovementReaction();
-    ~EntityMovementReaction();
+	EntityMovementReaction();
+	~EntityMovementReaction();
 
-    void setUserData(void* data);
-    bool start();
-    bool update(Ogre::Real tslf);
-    void setIdentifier(short id);
+	void setUserData(void* data);
+	bool start();
+	bool update(Ogre::Real tslf);
+	void setIdentifier(short id);
 
 private:
 
-    Ogre::SceneNode* node;
-    Ogre::Vector3 dir;
-    bool running;
-    short id;
+	Ogre::SceneNode* node;
+	Ogre::Vector3 dir;
+	bool running;
+	short id;
 };
 
 #endif

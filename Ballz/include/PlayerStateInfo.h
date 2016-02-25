@@ -4,13 +4,13 @@
 
 struct PlayerStateInfo
 {
-    float timestamp;
+	float timestamp;
 
-    Ogre::Vector3 position;
-    Ogre::Vector3 velocity;
+	Ogre::Vector3 position;
+	Ogre::Vector3 velocity;
 
-    Ogre::Quaternion camOrientation;
-    float camPitch;
+	Ogre::Quaternion camOrientation;
+	float camPitch;
 
-    bool wallrunning;
+	bool wallrunning;
 };

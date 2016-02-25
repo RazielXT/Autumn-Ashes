@@ -8,28 +8,28 @@ namespace SUtils
 {
 inline bool startsWith(const std::string str, const std::string with)
 {
-    if (str.length() < with.length())
-        return false;
+	if (str.length() < with.length())
+		return false;
 
-    auto sub = str.substr(0, with.length());
+	auto sub = str.substr(0, with.length());
 
-    return with == sub;
+	return with == sub;
 }
 
 inline std::string strtok_str(std::string& txt, char delim)
 {
-    auto dPos = txt.find_first_of(delim);
-    std::string ret = txt;
+	auto dPos = txt.find_first_of(delim);
+	std::string ret = txt;
 
-    if (dPos != std::string::npos)
-    {
-        ret.erase(dPos, std::string::npos);
-        txt.erase(0, dPos + 1);
-    }
-    else
-        txt.clear();
+	if (dPos != std::string::npos)
+	{
+		ret.erase(dPos, std::string::npos);
+		txt.erase(0, dPos + 1);
+	}
+	else
+		txt.clear();
 
-    return ret;
+	return ret;
 }
 
 }

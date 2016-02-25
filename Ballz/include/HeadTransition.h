@@ -3,28 +3,28 @@
 
 struct HeadTransition
 {
-    Ogre::Vector3 pos;
-    Ogre::Vector3 posTarget;
+	Ogre::Vector3 pos;
+	Ogre::Vector3 posTarget;
 
-    Ogre::Quaternion dir;
-    Ogre::Quaternion dirTarget;
+	Ogre::Quaternion dir;
+	Ogre::Quaternion dirTarget;
 
-    float timer;
-    float dist;
-    Ogre::SceneNode* transitionNode = nullptr;
+	float timer;
+	float dist;
+	Ogre::SceneNode* transitionNode = nullptr;
 
-    void initializeJump(Ogre::Camera* cam, Ogre::Vector3 target);
-    bool updateJump(float tslf);
+	void initializeJump(Ogre::Camera* cam, Ogre::Vector3 target);
+	bool updateJump(float tslf);
 
-    void initializeTransition(Ogre::Camera* cam, Ogre::Vector3 target, float transitionTime);
-    bool updateTransition(float tslf);
-    void refreshTransition(Ogre::Quaternion actualOr, Ogre::Vector3 actualPos);
+	void initializeTransition(Ogre::Camera* cam, Ogre::Vector3 target, float transitionTime);
+	bool updateTransition(float tslf);
+	void refreshTransition(Ogre::Quaternion actualOr, Ogre::Vector3 actualPos);
 
 private:
 
-    float transformHeightFuncTime(float time, float hd);
-    float heightFunc(float time, float hd);
+	float transformHeightFuncTime(float time, float hd);
+	float heightFunc(float time, float hd);
 
-    float transformHeightFuncTimeLow(float time, float hd);
-    float heightFuncLow(float time, float hd);
+	float transformHeightFuncTimeLow(float time, float hd);
+	float heightFuncLow(float time, float hd);
 };

@@ -7,38 +7,38 @@ class WaterCurrent;
 
 class PlayerSwimming
 {
-    friend class Player;
+	friend class Player;
 
-    Player* p;
-    WaterCurrent* currents;
+	Player* p;
+	WaterCurrent* currents;
 
-    Ogre::RenderTarget *rttTex;
-    Ogre::TexturePtr texture;
-    Ogre::Camera* mWaterCam;
-    Ogre::SceneNode* mWaterCamNode;
+	Ogre::RenderTarget *rttTex;
+	Ogre::TexturePtr texture;
+	Ogre::Camera* mWaterCam;
+	Ogre::SceneNode* mWaterCamNode;
 
-    void initWaterDepthReading();
-    void readWaterDepth();
+	void initWaterDepthReading();
+	void readWaterDepth();
 
-    Ogre::ParticleSystem* bubbles;
-    Ogre::SceneNode* bubblesNode;
+	Ogre::ParticleSystem* bubbles;
+	Ogre::SceneNode* bubblesNode;
 
-    Ogre::ParticleSystem* splash;
-    Ogre::SceneNode* splashNode;
+	Ogre::ParticleSystem* splash;
+	Ogre::SceneNode* splashNode;
 
-    Ogre::ParticleSystem* dust;
-    Ogre::SceneNode* dustNode;
+	Ogre::ParticleSystem* dust;
+	Ogre::SceneNode* dustNode;
 
-    void enteredWater();
-    void leftWater();
+	void enteredWater();
+	void leftWater();
 
 public:
 
-    float outOfWaterTimer = 1.0f;
+	float outOfWaterTimer = 1.0f;
 
-    bool inWater = false;
-    PlayerSwimming(Player* player);
-    ~PlayerSwimming();
+	bool inWater = false;
+	PlayerSwimming(Player* player);
+	~PlayerSwimming();
 
-    void update(float tslf);
+	void update(float tslf);
 };

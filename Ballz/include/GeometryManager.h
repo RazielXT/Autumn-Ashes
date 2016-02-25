@@ -9,45 +9,45 @@ using VCEditFunc = std::function<void(Ogre::Entity*, float*, float*, Ogre::RGBA*
 
 struct OptimizedGroup
 {
-    Ogre::AxisAlignedBox bbox;
-    Ogre::MaterialPtr mat;
-    std::string name;
+	Ogre::AxisAlignedBox bbox;
+	Ogre::MaterialPtr mat;
+	std::string name;
 };
 
 class GeometryManager
 {
 public:
 
-    void forgetPagedGeometry(Forests::PagedGeometry *g);
-    void addPagedGeometry(Forests::PagedGeometry *g);
-    void addPagedGeometry(Forests::PagedGeometry *g, std::string name);
+	void forgetPagedGeometry(Forests::PagedGeometry *g);
+	void addPagedGeometry(Forests::PagedGeometry *g);
+	void addPagedGeometry(Forests::PagedGeometry *g, std::string name);
 
-    void clear();
-    void update();
+	void clear();
+	void update();
 
-    void postLoad();
-    void addDetailGeometryEntity(int id, Ogre::SceneNode* node, std::string type, bool keepMesh, Ogre::Vector3 color);
-    void addDetailGeometryMask(Ogre::Entity* maskEnt, std::vector<DetailGeometryParams>& geometries, OgreNewt::Body* target, float rayDistance);
+	void postLoad();
+	void addDetailGeometryEntity(int id, Ogre::SceneNode* node, std::string type, bool keepMesh, Ogre::Vector3 color);
+	void addDetailGeometryMask(Ogre::Entity* maskEnt, std::vector<DetailGeometryParams>& geometries, OgreNewt::Body* target, float rayDistance);
 
-    void resetMaskedDetailGeometries();
+	void resetMaskedDetailGeometries();
 
-    //editFunc = (entity*, pos*, tc*, vc*)
-    bool modifyVertexBuffer(Ogre::Entity* ent, VCEditFunc editFunc, void* data = nullptr);
+	//editFunc = (entity*, pos*, tc*, vc*)
+	bool modifyVertexBuffer(Ogre::Entity* ent, VCEditFunc editFunc, void* data = nullptr);
 
-    void addOptimizedGroup(OptimizedGroup group);
-    OptimizedGroup getClosestOptGroup();
-    std::vector<OptimizedGroup>& getOptGroups();
+	void addOptimizedGroup(OptimizedGroup group);
+	OptimizedGroup getClosestOptGroup();
+	std::vector<OptimizedGroup>& getOptGroups();
 
 private:
 
-    std::vector<OptimizedGroup> optimizedGroups;
+	std::vector<OptimizedGroup> optimizedGroups;
 
-    std::vector<DetailGeometry *> detailGeometries;
-    DetailGeometry* getInstance(std::string name);
+	std::vector<DetailGeometry *> detailGeometries;
+	DetailGeometry* getInstance(std::string name);
 
-    void generateGeometryMask(Ogre::Entity* maskEnt, MaskGrid& grid, Ogre::Vector2& size);
+	void generateGeometryMask(Ogre::Entity* maskEnt, MaskGrid& grid, Ogre::Vector2& size);
 
-    std::map<std::string, Forests::PagedGeometry *> namedPagedGeometries;
-    std::vector<Forests::PagedGeometry *> pagedGeometries;
+	std::map<std::string, Forests::PagedGeometry *> namedPagedGeometries;
+	std::vector<Forests::PagedGeometry *> pagedGeometries;
 };
 

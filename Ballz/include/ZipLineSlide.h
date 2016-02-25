@@ -8,29 +8,29 @@ class ZipLineSlide : public Slide
 {
 public:
 
-    ZipLineSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, bool is_walkable, float speed);
+	ZipLineSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, bool is_walkable, float speed);
 
-    virtual bool start();
+	virtual bool start();
 
 protected:
 
-    virtual void resetHead()
-    {
-        head->setPosition(0, -1.5f, 0);
-        head->resetOrientation();
-    }
+	virtual void resetHead()
+	{
+		head->setPosition(0, -1.5f, 0);
+		head->resetOrientation();
+	}
 
-    struct TurnRollState
-    {
-        bool first = true;
-        Quaternion lastOr;
-        float torque;
-        float curHeadRoll;
-    };
+	struct TurnRollState
+	{
+		bool first = true;
+		Quaternion lastOr;
+		float torque;
+		float curHeadRoll;
+	};
 
-    virtual void updateSlidingCamera(float time);
+	virtual void updateSlidingCamera(float time);
 
-    inline void updateTurningRoll(float time);
+	inline void updateTurningRoll(float time);
 
-    TurnRollState turnRollState;
+	TurnRollState turnRollState;
 };

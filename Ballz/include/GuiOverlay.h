@@ -12,109 +12,109 @@ class GuiOverlay
 {
 public:
 
-    GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs);
-    ~GuiOverlay()
-    {
-        clear();
-    }
+	GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderWindow* mWin, Ogre::RenderSystem* rs);
+	~GuiOverlay()
+	{
+		clear();
+	}
 
-    void setMainMenu();
-    void setIngameMenu();
+	void setMainMenu();
+	void setIngameMenu();
 
-    void showParticleDebug();
-    void showMaterialDebug();
-    void showLevelDebug();
-    void showDetailGeometryDebug();
+	void showParticleDebug();
+	void showMaterialDebug();
+	void showLevelDebug();
+	void showDetailGeometryDebug();
 
-    void setDebugValue(Ogre::Real value1, std::vector<std::string>& values);
-    void updateMainMenu(Ogre::Real time);
-    int mainMenuPressed();
-    bool pressedKey(const OIS::KeyEvent &arg);
-    void mouseMoveUpdate(int x,int y);
-    void clearMenu();
+	void setDebugValue(Ogre::Real value1, std::vector<std::string>& values);
+	void updateMainMenu(Ogre::Real time);
+	int mainMenuPressed();
+	bool pressedKey(const OIS::KeyEvent &arg);
+	void mouseMoveUpdate(int x,int y);
+	void clearMenu();
 
-    void updateIngame(Ogre::Real time);
-    void updateIngameMenu(Ogre::Real time);
+	void updateIngame(Ogre::Real time);
+	void updateIngameMenu(Ogre::Real time);
 
-    GameUi* gameUi;
+	GameUi* gameUi;
 
 private:
 
-    GuiSceneEdit* editUi;
+	GuiSceneEdit* editUi;
 
-    GameConfig* gConfig;
+	GameConfig* gConfig;
 
-    void updateOptionsMove(Ogre::Real time);
-    void updateLevelsMove(Ogre::Real time);
-    void showLevels();
-    void closeLevels();
-    void showOptions();
-    void closeOptions();
-    void createMainMenuButtons();
-    void createOptionMenuButtons();
-    void createIngameMenuButtons();
-    void createLevelsMenuButtons();
+	void updateOptionsMove(Ogre::Real time);
+	void updateLevelsMove(Ogre::Real time);
+	void showLevels();
+	void closeLevels();
+	void showOptions();
+	void closeOptions();
+	void createMainMenuButtons();
+	void createOptionMenuButtons();
+	void createIngameMenuButtons();
+	void createLevelsMenuButtons();
 
-    void clear();
+	void clear();
 
 
-    enum mMenuEnum { START, OPTIONS, QUIT, RESUME, RESTART };
-    enum menusEnum { MAINM, STARTM, OPTIONSM, QUITM, TOSM, FRSM, TOOM, FROM, TOQM, FRQM };
-    enum oMenuEnum { RESOLUTION, FULLSCREEN, SHADOWS, SSAO };
+	enum mMenuEnum { START, OPTIONS, QUIT, RESUME, RESTART };
+	enum menusEnum { MAINM, STARTM, OPTIONSM, QUITM, TOSM, FRSM, TOOM, FROM, TOQM, FRQM };
+	enum oMenuEnum { RESOLUTION, FULLSCREEN, SHADOWS, SSAO };
 
-    struct resolution
-    {
-        std::string res;
-        int w;
-        int h;
-    };
+	struct resolution
+	{
+		std::string res;
+		int w;
+		int h;
+	};
 
-    struct lvlButton
-    {
-        lvlButton(Gorilla::Rectangle* r, Gorilla::Caption* c, int id, bool unlocked, float pos)
-        {
-            this->r = r;
-            this->id = id;
-            this->unlocked = unlocked;
-            this->pos = pos;
-            this->c = c;
-        }
+	struct lvlButton
+	{
+		lvlButton(Gorilla::Rectangle* r, Gorilla::Caption* c, int id, bool unlocked, float pos)
+		{
+			this->r = r;
+			this->id = id;
+			this->unlocked = unlocked;
+			this->pos = pos;
+			this->c = c;
+		}
 
-        float pos;
-        Gorilla::Rectangle* r;
-        Gorilla::Caption* c;
-        int id;
-        bool unlocked;
-    };
+		float pos;
+		Gorilla::Rectangle* r;
+		Gorilla::Caption* c;
+		int id;
+		bool unlocked;
+	};
 
-    ListLoop<mMenuEnum>* mMenuState;
-    ListLoop<mMenuEnum>* gMenuState;
-    menusEnum currentMenu;
-    oMenuEnum oMenuState;
+	ListLoop<mMenuEnum>* mMenuState;
+	ListLoop<mMenuEnum>* gMenuState;
+	menusEnum currentMenu;
+	oMenuEnum oMenuState;
 
-    ListLoop<Gorilla::Caption*>* cButton;
-    ListLoop<Gorilla::Caption*>* cOptionButtonA;
-    ListLoop<Gorilla::Caption*>* firstOptionButton;
-    ListLoop<Gorilla::Caption*>* firstOptionButtonA;
+	ListLoop<Gorilla::Caption*>* cButton;
+	ListLoop<Gorilla::Caption*>* cOptionButtonA;
+	ListLoop<Gorilla::Caption*>* firstOptionButton;
+	ListLoop<Gorilla::Caption*>* firstOptionButtonA;
 
-    ListLoop<resolution>* resolutionsLoop;
+	ListLoop<resolution>* resolutionsLoop;
 
-    char movingDir;
-    bool moving, lvlMoving;
-    irrklang::ISoundEngine* soundEngine;
-    Ogre::Real atm;
-    Ogre::SceneManager * mSceneMgr;
-    std::vector<Gorilla::Caption*> mMenuButtons;
-    std::vector<Gorilla::Caption*> oMenuButtons;
-    std::vector<lvlButton*> lMenuButtons;
-    lvlButton* firstLevelButton, *curLvlButton;
-    Gorilla::Silverback*    mSilverback;
-    Gorilla::Screen*        mScreen, *mScreenLvls, *mScreenIngame;
-    Gorilla::Layer*         mLayer, *gameLayer, *mouseLayer, *mLvlsLayer;
-    Gorilla::Caption*       fpsCaption;
-    Gorilla::Caption*       debugCaption[MAX_DEBUG_LINES];
-    Gorilla::Rectangle*     mousePointer;
+	char movingDir;
+	bool moving, lvlMoving;
+	irrklang::ISoundEngine* soundEngine;
+	Ogre::Real atm;
+	Ogre::SceneManager * mSceneMgr;
+	std::vector<Gorilla::Caption*> mMenuButtons;
+	std::vector<Gorilla::Caption*> oMenuButtons;
+	std::vector<lvlButton*> lMenuButtons;
+	lvlButton* firstLevelButton, *curLvlButton;
+	Gorilla::Silverback*    mSilverback;
+	Gorilla::Screen*        mScreen, *mScreenLvls, *mScreenIngame;
+	Gorilla::Layer*         mLayer, *gameLayer, *mouseLayer, *mLvlsLayer;
+	Gorilla::Caption*       fpsCaption;
+	Gorilla::Caption*       debugCaption[MAX_DEBUG_LINES];
+	Gorilla::Rectangle*     mousePointer;
 
-    bool ingamemenu;
+	bool ingamemenu;
 
 };

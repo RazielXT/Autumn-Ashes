@@ -11,129 +11,129 @@ std::vector<LoadedManualDG> ManualDetailGeometry::loadedMDG;
 
 ManualDetailGeometry::ManualDetailGeometry(int id)
 {
-    info.id = id;
+	info.id = id;
 }
 
 void ManualDetailGeometry::build()
 {
-    if (info.sg == nullptr)
-        return;
+	if (info.sg == nullptr)
+		return;
 
-    info.sg->build();
-    info.name = info.name + "_" + std::to_string(info.id);
-    info.usedMats = materialHelper.getGeneratedMaterials();
+	info.sg->build();
+	info.name = info.name + "_" + std::to_string(info.id);
+	info.usedMats = materialHelper.getGeneratedMaterials();
 
-    loadedMDG.push_back(info);
+	loadedMDG.push_back(info);
 
-    for (auto e : usedEntities)
-    {
-        Global::mSceneMgr->destroyEntity(e);
-    }
+	for (auto e : usedEntities)
+	{
+		Global::mSceneMgr->destroyEntity(e);
+	}
 
-    usedEntities.clear();
+	usedEntities.clear();
 }
 
 void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bool keepMesh, Vector3 color)
 {
-    info.bbox.merge(node->getPosition());
+	info.bbox.merge(node->getPosition());
 
-    auto dgTypeInfo = DetailGeometryInfo::get(type);
+	auto dgTypeInfo = DetailGeometryInfo::get(type);
 
-    if (info.sg == nullptr)
-    {
-        static int msgCount = 0;
-        info.sg = Global::mSceneMgr->createStaticGeometry("manDG" + std::to_string(msgCount++));
-        info.sg->setCastShadows(true);
-        info.sg->setVisibilityFlags(VisibilityFlag_Normal);
+	if (info.sg == nullptr)
+	{
+		static int msgCount = 0;
+		info.sg = Global::mSceneMgr->createStaticGeometry("manDG" + std::to_string(msgCount++));
+		info.sg->setCastShadows(true);
+		info.sg->setVisibilityFlags(VisibilityFlag_Normal);
 
-        float staticEntitiesGridSize = dgTypeInfo.gridSize;
-        Ogre::Vector3 gridRegion(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize);
-        info.sg->setRegionDimensions(gridRegion);
-        //sg->setOrigin(gridRegion / 2.0f + gridInfo.node->getPosition());
-        info.sg->setRenderingDistance(dgTypeInfo.maxDistance);
-    }
+		float staticEntitiesGridSize = dgTypeInfo.gridSize;
+		Ogre::Vector3 gridRegion(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize);
+		info.sg->setRegionDimensions(gridRegion);
+		//sg->setOrigin(gridRegion / 2.0f + gridInfo.node->getPosition());
+		info.sg->setRenderingDistance(dgTypeInfo.maxDistance);
+	}
 
-    Quaternion qCorrect(Degree(180), Vector3(1, 0, 0));
+	Quaternion qCorrect(Degree(180), Vector3(1, 0, 0));
 
-    if (!keepMesh)
-    {
-        String meshName = dgTypeInfo.possibleEntities[(int)Math::RangeRandom(0, dgTypeInfo.possibleEntities.size() - 0.01f)];
+	if (!keepMesh)
+	{
+		String meshName = dgTypeInfo.possibleEntities[(int)Math::RangeRandom(0, dgTypeInfo.possibleEntities.size() - 0.01f)];
 
-        while (!meshName.empty())
-        {
-            auto mname = SUtils::strtok_str(meshName, ';');
-            auto ent = Global::mSceneMgr->createEntity(mname);
-            //node->attachObject(ent);
+		while (!meshName.empty())
+		{
+			auto mname = SUtils::strtok_str(meshName, ';');
+			auto ent = Global::mSceneMgr->createEntity(mname);
+			//node->attachObject(ent);
 
-            materialHelper.updateMaterial(ent, color, dgTypeInfo);
-            info.sg->addEntity(ent, node->getPosition(), node->getOrientation()*qCorrect, dgTypeInfo.generalScale*node->getScale());
-            usedEntities.push_back(ent);
-        }
+			materialHelper.updateMaterial(ent, color, dgTypeInfo);
+			info.sg->addEntity(ent, node->getPosition(), node->getOrientation()*qCorrect, dgTypeInfo.generalScale*node->getScale());
+			usedEntities.push_back(ent);
+		}
 
-        if (info.name.empty())
-            info.name = type;
-    }
-    else
-    {
-        auto ent = (Entity*)node->getAttachedObject(0);
-        node->detachAllObjects();
+		if (info.name.empty())
+			info.name = type;
+	}
+	else
+	{
+		auto ent = (Entity*)node->getAttachedObject(0);
+		node->detachAllObjects();
 
-        materialHelper.updateMaterial(ent, color, dgTypeInfo);
-        info.sg->addEntity(ent, node->getPosition(), node->getOrientation()*qCorrect, node->getScale());
-        usedEntities.push_back(ent);
+		materialHelper.updateMaterial(ent, color, dgTypeInfo);
+		info.sg->addEntity(ent, node->getPosition(), node->getOrientation()*qCorrect, node->getScale());
+		usedEntities.push_back(ent);
 
-        if (info.name.empty())
-            info.name = ent->getName();
-    }
+		if (info.name.empty())
+			info.name = ent->getName();
+	}
 }
 
 LoadedManualDG* ManualDetailGeometry::getClosest()
 {
-    if (!Global::player)
-        return nullptr;
+	if (!Global::player)
+		return nullptr;
 
-    LoadedManualDG* dgOut = nullptr;
-    float closest = 999999;
-    auto pos = Global::player->getCameraPosition();
+	LoadedManualDG* dgOut = nullptr;
+	float closest = 999999;
+	auto pos = Global::player->getCameraPosition();
 
-    for (auto& dg : loadedMDG)
-    {
-        float dist = pos.squaredDistance(dg.bbox.getCenter());
+	for (auto& dg : loadedMDG)
+	{
+		float dist = pos.squaredDistance(dg.bbox.getCenter());
 
-        if (dist < closest)
-        {
-            dgOut = &dg;
-            closest = dist;
-        }
-    }
+		if (dist < closest)
+		{
+			dgOut = &dg;
+			closest = dist;
+		}
+	}
 
-    return dgOut;
+	return dgOut;
 }
 
 void ManualDetailGeometry::buildAll()
 {
-    loadedMDG.clear();
+	loadedMDG.clear();
 
-    for (auto dgi : mdg)
-    {
-        auto dg = dgi.second;
-        dg->build();
-        delete dg;
-    }
+	for (auto dgi : mdg)
+	{
+		auto dg = dgi.second;
+		dg->build();
+		delete dg;
+	}
 
-    mdg.clear();
+	mdg.clear();
 }
 
 ManualDetailGeometry* ManualDetailGeometry::get(int id)
 {
-    if (mdg.find(id) != mdg.end())
-    {
-        return mdg[id];
-    }
-    else
-    {
-        ManualDetailGeometry* dg = new ManualDetailGeometry(id);
-        mdg[id] = dg;
-        return dg;
-    }
+	if (mdg.find(id) != mdg.end())
+	{
+		return mdg[id];
+	}
+	else
+	{
+		ManualDetailGeometry* dg = new ManualDetailGeometry(id);
+		mdg[id] = dg;
+		return dg;
+	}
 }

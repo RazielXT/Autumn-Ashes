@@ -16,22 +16,22 @@ namespace Ogre
 class GpuCommandBufferFlush : public FrameListener
 {
 protected:
-    bool mUseOcclusionQuery;
-    typedef std::vector<HardwareOcclusionQuery*> HOQList;
-    HOQList mHOQList;
-    size_t mMaxQueuedFrames;
-    size_t mCurrentFrame;
-    bool mStartPull;
-    bool mStarted;
+	bool mUseOcclusionQuery;
+	typedef std::vector<HardwareOcclusionQuery*> HOQList;
+	HOQList mHOQList;
+	size_t mMaxQueuedFrames;
+	size_t mCurrentFrame;
+	bool mStartPull;
+	bool mStarted;
 
 public:
-    GpuCommandBufferFlush();
-    virtual ~GpuCommandBufferFlush();
+	GpuCommandBufferFlush();
+	virtual ~GpuCommandBufferFlush();
 
-    void start(size_t maxQueuedFrames = 2);
-    void stop();
-    bool frameStarted(const FrameEvent& evt);
-    bool frameEnded(const FrameEvent& evt);
+	void start(size_t maxQueuedFrames = 2);
+	void stop();
+	bool frameStarted(const FrameEvent& evt);
+	bool frameEnded(const FrameEvent& evt);
 
 };
 

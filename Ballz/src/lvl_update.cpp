@@ -7,19 +7,19 @@
 
 LvlMenuUpdate::LvlMenuUpdate(Ogre::SceneNode* cRot, Forests::PagedGeometry *gr)
 {
-    cRotator = cRot;
-    cRotator->yaw(Ogre::Degree(-30));
+	cRotator = cRot;
+	cRotator->yaw(Ogre::Degree(-30));
 
-    grass = gr;
-    stateExecution = UNDEFINED;
+	grass = gr;
+	stateExecution = UNDEFINED;
 };
 
 bool LvlMenuUpdate::update(Ogre::Real evt)
 {
-    cRotator->yaw(Ogre::Degree(evt*-3));
-    if (grass)
-        grass->update();
+	cRotator->yaw(Ogre::Degree(evt*-3));
+	if (grass)
+		grass->update();
 
-    return true;
+	return true;
 }
 

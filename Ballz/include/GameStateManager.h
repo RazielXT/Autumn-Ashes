@@ -12,84 +12,84 @@ class DebugKeys;
 
 enum StateSwitching
 {
-    SS_MAINMENU = -3,
-    SS_RESTART = -2
+	SS_MAINMENU = -3,
+	SS_RESTART = -2
 };
 
 struct LevelInfo
 {
-    std::string name;
-    std::string path;
-    std::string sceneFile;
-    std::function<void()> init;
+	std::string name;
+	std::string path;
+	std::string sceneFile;
+	std::function<void()> init;
 
-    std::string skyboxName;
+	std::string skyboxName;
 
-    Ogre::ColourValue fogColor;
-    float fogStartDistance;
-    float fogEndDistance;
-    Ogre::ColourValue ambientColor;
+	Ogre::ColourValue fogColor;
+	float fogStartDistance;
+	float fogEndDistance;
+	Ogre::ColourValue ambientColor;
 
-    Ogre::Vector4 ContSatuSharpNoise;
-    Ogre::Vector4 ColorShift;
-    float bloomAdd = 0;
-    float bloomSize = 1;
-    float bloomStr;
-    float bloomDepth;
+	Ogre::Vector4 ContSatuSharpNoise;
+	Ogre::Vector4 ColorShift;
+	float bloomAdd = 0;
+	float bloomSize = 1;
+	float bloomStr;
+	float bloomDepth;
 
-    void applyPostProcessing();
-    void applyFog();
+	void applyPostProcessing();
+	void applyFog();
 };
 
 class GameStateManager
 {
 public:
 
-    GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs);
-    ~GameStateManager();
+	GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs);
+	~GameStateManager();
 
-    LevelInfo* getLvlInfo(int id);
-    LevelInfo* getCurrentLvlInfo();
+	LevelInfo* getLvlInfo(int id);
+	LevelInfo* getCurrentLvlInfo();
 
-    void switchToMainMenu();
-    void switchToLevel(int lvl);
+	void switchToMainMenu();
+	void switchToLevel(int lvl);
 
-    void restartLevel();
-    void reloadLevel();
-    void loadSceneSettings();
+	void restartLevel();
+	void reloadLevel();
+	void loadSceneSettings();
 
-    void switchState(int target, float time = 1.0f);
+	void switchState(int target, float time = 1.0f);
 
-    void update(float tslf);
-    bool insideMenuPressed();
-    void insideMenuMoved(int x, int y);
-    void escapePressed();
+	void update(float tslf);
+	bool insideMenuPressed();
+	void insideMenuMoved(int x, int y);
+	void escapePressed();
 
-    GameConfig gameConfig;
-    GameState gameState;
-    GuiOverlay* myMenu;
-    WorldMaterials wMaterials;
-    GeometryManager* geometryMgr;
-    ParticleManager particleMgr;
-    MaterialEditsLibrary materialEdits;
-    SceneEditsLibrary sceneEdits;
+	GameConfig gameConfig;
+	GameState gameState;
+	GuiOverlay* myMenu;
+	WorldMaterials wMaterials;
+	GeometryManager* geometryMgr;
+	ParticleManager particleMgr;
+	MaterialEditsLibrary materialEdits;
+	SceneEditsLibrary sceneEdits;
 
-    std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
+	std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;
 
 private:
 
-    void clearLevel();
+	void clearLevel();
 
-    std::map<int, LevelInfo> levels;
+	std::map<int, LevelInfo> levels;
 
-    void updateStateSwitching(float tslf);
-    int stateTarget=0;
-    bool switchingState = false;
-    float switchStateTimer;
+	void updateStateSwitching(float tslf);
+	int stateTarget=0;
+	bool switchingState = false;
+	float switchStateTimer;
 
-    int lastLVL;
+	int lastLVL;
 
-    AudioLibrary audioLib;
+	AudioLibrary audioLib;
 
-    DebugKeys* dbg;
+	DebugKeys* dbg;
 };

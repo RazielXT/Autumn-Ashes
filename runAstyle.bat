@@ -1,2 +1,2 @@
 cd D:\AA\AAsvn\Ballz\
-AStyle.exe --style=allman --recursive --suffix=none *.cpp  *.h
+AStyle.exe --style=allman --recursive --indent=tab --suffix=none *.cpp  *.h

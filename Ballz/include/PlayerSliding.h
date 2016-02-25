@@ -9,34 +9,34 @@ class SlidesAutoTargetAsync;
 
 class PlayerSliding
 {
-    friend class Player;
-    friend class PlayerAbilities;
+	friend class Player;
+	friend class PlayerAbilities;
 
-    Player* p;
-    Slide* currentSlide = nullptr;
-    SlidesAutoTargetAsync* slidesAutoTarget;
+	Player* p;
+	Slide* currentSlide = nullptr;
+	SlidesAutoTargetAsync* slidesAutoTarget;
 
-    Ogre::BillboardSet* targetBillboardSet;
-    Ogre::SceneNode* billboardNode;
+	Ogre::BillboardSet* targetBillboardSet;
+	Ogre::SceneNode* billboardNode;
 
 public:
 
-    PlayerSliding(Player* player);
-    ~PlayerSliding();
+	PlayerSliding(Player* player);
+	~PlayerSliding();
 
-    float autoAttachUnavailableTimer = 0;
-    void slideStarted(Slide* slide);
-    void addLoadedSlide(Slide* slide);
+	float autoAttachUnavailableTimer = 0;
+	void slideStarted(Slide* slide);
+	void addLoadedSlide(Slide* slide);
 
-    void update(float tslf, bool readyToSlide);
+	void update(float tslf, bool readyToSlide);
 
-    void pressedKey(const OIS::KeyEvent &arg);
-    void releasedKey(const OIS::KeyEvent &arg);
-    void movedMouse(const OIS::MouseEvent &e);
+	void pressedKey(const OIS::KeyEvent &arg);
+	void releasedKey(const OIS::KeyEvent &arg);
+	void movedMouse(const OIS::MouseEvent &e);
 
-    void hideSlideTarget();
-    bool showPossibleSlideTarget();
+	void hideSlideTarget();
+	bool showPossibleSlideTarget();
 
-    bool foundTarget();
-    void portToTarget();
+	bool foundTarget();
+	void portToTarget();
 };

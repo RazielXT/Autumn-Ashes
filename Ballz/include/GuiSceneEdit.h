@@ -11,37 +11,37 @@ class GuiSceneEdit
 {
 public:
 
-    void initUi(Gorilla::Layer* layer);
-    bool pressedKey(const OIS::KeyEvent &arg);
+	void initUi(Gorilla::Layer* layer);
+	bool pressedKey(const OIS::KeyEvent &arg);
 
-    void queryLevel();
-    void queryMaterial();
-    void queryOptGroup();
-    void queryParticle();
-    void queryDetailGeometry();
+	void queryLevel();
+	void queryMaterial();
+	void queryOptGroup();
+	void queryParticle();
+	void queryDetailGeometry();
 
-    void setVisible(int lvl = 1);
-    void updateState();
-    void updateText();
+	void setVisible(int lvl = 1);
+	void updateState();
+	void updateText();
 
 private:
 
-    void updateBase();
+	void updateBase();
 
-    EditBaseRows base;
-    EditVariables* currentVars;
-    Edit* currentEdit;
+	EditBaseRows base;
+	EditVariables* currentVars;
+	Edit* currentEdit;
 
-    int selectedOffset = 3;
+	int selectedOffset = 3;
 
-    int activeLvl = 0;
+	int activeLvl = 0;
 
-    int activeBaseId = 3;
-    int activeVarId = 0;
-    int activeParamId = 0;
+	int activeBaseId = 3;
+	int activeVarId = 0;
+	int activeParamId = 0;
 
-    Gorilla::Caption*       baseRowsCaption[EDIT_BASE_ROWS_MAX];
-    Gorilla::Caption*       variablesCaption[EDIT_PARAMS_ROWS_MAX];
-    Gorilla::Caption*       variableParamsCaption[EDIT_PARAM_SIZE_MAX];
+	Gorilla::Caption*       baseRowsCaption[EDIT_BASE_ROWS_MAX];
+	Gorilla::Caption*       variablesCaption[EDIT_PARAMS_ROWS_MAX];
+	Gorilla::Caption*       variableParamsCaption[EDIT_PARAM_SIZE_MAX];
 
 };
