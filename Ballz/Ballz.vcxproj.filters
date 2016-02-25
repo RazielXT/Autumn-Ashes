@@ -314,9 +314,6 @@
     <ClCompile Include="src\SceneEditsLibrary.cpp">
       <Filter>Files\Core\SceneEdit</Filter>
     </ClCompile>
-    <ClCompile Include="include\LevelEdit.cpp">
-      <Filter>Files\Core\SceneEdit\Edits</Filter>
-    </ClCompile>
     <ClCompile Include="src\Edit.cpp">
       <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClCompile>
@@ -331,6 +328,9 @@
     </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LevelEdit.cpp">
+      <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -125,7 +125,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\LevelEdit.cpp" />
+    <ClCompile Include="src\LevelEdit.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\AnimatedTrack.cpp" />
     <ClCompile Include="src\AnimationBlender.cpp" />
