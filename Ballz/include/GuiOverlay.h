@@ -23,6 +23,7 @@ public:
 
 	void showParticleDebug();
 	void showMaterialDebug();
+	void showOptGroupDebug();
 	void showLevelDebug();
 	void showDetailGeometryDebug();
 

@@ -36,7 +36,7 @@ MaterialEdit::MaterialEdit(Ogre::Entity* ent)
 	loadMaterial();
 	changedMaterial = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, entity->getName());
 
-	rows = { { ent->getName(),EditRow::Caption } , { originName,EditRow::Caption },{ "Save",EditRow::Action },{ "VS",EditRow::Static },{ "PS",EditRow::Params } };
+	rows = { { ent->getName(),EditRow::Caption } , { originName,EditRow::Caption },{ "Save",EditRow::Action },{ "VS",EditRow::Params },{ "PS",EditRow::Params } };
 }
 
 EditVariables* MaterialEdit::getParams(const std::string& row)
@@ -44,6 +44,10 @@ EditVariables* MaterialEdit::getParams(const std::string& row)
 	if (row == "PS")
 	{
 		return &psVariables;
+	}
+	if (row == "VS")
+	{
+		return &vsVariables;
 	}
 
 	return nullptr;
@@ -63,6 +67,18 @@ void MaterialEdit::editChanged(EditVariable& var, const std::string& row)
 		int pass = materialPtr->getTechnique(0)->getNumPasses() - 1;
 		materialPtr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
 	}
+	if (row == "VS")
+	{
+		var.edited = true;
+
+		if (materialPtr.isNull())
+			return;
+
+		materialChanged();
+
+		int pass = materialPtr->getTechnique(0)->getNumPasses() - 1;
+		materialPtr->getTechnique(0)->getPass(pass)->getVertexProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+	}
 }
 
 void MaterialEdit::customAction(std::string name)
@@ -81,6 +97,7 @@ void MaterialEdit::merge(MaterialEdit& r, bool addNotExisting)
 	originName = r.originName;
 
 	mergeParams(r.psVariables, psVariables, addNotExisting);
+	mergeParams(r.vsVariables, vsVariables, addNotExisting);
 }
 
 void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& changes)
@@ -105,6 +122,11 @@ void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& ch
 
 void MaterialEdit::applyMaterialChanges(Ogre::MaterialPtr mat, const MaterialEdit& changes)
 {
+	for (auto& var : changes.vsVariables)
+	{
+		int pass = mat->getTechnique(0)->getNumPasses() - 1;
+		mat->getTechnique(0)->getPass(pass)->getVertexProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+	}
 	for (auto& var : changes.psVariables)
 	{
 		int pass = mat->getTechnique(0)->getNumPasses() - 1;
@@ -135,13 +157,26 @@ void MaterialEdit::resetMaterial()
 		entity->setMaterialName(originName);
 }
 
+std::vector<EditVariable> MaterialEdit::generateVsParams(Ogre::MaterialPtr matPtr)
+{
+	int pass = matPtr->getTechnique(0)->getNumPasses() - 1;
+	auto params = matPtr->getTechnique(0)->getPass(pass)->getVertexProgramParameters();
+
+	return generateShaderEditParams(params);
+}
+
 std::vector<EditVariable> MaterialEdit::generatePsParams(Ogre::MaterialPtr matPtr)
 {
-	std::vector<EditVariable> vars;
-
 	int pass = matPtr->getTechnique(0)->getNumPasses() - 1;
 	auto params = matPtr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters();
-	auto& l = params->getConstantDefinitions();
+
+	return generateShaderEditParams(params);
+}
+
+std::vector<EditVariable> MaterialEdit::generateShaderEditParams(Ogre::GpuProgramParametersSharedPtr gpuParams)
+{
+	std::vector<EditVariable> vars;
+	auto& l = gpuParams->getConstantDefinitions();
 	bool skip = true;
 
 	for (auto c : l.map)
@@ -154,7 +189,7 @@ std::vector<EditVariable> MaterialEdit::generatePsParams(Ogre::MaterialPtr matPt
 			EditVariable var;
 			var.name = c.first;
 			var.size = c.second.constType;
-			memcpy(var.buffer, params->getFloatPointer(c.second.physicalIndex), 4 * var.size);
+			memcpy(var.buffer, gpuParams->getFloatPointer(c.second.physicalIndex), 4 * var.size);
 
 			vars.push_back(var);
 		}
@@ -167,4 +202,5 @@ void MaterialEdit::loadMaterial()
 {
 	originName = materialPtr->getName();
 	psVariables = generatePsParams(materialPtr);
+	vsVariables = generateVsParams(materialPtr);
 }

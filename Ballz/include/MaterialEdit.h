@@ -33,7 +33,11 @@ struct MaterialEdit : public Edit
 
 protected:
 
+	std::vector<EditVariable> generateVsParams(Ogre::MaterialPtr matPtr);
 	std::vector<EditVariable> generatePsParams(Ogre::MaterialPtr matPtr);
+
+	std::vector<EditVariable> generateShaderEditParams(Ogre::GpuProgramParametersSharedPtr gpuParams);
+
 	void loadMaterial();
 
 	virtual void resetMaterial();

@@ -45,7 +45,7 @@ Player::Player(WorldMaterials* wMaterials)
 	levitating = false;
 
 	hanging=false;
-	climbing = 0;
+	climbing = BodyType(0);
 	grabbedObj = false;
 	wallrunning = false;
 	sliding = false;

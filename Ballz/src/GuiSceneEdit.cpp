@@ -330,6 +330,9 @@ void GuiSceneEdit::updateBase()
 
 void GuiSceneEdit::updateState()
 {
+	if (currentVars)
+		selectedOffset = std::max<int>(0, std::min<int>(3, currentVars->size() - 1));
+
 	setVisible(activeLvl);
 	updateText();
 }
@@ -344,7 +347,10 @@ void GuiSceneEdit::updateText()
 
 			id = (id < 0) ? std::max<int>(0,id + currentVars->size()) : id % currentVars->size();
 
-			variablesCaption[i]->text(currentVars->at(id).name);
+			if(i >= currentVars->size())
+				variablesCaption[i]->text("");
+			else
+				variablesCaption[i]->text(currentVars->at(id).name);
 		}
 
 		auto& var = currentVars->at(activeVarId);

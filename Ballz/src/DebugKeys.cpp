@@ -30,6 +30,12 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 	}
 	break;
 
+	case OIS::KC_NUMPAD8:
+	{
+		Global::gameMgr->myMenu->showOptGroupDebug();
+	}
+	break;
+
 	case OIS::KC_NUMPAD7:
 	{
 		Global::gameMgr->myMenu->showDetailGeometryDebug();

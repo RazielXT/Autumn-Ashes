@@ -134,7 +134,7 @@ void AudioLibrary::playHurtSound(float x, float y, float z)
 
 void AudioLibrary::playClimbSound(float x, float y, float z)
 {
-	playSound(climbAudio, x, y, z, true, 5, 0.3f);
+	playSound(climbAudio, x, y, z, true, 5, 0.5f);
 }
 
 void AudioLibrary::playFallSound(float x, float y, float z, int groundID)
@@ -240,5 +240,5 @@ void AudioLibrary::fillMoveAudio()
 	fallAudio[3] = fallAudio[7] = getSoundSource(getPath("metalgrate1.wav"));
 
 	hurtAudio = getSoundSource(getPath("pad.wav"));
-	climbAudio = getSoundSource(getPath("pad.wav"));
+	climbAudio = getSoundSource(getPath("pullup.wav"));
 }

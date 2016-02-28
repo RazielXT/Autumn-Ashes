@@ -168,7 +168,7 @@ private:
 
 	//extern state
 	bool hanging, grabbedObj, wallrunning, sliding, transformed;
-	char climbing;
+	BodyType climbing;
 
 	float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, sprintmeter;
 	char fallPitch, cameraWalkFinisher;

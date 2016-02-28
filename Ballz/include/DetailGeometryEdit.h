@@ -17,6 +17,7 @@ struct DetailGeometryEdit : public MaterialEdit
 	void serialize(Archive & ar, const unsigned int version)
 	{
 		ar & dgName;
+		ar & vsVariablesMap;
 		ar & psVariablesMap;
 		ar & geometryParams;
 	}
@@ -37,6 +38,7 @@ protected:
 
 	Ogre::StaticGeometry* sg;
 
+	std::map<std::string, std::vector<EditVariable>> vsVariablesMap;
 	std::map<std::string, std::vector<EditVariable>> psVariablesMap;
 
 	std::vector<Ogre::MaterialPtr> matsArray;

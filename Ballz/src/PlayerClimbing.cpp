@@ -85,7 +85,7 @@ void PlayerClimbing::forcePullup(Vector3 climbNormal, float startOffset)
 
 	startClimbing(Climb_Pullup);
 
-	Global::audioLib->play3D("pullup.wav", p->bodyPosition, 5, 0.7f);
+	Global::audioLib->playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
 
 	climb_normal = climbNormal;
 	climb_pullup = 0.05f + startOffset;
@@ -107,12 +107,12 @@ bool PlayerClimbing::spacePressed()
 	{
 		startPullup();
 	}
-	else if (p->climbing == 2 || p->climbing == 6)
+	else if (p->climbing == Pullup_old || p->climbing == Climb_Pullup)
 	{
-		Global::audioLib->play3D("pullup.wav", p->bodyPosition, 5, 0.7f);
+		Global::audioLib->playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
 		climb_pullup = 0.05f;
 	}
-	else if (p->climbing == 5)
+	else if (p->climbing == Climb)
 	{
 		Vector3 camDir = p->getFacingDirection();
 		Vector3 pohlad(-camDir);
@@ -462,7 +462,7 @@ void PlayerClimbing::updateClimbingPossibility()
 				Global::audioLib->playRandom3D(a->highHitAudio, pos);
 			}
 
-			startClimbing(info.mBody->getType());
+			startClimbing(BodyType(info.mBody->getType()));
 
 			if (info.mBody->getType() == Pullup_old)
 			{
@@ -495,7 +495,7 @@ void PlayerClimbing::updateClimbingStats()
 	{
 		if ((info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old || info.mBody->getType() == Climb_Pullup) && !p->onGround)
 		{
-			p->climbing = info.mBody->getType();
+			p->climbing = BodyType(info.mBody->getType());
 			Ogre::Vector3 c_normal = info.mNormal.normalisedCopy();
 
 			if (c_normal != climb_normal)
@@ -625,7 +625,7 @@ bool PlayerClimbing::canClimb(Direction direction, bool soundIfTrue, bool needSp
 	return false;
 }
 
-void PlayerClimbing::startClimbing(char type)
+void PlayerClimbing::startClimbing(BodyType type)
 {
 	Ogre::Vector3 size(0.2, 0.2, 0.2);
 	Ogre::Real mass = 0.3;
@@ -680,7 +680,7 @@ void PlayerClimbing::stopClimbing()
 	delete b;
 	Global::mSceneMgr->destroyEntity("BodyChytac");
 	Global::mSceneMgr->destroySceneNode("BodyChytac");
-	p->climbing = 0;
+	p->climbing = BodyType(0);
 	climb_yaw = 0;
 }
 
@@ -699,7 +699,7 @@ void PlayerClimbing::updatePullup(float tslf)
 		climbDir.normalise();
 
 		Real v = 2 / (2.5f*climb_pullup);
-		climbDir *= 2;
+		climbDir *= 3;
 		climbDir.y =  v;
 
 		p->head_turning += p->tslf*-15*pullupSide;

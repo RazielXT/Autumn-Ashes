@@ -29,7 +29,7 @@ class PlayerClimbing
 		return climb_pullup!=0;
 	}
 
-	void startClimbing(char type);
+	void startClimbing(BodyType type);
 	void stopClimbing();
 
 	inline void updateVerticalClimb(bool leftPhase);

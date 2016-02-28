@@ -10,10 +10,12 @@ DetailGeometryEdit::DetailGeometryEdit(LoadedManualDG* manualDG)
 	for (size_t i = 0; i < manualDG->usedMats.size(); i++)
 	{
 		auto matPtr = Ogre::MaterialManager::getSingleton().getByName(manualDG->usedMats[i]->getName());
+		auto vsVars = generateVsParams(matPtr);
 		auto psVars = generatePsParams(matPtr);
 
 		matsArray.push_back(matPtr);
 		psVariablesMap[matPtr->getName()] = psVars;
+		vsVariablesMap[matPtr->getName()] = vsVars;
 	}
 
 	materialPtr = matsArray[currentMatId];
@@ -28,6 +30,8 @@ DetailGeometryEdit::DetailGeometryEdit(LoadedManualDG* manualDG)
 		rows.push_back({ mat->getName(),rows.size() == 1 ? EditRow::Caption : EditRow::Action });
 	}
 	rows.push_back({ "Save",EditRow::Action });
+
+	rows.push_back({ "VS",EditRow::Params });
 	rows.push_back({ "PS",EditRow::Params });
 }
 
@@ -72,6 +76,13 @@ void DetailGeometryEdit::customAction(std::string name)
 void DetailGeometryEdit::merge(DetailGeometryEdit& r, bool addNotExisting)
 {
 	dgName = r.dgName;
+
+	for (auto& vsVarsIt : r.vsVariablesMap)
+	{
+		auto& target = vsVariablesMap[vsVarsIt.first];
+
+		mergeParams(vsVarsIt.second, target, addNotExisting);
+	}
 
 	for (auto& psVarsIt : r.psVariablesMap)
 	{
@@ -125,6 +136,20 @@ void DetailGeometryEdit::applyChanges(std::map < std::string, DetailGeometryEdit
 						break;
 					}
 				}
+
+				for (auto savedMat : savedDg.second.vsVariablesMap)
+				{
+					if (savedMat.first == mat->getName())
+					{
+						for (auto& var : savedMat.second)
+						{
+							int pass = mat->getTechnique(0)->getNumPasses() - 1;
+							mat->getTechnique(0)->getPass(pass)->getVertexProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+						}
+
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -137,6 +162,7 @@ void DetailGeometryEdit::resetMaterial()
 
 void DetailGeometryEdit::materialChanged()
 {
+	vsVariablesMap[matsArray[currentMatId]->getName()] = vsVariables;
 	psVariablesMap[matsArray[currentMatId]->getName()] = psVariables;
 	changedMaterial = true;
 
