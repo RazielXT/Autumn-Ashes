@@ -171,7 +171,7 @@ void optimizeEntities()
 
 		std::map < mvec, std::vector<Entity*>, comparator> grid;
 
-		Ogre::MaterialPtr usedMat = Ogre::MaterialManager::getSingletonPtr()->getByName(it.first);	
+		Ogre::MaterialPtr usedMat = Ogre::MaterialManager::getSingletonPtr()->getByName(it.first);
 		Ogre::AxisAlignedBox bBox;
 
 		for (auto e : entities)
@@ -232,7 +232,7 @@ void optimizeEntities()
 		{
 			myLog->logMessage("Creating optimized geometry " + it.first + " with number of entities: " + Ogre::StringConverter::toString(count), LML_NORMAL);
 			sg->build();
-		}			
+		}
 
 	}
 

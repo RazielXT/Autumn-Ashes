@@ -168,7 +168,7 @@ void CrowFlight::randomizeAnim(Ogre::Animation* anim)
 	//todo fix rot maybe?
 	for (size_t i = 0; i < track->getNumKeyFrames(); i++)
 	{
-		TransformKeyFrame* key = (TransformKeyFrame*)track->getKeyFrame(i);
+		TransformKeyFrame* key = (TransformKeyFrame*)track->getKeyFrame(static_cast<unsigned short>(i));
 		Vector3 centralized = key->getTranslate() - centerPos;
 		key->setTranslate(centerPos + rot*centralized);
 		key->setRotation(key->getRotation()*rot);

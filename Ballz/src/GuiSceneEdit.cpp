@@ -347,7 +347,7 @@ void GuiSceneEdit::updateText()
 
 			id = (id < 0) ? std::max<int>(0,id + currentVars->size()) : id % currentVars->size();
 
-			if(i >= currentVars->size())
+			if(i >= static_cast<int>(currentVars->size()))
 				variablesCaption[i]->text("");
 			else
 				variablesCaption[i]->text(currentVars->at(id).name);

@@ -33,7 +33,7 @@ void AnimatedTrack::initTrack(const std::string& initAnimName)
 	auto o_track = anim->getNodeTrack(0);
 	float realLength = 0;
 
-	for (size_t i = 1; i < o_track->getNumKeyFrames(); i++)
+	for (unsigned short i = 1; i < o_track->getNumKeyFrames(); i++)
 	{
 		auto pKeyFrame = o_track->getNodeKeyFrame(i - 1);
 		auto keyFrame = o_track->getNodeKeyFrame(i);
@@ -55,7 +55,7 @@ void AnimatedTrack::initTrack(const std::string& initAnimName)
 	Quaternion previous;
 	Quaternion yawMe(Degree(-90), Vector3(0, 1, 0));
 
-	for (size_t i = 0; i < o_track->getNumKeyFrames(); i++)
+	for (unsigned short i = 0; i < o_track->getNumKeyFrames(); i++)
 	{
 		SlidePoint& point = trackPoints[i];
 		auto keyFrame = o_track->getNodeKeyFrame(i);
