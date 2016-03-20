@@ -171,14 +171,12 @@ void optimizeEntities()
 
 		std::map < mvec, std::vector<Entity*>, comparator> grid;
 
-		Ogre::MaterialPtr usedMat = Ogre::MaterialManager::getSingletonPtr()->getByName(it.first);
-		auto newMat = usedMat->clone(it.first + "_opt");
+		Ogre::MaterialPtr usedMat = Ogre::MaterialManager::getSingletonPtr()->getByName(it.first);	
 		Ogre::AxisAlignedBox bBox;
 
 		for (auto e : entities)
 		{
 			bBox.merge(e->getParentNode()->getPosition());
-			e->setMaterial(newMat);
 
 			Ogre::Quaternion eQ = e->getParentNode()->_getDerivedOrientation();
 			Ogre::Vector3 bbCenterOffset = eQ*e->getBoundingBox().getHalfSize() - eQ*e->getBoundingBox().getCenter();
@@ -192,10 +190,9 @@ void optimizeEntities()
 			grid[mgridPos].push_back(e);
 		}
 
-		std::string optGroupName = it.first;
-		Global::gameMgr->geometryMgr->addOptimizedGroup({bBox, newMat, optGroupName });
-
+		Ogre::MaterialPtr newMat;
 		Ogre::StaticGeometry* sg = nullptr;
+		size_t count = 0;
 
 		for (auto gIt : grid)
 		{
@@ -204,18 +201,23 @@ void optimizeEntities()
 			if (v.size()<2)
 				continue;
 
+			count += v.size();
+
 			if (!sg)
 			{
 				sg = Global::mSceneMgr->createStaticGeometry("sgOpt" + std::to_string(sgCount++));
 				sg->setRegionDimensions(Ogre::Vector3(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize));
 				sg->setOrigin(Ogre::Vector3(0, 0, 0));
 				sg->setCastShadows(true);
-			}
 
-			myLog->logMessage("Creating geometry with number of entities: " + Ogre::StringConverter::toString(v.size()), LML_NORMAL);
+				newMat = usedMat->clone(it.first + "_opt");
+				Global::gameMgr->geometryMgr->addOptimizedGroup({ bBox, newMat, it.first });
+			}
 
 			for (auto e : v)
 			{
+				e->setMaterial(newMat);
+
 				auto sn = e->getParentSceneNode();
 				auto pos = sn->_getDerivedPosition();
 				auto quat = sn->_getDerivedOrientation();
@@ -224,11 +226,13 @@ void optimizeEntities()
 				sn->detachAllObjects();
 				sg->addEntity(e, pos, quat, scale);
 			}
-
 		}
 
 		if (sg)
+		{
+			myLog->logMessage("Creating optimized geometry " + it.first + " with number of entities: " + Ogre::StringConverter::toString(count), LML_NORMAL);
 			sg->build();
+		}			
 
 	}
 

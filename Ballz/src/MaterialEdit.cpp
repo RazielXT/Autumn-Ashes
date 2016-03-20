@@ -3,6 +3,7 @@
 #include "GameStateManager.h"
 #include "GUtils.h"
 #include "Player.h"
+#include "SUtils.h"
 
 MaterialEdit* MaterialEdit::query()
 {
@@ -109,6 +110,7 @@ void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& ch
 			auto e = Global::mSceneMgr->getEntity(ent.first);
 			auto curMat = e->getSubEntity(0)->getMaterial();
 
+			//if (SUtils::startsWith(curMat->getName(), ent.second.originName))
 			if (ent.second.originName == curMat->getName())
 			{
 				auto newMat = curMat->clone(curMat->getName() + std::to_string(idCounter++));
