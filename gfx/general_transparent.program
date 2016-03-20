@@ -25,5 +25,6 @@ fragment_program general_transparent_ps cg
         param_named_auto iTWMat inverse_transpose_world_matrix
 		param_named_auto fogColor fog_colour
 		param_named_auto fogParams fog_params
+		param_named_auto ambientColor	ambient_light_colour
     }
 }

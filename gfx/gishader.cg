@@ -41,8 +41,7 @@ void myvs_Leafvs(uniform float4x4 vpmat,
     out float2 uv0 : TEXCOORD1,
     uniform float time,
     uniform float speed,
-    uniform float3 camPos,
-	uniform float4 depthRange)
+    uniform float3 camPos)
 {
 
 	speed = saturate(speed/3);

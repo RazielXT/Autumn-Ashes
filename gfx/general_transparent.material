@@ -3,8 +3,11 @@ material material_transparent
     set $diffuseCol "1 1 1 1"
     set $specularCol "1 1 1"
     set $shininess "32"
-    set $difUV "2 2"
-
+    set $uvScale "2"
+	set $ambientWeight "1"
+	set $fresnelTerm "2"
+	set $distortionTerm "1"
+	
     technique
     {
         scheme Transparent
@@ -31,7 +34,12 @@ material material_transparent
  
             fragment_program_ref general_transparent_ps
             {
-				param_named scaleDiff float2 $difUV
+				param_named uvScale float $uvScale
+				param_named ambientWeight float $ambientWeight
+				param_named fresnelTerm float $fresnelTerm
+				param_named distortionTerm float $distortionTerm
+				
+				param_named cubemapWPOffset float4 0 0 0 0
             }
  
             diffuse $diffuseCol
@@ -48,12 +56,13 @@ material material_transparent
 		      texture flat_n.png
             }
 			
-			texture_unit reflectionMap
-            {
+		 
+			texture_unit envCubeMap
+			{
+				cubic_texture imgs.png combinedUVW
 				filtering anisotropic
 				max_anisotropy 8
-				 texture ANGMAP11.JPG
-            }
+			}
 
 			texture_unit depthMap
             {

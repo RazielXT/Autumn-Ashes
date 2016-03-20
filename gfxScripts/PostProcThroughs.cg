@@ -269,10 +269,12 @@ float4 CombineScene_fp
 	if(w >0 && w < 0.2)
 		w = lerp(w,lerp(15,0.2,w*5),heightEnd);
 	
-	distPP.xy = (distPP.xy- 0.5)*w*0.3; 
+	distPP.xy = (distPP.xy - 0.5)*w*0.3; 
 	
-	float2 dist = (distScene.a==0) ? 0 : (distScene.xy - 0.5);	
-	dist = (distScene + distPP.xy)/2;
+	float distW = distScene.w;
+	float2 transpDist = (distScene.w == 0) ? 0 :(distScene.xy-0.75)*distW;
+	//float2 dist = (distScene.a==0) ? 0 : (distScene.xy - 0.5);	
+	float2 dist = (transpDist + distPP.xy)/2;
 	
 	float4 scene = tex2D(sceneMap, uv+dist);
 	

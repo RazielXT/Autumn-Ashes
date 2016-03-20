@@ -1,7 +1,7 @@
 struct VIn
 {
     float4 p : POSITION;
-    float4 n : NORMAL;
+    float3 n : NORMAL;
     float3 t : TANGENT;
     float2 uv  : TEXCOORD0;
     float3 c : COLOR;
@@ -49,17 +49,28 @@ VOut wdiffuse_vs_op(VIn IN,
     return OUT;
 }
 
+float3 offsetCubemapUV(in float3 v, float3 CubemapPositionWS, float3 PositionWS, float EnvMapOffset)
+{  
+	float3 ReflDirectionWS = v;
+	return (normalize(PositionWS - CubemapPositionWS)*EnvMapOffset + ReflDirectionWS);
+}
+
 void wdiffuse_ps_op(
 	PIn IN,
-	uniform float2 scaleDiff,
+	uniform float uvScale,
 	uniform float4 lightPos0,
 	uniform float3 camPos,
 	uniform float4 fogColor,
 	uniform float4 fogParams,
 	uniform float4x4 iTWMat,
+	uniform float4 cubemapWPOffset,
+	uniform float3 ambientColor,
+	uniform float ambientWeight,
+	uniform float fresnelTerm,
+	uniform float distortionTerm,
 	uniform sampler2D diffuseMap : register(s0),
 	uniform sampler2D normalMap : register(s1),
-	uniform sampler2D reflMap : register(s2),
+	uniform samplerCube reflMap : register(s2),
 	uniform sampler2D depthMap : register(s3),
 	float2 screenSpace : WPOS,
 	out float4 color0 : COLOR0,
@@ -70,45 +81,50 @@ void wdiffuse_ps_op(
 {
 	float finalDepthFade = 0.5;
 	float depthFade = 15;
+	
 	float normalScale = 3;
-	float2 texCoord = IN.uv.xy;
+	float2 texCoord = IN.uv.xy*uvScale;
 	
     // direction
     float3 ld0 = lightPos0.xyz;
 	
-	float3 normalTex = tex2D(normalMap, texCoord*scaleDiff*normalScale).rgb;
-
-    texCoord = IN.uv.xy;
-	
-	float4 diffTex = tex2D(diffuseMap, texCoord*scaleDiff);
+	float3 normalTex = tex2D(normalMap, texCoord*normalScale).rgb;
+	float4 diffTex = tex2D(diffuseMap, texCoord);
 	diffTex.a = 0.5;
 	
     float3x3 tbn = float3x3(IN.t.xyz,IN.b.xyz, IN.n.xyz);
     float3 normal = mul(transpose(tbn), normalTex.xyz * 2 - 1); // to object space
     normal = normalize(mul((float3x3)iTWMat, normal));
     
-    float diffuse = dot(ld0, normal)*0.5 + 0.5;
+    
     
 	float3 camDir = camPos - IN.wp.xyz;
 	float dist = length(camDir);
 	camDir = normalize(camDir);
 	
-	float3 Ru = normalize(-camDir);
-	float3 Rn = normalize(normal.xyz);
-	float3 Rr = reflect( Ru, Rn );
-	float m = 2.0 * sqrt( Rr.x*Rr.x + Rr.y*Rr.y + (Rr.z+1.0)*(Rr.z+1.0) );
-	float2 reflUV = float2(Rr.x/m + 0.5, Rr.y/m + 0.5);
-	float3 reflectionTex = tex2D(reflMap,reflUV).rgb;
+	float3 ReflectDir = reflect(camDir,normal);
+	ReflectDir.z *= -1;
+	float3 cubeDir = offsetCubemapUV(ReflectDir,cubemapWPOffset.xyz,IN.wp.xyz, cubemapWPOffset.w);
+	float fresnel = pow(1 - abs(dot(camDir, normal)), fresnelTerm);
+	//fresnel *= 0.8;	
+	float3 reflTex = texCUBE(reflMap,cubeDir).rgb;
+	diffTex.rgb = lerp(diffTex.rgb, reflTex, fresnel);
 	
-	float fresnel = pow(1 - abs(dot(camDir, normal)), 3);
-
+	float diffuseLight = dot(ld0, normal);
+	diffuseLight = abs(max(diffuseLight,diffuseLight/2));
+	
+	ambientColor *= ambientWeight;
+	
+	diffTex.rgb *= max(ambientColor, diffuseLight);
+	
+	float2 invSize = 1/float2(1280.0f,768.0f);
 	//fade depth
-	float2 depthTexCoord=screenSpace/float2(1280.0f,768.0f);
+	float2 depthTexCoord=screenSpace*invSize;
 	float3 depthEnv=tex2D(depthMap,depthTexCoord).rgb;  
 	float depth = lerp(0,finalDepthFade,saturate((depthEnv.g - dist)/depthFade));
 	float alpha = saturate(depth);
 	
-    color0=float4(diffTex.rgb*reflectionTex,alpha);
+    color0=float4(diffTex.rgb,alpha);
 	
 	//distance fog
 	float insideFog = saturate((dist - fogParams.y) / fogParams.z)*fogColor.a;
@@ -116,11 +132,12 @@ void wdiffuse_ps_op(
 	color0.rgb = lerp(color0.rgb, atmFog, insideFog);
 	
 	//float2(0.5,0.5);
-	float normalDistancing = lerp(0.13,0.005,saturate(IN.uv.z/30));
-    float2 normalOut = normalTex.xy*normalDistancing;	
-	float shine = reflectionTex.r*fresnel*0.2;
+	float normalDistancing = saturate(IN.uv.z/30); //lerp(0.13,0.005,saturate(IN.uv.z/30));
+	normalDistancing = lerp(0.3,0.05,normalDistancing)*distortionTerm;
+    float2 normalOut = saturate(normalTex.xy*0.5 + 0.5);
+	float shine = dot(reflTex,fresnel);
 	
-    color1=float4(normalOut,shine,alpha);
-    color2=pow(fresnel*1.5,2);
+    color1=float4(normalOut,shine,normalDistancing);
+    color2=pow(fresnel,2);
     color3=float4(1-IN.uv.z/IN.uv.w,dist,0,0);
 }
