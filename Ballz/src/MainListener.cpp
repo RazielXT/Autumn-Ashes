@@ -52,7 +52,6 @@ MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneMana
 	mWorld->setSolverModel(3);
 	mCamera = mSceneMgr->getCamera("Camera");
 
-	Global::mCamera = mCamera;
 	Global::mSceneMgr = mSceneMgr;
 	Global::mWorld = mWorld;
 	Global::mWindow = mWindow;

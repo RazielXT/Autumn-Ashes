@@ -6,7 +6,7 @@
 
 using namespace Ogre;
 
-class SlidesAutoTargetAsync;
+class PlayerAutoTarget;
 
 class Slide : public AnimatedTrack
 {

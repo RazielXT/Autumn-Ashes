@@ -8,7 +8,7 @@
 MaterialEdit* MaterialEdit::query()
 {
 	GUtils::RayInfo out;
-	if (GUtils::getRayInfo(Global::player->getCameraPosition(), Global::player->getFacingDirection(), 1000, out))
+	if (GUtils::getRayInfo(Global::camera->getPosition(), Global::camera->getFacingDirection(), 1000, out))
 	{
 		auto node = static_cast<Ogre::SceneNode*>(out.body->getOgreNode());
 

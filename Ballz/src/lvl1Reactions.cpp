@@ -83,7 +83,7 @@ bool NearParkEndReaction::update(Ogre::Real tslf)
 		{
 			Global::mSceneMgr->setVisibilityMask(4);
 			Global::player->stopMoving();
-			Global::player->rotateCamera(180,0);
+			Global::camera->rotateCamera(180,0);
 			doneEffect0=true;
 		}
 

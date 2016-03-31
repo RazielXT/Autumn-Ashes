@@ -1,11 +1,11 @@
 #pragma once
 #include "stdafx.h"
 
-class SlidesAutoTargetAsync;
+class PlayerAutoTarget;
 
 class AnimatedTrack
 {
-	friend SlidesAutoTargetAsync;
+	friend PlayerAutoTarget;
 
 public:
 

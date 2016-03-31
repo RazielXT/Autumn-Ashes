@@ -77,9 +77,7 @@ void PlayerFlash::portForward()
 
 		portingTimer = 0;
 
-		cameraPortNode->setPosition(p->camnode->_getDerivedPosition());
-		cameraPortNode->setOrientation(p->camnode->_getDerivedOrientation());
-		cameraPortNode->attachObject(p->detachCamera());
+		Global::camera->detachCamera(cameraPortNode);
 
 		portStartPos = cameraPortNode->getPosition();
 		portTargetPos = target->position;
@@ -96,10 +94,10 @@ void PlayerFlash::update(float tslf)
 		if (portingTimer >= portTime)
 		{
 			Global::mPPMgr->vars.radialHorizBlurVignette.x = 0;
-			p->attachCamera(true);
+			Global::camera->attachCamera(true);
 			p->bodyPosition = portTargetPos;
 			p->body->setPositionOrientation(portTargetPos, Ogre::Quaternion::IDENTITY);
-			p->body->setVelocity(p->getFacingDirection() * 10);
+			p->body->setVelocity(p->facingDir * 10);
 			portingTimer = -1;
 		}
 		else

@@ -4,6 +4,8 @@
 #include "WaterCurrent.h"
 #include "GameStateManager.h"
 
+using namespace Ogre;
+
 PlayerSwimming::PlayerSwimming(Player* player) : p(player)
 {
 	initWaterDepthReading();
@@ -26,7 +28,7 @@ PlayerSwimming::~PlayerSwimming()
 void PlayerSwimming::initWaterDepthReading()
 {
 	auto sceneMgr = Global::mSceneMgr;
-	auto camera = sceneMgr->getCamera("Camera");
+	auto camera = Global::camera->camera;
 	auto window = Global::mWindow;
 
 	texture = TextureManager::getSingleton().createManual("waterDepth",
@@ -65,7 +67,7 @@ void PlayerSwimming::readWaterDepth()
 
 	texture->getBuffer()->blitToMemory(tempPb);
 
-	float playerDepth = p->getCameraPosition().y - 0.2f;
+	float playerDepth = Global::camera->getPosition().y - 0.2f;
 
 	if (depth == 0 || playerDepth > depth)
 	{

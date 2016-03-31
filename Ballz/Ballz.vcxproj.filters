@@ -128,9 +128,6 @@
     <ClCompile Include="src\TopSlide.cpp">
       <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
-    <ClCompile Include="src\SlidesAutoTarget.cpp">
-      <Filter>Files\Objects\Slide</Filter>
-    </ClCompile>
     <ClCompile Include="src\Slide.cpp">
       <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
@@ -332,6 +329,15 @@
     <ClCompile Include="src\LevelEdit.cpp">
       <Filter>Files\Core\SceneEdit\Edits</Filter>
     </ClCompile>
+    <ClCompile Include="src\PlayerCamera.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="JumpBox.cpp">
+      <Filter>Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerAutoTarget.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -477,9 +483,6 @@
     </ClInclude>
     <ClInclude Include="include\WorldMaterials.h">
       <Filter>Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SlidesAutoTarget.h">
-      <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
     <ClInclude Include="include\tinyxml2.h">
       <Filter>Files\Scene</Filter>
@@ -657,6 +660,15 @@
     </ClInclude>
     <ClInclude Include="include\OptimizedGroupEdit.h">
       <Filter>Files\Core\SceneEdit\Edits</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerCamera.h">
+      <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerAutoTarget.h">
+      <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\JumpBox.h">
+      <Filter>Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

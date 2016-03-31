@@ -3,6 +3,7 @@
 #include "stdafx.h"
 
 class Player;
+class PlayerCamera;
 
 class PlayerClimbing
 {
@@ -12,6 +13,7 @@ class PlayerClimbing
 	};
 
 	friend class Player;
+	friend class PlayerCamera;
 
 	Player* p;
 	OgreNewt::Body* body;
@@ -44,6 +46,7 @@ class PlayerClimbing
 	Ogre::Vector3 climb_normal, climbDir;
 
 	OgreNewt::BallAndSocket* climbJoint;
+	Ogre::SceneNode* camnode, *headnode, *necknode;
 
 public:
 
@@ -51,6 +54,6 @@ public:
 
 	void climb_callback(OgreNewt::Body* me, float timeStep, int threadIndex);
 
-	void forcePullup(Vector3 climbNormal, float startOffset = 0.0f);
+	void forcePullup(Ogre::Vector3 climbNormal, float startOffset = 0.0f);
 	void update(float tslf);
 };

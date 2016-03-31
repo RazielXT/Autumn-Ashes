@@ -22,6 +22,7 @@
 #include "GameStateManager.h"
 #include "GateLock.h"
 #include "Energy.h"
+#include "JumpBox.h"
 
 using namespace Ogre;
 using namespace tinyxml2;
@@ -642,13 +643,6 @@ void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
 			ps->removeEmitter(0);
 			emmiter = newEmitter;
 		}
-
-		if (getElementBoolValue(rootElement, "EditDir"))
-		{
-			auto dir = getElementV3Value(rootElement, "Direction");
-
-			emmiter->setDirection(dir);
-		}
 	}
 
 	if (getElementBoolValue(rootElement, "EditMaterial"))
@@ -1166,6 +1160,16 @@ void loadInstance(const XMLElement* element, Ogre::Entity* ent, SceneNode* node,
 
 }
 
+void loadJumpBox(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
+{
+	JumpBox box;
+	box.position = node->_getDerivedPosition();
+	box.position.y += 1.5f;
+	box.jumpDirection = Ogre::Vector3(0, 30, 0);// node->getOrientation();
+
+	Global::player->autoTarget->objects.addLoadedJumpBox(box);
+}
+
 void loadEnergy(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
 {
 	auto energy = SceneEnergies::createEnergy();
@@ -1316,7 +1320,7 @@ void loadSlideTrack(const XMLElement* element, Ogre::Entity* ent, SceneNode* nod
 
 	loadedSlides[node->getName()] = line;
 
-	Global::player->pSliding->addLoadedSlide(line);
+	Global::player->autoTarget->objects.addLoadedSlide(line);
 
 	node->detachAllObjects();
 	mSceneMgr->destroyEntity(ent);
@@ -2139,6 +2143,10 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 				{
 					loadSceneCubeMap(root, ent, node);
 				}
+				else if (rootTag == "JumpBox")
+				{
+					loadJumpBox(root, ent, node);
+				}
 				else if (rootTag == "Energy")
 				{
 					loadEnergy(root, ent, node);
@@ -2308,7 +2316,7 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 }
 
 
-void loadPlayerInfo(const XMLElement* nodeElement, Player* pl)
+void loadPlayerInfo(const XMLElement* nodeElement)
 {
 	String elementName;
 	const XMLElement* childElement = 0;
@@ -2317,11 +2325,11 @@ void loadPlayerInfo(const XMLElement* nodeElement, Player* pl)
 		elementName = childElement->Value();
 
 		if (elementName == "position")
-			pl->setPosition(LoadXYZ(childElement));
+			Global::player->setPosition(LoadXYZ(childElement));
 		else if (elementName == "rotation")
 		{
 			Quaternion q = LoadRotation(childElement);
-			pl->rotateCamera(Ogre::Degree(q.getYaw()).valueDegrees(), -Ogre::Degree(q.getPitch()).valueDegrees());
+			Global::camera->rotateCamera(Ogre::Degree(q.getYaw()).valueDegrees(), -Ogre::Degree(q.getPitch()).valueDegrees());
 		}
 		else if (elementName == "entity")
 		{
@@ -2348,7 +2356,7 @@ void loadPlayerInfo(const XMLElement* nodeElement, Player* pl)
 
 						if (rootTag == "Player")
 						{
-							loadActions(element, pl->body);
+							loadActions(element, Global::player->body);
 						}
 					}
 				}
@@ -2430,7 +2438,7 @@ void loadNode(const XMLElement* nodeElement)
 
 	if (name == "Player" &&  Global::player != NULL)
 	{
-		loadPlayerInfo(nodeElement, Global::player);
+		loadPlayerInfo(nodeElement);
 	}
 	else
 	{

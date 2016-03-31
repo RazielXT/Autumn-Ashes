@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SceneCubeMap.h"
 #include "GameStateManager.h"
+#include "PlayerCamera.h"
 
 using namespace Ogre;
 
@@ -108,7 +109,7 @@ void SceneCubeMap::init(std::string name, int size, bool editable, float minRend
 	cubeMaps[name] = this;
 
 	auto sceneMgr = Global::mSceneMgr;
-	auto camera = sceneMgr->getCamera("Camera");
+	auto camera = Global::camera->camera;
 	auto window = Global::mWindow;
 
 	auto idString = Ogre::StringConverter::toString(id++);

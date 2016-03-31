@@ -43,13 +43,13 @@ void CrowWatch::activate(bool activate)
 
 		if (targetCrow)
 		{
-			auto cam = Global::player->detachCamera();
+			auto cam = Global::camera->detachCamera();
 			mNode->attachObject(cam);
 		}
 	}
 	else if (targetCrow)
 	{
-		Global::player->attachCamera();
+		Global::camera->attachCamera();
 		targetCrow = nullptr;
 	}
 }

@@ -2,6 +2,7 @@
 
 class EventsManager;
 class Player;
+class PlayerCamera;
 class GameStateManager;
 class GeometryManager;
 class PostProcessMgr;
@@ -42,7 +43,7 @@ extern EventsManager* mEventsMgr;
 extern GameStateManager* gameMgr;
 extern PostProcessMgr* mPPMgr;
 
-extern Ogre::Camera* mCamera;
+extern PlayerCamera* camera;
 extern Player* player;
 extern float timestep;
 extern AudioLibrary* audioLib;

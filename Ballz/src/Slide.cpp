@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "Slide.h"
 #include "Player.h"
-#include "PlayerSliding.h"
 #include "MUtils.h"
-#include "SlidesAutoTarget.h"
 
 using namespace Ogre;
 
@@ -68,9 +66,7 @@ void Slide::startJumpToSlide()
 	auto target = getCurrentState().getTranslate();
 	target.y += head->getPosition().y;
 
-	Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
-
-	headArrival.initializeJump(cam, target);
+	headArrival.initializeJump(target);
 
 	jumpingToSlide = true;
 
@@ -183,7 +179,7 @@ void Slide::attach(bool retainDirection, float headArrivalTime)
 	resetHead();
 
 	{
-		Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
+		Ogre::Camera* cam = Global::camera->camera;
 
 		auto state = getCurrentState();
 		auto pDir = cam->getDerivedOrientation();
@@ -199,7 +195,7 @@ void Slide::attach(bool retainDirection, float headArrivalTime)
 			headState.pitch = headState.yaw = 0;
 		}
 
-		headArrival.initializeTransition(cam, state.getTranslate() + head->getPosition(), headArrivalTime);
+		headArrival.initializeTransition(state.getTranslate() + head->getPosition(), headArrivalTime);
 	}
 
 	Global::player->body->setPositionOrientation(Vector3(0,1000,0), Quaternion::IDENTITY);
@@ -219,18 +215,17 @@ void Slide::release(bool returnControl, bool manualJump)
 {
 	if (returnControl)
 	{
-		Ogre::Quaternion direction = !manualJump ? getDirectionState() : head->_getDerivedOrientation();
-
-		Global::player->attachCameraWithTransition(0.2f, direction);
+		Global::camera->attachCameraWithTransition(0.2f);
+		Global::camera->nodHead(40);
 		Global::player->body->setPositionOrientation(head->_getDerivedPosition(), Ogre::Quaternion::IDENTITY);
 		Global::player->body->unFreeze();
 
 		float releaseSpeed = pow(std::max(1.0f, currentSpeed * 0.5f), 0.75f);
 
 		if (!manualJump)
-			Global::player->body->setVelocity(direction*Vector3(0, 0, -1 * releaseSpeed) + Vector3(0, 3, 0));
+			Global::player->body->setVelocity(getDirectionState()*Vector3(0, 0, -1 * releaseSpeed) + Vector3(0, 3, 0));
 		else
-			Global::player->body->setVelocity(10 * Global::player->getFacingDirection() + Vector3(0, 5, 0));
+			Global::player->body->setVelocity(10 * Global::camera->getFacingDirection() + Vector3(0, 5, 0));
 
 		Global::shaker->startShaking(0.65, 1.0, 0.25, 1, 1, 0.5, 0.35, 1, true);
 
@@ -252,7 +247,7 @@ void Slide::updateHeadArrival(float time)
 
 	if (finished)
 	{
-		Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
+		Ogre::Camera* cam = Global::camera->camera;
 		head->attachObject(cam);
 		head->setOrientation(qCam);
 	}

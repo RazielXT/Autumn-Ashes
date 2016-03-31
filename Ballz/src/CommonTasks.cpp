@@ -1202,14 +1202,14 @@ bool ShakeCamera::start()
 	Player* p = Global::player;
 
 	if(!maxDistance)
-		p->startCameraShake(steps,power,impulse);
+		Global::camera->startCameraShake(steps,power,impulse);
 	else
 	{
 		float mod = Ogre::Math::Clamp((p->body->getPosition()-mBody->getPosition()).length()/maxDistance,0.0f,1.0f);
 		steps*=mod;
 		power*=mod;
 		impulse*=mod;
-		p->startCameraShake(steps,power,impulse);
+		Global::camera->startCameraShake(steps,power,impulse);
 	}
 
 	return false;
@@ -1504,7 +1504,7 @@ bool WalkingAnim::update(float tslf)
 
 			Global::player->body->setPositionOrientation(animNode->_getDerivedPosition()-Ogre::Vector3(0,2,0),Ogre::Quaternion::IDENTITY);
 			Global::player->enableControl(true);
-			Global::player->attachCamera();
+			Global::camera->attachCamera();
 
 			return false;
 		}
@@ -1571,7 +1571,7 @@ bool PushObject::start()
 {
 	if(dirFromPlayer)
 	{
-		direction = Global::player->getFacingDirection();
+		direction = Global::camera->getFacingDirection();
 		direction.normalise();
 	}
 

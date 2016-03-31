@@ -94,7 +94,7 @@ LoadedManualDG* ManualDetailGeometry::getClosest()
 
 	LoadedManualDG* dgOut = nullptr;
 	float closest = 999999;
-	auto pos = Global::player->getCameraPosition();
+	auto pos = Global::camera->getPosition();
 
 	for (auto& dg : loadedMDG)
 	{

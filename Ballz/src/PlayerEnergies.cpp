@@ -61,12 +61,12 @@ void PlayerEnergies::update(float tslf)
 
 Energy* PlayerEnergies::facingEnergy()
 {
-	return SceneEnergies::getAvailableEnergyFromDirection(p->getCameraPosition(), p->getFacingDirection(), std::min(p->facingWallDistance,energyManipulationRange));
+	return SceneEnergies::getAvailableEnergyFromDirection(p->camPosition, p->facingDir, std::min(p->facingWallDistance,energyManipulationRange));
 }
 
 EnergyPlacement* PlayerEnergies::facingEnergyPlacement()
 {
-	return SceneEnergies::getEnergyPlacementFromDirection(p->getCameraPosition(), p->getFacingDirection(), std::min(p->facingWallDistance, energyManipulationRange));
+	return SceneEnergies::getEnergyPlacementFromDirection(p->camPosition, p->facingDir, std::min(p->facingWallDistance, energyManipulationRange));
 }
 
 bool PlayerEnergies::grabEnergy()
@@ -116,7 +116,7 @@ bool PlayerEnergies::pressedKey(const OIS::KeyEvent &arg)
 
 Ogre::Vector3 PlayerEnergies::getChargedEnergyPosition(float time)
 {
-	return p->getCameraPosition() + p->getFacingDirection() * std::min(chargeTime, time) / chargeTime * std::min(p->facingWallDistance, energyManipulationRange);
+	return p->camPosition + p->facingDir * std::min(chargeTime, time) / chargeTime * std::min(p->facingWallDistance, energyManipulationRange);
 }
 
 bool PlayerEnergies::releasedKey(const OIS::KeyEvent &arg)

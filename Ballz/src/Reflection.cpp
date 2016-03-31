@@ -53,7 +53,7 @@ bool ReflectionTask::start()
 	mReflectCam->setAspectRatio(
 	    (Real)window->getViewport(0)->getActualWidth() /
 	    (Real)window->getViewport(0)->getActualHeight());
-	mReflectCam->setFOVy(Global::mSceneMgr->getCamera("Camera")->getFOVy());
+	mReflectCam->setFOVy(camera->getFOVy());
 	//mReflectCam->setVisibilityFlags(2);
 	Viewport *v = rttTex->addViewport(mReflectCam);
 	v->setClearEveryFrame(true);

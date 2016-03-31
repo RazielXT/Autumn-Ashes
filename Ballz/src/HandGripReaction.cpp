@@ -166,7 +166,7 @@ void HandGripReaction::reaction()
 		if(Global::timestep<1)
 			music->getSoundEffectControl()->enableWavesReverbSoundEffect(0,-10*Global::timestep,2600,0.5);
 
-		Global::player->startCameraShake(10,3,0.4);
+		Global::camera->startCameraShake(10,3,0.4);
 	}
 
 	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::mWorld, mEntity,0));

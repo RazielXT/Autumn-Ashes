@@ -10,6 +10,7 @@ class PlayerPostProcess
 	friend class Player;
 
 	Player* p;
+	Ogre::Camera* cam;
 	PostProcessVariables* vars;
 
 	//motion blur

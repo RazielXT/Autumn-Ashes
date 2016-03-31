@@ -192,7 +192,7 @@ void AnimatedTrack::setCorrectDirection(bool bidirectional, float startOffset)
 
 	if (bidirectional)
 	{
-		auto pdir = Global::player->getFacingDirection();
+		auto pdir = Global::camera->getFacingDirection();
 		auto slDir = getDirectionState(startOffset)*Vector3(0, 0, -1);
 
 		if (pdir.dotProduct(slDir) < 0)

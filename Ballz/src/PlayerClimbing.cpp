@@ -15,6 +15,10 @@ PlayerClimbing::PlayerClimbing(Player* player) : p(player), body(player->body)
 
 	Gbody = nullptr;
 	climbJoint = nullptr;
+
+	camnode = Global::camera->camnode;
+	headnode = Global::camera->headnode;
+	necknode = Global::camera->necknode;
 }
 
 void PlayerClimbing::update(float tslf)
@@ -80,7 +84,7 @@ void PlayerClimbing::pressedC()
 
 void PlayerClimbing::forcePullup(Vector3 climbNormal, float startOffset)
 {
-	pullupSide = (MUtils::getSideDotProduct(p->getFacingDirection(), climbNormal) < 0) ? -1.0f : 1.0f;
+	pullupSide = (MUtils::getSideDotProduct(p->facingDir, climbNormal) < 0) ? -1.0f : 1.0f;
 	Global::shaker->startShaking(1.5, 0.5, 0.5, 1, 1, 0.7, 0.25, 0.75, true);
 
 	startClimbing(Climb_Pullup);
@@ -90,12 +94,7 @@ void PlayerClimbing::forcePullup(Vector3 climbNormal, float startOffset)
 	climb_normal = climbNormal;
 	climb_pullup = 0.05f + startOffset;
 
-	if (!p->fallPitch)
-	{
-		p->fallPitch = 1;
-		p->fallPitchTimer = 0;
-		p->fallVelocity = 50;
-	}
+	Global::camera->nodHead(50);
 }
 
 bool PlayerClimbing::spacePressed()
@@ -114,7 +113,7 @@ bool PlayerClimbing::spacePressed()
 	}
 	else if (p->climbing == Climb)
 	{
-		Vector3 camDir = p->getFacingDirection();
+		Vector3 camDir = p->facingDir;
 		Vector3 pohlad(-camDir);
 		pohlad.y = 0;
 		pohlad.normalise();
@@ -181,8 +180,8 @@ void PlayerClimbing::updateClimbMovement(float tslf)
 				body->setMaterialGroupID(wmaterials->plNoMove_mat);
 			}
 
-			p->camnode->setPosition((1 - abs(climb_move_side - 1)) / 2.0f, 0, 0);
-			p->headnode->setOrientation(Quaternion(Ogre::Radian((1 - abs(climb_move_side - 1)) / 20.0f), Vector3(1, 0, 0)));
+			camnode->setPosition((1 - abs(climb_move_side - 1)) / 2.0f, 0, 0);
+			headnode->setOrientation(Quaternion(Ogre::Radian((1 - abs(climb_move_side - 1)) / 20.0f), Vector3(1, 0, 0)));
 		}
 		else
 			//left
@@ -209,8 +208,8 @@ void PlayerClimbing::updateClimbMovement(float tslf)
 					climb_move_side = 0;
 					body->setMaterialGroupID(wmaterials->plNoMove_mat);
 				}
-				p->camnode->setPosition((abs(climb_move_side + 1) - 1) / 2, 0, 0);
-				p->headnode->setOrientation(Quaternion(Ogre::Radian((1 - abs(-climb_move_side - 1)) / 20), Vector3(1, 0, 0)));
+				camnode->setPosition((abs(climb_move_side + 1) - 1) / 2, 0, 0);
+				headnode->setOrientation(Quaternion(Ogre::Radian((1 - abs(-climb_move_side - 1)) / 20), Vector3(1, 0, 0)));
 			}
 	}
 	//already on move vertically
@@ -259,7 +258,7 @@ void PlayerClimbing::updateClimbMovement(float tslf)
 
 			}
 			else
-				p->camnode->setOrientation(Quaternion(Ogre::Radian((1 - abs(climb_move_vert - 1)) / 20), Vector3(-0.5, 0, 1)));
+				camnode->setOrientation(Quaternion(Ogre::Radian((1 - abs(climb_move_vert - 1)) / 20), Vector3(-0.5, 0, 1)));
 		}
 		else
 			//left phase
@@ -271,7 +270,7 @@ void PlayerClimbing::updateClimbMovement(float tslf)
 					updateVerticalClimb(true);
 				}
 				else
-					p->camnode->setOrientation(Quaternion(Ogre::Radian((abs(climb_move_vert + 1) - 1) / 20), Vector3(0.5, 0, 1)));
+					camnode->setOrientation(Quaternion(Ogre::Radian((abs(climb_move_vert + 1) - 1) / 20), Vector3(0.5, 0, 1)));
 			}
 	}
 	//not moving yet
@@ -279,7 +278,7 @@ void PlayerClimbing::updateClimbMovement(float tslf)
 	{
 		if (p->forw_key)
 		{
-			Vector3 pohlad = p->getFacingDirection();
+			Vector3 pohlad = p->facingDir;
 
 			if (pohlad.y >= 0)
 			{
@@ -331,12 +330,12 @@ void PlayerClimbing::updateClimbMovement(float tslf)
 		{
 			if ((climb_yaw + tslf) >= 0)
 			{
-				p->necknode->yaw(Ogre::Radian(climb_yaw), Node::TS_WORLD);
+				necknode->yaw(Ogre::Radian(climb_yaw), Node::TS_WORLD);
 				climb_yaw = 0;
 			}
 			else
 			{
-				p->necknode->yaw(Ogre::Radian(-tslf), Node::TS_WORLD);
+				necknode->yaw(Ogre::Radian(-tslf), Node::TS_WORLD);
 				climb_yaw += tslf;
 			}
 		}
@@ -344,12 +343,12 @@ void PlayerClimbing::updateClimbMovement(float tslf)
 		{
 			if ((climb_yaw - tslf) <= 0)
 			{
-				p->necknode->yaw(Ogre::Radian(climb_yaw), Node::TS_WORLD);
+				necknode->yaw(Ogre::Radian(climb_yaw), Node::TS_WORLD);
 				climb_yaw = 0;
 			}
 			else
 			{
-				p->necknode->yaw(Ogre::Radian(tslf), Node::TS_WORLD);
+				necknode->yaw(Ogre::Radian(tslf), Node::TS_WORLD);
 				climb_yaw -= tslf;
 			}
 		}
@@ -363,7 +362,7 @@ void PlayerClimbing::updateVerticalClimb(bool leftPhase)
 
 	if (p->forw_key)
 	{
-		Vector3 pohlad = p->getFacingDirection();
+		Vector3 pohlad = p->facingDir;
 		bool con = false;
 
 		if (pohlad.y > 0)
@@ -388,14 +387,14 @@ void PlayerClimbing::updateVerticalClimb(bool leftPhase)
 		if (con)
 		{
 			climb_move_vert = diff*-2.0f - climb_move_vert;
-			p->camnode->setOrientation(Quaternion(Ogre::Radian(diff*(-1 + abs(climb_move_vert + diff)) / 20), Vector3(diff*-0.5f, 0, 1)));
+			camnode->setOrientation(Quaternion(Ogre::Radian(diff*(-1 + abs(climb_move_vert + diff)) / 20), Vector3(diff*-0.5f, 0, 1)));
 		}
 		else body->setMaterialGroupID(wmaterials->plNoMove_mat);
 	}
 	else
 	{
 		climb_move_vert = 0;
-		p->camnode->setOrientation(Quaternion(Ogre::Radian(diff*(1 - abs(climb_move_vert - diff)) / 20), Vector3(diff*0.5f, 0, 1)));
+		camnode->setOrientation(Quaternion(Ogre::Radian(diff*(1 - abs(climb_move_vert - diff)) / 20), Vector3(diff*0.5f, 0, 1)));
 		body->setMaterialGroupID(wmaterials->plNoMove_mat);
 	}
 }
@@ -430,8 +429,8 @@ void PlayerClimbing::updateClimbingPossibility()
 	if (noClimbTimer > 0)
 		return;
 
-	auto pos = p->necknode->_getDerivedPosition() + Vector3(0, 0.25, 0);
-	Vector3 predsebou = p->getFacingDirection();
+	auto pos = necknode->_getDerivedPosition() + Vector3(0, 0.25, 0);
+	Vector3 predsebou = p->facingDir;
 	predsebou.y = 0;
 	predsebou.normalise();
 	predsebou *= 2;
@@ -487,7 +486,7 @@ void PlayerClimbing::updateClimbingPossibility()
 
 void PlayerClimbing::updateClimbingStats()
 {
-	auto pos = p->necknode->_getDerivedPosition() + Vector3(0, 0.25, 0);
+	auto pos = necknode->_getDerivedPosition() + Vector3(0, 0.25, 0);
 	auto ray = OgreNewt::BasicRaycast(Global::mWorld, pos, pos + climb_normal*-3, false);
 
 	auto info = ray.getFirstHit();
@@ -702,7 +701,7 @@ void PlayerClimbing::updatePullup(float tslf)
 		climbDir *= 3;
 		climbDir.y =  v;
 
-		p->head_turning += p->tslf*-15*pullupSide;
+		Global::camera->head_turning += p->tslf*-15*pullupSide;
 
 		if (climb_pullup == 1.0f)
 		{
@@ -735,7 +734,7 @@ void PlayerClimbing::updatePullup(float tslf)
 
 void PlayerClimbing::updateClimbCamera(float moveX)
 {
-	Vector3 camDir = p->getFacingDirection();
+	Vector3 camDir = p->facingDir;
 	camDir.y = 0;
 	camDir.normalise();
 	Real angle = climb_normal.angleBetween(camDir).valueDegrees();
@@ -744,7 +743,7 @@ void PlayerClimbing::updateClimbCamera(float moveX)
 
 	if ((climbCam > 0 && moveX > 0) || (climbCam < 0 && moveX < 0))
 	{
-		p->necknode->yaw(Degree(moveX), Node::TS_WORLD);
+		necknode->yaw(Degree(moveX), Node::TS_WORLD);
 	}
 	else
 	{
@@ -755,7 +754,7 @@ void PlayerClimbing::updateClimbCamera(float moveX)
 		angle -= (180 - max_angle);
 		if (angle < 0) spomal = 0;
 		else spomal = angle / max_angle;
-		p->necknode->yaw(Degree(moveX* spomal), Node::TS_WORLD);
+		necknode->yaw(Degree(moveX* spomal), Node::TS_WORLD);
 	}
 }
 

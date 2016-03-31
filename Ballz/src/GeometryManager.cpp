@@ -294,7 +294,7 @@ std::vector<OptimizedGroup>& GeometryManager::getOptGroups()
 
 OptimizedGroup GeometryManager::getClosestOptGroup()
 {
-	auto pos = Global::player->getCameraPosition();
+	auto pos = Global::camera->getPosition();
 	OptimizedGroup out;
 	float closest = 999999;
 

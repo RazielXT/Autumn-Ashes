@@ -5,16 +5,15 @@
 
 class Player;
 class Slide;
-class SlidesAutoTargetAsync;
+class PlayerAutoTarget;
 
 class PlayerSliding
 {
 	friend class Player;
 	friend class PlayerAbilities;
 
-	Player* p;
+	Player* player;
 	Slide* currentSlide = nullptr;
-	SlidesAutoTargetAsync* slidesAutoTarget;
 
 	Ogre::BillboardSet* targetBillboardSet;
 	Ogre::SceneNode* billboardNode;
@@ -26,7 +25,6 @@ public:
 
 	float autoAttachUnavailableTimer = 0;
 	void slideStarted(Slide* slide);
-	void addLoadedSlide(Slide* slide);
 
 	void update(float tslf, bool readyToSlide);
 

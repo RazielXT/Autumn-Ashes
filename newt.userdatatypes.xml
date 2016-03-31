@@ -281,8 +281,6 @@
 	
 	<data name="EditEmmiter" displayName="Edit Emmiter" type="bool" groupName="Emmiter" defaultValue="false"/>
 	<data name="EmmiterType" displayName="Type" type="emitterType" groupName="Emmiter" visibilityParentName="EditEmmiter"/>
-	<data name="EditDir" displayName="Edit Direction" type="bool" groupName="Emmiter" visibilityParentName="EditEmmiter" defaultValue="true"/>
-	<data name="Direction" displayName="Base Direction" type="float3" groupName="Emmiter" visibilityParentName="EditDir" minValue="-1" maxValue="1" defaultValue="0,-1,0"/>
 	
 </class>
 
@@ -414,6 +412,10 @@
 
 <class name="Energy" usage="object">
 	<data name="Auto obtain" type="bool" defaultValue="false"/>
+</class>
+
+<class name="JumpBox" usage="object">
+	<data name="Velocity" type="float" defaultValue="20"/>
 </class>
 
 </userDataTypes>

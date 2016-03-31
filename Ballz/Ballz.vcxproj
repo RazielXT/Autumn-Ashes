@@ -118,13 +118,14 @@
 copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>call "D:\AA\AAsvn\runAstyle.bat"</Command>
+      <Command>call "F:\AAsrc\runAstyle.bat"</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Formatting code with Astyle...</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="JumpBox.cpp" />
     <ClCompile Include="src\LevelEdit.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\AnimatedTrack.cpp" />
@@ -177,6 +178,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\ParticleManager.cpp" />
     <ClCompile Include="src\PgDetailGeometry.cpp" />
     <ClCompile Include="src\PlayerAbilities.cpp" />
+    <ClCompile Include="src\PlayerCamera.cpp" />
     <ClCompile Include="src\PlayerClimbing.cpp" />
     <ClCompile Include="src\PlayerEnergies.cpp" />
     <ClCompile Include="src\PlayerGrab.cpp" />
@@ -190,7 +192,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\SceneCubeMap.cpp" />
     <ClCompile Include="src\SceneEditsLibrary.cpp" />
     <ClCompile Include="src\SceneParser.cpp" />
-    <ClCompile Include="src\SlidesAutoTarget.cpp" />
+    <ClCompile Include="src\PlayerAutoTarget.cpp" />
     <ClCompile Include="src\PlayerPostProcess.cpp" />
     <ClCompile Include="src\Tasks.cpp" />
     <ClCompile Include="src\tinyxml2.cpp" />
@@ -249,6 +251,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\GameUiActions.h" />
     <ClInclude Include="include\Gate.h" />
     <ClInclude Include="include\GateLock.h" />
+    <ClInclude Include="include\JumpBox.h" />
     <ClInclude Include="include\LevelEdit.h" />
     <ClInclude Include="include\GrassDetailGeometry.h" />
     <ClInclude Include="include\GuiMaterialEdit.h" />
@@ -282,6 +285,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\ParticleManager.h" />
     <ClInclude Include="include\PgDetailGeometry.h" />
     <ClInclude Include="include\PlayerAbilities.h" />
+    <ClInclude Include="include\PlayerCamera.h" />
     <ClInclude Include="include\PlayerClimbing.h" />
     <ClInclude Include="include\PlayerEnergies.h" />
     <ClInclude Include="include\PlayerGrab.h" />
@@ -303,7 +307,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\SceneCubeMap.h" />
     <ClInclude Include="include\SceneEditsLibrary.h" />
     <ClInclude Include="include\SceneParser.h" />
-    <ClInclude Include="include\SlidesAutoTarget.h" />
+    <ClInclude Include="include\PlayerAutoTarget.h" />
     <ClInclude Include="include\SUtils.h" />
     <ClInclude Include="include\tinyxml2.h" />
     <ClInclude Include="include\TopSlide.h" />

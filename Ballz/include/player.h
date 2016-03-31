@@ -1,35 +1,15 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#pragma once
 
 #include "stdafx.h"
-#include "SlidesAutoTarget.h"
+#include "PlayerAutoTarget.h"
 #include "PlayerStateInfo.h"
 #include "PlayerPostProcess.h"
 #include "PlayerClimbing.h"
+#include "PlayerCamera.h"
 #include "PlayerGrab.h"
 #include "PlayerParkour.h"
+#include "PlayerSliding.h"
 #include "CameraShaker.h"
-
-class Shaker
-{
-public:
-	Shaker(Ogre::SceneNode* node);
-	~Shaker();
-	void updateCameraShake(float time);
-	void startCameraShake(float time,float power,float impulse);
-	float doRoll(float duration, Ogre::SceneNode* rNode, Ogre::SceneNode* hNode);
-
-private:
-
-	float rollingLeft = 0, rollingDuration;
-	Ogre::SceneNode* rollNode;
-	Ogre::SceneNode* heightNode;
-
-	bool camShaking = false;
-	Ogre::SceneNode* node;
-	float camShakeTimer,camShakeTimerEnd,camShakePower,camShakeImpulse,camShakeTimeLeft;
-	Ogre::Quaternion camShakePrev,camShakeTarget;
-};
 
 class GameUi;
 
@@ -44,14 +24,7 @@ class Player
 	friend class PlayerSliding;
 	friend class PlayerTimeshift;
 	friend class PlayerFlash;
-
-	struct CamArrivalInfo
-	{
-		Ogre::SceneNode* tempNode = nullptr;
-		Ogre::Vector3 pos;
-		Ogre::Quaternion dir;
-		float timer = 0;
-	};
+	friend class PlayerCamera;
 
 public:
 
@@ -84,11 +57,6 @@ public:
 	void enableControl(bool enable);
 	void enableMovement(bool enable);
 
-	/*	power-0.1 weak, 0.5 strong;
-	impulse-0.1 slow,0.4 strong  */
-	void startCameraShake(float time,float power,float impulse);
-	Vector3 getCameraPosition() const;
-
 	OgreNewt::Body* body = nullptr;
 
 	void stopMoving()
@@ -96,22 +64,12 @@ public:
 		body->setVelocity(Ogre::Vector3(0, 0, 0));
 	};
 
-	Ogre::Camera* detachCamera();
-	void attachCamera(bool silent = false);
-	void attachCameraWithTransition(float duration, Ogre::Quaternion targetOr);
-
-	Ogre::Vector3 getFacingDirection() const;
-	void rotateCamera(Ogre::Real hybX, Ogre::Real hybY);
-	void rotateCamera(Ogre::Quaternion or);
-
-	Ogre::SceneNode* detachHead();
-	void attachHead(Ogre::SceneNode* headNode = nullptr);
-
 	bool isInControl()
 	{
 		return inControl;
 	}
 
+	Ogre::Vector3 facingDir;
 	Ogre::Vector3 camPosition;
 	Ogre::Vector3 bodyPosition;
 	float bodyVelocityL;
@@ -124,6 +82,8 @@ public:
 	PlayerSwimming* pSwimming;
 	PlayerAbilities* pAbilities;
 	PlayerSliding* pSliding;
+	PlayerCamera* pCamera;
+	PlayerAutoTarget* autoTarget;
 
 private:
 
@@ -131,7 +91,8 @@ private:
 
 	void updateStats();
 	void updateMovement();
-	void updateHead();
+	void updateSpeed();
+
 	void updateDirectionForce();
 	void updateGroundStats();
 
@@ -139,7 +100,6 @@ private:
 	void manageFall();
 
 	void initBody();
-	void updateCameraArrival();
 
 	inline void playWalkSound()
 	{
@@ -147,13 +107,9 @@ private:
 	}
 
 	GameUi* ui;
-	Shaker* shaker;
 
 	OgreNewt::World* m_World;
 	Ogre::SceneManager * mSceneMgr;
-
-	Ogre::Camera* mCamera;
-	Ogre::SceneNode* camnode, *necknode, *headnode, *shakeNode;
 
 	//physics
 	OgreNewt::UpVector* uv;
@@ -164,22 +120,15 @@ private:
 	//basic state
 	bool alive, immortal;
 	bool moving, right_key, left_key, back_key, forw_key;
-	bool onGround, sprinting, inControl, inMoveControl, ownsCamera, levitating;
+	bool onGround, sprinting, inControl, inMoveControl, levitating;
 
 	//extern state
 	bool hanging, grabbedObj, wallrunning, sliding, transformed;
 	BodyType climbing;
 
-	float camPitch, fallVelocity, bodySpeedAccum, startMoveBoost, movespeed, sprintmeter;
-	char fallPitch, cameraWalkFinisher;
-	int walkCycle = 0;
+	float bodySpeedAccum, startMoveBoost, movespeed, sprintmeter;
 
-	float fallPitchTimer, cam_walking, head_turning;
 	int groundID, mouseX;
 	float tslf, slowingDown;
 	Ogre::Vector3 forceDirection, gNormal;
-	CamArrivalInfo cameraArrival;
-	Ogre::Vector3 facingDir;
 };
-
-#endif

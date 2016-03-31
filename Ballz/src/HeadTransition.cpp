@@ -2,11 +2,14 @@
 #include "HeadTransition.h"
 #include "MUtils.h"
 #include "CameraShaker.h"
+#include "PlayerCamera.h"
 
 using namespace Ogre;
 
-void HeadTransition::initializeJump(Ogre::Camera* cam, Ogre::Vector3 target)
+void HeadTransition::initializeJump(Ogre::Vector3 target)
 {
+	auto cam = Global::camera->camera;
+
 	pos = cam->getDerivedPosition();
 	dir = cam->getDerivedOrientation();
 	cam->detachFromParent();
@@ -20,35 +23,12 @@ void HeadTransition::initializeJump(Ogre::Camera* cam, Ogre::Vector3 target)
 	transitionNode->setPosition(pos);
 	transitionNode->setOrientation(dir);
 
-
 	dist = std::max(0.5f, pos.distance(target) / 10.0f);
 	dirTarget.FromAngleAxis(dir.getYaw(), Vector3(0, 1, 0));
 	dirTarget = dirTarget*Quaternion(Ogre::Degree(-30), Vector3(1, 0, 0));
 
 	posTarget = target;
 	timer = 0;
-}
-
-//w^n, n = -1-1 to 3-1/3, n 0->1
-float HeadTransition::transformHeightFuncTimeLow(float time, float hd)
-{
-	auto t = abs(hd);
-
-	t = t * 2 + 1;
-
-	if (hd > 0)
-		t = 1 / t;
-
-	return pow(time, t);
-}
-
-float HeadTransition::heightFuncLow(float time, float hd)
-{
-	float addH = MUtils::smoothjump(time, 2);
-
-	addH *= 1 - abs(hd);
-
-	return addH;
 }
 
 //w^n, n = -1-1 to 3-1/3, n 0->1
@@ -96,10 +76,10 @@ bool HeadTransition::updateJump(float time)
 
 	if (!beforeJump)
 	{
-		timer = std::min(timer + time*2.75f, dist);
+		timer = std::min(timer + time*3.75f, dist);
 		w = timer / dist;
 
-		//w = pow(w, 0.58f);
+		w = pow(w, 1.25f);
 		//w = quickstep(w, 0.75f);
 	}
 
@@ -111,7 +91,7 @@ bool HeadTransition::updateJump(float time)
 	auto cdir = Quaternion::nlerp(w, dir, dirTarget, true);
 
 	auto maxH = tDist / 2.0f;
-	auto hAdd = heightFuncLow(w, hDiff)*maxH;
+	auto hAdd = heightFunc(w, hDiff)*maxH;
 	cpos.y += hAdd;
 
 	//Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("Jumping: hadd " + Ogre::StringConverter::toString(hAdd) + ", hd " + Ogre::StringConverter::toString(hd), Ogre::LML_NORMAL);
@@ -122,10 +102,12 @@ bool HeadTransition::updateJump(float time)
 	return (timer == dist);
 }
 
-void HeadTransition::initializeTransition(Ogre::Camera* cam, Ogre::Vector3 target, float transitionTime)
+void HeadTransition::initializeTransition(Ogre::Vector3 target, float transitionTime)
 {
 	timer = transitionTime;
 	posTarget = target;
+
+	auto cam = Global::camera->camera;
 	pos = cam->getDerivedPosition();
 	dir = cam->getDerivedOrientation();
 

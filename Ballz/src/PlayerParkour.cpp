@@ -2,6 +2,8 @@
 #include "PlayerParkour.h"
 #include "Player.h"
 #include "MUtils.h"
+#include "JumpBox.h"
+#include "PlayerAutoTarget.h"
 
 PlayerParkour::PlayerParkour(Player* player) : p(player), body(player->body)
 {
@@ -13,12 +15,7 @@ void PlayerParkour::doWalljump()
 	allowWalljump = false;
 	reattachFixTimer = 0.5f;
 
-	if (!p->fallPitch)
-	{
-		p->fallPitch = 1;
-		p->fallPitchTimer = 0;
-		p->fallVelocity = 30;
-	}
+	Global::camera->nodHead(30);
 
 	p->playWalkSound();
 
@@ -40,7 +37,7 @@ bool PlayerParkour::spacePressed()
 		}
 		else
 		{
-			auto jumpDir = p->getFacingDirection();
+			auto jumpDir = p->facingDir;
 			jumpDir.y = 0;
 			jumpDir.normalise();
 
@@ -81,7 +78,7 @@ bool PlayerParkour::spacePressed()
 	{
 		//GUtils::DebugPrint("Free jump");
 
-		auto jumpDir = p->getFacingDirection();
+		auto jumpDir = p->facingDir;
 		jumpDir.y = 0;
 		jumpDir.normalise();
 		jumpDir.y = 1;
@@ -119,7 +116,7 @@ bool PlayerParkour::tryWallClimb()
 {
 	auto rStart = p->bodyPosition;
 	rStart.y += 0.3f;
-	auto rDir = p->getFacingDirection();
+	auto rDir = p->facingDir;
 	rDir.y = 0;
 	rDir.normalise();
 	auto rEnd = rDir*1.75f + rStart;
@@ -214,15 +211,14 @@ void PlayerParkour::doRoll()
 	vel.normalise();
 	vel.y = 0;
 
-	Vector3 lookDirection = p->getFacingDirection();
+	Vector3 lookDirection = p->facingDir;
 	lookDirection.y = 0;
 
 	Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
 
 	if (dirAngleDiff < 45 && vel.length()>0.5f)
 	{
-		rolling = p->shaker->doRoll(1.2f, p->headnode, p->necknode);
-
+		rolling = Global::camera->rollCamera(1.2f);
 		Global::audioLib->playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
 	}
 }
@@ -232,7 +228,7 @@ void PlayerParkour::updateRolling(float tslf)
 	body->setMaterialGroupID(p->wmaterials->plMove_mat);
 	p->moving = true;
 
-	auto dirVec = p->necknode->_getDerivedOrientation()*Vector3(0, 0, -1);
+	auto dirVec = Global::camera->getBaseOrientation()*Vector3(0, 0, -1);
 	dirVec.y = 0;
 	dirVec.normalise();
 	p->forceDirection += dirVec * 10 * rolling;
@@ -243,7 +239,7 @@ void PlayerParkour::updateRolling(float tslf)
 bool PlayerParkour::tryWallrun()
 {
 	wallrunSide = 0;
-	auto frontDir = p->getFacingDirection();
+	auto frontDir = p->facingDir;
 	frontDir.y = 0;
 	frontDir.normalise();
 
@@ -360,9 +356,9 @@ void PlayerParkour::updateWallrunning()
 			wallrunTimer = std::min(wallrunTimer + p->tslf, 1.0f);
 
 			wallrunCurrentDir = Quaternion(Degree(90 * wallrunSide), Vector3(0, 1, 0))* wall_normal;
-			p->head_turning += p->tslf*-10*wallrunSide;
+			Global::camera->head_turning += p->tslf*-10*wallrunSide;
 
-			auto dirDiff = p->getFacingDirection().dotProduct(wallrunCurrentDir);
+			auto dirDiff = p->facingDir.dotProduct(wallrunCurrentDir);
 
 			if (dirDiff > -0.5f)
 				return;

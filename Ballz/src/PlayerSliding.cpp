@@ -1,8 +1,11 @@
 #include "stdafx.h"
 #include "PlayerSliding.h"
 #include "Player.h"
+#include "Slide.h"
 
-PlayerSliding::PlayerSliding(Player* player) : p(player)
+using namespace Ogre;
+
+PlayerSliding::PlayerSliding(Player* p) : player(p)
 {
 	targetBillboardSet = Global::mSceneMgr->createBillboardSet("autoTargetBillSet");
 	targetBillboardSet->setMaterialName("chimneySmoke");
@@ -15,13 +18,10 @@ PlayerSliding::PlayerSliding(Player* player) : p(player)
 	targetBillboardSet->setVisible(false);
 	targetBillboardSet->setCastShadows(false);
 	targetBillboardSet->setRenderQueueGroup(RENDER_QUEUE_OVERLAY);
-
-	slidesAutoTarget = new SlidesAutoTargetAsync();
 }
 
 PlayerSliding::~PlayerSliding()
 {
-	delete slidesAutoTarget;
 }
 
 void PlayerSliding::slideStarted(Slide* slide)
@@ -30,11 +30,6 @@ void PlayerSliding::slideStarted(Slide* slide)
 		currentSlide->instantDetach(false);
 
 	currentSlide = slide;
-}
-
-void PlayerSliding::addLoadedSlide(Slide* slide)
-{
-	slidesAutoTarget->loadedSlides.push_back(slide);
 }
 
 void PlayerSliding::update(float tslf, bool readyToSlide)
@@ -52,16 +47,14 @@ void PlayerSliding::update(float tslf, bool readyToSlide)
 
 	//todo allow autoslide
 	bool allowAutoAttach = readyToSlide && autoAttachUnavailableTimer <= 0;
-	slidesAutoTarget->updateAutoTarget(p->mCamera->getDerivedPosition(), p->getFacingDirection(), tslf, 35.0f, false, currentSlide);
+
+	player->autoTarget->setSlidingInfo(false, currentSlide);
 }
 
 void PlayerSliding::pressedKey(const OIS::KeyEvent &arg)
 {
-	if (!(arg.key == OIS::KC_SPACE && slidesAutoTarget->pressedAction()))
-	{
-		if (currentSlide)
-			currentSlide->pressedKey(arg);
-	}
+	if (currentSlide)
+		currentSlide->pressedKey(arg);
 }
 
 void PlayerSliding::releasedKey(const OIS::KeyEvent &arg)
@@ -83,7 +76,7 @@ void PlayerSliding::hideSlideTarget()
 
 bool PlayerSliding::showPossibleSlideTarget()
 {
-	auto& target = slidesAutoTarget->targetInfo;
+	auto& target = player->autoTarget->targetInfo;
 
 	if (target.targetSlide && target.targetSlidePosOffset >= 0)
 	{
@@ -99,13 +92,15 @@ bool PlayerSliding::showPossibleSlideTarget()
 
 bool PlayerSliding::foundTarget()
 {
-	auto& target = slidesAutoTarget->targetInfo;
+	auto& target = player->autoTarget->targetInfo;
 
 	return (target.targetSlide && target.targetSlidePosOffset >= 0);
 }
 
 void PlayerSliding::portToTarget()
 {
-	if (slidesAutoTarget->targetInfo.targetSlide)
-		slidesAutoTarget->targetInfo.targetSlide->start(slidesAutoTarget->targetInfo.targetSlidePosOffset, false, 0.1f);
+	auto& targetInfo = player->autoTarget->targetInfo;
+
+	if (targetInfo.targetSlide)
+		targetInfo.targetSlide->start(targetInfo.targetSlidePosOffset, false, 0.1f);
 }

@@ -2,6 +2,8 @@
 #include "PlayerGrab.h"
 #include "Player.h"
 
+using namespace Ogre;
+
 PlayerGrab::PlayerGrab(Player* player) : p(player), body(player->body)
 {
 }
@@ -12,7 +14,7 @@ void PlayerGrab::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threa
 
 	Vector3 targetPos = p->bodyPosition;
 	targetPos.y += 1;
-	targetPos += p->getFacingDirection()*3;
+	targetPos += Global::camera->getFacingDirection()*3;
 
 	Vector3 targetVector = (targetPos - currentPos) ;
 
@@ -33,13 +35,13 @@ void PlayerGrab::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threa
 	}
 
 	obj->setForce(targetVector * 10);
-	obj->setPositionOrientation(obj->getPosition(), p->necknode->getOrientation());
+	obj->setPositionOrientation(obj->getPosition(), Global::camera->getBaseOrientation());
 }
 
 void PlayerGrab::tryToGrab()
 {
-	Vector3 pos = p->necknode->_getDerivedPosition();
-	OgreNewt::BasicRaycast ray(Global::mWorld, pos, pos + p->getFacingDirection()*4, false);
+	Vector3 pos = p->camPosition;
+	OgreNewt::BasicRaycast ray(Global::mWorld, pos, pos + p->facingDir*4, false);
 	OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
 
 	if (info.mBody)
