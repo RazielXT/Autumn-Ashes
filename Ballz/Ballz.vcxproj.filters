@@ -45,9 +45,6 @@
     <Filter Include="Files\Core\RenderObjects">
       <UniqueIdentifier>{83a765d8-98ef-4422-8267-53b52e92fbe1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Files\Core\MaterialEdit">
-      <UniqueIdentifier>{235e7fbd-2a99-4af2-9976-14a60da0a8e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Files\Core\Gui">
       <UniqueIdentifier>{83ce8b73-fa13-47e7-8a3c-ed41a1d88a0f}</UniqueIdentifier>
     </Filter>
@@ -242,12 +239,6 @@
     <ClCompile Include="src\HeadTransition.cpp">
       <Filter>Files\Objects\Slide</Filter>
     </ClCompile>
-    <ClCompile Include="src\GuiMaterialEdit.cpp">
-      <Filter>Files\Core\MaterialEdit</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MaterialEditsLibrary.cpp">
-      <Filter>Files\Core\MaterialEdit</Filter>
-    </ClCompile>
     <ClCompile Include="src\Energy.cpp">
       <Filter>Files\Objects</Filter>
     </ClCompile>
@@ -336,6 +327,9 @@
       <Filter>Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="src\PlayerAutoTarget.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerHanging.cpp">
       <Filter>Files\Player</Filter>
     </ClCompile>
   </ItemGroup>
@@ -568,12 +562,6 @@
     <ClInclude Include="include\HeadTransition.h">
       <Filter>Files\Objects\Slide</Filter>
     </ClInclude>
-    <ClInclude Include="include\GuiMaterialEdit.h">
-      <Filter>Files\Core\MaterialEdit</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MaterialEditsLibrary.h">
-      <Filter>Files\Core\MaterialEdit</Filter>
-    </ClInclude>
     <ClInclude Include="include\Energy.h">
       <Filter>Files\Objects</Filter>
     </ClInclude>
@@ -668,6 +656,12 @@
       <Filter>Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="include\JumpBox.h">
+      <Filter>Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerHanging.h">
+      <Filter>Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Pole.h">
       <Filter>Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>

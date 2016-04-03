@@ -9,6 +9,7 @@
 #include "PlayerGrab.h"
 #include "PlayerParkour.h"
 #include "PlayerSliding.h"
+#include "PlayerHanging.h"
 #include "CameraShaker.h"
 
 class GameUi;
@@ -25,6 +26,7 @@ class Player
 	friend class PlayerTimeshift;
 	friend class PlayerFlash;
 	friend class PlayerCamera;
+	friend class PlayerHanging;
 
 public:
 
@@ -84,6 +86,7 @@ public:
 	PlayerSliding* pSliding;
 	PlayerCamera* pCamera;
 	PlayerAutoTarget* autoTarget;
+	PlayerHanging* pHanging;
 
 private:
 

@@ -3,10 +3,15 @@
 #include "MUtils.h"
 #include "Slide.h"
 #include "JumpBox.h"
+#include "Pole.h"
+#include "Player.h"
+#include "GameUi.h"
+#include "GameStateManager.h"
 
 PlayerAutoTarget::PlayerAutoTarget()
 {
 	targetTimer = 0;
+	targetPole = nullptr;
 }
 
 PlayerAutoTarget::~PlayerAutoTarget()
@@ -21,9 +26,10 @@ bool PlayerAutoTarget::spacePressed()
 	{
 		return targetInfo.targetSlide->start(targetInfo.targetSlidePosOffset, true);
 	}
-	else
+	else if(targetPole)
 	{
-		objects.jumpBoxes[0].jumpToBox();
+		Global::player->pHanging->jumpTo(targetPole);
+
 		return true;
 	}
 
@@ -44,6 +50,11 @@ void TargetableObjects::addLoadedSlide(Slide* slide)
 void TargetableObjects::addLoadedJumpBox(JumpBox box)
 {
 	jumpBoxes.push_back(box);
+}
+
+void TargetableObjects::addLoadedPole(Pole pole)
+{
+	poles.push_back(pole);
 }
 
 bool PlayerAutoTarget::getTargetSlideRay(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide)
@@ -129,8 +140,38 @@ bool PlayerAutoTarget::getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide* igno
 	return closest < maxDistSq;
 }
 
+bool PlayerAutoTarget::getTargetPole(Ogre::Vector3 pos, Ogre::Vector3 dir, float rayDistance)
+{
+	Pole* ignored = Global::player->pHanging->currentPole;
+	Pole* target = nullptr;
+	float closest = rayDistance*rayDistance + 5;
+	float maxDistSq = 5;
+
+	for (auto& pole : objects.poles)
+	{
+		float pDist = pole.position.squaredDistance(pos);
+
+		if (&pole != ignored && pDist < closest && abs(pole.pinDirection.dotProduct(dir)) < 0.8f)
+		{
+			auto p = MUtils::getProjectedPointOnLine(pole.position, pos, pos + dir*rayDistance);
+
+			if (p.sqMinDistance < maxDistSq)
+			{
+				closest = pDist;
+				target = &pole;
+			}
+		}
+	}
+
+	preparedPole = target;
+
+	return preparedPole != nullptr;
+}
+
 bool PlayerAutoTarget::getTargetFunc(Vector3 pos, Vector3 dir, float rayDistance)
 {
+	getTargetPole(pos, dir, rayDistance);
+
 	if (!slidingState.autoAttach)
 		return getTargetSlideRay(pos, dir, rayDistance, slidingState.currentSlide);
 	else
@@ -164,6 +205,12 @@ void PlayerAutoTarget::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, fl
 
 	if (slidingState.autoAttach && lastUnavailableSlide != targetInfo.targetSlide)
 		lastUnavailableSlide = nullptr;
+
+	targetPole = preparedPole;
+	if (targetPole)
+	{
+		Global::gameMgr->myMenu->gameUi->showUseGui(Ui_UseEnergy);
+	}
 
 	preparedSlide = nullptr;
 	targetResult = std::async(std::launch::async, &PlayerAutoTarget::getTargetFunc, this, pos, dir, rayDistance);

@@ -110,6 +110,11 @@ void CameraShaker::startShaking(float power, float freq, float duration, float a
 	camShaking = true;
 }
 
+void CameraShaker::nodHead(float power)
+{
+	startShaking(power, 2.5, 0.1, 1, 1, 0.7, 0, 1, true);
+}
+
 void CameraShaker::stopShaking()
 {
 	camShaking = false;

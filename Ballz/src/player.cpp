@@ -67,6 +67,7 @@ Player::Player(WorldMaterials* wMaterials)
 	pSwimming = new PlayerSwimming(this);
 	pAbilities = new PlayerAbilities(this);
 	pSliding = new PlayerSliding(this);
+	pHanging = new PlayerHanging(this);
 }
 
 Player::~Player ()
@@ -80,6 +81,7 @@ Player::~Player ()
 	delete pSliding;
 	delete pCamera;
 	delete autoTarget;
+	delete pHanging;
 }
 
 void Player::saveState(PlayerStateInfo& info)
@@ -166,6 +168,9 @@ void Player::default_callback(OgreNewt::Body* me, float timeStep, int threadInde
 
 void Player::pressedKey(const OIS::KeyEvent &arg)
 {
+	if (hanging && pHanging->pressedKey(arg))
+		return;
+
 	if(arg.key == OIS::KC_SPACE && autoTarget->spacePressed())
 		return;
 
@@ -200,7 +205,7 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
 		break;
 
 	case OIS::KC_C:
-		pClimbing->pressedC();
+		pClimbing->release();
 		break;
 
 	case OIS::KC_SPACE:
@@ -228,6 +233,9 @@ void Player::releasedKey(const OIS::KeyEvent &arg)
 {
 	pSliding->releasedKey(arg);
 	pAbilities->releasedKey(arg);
+
+	if (hanging && pHanging->releasedKey(arg))
+		return;
 
 	switch (arg.key)
 	{
@@ -353,6 +361,9 @@ void Player::updateStats()
 
 	pSwimming->update(tslf);
 	pAbilities->update(tslf);
+
+	if (hanging)
+		pHanging->update(tslf);
 
 	bool readyToSlide = (inControl && !pParkour->isRolling() && !wallrunning && !climbing && !hanging);
 	pSliding->update(tslf, readyToSlide);

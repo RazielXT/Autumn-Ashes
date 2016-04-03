@@ -56,7 +56,6 @@ MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneMana
 	Global::mWorld = mWorld;
 	Global::mWindow = mWindow;
 	Global::mEventsMgr = mEventMgr;
-	Global::shaker = new CameraShaker();
 
 	gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem());
 	Global::gameMgr = gameMgr;

@@ -67,11 +67,12 @@ void PlayerClimbing::startPullup()
 	climb_pullup = 0.05;
 }
 
-void PlayerClimbing::pressedC()
+void PlayerClimbing::release()
 {
-	if (p->hanging)
+	if (p->hanging && climbJoint)
 	{
 		delete climbJoint;
+		climbJoint = nullptr;
 		p->hanging = false;
 		noClimbTimer = 1;
 	}
@@ -85,7 +86,7 @@ void PlayerClimbing::pressedC()
 void PlayerClimbing::forcePullup(Vector3 climbNormal, float startOffset)
 {
 	pullupSide = (MUtils::getSideDotProduct(p->facingDir, climbNormal) < 0) ? -1.0f : 1.0f;
-	Global::shaker->startShaking(1.5, 0.5, 0.5, 1, 1, 0.7, 0.25, 0.75, true);
+	Global::camera->shaker.startShaking(1.5, 0.5, 0.5, 1, 1, 0.7, 0.25, 0.75, true);
 
 	startClimbing(Climb_Pullup);
 
@@ -102,7 +103,7 @@ bool PlayerClimbing::spacePressed()
 	if (climb_pullup != 0)
 		return true;
 
-	if (p->hanging)
+	if (p->hanging && climbJoint)
 	{
 		startPullup();
 	}
@@ -130,7 +131,8 @@ bool PlayerClimbing::spacePressed()
 			body->setVelocity(camDir * 12 + Vector3(0, 4, 0));
 		}
 	}
-	else return false;
+	else
+		return false;
 
 	return true;
 }
@@ -676,6 +678,7 @@ void PlayerClimbing::stopClimbing()
 	body->setCustomForceAndTorqueCallback<Player>(&Player::move_callback, p);
 	OgreNewt::Body* b = climbJoint->getBody0();
 	delete climbJoint;
+	climbJoint = nullptr;
 	delete b;
 	Global::mSceneMgr->destroyEntity("BodyChytac");
 	Global::mSceneMgr->destroySceneNode("BodyChytac");
@@ -709,11 +712,12 @@ void PlayerClimbing::updatePullup(float tslf)
 
 			if (p->climbing)
 				stopClimbing();
-			else if (p->hanging)
+			else if (p->hanging && climbJoint)
 			{
 				p->inMoveControl = true;
 				p->hanging = false;
 				delete climbJoint;
+				climbJoint = nullptr;
 				delete Gbody;
 			}
 

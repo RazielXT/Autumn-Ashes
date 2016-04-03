@@ -4,6 +4,7 @@
 #include <future>
 #include <vector>
 
+struct Pole;
 struct JumpBox;
 class Slide;
 class PlayerAutoTarget;
@@ -16,9 +17,11 @@ public:
 
 	void addLoadedSlide(Slide* slide);
 	void addLoadedJumpBox(JumpBox box);
+	void addLoadedPole(Pole pole);
 
 private:
 
+	std::vector<Pole> poles;
 	std::vector<JumpBox> jumpBoxes;
 	std::vector<Slide*> slides;
 };
@@ -46,10 +49,13 @@ public:
 	void updateAutoTarget(Ogre::Vector3 pos, Ogre::Vector3 dir, float tslf, float rayDistance);
 
 	TargetSlideInfo targetInfo;
+	Pole* targetPole;
 
 	TargetableObjects objects;
 
 private:
+
+	bool getTargetPole(Ogre::Vector3 pos, Ogre::Vector3 dir, float rayDistance);
 
 	struct
 	{
@@ -60,6 +66,7 @@ private:
 
 	Slide* lastUnavailableSlide = nullptr;
 
+	Pole* preparedPole;
 	Slide* preparedSlide;
 	float preparedSlideOffset;
 	Ogre::Vector3 preparedSlidePos;

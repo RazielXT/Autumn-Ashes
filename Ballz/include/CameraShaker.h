@@ -10,6 +10,8 @@ public:
 	//0 duration = permanent
 	void startShaking(float power, float freq, float duration = 5.0f, float angleShake = 0.5f, float initPowerW = 1.0f, float endPowerW = 1.0f, float wX = 1.0f, float wY = 1.0f, bool forceDominantSideDownFirst = false);
 
+	void nodHead(float power);
+
 	void stopShaking();
 
 	Ogre::Quaternion current;

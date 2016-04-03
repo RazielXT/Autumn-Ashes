@@ -4,7 +4,6 @@ float Global::timestep = 1;
 AudioLibrary* Global::audioLib = nullptr;
 EventsManager* Global::mEventsMgr = nullptr;
 Ogre::SceneManager* Global::mSceneMgr = nullptr;
-CameraShaker* Global::shaker = nullptr;
 Ogre::RenderWindow* Global::mWindow = nullptr;
 OgreNewt::World* Global::mWorld = nullptr;
 irrklang::ISoundEngine* Global::soundEngine = nullptr;

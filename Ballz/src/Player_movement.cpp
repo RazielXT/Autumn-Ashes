@@ -114,7 +114,7 @@ void Player::manageFall()
 
 			Global::audioLib->playHurtSound(bodyPosition.x, bodyPosition.y, bodyPosition.z);
 
-			Global::shaker->startShaking(1.5, 1.5, 0.5, 1, 1, 0.7, 0.35, 1, true);
+			Global::camera->shaker.startShaking(1.5, 1.5, 0.5, 1, 1, 0.7, 0.35, 1, true);
 		}
 		else
 			slowingDown = 1;// -fallVelocity / 100.0f;

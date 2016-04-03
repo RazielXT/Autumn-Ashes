@@ -418,4 +418,7 @@
 	<data name="Velocity" type="float" defaultValue="20"/>
 </class>
 
+<class name="Pole" usage="object">
+</class>
+
 </userDataTypes>

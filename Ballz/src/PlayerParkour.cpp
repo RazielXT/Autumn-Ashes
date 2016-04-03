@@ -60,7 +60,7 @@ bool PlayerParkour::spacePressed()
 
 			allowWalljump = true;
 
-			Global::shaker->startShaking(0.75, 1.0, 0.1, 1, 1, 0.7, 0.15, 0.75, true);
+			Global::camera->shaker.startShaking(0.75, 1.0, 0.1, 1, 1, 0.7, 0.15, 0.75, true);
 			body->setVelocity(jumpDir);
 
 			p->playWalkSound();

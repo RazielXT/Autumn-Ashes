@@ -23,6 +23,7 @@
 #include "GateLock.h"
 #include "Energy.h"
 #include "JumpBox.h"
+#include "Pole.h"
 
 using namespace Ogre;
 using namespace tinyxml2;
@@ -1170,6 +1171,21 @@ void loadJumpBox(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
 	Global::player->autoTarget->objects.addLoadedJumpBox(box);
 }
 
+void loadPole(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
+{
+	Pole pole;
+	pole.position = node->getPosition();
+
+	auto box = ent->getBoundingBox().getSize();
+	pole.pinDirection = box.x > box.z ? Ogre::Vector3::UNIT_X : Ogre::Vector3::UNIT_Z;
+	pole.direction = box.x < box.z ? Ogre::Vector3::UNIT_X : Ogre::Vector3::UNIT_Z;
+
+	pole.pinDirection = node->getOrientation()*pole.pinDirection;
+	pole.direction = node->getOrientation()*pole.direction;
+
+	Global::player->autoTarget->objects.addLoadedPole(pole);
+}
+
 void loadEnergy(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
 {
 	auto energy = SceneEnergies::createEnergy();
@@ -2146,6 +2162,10 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 				else if (rootTag == "JumpBox")
 				{
 					loadJumpBox(root, ent, node);
+				}
+				else if (rootTag == "Pole")
+				{
+					loadPole(root, ent, node);
 				}
 				else if (rootTag == "Energy")
 				{

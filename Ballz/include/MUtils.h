@@ -67,9 +67,17 @@ inline float getYawBetween(Quaternion& q1, Quaternion& q2)
 	return r;
 }
 
+inline Quaternion quaternionFromDir(Vector3 dir, bool normalize = true)
+{
+	if(normalize)
+		dir.normalise();
+
+	return Vector3::NEGATIVE_UNIT_Z.getRotationTo(dir);
+}
+
 inline Vector3 dirFromQuaternion(Quaternion or)
 {
-	return or*Vector3(0,0,-1);
+	return or*Vector3::NEGATIVE_UNIT_Z;
 }
 
 inline Quaternion quaternionFromNormal(Vector3 dirFront)

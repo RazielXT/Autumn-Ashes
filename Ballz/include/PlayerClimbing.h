@@ -19,7 +19,7 @@ class PlayerClimbing
 	OgreNewt::Body* body;
 	OgreNewt::Body* Gbody;
 
-	void pressedC();
+	void release();
 	bool spacePressed();
 	void updateClimbCamera(float moveX);
 
@@ -45,7 +45,7 @@ class PlayerClimbing
 	float climb_yaw, climb_move_side, climb_move_vert, climb_pullup, noClimbTimer, pullupPos;
 	Ogre::Vector3 climb_normal, climbDir;
 
-	OgreNewt::BallAndSocket* climbJoint;
+	OgreNewt::BallAndSocket* climbJoint = nullptr;
 	Ogre::SceneNode* camnode, *headnode, *necknode;
 
 public:

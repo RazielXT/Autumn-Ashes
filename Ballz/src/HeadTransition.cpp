@@ -23,7 +23,7 @@ void HeadTransition::initializeJump(Ogre::Vector3 target)
 	transitionNode->setPosition(pos);
 	transitionNode->setOrientation(dir);
 
-	dist = std::max(0.5f, pos.distance(target) / 10.0f);
+	dist = std::max(1.0f, pos.distance(target) / 5.0f);
 	dirTarget.FromAngleAxis(dir.getYaw(), Vector3(0, 1, 0));
 	dirTarget = dirTarget*Quaternion(Ogre::Degree(-30), Vector3(1, 0, 0));
 
@@ -76,7 +76,7 @@ bool HeadTransition::updateJump(float time)
 
 	if (!beforeJump)
 	{
-		timer = std::min(timer + time*3.75f, dist);
+		timer = std::min(timer + time*4.0f, dist);
 		w = timer / dist;
 
 		w = pow(w, 1.25f);
@@ -97,14 +97,14 @@ bool HeadTransition::updateJump(float time)
 	//Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("Jumping: hadd " + Ogre::StringConverter::toString(hAdd) + ", hd " + Ogre::StringConverter::toString(hd), Ogre::LML_NORMAL);
 
 	transitionNode->setPosition(cpos);
-	transitionNode->setOrientation(cdir*Global::shaker->current);
+	transitionNode->setOrientation(cdir*Global::camera->shaker.current);
 
 	return (timer == dist);
 }
 
 void HeadTransition::initializeTransition(Ogre::Vector3 target, float transitionTime)
 {
-	timer = transitionTime;
+	timer = dist = transitionTime;
 	posTarget = target;
 
 	auto cam = Global::camera->camera;
@@ -139,10 +139,10 @@ bool HeadTransition::updateTransition(float tslf)
 
 void HeadTransition::refreshTransition(Ogre::Quaternion actualOr, Ogre::Vector3 actualPos)
 {
-	auto w = timer;
+	auto w = timer/ dist;
 
 	Quaternion q = Quaternion::nlerp(1 - w, dir, actualOr, true);
-	transitionNode->setOrientation(q);
+	transitionNode->setOrientation(q*Global::camera->shaker.current);
 
 	Vector3 moveOffset = actualPos - posTarget;
 	Vector3 p = w*pos + (1 - w)*posTarget;

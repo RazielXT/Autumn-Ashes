@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "CameraShaker.h"
 
 class Player;
 class Rolling;
@@ -56,6 +57,7 @@ public:
 	Ogre::SceneNode* getCamNode();
 
 	Ogre::Camera* camera;
+	CameraShaker shaker;
 
 	float head_turning;
 

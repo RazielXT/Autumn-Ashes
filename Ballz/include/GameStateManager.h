@@ -3,7 +3,6 @@
 #include "stdafx.h"
 #include "WorldMaterials.h"
 #include "GeometryManager.h"
-#include "MaterialEditsLibrary.h"
 #include "ParticleManager.h"
 #include "SceneEditsLibrary.h"
 
@@ -71,7 +70,6 @@ public:
 	WorldMaterials wMaterials;
 	GeometryManager* geometryMgr;
 	ParticleManager particleMgr;
-	MaterialEditsLibrary materialEdits;
 	SceneEditsLibrary sceneEdits;
 
 	std::map<Ogre::String, OgreNewt::Body*>* loadedBodies;

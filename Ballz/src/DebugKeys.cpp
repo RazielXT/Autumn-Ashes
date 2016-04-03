@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "DebugKeys.h"
-#include "CameraShaker.h"
+#include "PlayerCamera.h"
 #include "GameStateManager.h"
 #include "PlayerSwimming.h"
 #include "Player.h"
@@ -106,23 +106,23 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 		break;
 
 	case OIS::KC_1:
-		Global::shaker->startShaking(0.3, 1.5, 0.0, 1, 1, 0.7, 0.55, 0.5, true);
+		Global::camera->shaker.startShaking(0.3, 1.5, 0.0, 1, 1, 0.7, 0.55, 0.5, true);
 		break;
 
 	case OIS::KC_2:
-		Global::shaker->startShaking(1.5, 1.0, 0.1, 1, 1, 0.7, 0.15, 0.75, true);
+		Global::camera->shaker.startShaking(1.5, 1.0, 0.1, 1, 1, 0.7, 0.15, 0.75, true);
 		break;
 
 	case OIS::KC_3:
-		Global::shaker->startShaking(1.0, 1.5, 0.5, 1, 1, 0.5, 0.35, 1, true);
+		Global::camera->shaker.startShaking(1.0, 1.5, 0.5, 1, 1, 0.5, 0.35, 1, true);
 		break;
 
 	case OIS::KC_4:
-		Global::shaker->startShaking(1.0, 1.5, 5, 1, 1, 0.1, 1.35, 1, true);
+		Global::camera->shaker.startShaking(1.0, 1.5, 5, 1, 1, 0.1, 1.35, 1, true);
 		break;
 
 	case OIS::KC_5:
-		Global::shaker->startShaking(1.2, 1.5, 10, 1, 1, 0.1, 0.35, 1, true);
+		Global::camera->shaker.startShaking(1.2, 1.5, 10, 1, 1, 0.1, 0.35, 1, true);
 		break;
 
 	case OIS::KC_NUMPAD3:

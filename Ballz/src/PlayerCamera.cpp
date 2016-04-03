@@ -59,7 +59,7 @@ Vector3 PlayerCamera::getPosition() const
 void PlayerCamera::startCameraShake(float time, float power, float impulse)
 {
 	//shaker->startCameraShake(time,power,impulse);
-	Global::shaker->startShaking(power, impulse, time);
+	Global::camera->shaker.startShaking(power, impulse, time);
 }
 
 Ogre::Vector3 PlayerCamera::getFacingDirection() const
@@ -251,10 +251,10 @@ void PlayerCamera::updateHead()
 {
 	float time = player->tslf;
 
-	Global::shaker->update(time);
+	Global::camera->shaker.update(time);
 	rolling.update(time);
 
-	auto sQ = Global::shaker->current;
+	auto sQ = Global::camera->shaker.current;
 	shakeNode->setOrientation(sQ);
 
 	if (fallPitch == 1)

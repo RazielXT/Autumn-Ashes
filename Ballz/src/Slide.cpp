@@ -71,7 +71,7 @@ void Slide::startJumpToSlide()
 	jumpingToSlide = true;
 
 	float shakeW = std::min(1.0f, headArrival.dist*0.8f);
-	Global::shaker->startShaking(shakeW*0.8f, shakeW*1.0f, 0.5f, 1, 1, 0.4f, 0.25f, 1, true);
+	Global::camera->shaker.startShaking(shakeW*0.8f, shakeW*1.0f, 0.5f, 1, 1, 0.4f, 0.25f, 1, true);
 }
 
 void Slide::updateJumpToSlide(float time)
@@ -203,7 +203,7 @@ void Slide::attach(bool retainDirection, float headArrivalTime)
 
 	unavailableTimer = 0.25f;
 
-	Global::shaker->startShaking(0.85, 1.0, 0.25, 1, 1, 0.5, 0.35, 1, true);
+	Global::camera->shaker.startShaking(0.85, 1.0, 0.25, 1, 1, 0.5, 0.35, 1, true);
 
 	mTrackerState->setEnabled(true);
 	mTrackerState->setLoop(loop);
@@ -227,7 +227,7 @@ void Slide::release(bool returnControl, bool manualJump)
 		else
 			Global::player->body->setVelocity(10 * Global::camera->getFacingDirection() + Vector3(0, 5, 0));
 
-		Global::shaker->startShaking(0.65, 1.0, 0.25, 1, 1, 0.5, 0.35, 1, true);
+		Global::camera->shaker.startShaking(0.65, 1.0, 0.25, 1, 1, 0.5, 0.35, 1, true);
 
 		enablePlayerControl = true;
 	}
@@ -243,7 +243,7 @@ void Slide::updateHeadArrival(float time)
 
 	Quaternion qpitch = Quaternion(Degree(headState.pitch), Vector3(0, 1, 0));
 	Quaternion qyaw = Quaternion(Degree(headState.yaw), Vector3(1, 0, 0));
-	Quaternion qCam = qpitch*qyaw*Global::shaker->current;
+	Quaternion qCam = qpitch*qyaw*Global::camera->shaker.current;
 
 	if (finished)
 	{
@@ -284,7 +284,7 @@ void Slide::updateSlidingCamera(float time)
 		Quaternion qpitch = Quaternion(Degree(headState.pitch), Vector3(0, 1, 0));
 		Quaternion qyaw = Quaternion(Degree(headState.yaw), Vector3(1, 0, 0));
 
-		head->setOrientation(qpitch*qyaw*Global::shaker->current);
+		head->setOrientation(qpitch*qyaw*Global::camera->shaker.current);
 	}
 }
 

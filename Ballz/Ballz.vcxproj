@@ -157,7 +157,6 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\GateLock.cpp" />
     <ClCompile Include="src\Gorilla.cpp" />
     <ClCompile Include="src\GrassDetailGeometry.cpp" />
-    <ClCompile Include="src\GuiMaterialEdit.cpp" />
     <ClCompile Include="src\GuiSceneEdit.cpp" />
     <ClCompile Include="src\HandGripReaction.cpp" />
     <ClCompile Include="src\HeadTransition.cpp" />
@@ -171,7 +170,6 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\MainListener.cpp" />
     <ClCompile Include="src\ManualDetailGeometry.cpp" />
     <ClCompile Include="src\MaterialEdit.cpp" />
-    <ClCompile Include="src\MaterialEditsLibrary.cpp" />
     <ClCompile Include="src\GUtils.cpp" />
     <ClCompile Include="src\OptimizedGroupEdit.cpp" />
     <ClCompile Include="src\ParticleEdit.cpp" />
@@ -182,6 +180,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\PlayerClimbing.cpp" />
     <ClCompile Include="src\PlayerEnergies.cpp" />
     <ClCompile Include="src\PlayerGrab.cpp" />
+    <ClCompile Include="src\PlayerHanging.cpp" />
     <ClCompile Include="src\PlayerParkour.cpp" />
     <ClCompile Include="src\PlayerSliding.cpp" />
     <ClCompile Include="src\PlayerSwimming.cpp" />
@@ -254,7 +253,6 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\JumpBox.h" />
     <ClInclude Include="include\LevelEdit.h" />
     <ClInclude Include="include\GrassDetailGeometry.h" />
-    <ClInclude Include="include\GuiMaterialEdit.h" />
     <ClInclude Include="include\GuiSceneEdit.h" />
     <ClInclude Include="include\GUtils.h" />
     <ClInclude Include="include\HeadTransition.h" />
@@ -276,7 +274,6 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\GuiOverlay.h" />
     <ClInclude Include="include\ManualDetailGeometry.h" />
     <ClInclude Include="include\MaterialEdit.h" />
-    <ClInclude Include="include\MaterialEditsLibrary.h" />
     <ClInclude Include="include\MUtils.h" />
     <ClInclude Include="include\NewtonListener.h" />
     <ClInclude Include="include\GeometryManager.h" />
@@ -289,6 +286,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\PlayerClimbing.h" />
     <ClInclude Include="include\PlayerEnergies.h" />
     <ClInclude Include="include\PlayerGrab.h" />
+    <ClInclude Include="include\PlayerHanging.h" />
     <ClInclude Include="include\PlayerParkour.h" />
     <ClInclude Include="include\PlayerPostProcess.h" />
     <ClInclude Include="include\DynamicRope.h" />
@@ -297,6 +295,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\PlayerStateInfo.h" />
     <ClInclude Include="include\PlayerSwimming.h" />
     <ClInclude Include="include\PlayerTimeshift.h" />
+    <ClInclude Include="include\Pole.h" />
     <ClInclude Include="include\ScaryPPListener.h" />
     <ClInclude Include="include\PSSMCamera.h" />
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h" />
