@@ -178,7 +178,9 @@ void optimizeEntities()
 
 		for (auto e : entities)
 		{
-			bBox.merge(e->getParentNode()->getPosition());
+			auto ebbox = e->getBoundingBox();
+			ebbox.transform(e->getParentNode()->_getFullTransform());
+			bBox.merge(ebbox);
 
 			Ogre::Quaternion eQ = e->getParentNode()->_getDerivedOrientation();
 			Ogre::Vector3 bbCenterOffset = eQ*e->getBoundingBox().getHalfSize() - eQ*e->getBoundingBox().getCenter();

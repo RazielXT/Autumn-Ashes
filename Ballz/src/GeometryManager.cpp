@@ -292,21 +292,28 @@ std::vector<OptimizedGroup>& GeometryManager::getOptGroups()
 	return optimizedGroups;
 }
 
-OptimizedGroup GeometryManager::getClosestOptGroup()
+std::vector<OptimizedGroup> GeometryManager::getClosestOptGroup(float radius)
 {
 	auto pos = Global::camera->getPosition();
-	OptimizedGroup out;
-	float closest = 999999;
+	std::vector<std::pair<float, OptimizedGroup>> inReach;
 
 	for (auto& g : optimizedGroups)
 	{
-		float dist = g.bbox.getCenter().squaredDistance(pos);
-		if (dist < closest)
+		float dist = g.bbox.distance(pos);
+		if (dist < radius)
 		{
-			out = g;
-			closest = dist;
+			inReach.push_back({ dist, g });
 		}
 	}
+
+	std::sort(inReach.begin(), inReach.end(), [](std::pair<float, OptimizedGroup>& left, std::pair<float, OptimizedGroup>& right)
+	{
+		return left.first < right.first;
+	});
+
+	std::vector<OptimizedGroup> out;
+	for (auto& o : inReach)
+		out.push_back(o.second);
 
 	return out;
 }

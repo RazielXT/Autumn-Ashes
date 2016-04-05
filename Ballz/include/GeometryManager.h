@@ -35,7 +35,7 @@ public:
 	bool modifyVertexBuffer(Ogre::Entity* ent, VCEditFunc editFunc, void* data = nullptr);
 
 	void addOptimizedGroup(OptimizedGroup group);
-	OptimizedGroup getClosestOptGroup();
+	std::vector<OptimizedGroup> getClosestOptGroup(float radius);
 	std::vector<OptimizedGroup>& getOptGroups();
 
 private:

@@ -39,7 +39,30 @@ void OptimizedGroupEdit::customAction(std::string name)
 
 OptimizedGroupEdit* OptimizedGroupEdit::query()
 {
-	auto group = Global::gameMgr->geometryMgr->getClosestOptGroup();
+	static std::string lastSelected;
+
+	auto groups = Global::gameMgr->geometryMgr->getClosestOptGroup(5);
+
+	if (groups.empty())
+		return nullptr;
+
+	auto group = *groups.begin();
+	for (auto g = groups.begin(); g != groups.end(); g++)
+	{
+		if (g->name == lastSelected)
+		{
+			g++;
+
+			if (g != groups.end())
+			{
+				group = *g;
+			}
+
+			break;
+		}
+	}
+
+	lastSelected = group.name;
 
 	if(!group.mat.isNull())
 	{
