@@ -35,7 +35,6 @@ protected:
 
 	bool startFromPosition(Ogre::Vector3& point);
 
-
 	Ogre::NodeAnimationTrack* track;
 	Ogre::AnimationState * mTrackerState = nullptr;
 	Ogre::SceneNode* tracker;

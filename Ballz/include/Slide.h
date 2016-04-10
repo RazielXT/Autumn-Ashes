@@ -48,7 +48,7 @@ protected:
 		float pitch;
 	};
 
-	void updateSlidingState(float time);
+	virtual void updateSlidingState(float time);
 	void updateHeadArrival(float time);
 
 	virtual void updateSlidingSpeed(float time);

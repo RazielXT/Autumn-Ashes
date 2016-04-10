@@ -20,6 +20,8 @@ public:
 
 protected:
 
+	virtual void updateSlidingState(float time);
+
 	virtual void updateSlidingCamera(float time);
 
 	virtual void updateSlidingSpeed(float time);

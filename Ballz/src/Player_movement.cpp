@@ -56,9 +56,6 @@ void Player::updateDirectionForce()
 		pParkour->updateRolling(tslf);
 	}
 
-	if (levitating)
-		forceDirection.y += 10;
-
 	if (moving && onGround)
 	{
 		float sprintFactor = sprinting ? 1.5f : 1.0f;
@@ -85,8 +82,6 @@ void Player::jump()
 			Vector3 vel = body->getVelocity();
 			body->setVelocity(vel + Vector3(0, 9, 0));
 		}
-		else
-			levitating = true;
 	}
 }
 
@@ -264,10 +259,7 @@ void Player::updateGroundStats()
 	}
 	else
 	{
-		if(levitating)
-			body->setLinearDamping(0.15f);
-		else
-			body->setLinearDamping(0.0);
+		body->setLinearDamping(0.0);
 
 		if (onGround)
 		{

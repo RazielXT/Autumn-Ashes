@@ -123,7 +123,7 @@ private:
 	//basic state
 	bool alive, immortal;
 	bool moving, right_key, left_key, back_key, forw_key;
-	bool onGround, sprinting, inControl, inMoveControl, levitating;
+	bool onGround, sprinting, inControl, inMoveControl;
 
 	//extern state
 	bool hanging, grabbedObj, wallrunning, sliding, transformed;

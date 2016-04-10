@@ -12,6 +12,7 @@ PlayerAutoTarget::PlayerAutoTarget()
 {
 	targetTimer = 0;
 	targetPole = nullptr;
+	preparedPole = nullptr;
 }
 
 PlayerAutoTarget::~PlayerAutoTarget()

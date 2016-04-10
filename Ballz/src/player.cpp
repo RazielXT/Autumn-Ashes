@@ -39,7 +39,6 @@ Player::Player(WorldMaterials* wMaterials)
 	moving=false;
 	onGround = true;
 	sprinting = false;
-	levitating = false;
 
 	hanging=false;
 	climbing = BodyType(0);
@@ -181,6 +180,18 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
 
 	switch (arg.key)
 	{
+	case OIS::KC_G:
+	{
+		irrklang::ISound* s = Global::audioLib->soundEngine->play3D(AudioLibrary::getPath("speedWind.wav").c_str(), irrklang::vec3df(bodyPosition.x + 2, bodyPosition.y + 3, bodyPosition.z), false, false, true, irrklang::ESM_AUTO_DETECT, false);
+		s->setMaxDistance(10);
+		s->setVolume(0.75f);
+
+		s->setPlaybackSpeed(1.7f);
+		//s->getSoundEffectControl()->enable.WavesReverbSoundEffect(0, -10 * Global::timestep, 2600, 0.5);
+
+		s->drop();
+	}
+	break;
 	case OIS::KC_D:
 		right_key = true;
 		break;
@@ -254,9 +265,6 @@ void Player::releasedKey(const OIS::KeyEvent &arg)
 	case OIS::KC_LSHIFT:
 		sprinting = false;
 		break;
-	case OIS::KC_SPACE:
-		levitating = false;
-		break;
 	}
 }
 
@@ -286,6 +294,9 @@ void Player::releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 }
 void Player::movedMouse(const OIS::MouseEvent &e)
 {
+	if (hanging)
+		pHanging->movedMouse(e);
+
 	if (!pParkour->isRolling())
 		mouseX = (int)(-1 * e.state.X.rel*Global::timestep);
 
@@ -353,11 +364,11 @@ void Player::updateStats()
 	updateGroundStats();
 
 	bodyVelocityL = body->getVelocity().length();
-	if (bodyVelocityL > 20)
+	/*if (bodyVelocityL > 20)
 	{
 		bodyVelocityL = 20;
 		body->setVelocity(20 * body->getVelocity() / bodyVelocityL);
-	}
+	}*/
 
 	pSwimming->update(tslf);
 	pAbilities->update(tslf);

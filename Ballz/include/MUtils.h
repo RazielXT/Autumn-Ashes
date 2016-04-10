@@ -75,9 +75,21 @@ inline Quaternion quaternionFromDir(Vector3 dir, bool normalize = true)
 	return Vector3::NEGATIVE_UNIT_Z.getRotationTo(dir);
 }
 
+inline Vector3 projectOnPlane(Vector3 v, Vector3 planeNormal)
+{
+	auto d = v.dotProduct(planeNormal);
+
+	return v - planeNormal*d;
+}
+
 inline Vector3 dirFromQuaternion(Quaternion or)
 {
 	return or*Vector3::NEGATIVE_UNIT_Z;
+}
+
+inline Vector3 dirUpFromQuaternion(Quaternion or )
+{
+	return or *Vector3::UNIT_Y;
 }
 
 inline Quaternion quaternionFromNormal(Vector3 dirFront)

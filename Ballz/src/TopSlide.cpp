@@ -2,6 +2,8 @@
 #include "TopSlide.h"
 #include "Player.h"
 #include "OgreMath.h"
+#include "MUtils.h"
+#include "GUtils.h"
 
 TopSlide::TopSlide(SceneNode* node, const std::string& zipName, const std::string& zipAnimName, bool looped, bool walkable, float speed) : Slide(zipAnimName, looped, walkable, speed)
 {
@@ -62,6 +64,21 @@ bool TopSlide::start()
 	pos.y -= 1.5f;
 
 	return Slide::start(pos);
+}
+
+void TopSlide::updateSlidingState(float time)
+{
+	Ogre::Vector3 oldUp = MUtils::dirUpFromQuaternion(getDirectionState());
+
+	Slide::updateSlidingState(time);
+
+	Ogre::Vector3 newUp = MUtils::dirUpFromQuaternion(getDirectionState());
+	Ogre::Vector3 facing = MUtils::dirFromQuaternion(getDirectionState());
+
+	oldUp = MUtils::projectOnPlane(oldUp, facing);
+	oldUp.normalise();
+
+	GUtils::DebugPrint(std::to_string(newUp.angleBetween(oldUp).valueDegrees()));
 }
 
 void TopSlide::updateSlidingCamera(float time)

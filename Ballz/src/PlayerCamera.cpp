@@ -140,7 +140,6 @@ void PlayerCamera::attachCamera(bool silent)
 	cam_walking = 0;
 	head_turning = 0;
 	//todo mouseX = 0;
-	camPitch = 0;
 	//todo moving = false;
 
 	necknode->setOrientation(Ogre::Quaternion::IDENTITY);

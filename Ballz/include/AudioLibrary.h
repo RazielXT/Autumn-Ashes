@@ -56,7 +56,7 @@ public:
 		}
 	}
 
-private:
+//private:
 
 	irrklang::ISoundSource* preloadSound(std::string path);
 
