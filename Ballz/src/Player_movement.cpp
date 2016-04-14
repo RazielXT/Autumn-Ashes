@@ -12,7 +12,9 @@ void Player::enableControl(bool enable)
 	inMoveControl = enable;
 
 	if (!enable)
-		stopMoving();
+		hideBody();
+	else
+		body->unFreeze();
 
 	if (climbing)
 		pClimbing->stopClimbing();
@@ -26,7 +28,7 @@ void Player::enableMovement(bool enable)
 	inMoveControl = enable;
 
 	if (!enable)
-		stopMoving();
+		hideBody();
 }
 
 void Player::move_callback(OgreNewt::Body* me, float timeStep, int threadIndex)
@@ -90,7 +92,7 @@ void Player::manageFall()
 	auto fallVelocity = bodyVelocityL * 3;
 	pParkour->hitGround();
 
-	if (fallVelocity >= 60)
+	if (fallVelocity > 60)
 	{
 		if (!immortal && fallVelocity > 75)
 		{
@@ -101,19 +103,17 @@ void Player::manageFall()
 			pParkour->doRoll();
 		}
 
-		if (fallVelocity > 50)
+		//if (fallVelocity > 50)
 		{
 			pPostProcess->vars->hurtEffect = std::min(fallVelocity / 7.0f, 8.0f);
-
-			slowingDown = 1;
 
 			Global::audioLib->playHurtSound(bodyPosition.x, bodyPosition.y, bodyPosition.z);
 
 			Global::camera->shaker.startShaking(1.5, 1.5, 0.5, 1, 1, 0.7, 0.35, 1, true);
 		}
-		else
-			slowingDown = 1;// -fallVelocity / 100.0f;
 	}
+	else
+		slowingDown = std::max(1.0f,fallVelocity/20.0f);
 
 	pCamera->manageFall(fallVelocity);
 
@@ -122,10 +122,10 @@ void Player::manageFall()
 
 void Player::updateMovement()
 {
-	if (slowingDown < 1)
+	if (slowingDown > 1)
 	{
-		slowingDown += (tslf / 2);
-		if (slowingDown > 1) slowingDown = 1;
+		slowingDown -= tslf;
+		if (slowingDown < 1) slowingDown = 1;
 	}
 
 	if (startMoveBoost)

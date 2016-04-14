@@ -92,6 +92,11 @@ inline Vector3 dirUpFromQuaternion(Quaternion or )
 	return or *Vector3::UNIT_Y;
 }
 
+inline Vector3 dirRightFromQuaternion(Quaternion or )
+{
+	return or *Vector3::UNIT_X;
+}
+
 inline Quaternion quaternionFromNormal(Vector3 dirFront)
 {
 	dirFront.normalise();

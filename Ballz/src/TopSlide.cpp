@@ -63,38 +63,73 @@ bool TopSlide::start()
 	auto pos = Global::player->bodyPosition;
 	pos.y -= 1.5f;
 
+	manualRoll = 0;
+
 	return Slide::start(pos);
 }
 
 void TopSlide::updateSlidingState(float time)
 {
-	Ogre::Vector3 oldUp = MUtils::dirUpFromQuaternion(getDirectionState());
+	/*Ogre::Vector3 oldUp = Ogre::Vector3(0,1,0);//MUtils::dirUpFromQuaternion(getDirectionState());
 
 	Slide::updateSlidingState(time);
 
-	Ogre::Vector3 newUp = MUtils::dirUpFromQuaternion(getDirectionState());
-	Ogre::Vector3 facing = MUtils::dirFromQuaternion(getDirectionState());
+	Ogre::Vector3 newUp = Ogre::Vector3(0, 1, 1);
+	newUp.normalise(); //MUtils::dirUpFromQuaternion(getDirectionState());
+	Ogre::Vector3 facing = Ogre::Vector3(0, 1, -1);
+	facing.normalise(); //MUtils::dirFromQuaternion(getDirectionState());*/
+
+	Ogre::Vector3 oldUp = MUtils::dirUpFromQuaternion(getDirectionState());
+	//GUtils::DebugPrint(GUtils::v2s(oldUp), true);
+
+	Slide::updateSlidingState(time);
+
+	auto q = getDirectionState();
+
+	Ogre::Vector3 actualUp = MUtils::dirUpFromQuaternion(base->_getDerivedOrientation());
+	Ogre::Vector3 newUp = MUtils::dirUpFromQuaternion(q);
+	Ogre::Vector3 facing = MUtils::dirFromQuaternion(q);
 
 	oldUp = MUtils::projectOnPlane(oldUp, facing);
-	oldUp.normalise();
+	actualUp = MUtils::projectOnPlane(actualUp, facing);
 
-	GUtils::DebugPrint(std::to_string(newUp.angleBetween(oldUp).valueDegrees()));
+	auto autoRoll = newUp.angleBetween(oldUp).valueDegrees();
+	auto angle = newUp.angleBetween(actualUp).valueDegrees();
+
+	Ogre::Vector3 right = MUtils::dirRightFromQuaternion(q);
+	if (right.dotProduct(oldUp) < 0)
+	{
+		angle *= -1;
+		autoRoll *= -1;
+	}
+
+	manualRoll = angle;
+
+	base->roll(Ogre::Degree(-autoRoll));
+
+	//GUtils::DebugPrint(GUtils::v2s(newUp), true);
+	//GUtils::DebugPrint(GUtils::v2s(oldUp), true);
+	GUtils::DebugPrint(std::to_string(manualRoll), true);
 }
 
 void TopSlide::updateSlidingCamera(float time)
 {
 	auto dirRoll = tracker->getOrientation().getRoll().valueDegrees();
 
-	manualRoll += time*rolling * 5;
-	Quaternion baseQ(Degree(manualRoll - dirRoll), Vector3(0, 0, 1));
+	//manualRoll += time*rolling * 5;
+	//Quaternion baseQ(Degree(manualRoll - dirRoll), Vector3(0, 0, 1));
 	//base->setOrientation(baseQ);
 
 	Slide::updateSlidingCamera(time);
+
+	base->roll(Ogre::Degree(time * -1 * avgSpeed * rolling));
 }
 
 void TopSlide::updateSlidingSpeed(float time)
 {
 	//currentSpeed = Math::Clamp(currentSpeed + 0.5f*time, 0.5f, 1.5f)*avgSpeed;
 
-	Slide::updateSlidingSpeed(time);
+	currentSpeed = avgSpeed;
+
+	//Slide::updateSlidingSpeed(time);
 }

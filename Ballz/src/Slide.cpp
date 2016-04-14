@@ -52,7 +52,7 @@ void Slide::movedMouse(const OIS::MouseEvent &e)
 
 	const float maxAngle = 85;
 
-	headState.pitch = headState.pitch + mouseX; // Math::Clamp(headState.pitch + mouseX, -maxAngle, maxAngle);
+	headState.pitch = Math::Clamp(headState.pitch + mouseX, -maxAngle, maxAngle);
 	headState.yaw = Math::Clamp(headState.yaw + mouseY, -maxAngle, maxAngle);
 }
 
@@ -80,7 +80,7 @@ void Slide::updateJumpToSlide(float time)
 	{
 		jumpingToSlide = false;
 
-		attach(true,0.2f);
+		attach(false,0.2f);
 	}
 }
 
@@ -115,7 +115,7 @@ bool Slide::start(Vector3& pos, bool withJump)
 		if (withJump)
 			startJumpToSlide();
 		else
-			attach(true);
+			attach(false);
 
 		Global::player->pSliding->slideStarted(this);
 
@@ -140,7 +140,7 @@ bool Slide::start(float startOffset, bool withJump, float headArrivalTimer)
 	if (withJump)
 		startJumpToSlide();
 	else
-		attach(true, headArrivalTimer);
+		attach(false, headArrivalTimer);
 
 	Global::player->pSliding->slideStarted(this);
 
@@ -176,6 +176,7 @@ void Slide::removeControlFromPlayer()
 
 void Slide::attach(bool retainDirection, float headArrivalTime)
 {
+	headArrivalTime = 0.5f;
 	resetHead();
 
 	{
@@ -198,12 +199,9 @@ void Slide::attach(bool retainDirection, float headArrivalTime)
 		headArrival.initializeTransition(state.getTranslate() + head->getPosition(), headArrivalTime);
 	}
 
-	Global::player->body->setPositionOrientation(Vector3(0,1000,0), Quaternion::IDENTITY);
-	Global::player->body->freeze();
+	unavailableTimer = headArrivalTime;
 
-	unavailableTimer = 0.25f;
-
-	Global::camera->shaker.startShaking(0.85, 1.0, 0.25, 1, 1, 0.5, 0.35, 1, true);
+	Global::camera->shaker.nodHead(20);
 
 	mTrackerState->setEnabled(true);
 	mTrackerState->setLoop(loop);
@@ -218,7 +216,6 @@ void Slide::release(bool returnControl, bool manualJump)
 		Global::camera->attachCameraWithTransition(0.2f);
 		Global::camera->nodHead(40);
 		Global::player->body->setPositionOrientation(head->_getDerivedPosition(), Ogre::Quaternion::IDENTITY);
-		Global::player->body->unFreeze();
 
 		float releaseSpeed = pow(std::max(1.0f, currentSpeed * 0.5f), 0.75f);
 
@@ -239,7 +236,7 @@ void Slide::release(bool returnControl, bool manualJump)
 
 void Slide::updateHeadArrival(float time)
 {
-	bool finished = headArrival.updateTransition(time*std::max(1.0f,currentSpeed));
+	bool finished = headArrival.updateTransition(time);
 
 	Quaternion qpitch = Quaternion(Degree(headState.pitch), Vector3(0, 1, 0));
 	Quaternion qyaw = Quaternion(Degree(headState.yaw), Vector3(1, 0, 0));

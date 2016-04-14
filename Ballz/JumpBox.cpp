@@ -27,7 +27,6 @@ bool JumpBoxArrival::update(Ogre::Real tslf)
 
 		Global::player->enableControl(true);
 		Global::player->body->setPositionOrientation(target->position, Ogre::Quaternion::IDENTITY);
-		Global::player->body->unFreeze();
 		Global::player->body->setVelocity(target->jumpDirection);
 
 		Global::camera->attachCameraWithTransition(0.25f);

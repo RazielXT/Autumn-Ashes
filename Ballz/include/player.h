@@ -58,6 +58,7 @@ public:
 	void die();
 	void enableControl(bool enable);
 	void enableMovement(bool enable);
+	void hideBody();
 
 	OgreNewt::Body* body = nullptr;
 

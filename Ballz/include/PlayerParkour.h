@@ -16,7 +16,7 @@ class PlayerParkour
 	bool tryWallClimb();
 	void doWalljump();
 
-	float rolling;
+	float rolling = 0;
 
 	OgreNewt::BallAndSocket* wallrunJoint;
 	Ogre::Vector3 wall_normal, wallrunCurrentDir;

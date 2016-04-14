@@ -4,8 +4,7 @@
 
 #include "GUtils.h"
 
-#define DEGUB_CROWS(x) GUtils::DebugPrint(x)
-//#define DEGUB_CROWS(x)
+#define DEGUB_CROWS(x) //GUtils::DebugPrint(x)
 
 enum CrowState { Standing, Walking, Flying, SwitchFlying, Landing, Lifting, None };
 

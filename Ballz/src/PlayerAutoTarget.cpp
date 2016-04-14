@@ -113,7 +113,7 @@ bool PlayerAutoTarget::getTargetSlideRay(Vector3 pos, Vector3 dir, float rayDist
 bool PlayerAutoTarget::getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide* ignoredSlide)
 {
 	pos.y -= 2;
-	float maxDistSq = 5;
+	float maxDistSq = 3*3;
 	float closest = maxDistSq;
 
 	for (auto s : objects.slides)

@@ -22,6 +22,10 @@ inline Ogre::Entity* MakeEntity(const std::string name, Ogre::Vector3 pos = Ogre
 
 extern OgreNewt::Body* createConvexBody(Entity* ent, float mass = 0, float linearDamping = 0, float angularDamping = 0);
 
+inline std::string v2s(Ogre::Vector3& v)
+{
+	return std::to_string(v.x) + " , " + std::to_string(v.y) + " , " + std::to_string(v.z);
+}
 
 inline bool isPathFree(Vector3 start, Vector3 end)
 {

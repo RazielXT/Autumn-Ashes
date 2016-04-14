@@ -334,6 +334,12 @@ void Player::die()
 }
 
 
+void Player::hideBody()
+{
+	body->setPositionOrientation(Vector3(0, 1000, 0), Quaternion::IDENTITY);
+	body->freeze();
+}
+
 void Player::update(Real time)
 {
 	tslf = time*Global::timestep;
@@ -376,7 +382,7 @@ void Player::updateStats()
 	if (hanging)
 		pHanging->update(tslf);
 
-	bool readyToSlide = (inControl && !pParkour->isRolling() && !wallrunning && !climbing && !hanging);
+	bool readyToSlide = (inControl && !pParkour->isRolling() && !wallrunning && climbing==0 && !hanging);
 	pSliding->update(tslf, readyToSlide);
 
 	autoTarget->updateAutoTarget(camPosition, facingDir, tslf, 35.0f);

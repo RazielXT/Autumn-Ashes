@@ -7,6 +7,7 @@
 
 PlayerParkour::PlayerParkour(Player* player) : p(player), body(player->body)
 {
+	rolling = 0;
 }
 
 void PlayerParkour::doWalljump()
