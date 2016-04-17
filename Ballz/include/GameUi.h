@@ -37,4 +37,5 @@ private:
 	Gorilla::Caption* useTextCaption;
 	Gorilla::Caption* gameCaption;
 
+	Gorilla::Polygon* slideBar;
 };

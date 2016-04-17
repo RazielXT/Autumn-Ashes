@@ -181,7 +181,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
 	SUtils::strtok_str(s, ' ');
 	std::string s2 = SUtils::strtok_str(s, ' ');
 	std::string res=s1+"x"+s2;
-	resolutionsLoop->value.res = res;
+	resolutionsLoop->value.txt = res;
 	resolutionsLoop->value.w = Ogre::StringConverter::parseInt(s1);
 	resolutionsLoop->value.h = Ogre::StringConverter::parseInt(s2);
 
@@ -196,7 +196,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
 		resolution trLoopN;
 		trLoopN.w=Ogre::StringConverter::parseInt(s1);
 		trLoopN.h=Ogre::StringConverter::parseInt(s2);
-		trLoopN.res=res;
+		trLoopN.txt=res;
 
 		auto added = resolutionsLoop->addToEnd(trLoopN);
 
@@ -207,7 +207,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
 	Ogre::LogManager::getSingleton().getDefaultLog()->logMessage("Possible resolutions: ",Ogre::LML_NORMAL);
 	for(int o=0; o<i; o++)
 	{
-		Ogre::LogManager::getSingleton().getDefaultLog()->logMessage(resolutionsLoop->value.res,Ogre::LML_NORMAL);
+		Ogre::LogManager::getSingleton().getDefaultLog()->logMessage(resolutionsLoop->value.txt,Ogre::LML_NORMAL);
 		resolutionsLoop=resolutionsLoop->next;
 	}
 
@@ -407,7 +407,7 @@ void GuiOverlay::createLevelsMenuButtons()
 		caption->align(Gorilla::TextAlign_Centre);
 
 		r->background_image("lvl" + std::to_string(lvlId));
-		lvlButton* b = new lvlButton(r,caption, lvlId, true, pos);
+		lvlButton* b = new lvlButton{ r,caption, lvlId, true, pos };
 		lMenuButtons.push_back(b);
 		pos += 400;
 
@@ -423,7 +423,7 @@ void GuiOverlay::createLevelsMenuButtons()
 		auto caption = mLvlsLayer->createCaption(48, pos - sideButtonSize.x, sideButtonSize.y, "TBD");
 		caption->size(sideButtonSize.z, sideButtonSize.w);
 		r->background_image("lvl" + std::to_string(lvlId));
-		lvlButton* b = new lvlButton(r, caption, lvlId, false, pos);
+		lvlButton* b = new lvlButton{ r, caption, lvlId, false, pos };
 		lMenuButtons.push_back(b);
 		pos += 400;
 		lvlId++;
@@ -667,7 +667,7 @@ int GuiOverlay::mainMenuPressed()
 				if(c->width()==600 || c->width()==350)
 				{
 					resolutionsLoop=resolutionsLoop->next;
-					cOptionButtonA->value->text(resolutionsLoop->value.res);
+					cOptionButtonA->value->text(resolutionsLoop->value.txt);
 					gConfig->height = resolutionsLoop->value.h;
 					gConfig->width = resolutionsLoop->value.w;
 

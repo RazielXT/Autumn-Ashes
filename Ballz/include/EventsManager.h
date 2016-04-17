@@ -6,24 +6,15 @@
 #include "BodyUserData.h"
 
 class InputListener;
-
-struct DelayedTask
-{
-	DelayedTask(EventTask* r, float timer);
-
-	EventTask* r;
-	float timer;
-};
+struct bodyUserData;
 
 class EventsManager
 {
 private:
 
-	std::list<EventTask*> currentCachedTasks;
-	std::list<EventTask*> oneTimeTasks;
-	std::list<DelayedTask> currentDelayedCachedTasks;
-	std::list<DelayedTask> oneTimeDelayedTasks;
-	std::list<bodyUserData*> unavailableTriggers;
+	std::vector<EventTask*> currentCachedTasks;
+	std::vector<EventTask*> oneTimeTasks;
+	std::vector<bodyUserData*> unavailableTriggers;
 
 	std::vector<InputListener*> keyListeners;
 

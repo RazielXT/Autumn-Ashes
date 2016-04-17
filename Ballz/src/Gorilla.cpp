@@ -1557,6 +1557,8 @@ void  Polygon::_redraw()
 	{
 		if (mSprite)
 		{
+			auto baseAngle = mAngle.valueRadians();
+
 			Ogre::Real xRadius = mSprite->spriteWidth * 0.5f;
 			Ogre::Real yRadius = mSprite->spriteHeight * 0.5f;
 
@@ -1568,8 +1570,8 @@ void  Polygon::_redraw()
 
 			centerUV = baseUV / texSize;
 			lastUV = baseUV;
-			lastUV.x = baseUV.x + (xRadius * Ogre::Math::Cos(theta));
-			lastUV.y = baseUV.y + (yRadius * Ogre::Math::Sin(theta));
+			lastUV.x = baseUV.x + (xRadius * Ogre::Math::Cos(theta - baseAngle));
+			lastUV.y = baseUV.y + (yRadius * Ogre::Math::Sin(theta - baseAngle));
 			lastUV /= texSize;
 
 			for (size_t i=0; i < mSides; i++)
@@ -1578,8 +1580,8 @@ void  Polygon::_redraw()
 				theta += inc;
 				thisVertex.x = mLeft + (mRadius * Ogre::Math::Cos(theta));
 				thisVertex.y = mTop + (mRadius * Ogre::Math::Sin(theta));
-				thisUV.x = baseUV.x + (xRadius * Ogre::Math::Cos(theta));
-				thisUV.y = baseUV.y + (yRadius * Ogre::Math::Sin(theta));
+				thisUV.x = baseUV.x + (xRadius * Ogre::Math::Cos(theta - baseAngle));
+				thisUV.y = baseUV.y + (yRadius * Ogre::Math::Sin(theta - baseAngle));
 				thisUV /= texSize;
 				PUSH_VERTEX(mVertices, temp, thisVertex.x, thisVertex.y, thisUV, mBackgroundColour);
 				PUSH_VERTEX(mVertices, temp, lastVertex.x, lastVertex.y, lastUV, mBackgroundColour);

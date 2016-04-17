@@ -176,6 +176,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\ParticleManager.cpp" />
     <ClCompile Include="src\PgDetailGeometry.cpp" />
     <ClCompile Include="src\PlayerAbilities.cpp" />
+    <ClCompile Include="src\PlayerAudio.cpp" />
     <ClCompile Include="src\PlayerCamera.cpp" />
     <ClCompile Include="src\PlayerClimbing.cpp" />
     <ClCompile Include="src\PlayerEnergies.cpp" />
@@ -282,6 +283,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\ParticleManager.h" />
     <ClInclude Include="include\PgDetailGeometry.h" />
     <ClInclude Include="include\PlayerAbilities.h" />
+    <ClInclude Include="include\PlayerAudio.h" />
     <ClInclude Include="include\PlayerCamera.h" />
     <ClInclude Include="include\PlayerClimbing.h" />
     <ClInclude Include="include\PlayerEnergies.h" />

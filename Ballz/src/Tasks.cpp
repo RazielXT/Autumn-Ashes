@@ -23,7 +23,7 @@ float getTaskDelay(Ogre::String& fname)
 	return 0;
 }
 
-EventTask* makeTask(Ogre::String fname)
+EventTask* makeTask(Ogre::String fname, float delay)
 {
 	if (fname == "TestReaction")
 		return new TestReaction();

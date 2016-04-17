@@ -58,34 +58,24 @@ private:
 
 	void clear();
 
-
 	enum mMenuEnum { START, OPTIONS, QUIT, RESUME, RESTART };
 	enum menusEnum { MAINM, STARTM, OPTIONSM, QUITM, TOSM, FRSM, TOOM, FROM, TOQM, FRQM };
 	enum oMenuEnum { RESOLUTION, FULLSCREEN, SHADOWS, SSAO };
 
 	struct resolution
 	{
-		std::string res;
+		std::string txt;
 		int w;
 		int h;
 	};
 
 	struct lvlButton
 	{
-		lvlButton(Gorilla::Rectangle* r, Gorilla::Caption* c, int id, bool unlocked, float pos)
-		{
-			this->r = r;
-			this->id = id;
-			this->unlocked = unlocked;
-			this->pos = pos;
-			this->c = c;
-		}
-
-		float pos;
 		Gorilla::Rectangle* r;
 		Gorilla::Caption* c;
 		int id;
 		bool unlocked;
+		float pos;
 	};
 
 	ListLoop<mMenuEnum>* mMenuState;

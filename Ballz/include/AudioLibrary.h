@@ -5,6 +5,7 @@
 enum SoundType
 {
 	SoundEffect,
+	Character,
 	Music,
 	Ui
 };
@@ -50,6 +51,8 @@ public:
 		{
 		case Music:
 			return std::string("../../media/audio/music/" + file);
+		case Character:
+			return std::string("../../media/audio/character/" + file);
 		case SoundEffect:
 		default:
 			return std::string("../../media/audio/effects/" + file);

@@ -1,7 +1,5 @@
-#ifndef EVENTR_H
-#define EVENTR_H
+#pragma once
 
-//#include "stdafx.h"
 #include <vector>
 
 class EventTask
@@ -13,11 +11,25 @@ public:
 
 	virtual void setUserData(void* data);
 	virtual bool start();
-	virtual bool update(Ogre::Real tslf);
+	virtual bool update(float tslf);
 
-	float taskDelay = 0;
 	GameState stateExecution = GAME;
-
 };
 
-#endif //EVENTR_H
+class DelayedEventTask
+{
+public:
+
+	DelayedEventTask() {};
+	virtual ~DelayedEventTask() {};
+
+protected:
+
+	void startDelay();
+	bool checkDelay(float tslf);
+	float delay = 0;
+
+private:
+
+	float timer = 0;
+};

@@ -15,6 +15,7 @@ void WorldMaterials::init()
 	actionMaker_mat = new OgreNewt::MaterialID(mWorld);
 	selfIgnore_mat = new OgreNewt::MaterialID(mWorld);
 	plBlock_mat = new OgreNewt::MaterialID(mWorld);
+	plSlide_mat = new OgreNewt::MaterialID(mWorld);
 
 	initCollisions(mWorld);
 }
@@ -39,6 +40,16 @@ void WorldMaterials::initCollisions(OgreNewt::World* mWorld)
 
 	material_pair = new OgreNewt::MaterialPair(mWorld, plNoMove_mat, selfIgnore_mat);
 	material_pair->setDefaultFriction(4.0, 4.0f);
+	material_pair->setDefaultElasticity(0);
+
+
+	material_pair = new OgreNewt::MaterialPair(mWorld, plMove_mat, plSlide_mat);
+	material_pair->setDefaultFriction(0.0, 0.0f);
+	material_pair->setDefaultElasticity(0);
+	material_pair->setDefaultSurfaceThickness(0.01);
+
+	material_pair = new OgreNewt::MaterialPair(mWorld, plNoMove_mat, plSlide_mat);
+	material_pair->setDefaultFriction(0.0, 0.0f);
 	material_pair->setDefaultElasticity(0);
 
 
@@ -98,6 +109,9 @@ void WorldMaterials::initCollisions(OgreNewt::World* mWorld)
 	material_pair->setDefaultCollidable(0);
 
 	material_pair = new OgreNewt::MaterialPair(mWorld, noCollide_mat, noCollide_mat);
+	material_pair->setDefaultCollidable(0);
+
+	material_pair = new OgreNewt::MaterialPair(mWorld, noCollide_mat, plSlide_mat);
 	material_pair->setDefaultCollidable(0);
 
 	material_pair = new OgreNewt::MaterialPair(mWorld, noCollide_mat, playerIgnore_mat);

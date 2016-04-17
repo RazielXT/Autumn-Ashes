@@ -32,7 +32,7 @@ inline void processTrigger(bodyUserData* a0, bodyUserData* a1, EventsManager* mE
 		{
 			for (unsigned int j = 0; j<(*it).second.size(); j++)
 			{
-				if ((*it).second.at(j)->taskDelay || (*it).second.at(j)->start())
+				if ((*it).second.at(j)->start())
 				{
 					mEventMgr->addCachedTask((*it).second.at(j));
 				}

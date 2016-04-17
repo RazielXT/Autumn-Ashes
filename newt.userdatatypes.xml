@@ -32,15 +32,16 @@
 </enum>
 
 <enum name="btype" type="int">
-		<enumItem name="Default" value="0" />
-        <enumItem name="Pullup_old" value="2" />
-        <enumItem name="Grabbable" value="3" />
-		<enumItem name="Climb" value="5" />
-		<enumItem name="Climb_Pullup" value="6" />
-		<enumItem name="ZipLine" value="7" />
-		<enumItem name="Dynamic_Pullup" value="8" />
-		<enumItem name="SelfIgnore" value="11" />
-		<enumItem name="PlayerIgnore" value="12" />
+	<enumItem name="Default" value="0" />
+	<enumItem name="Pullup_old" value="2" />
+	<enumItem name="Grabbable" value="3" />
+	<enumItem name="Climb" value="5" />
+	<enumItem name="Climb_Pullup" value="6" />
+	<enumItem name="ZipLine" value="7" />
+	<enumItem name="Dynamic_Pullup" value="8" />
+	<enumItem name="SelfIgnore" value="11" />
+	<enumItem name="PlayerIgnore" value="12" />
+	<enumItem name="Slidable" value="13" />
 </enum>
 
 <enum name="joints" type="string">
@@ -49,21 +50,21 @@
 </enum>
 
 <enum name="matID" type="int">
-	   <enumItem name="Default" value="0" />
-        <enumItem name="Rock" value="1" />
-        <enumItem name="Grass" value="2" />
-		<enumItem name="Metal" value="3" />
-		<enumItem name="Wood" value="4" />
-		<enumItem name="OldWood" value="5" />
-		<enumItem name="Bush_Dynamic" value="8" />
-		<enumItem name="Wood_Dynamic" value="6" />
-		<enumItem name="Metal_Dynamic" value="7" />
+	<enumItem name="Dirt" value="0" />
+	<enumItem name="Rock" value="1" />
+	<enumItem name="Grass" value="2" />
+	<enumItem name="Metal" value="3" />
+	<enumItem name="Wood" value="4" />
+	<enumItem name="OldWood" value="5" />
+	<enumItem name="Bush_Dynamic" value="8" />
+	<enumItem name="Wood_Dynamic" value="6" />
+	<enumItem name="Metal_Dynamic" value="7" />
 </enum>
 
 <enum name="fadeTech" type="int">
-	   <enumItem name="Alpha" value="0" />
-        <enumItem name="Grow" value="1" />
-        <enumItem name="AlphaGrow" value="2" />
+	<enumItem name="Alpha" value="0" />
+	<enumItem name="Grow" value="1" />
+	<enumItem name="AlphaGrow" value="2" />
 </enum>
 
 <class name="SceneSettings" usage="scene">

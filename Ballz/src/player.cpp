@@ -13,7 +13,7 @@
 
 using namespace Ogre;
 
-Player::Player(WorldMaterials* wMaterials)
+Player::Player(WorldMaterials* wMaterials) : pAudio(this)
 {
 	gravity = Ogre::Vector3(0, -9.0f, 0);
 	tslf=0;
@@ -46,6 +46,7 @@ Player::Player(WorldMaterials* wMaterials)
 	wallrunning = false;
 	sliding = false;
 	transformed = false;
+	surfaceSliding = false;
 
 	inControl = true;
 	inMoveControl = true;

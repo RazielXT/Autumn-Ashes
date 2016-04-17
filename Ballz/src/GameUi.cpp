@@ -23,6 +23,10 @@ GameUi::GameUi(Gorilla::Layer* mLayer)
 	gameCaption->size(1500, 50);
 	gameCaption->setScale(1.0f);
 	gameCaption->align(Gorilla::TextAlign_Right);
+
+	slideBar = mLayer->createPolygon(700, 800,100,4);
+	slideBar->background_image("mousepointer");
+	//slideBar->yes_background(1);
 }
 
 void GameUi::update(float time)

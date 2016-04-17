@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "PlayerAudio.h"
 #include "PlayerAutoTarget.h"
 #include "PlayerStateInfo.h"
 #include "PlayerPostProcess.h"
@@ -88,6 +89,7 @@ public:
 	PlayerCamera* pCamera;
 	PlayerAutoTarget* autoTarget;
 	PlayerHanging* pHanging;
+	PlayerAudio pAudio;
 
 private:
 
@@ -127,7 +129,7 @@ private:
 	bool onGround, sprinting, inControl, inMoveControl;
 
 	//extern state
-	bool hanging, grabbedObj, wallrunning, sliding, transformed;
+	bool hanging, grabbedObj, wallrunning, sliding, transformed, surfaceSliding;
 	BodyType climbing;
 
 	float bodySpeedAccum, startMoveBoost, movespeed, sprintmeter;

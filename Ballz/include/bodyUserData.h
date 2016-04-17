@@ -25,7 +25,8 @@ enum BodyType
 	Trigger = 9,
 	Bridge = 10,
 	SelfIgnore = 11,
-	PlayerIgnore = 12
+	PlayerIgnore = 12,
+	Slidable = 13
 };
 
 struct bodyUserData

@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "PostProcessMgr.h"
 #include "Slide.h"
+#include "MUtils.h"
 
 using namespace Ogre;
 
@@ -69,7 +70,8 @@ void Player::updateDirectionForce()
 
 		sprintFactor = sprinting ? 1.25f : 1.0f;
 	}
-	else movespeed = 7;
+	else
+		movespeed = 7;
 }
 
 void Player::jump()
@@ -82,7 +84,16 @@ void Player::jump()
 		if (onGround)
 		{
 			Vector3 vel = body->getVelocity();
-			body->setVelocity(vel + Vector3(0, 9, 0));
+
+			if (surfaceSliding)
+			{
+				vel.y = 0;
+				vel += 6*gNormal;
+			}
+			else
+				vel += Vector3(0, 9, 0);
+
+			body->setVelocity(vel);
 		}
 	}
 }
@@ -142,12 +153,21 @@ void Player::updateMovement()
 	if (right_key) movedDir.x++;
 	if (left_key) movedDir.x--;
 
-	forceDirection = pCamera->getOrientation()*movedDir;
-	forceDirection.normalise();
-	forceDirection.y = 0;
-
-	if (onGround)
+	if (surfaceSliding)
 	{
+		forceDirection = gNormal;
+		forceDirection.y = 0;
+
+		forceDirection = MUtils::quaternionFromDir(forceDirection)*movedDir;
+
+		forceDirection *= forw_key ? 1.0f : 5.0f;
+	}
+	else if (onGround)
+	{
+		forceDirection = pCamera->getOrientation()*movedDir;
+		forceDirection.normalise();
+		forceDirection.y = 0;
+
 		Vector3 lookDirection = pCamera->getFacingDirection();
 		lookDirection.y = 0;
 		Vector3 vel = body->getVelocity();
@@ -255,7 +275,8 @@ void Player::updateGroundStats()
 			manageFall();
 
 		onGround = true;
-		body->setLinearDamping(4);
+		surfaceSliding = groundBody->getType() == Slidable;
+		body->setLinearDamping(surfaceSliding ? 0.2f : 4);
 	}
 	else
 	{
@@ -266,6 +287,7 @@ void Player::updateGroundStats()
 			groundID = -1;
 			onGround = false;
 			gNormal = 0;
+			surfaceSliding = false;
 		}
 	}
 }

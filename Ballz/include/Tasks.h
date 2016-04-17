@@ -12,7 +12,7 @@
 #include "lvl1Tasks.h"
 
 float getTaskDelay(Ogre::String& fname);
-EventTask* makeTask(Ogre::String fname);
+EventTask* makeTask(Ogre::String fname, float delay = 0);
 
 
 #endif //MEVENTR_H

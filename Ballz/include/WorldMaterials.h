@@ -13,6 +13,7 @@ struct WorldMaterials
 	OgreNewt::MaterialID* actionMaker_mat;
 	OgreNewt::MaterialID* selfIgnore_mat;
 	OgreNewt::MaterialID* plBlock_mat;
+	OgreNewt::MaterialID* plSlide_mat;
 
 private:
 	void initCollisions(OgreNewt::World* mWorld);

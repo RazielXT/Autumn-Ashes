@@ -288,7 +288,7 @@ void PlayerCamera::updateHead()
 		float walkAngleSize = 0.10f;
 
 		//walking camera
-		if ((player->moving && !player->climbing && !rolling.active() && player->onGround && (player->bodyVelocityL > 2)) || player->wallrunning)
+		if (!player->surfaceSliding && ((player->moving && !player->climbing && !rolling.active() && player->onGround && (player->bodyVelocityL > 2)) || player->wallrunning))
 		{
 			float sprintFactor = player->sprinting ? 2.0f : 1.0f;
 			float walkSize = player->wallrunning ? 1.15f : 1.0f;

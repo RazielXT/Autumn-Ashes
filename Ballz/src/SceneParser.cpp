@@ -818,13 +818,11 @@ void loadActions(const XMLElement* rootElement, EventsManager* mEventMgr, OgreNe
 				}
 			}
 
-			EventTask* r = makeTask(taskStr);
+			EventTask* r = makeTask(taskStr, delay);
 
-			if (r != NULL)
+			if (r)
 			{
 				r->setUserData(body);
-				r->taskDelay = delay;
-
 				mEventMgr->addTask(r);
 			}
 
@@ -1431,15 +1429,28 @@ void loadBillboard(const XMLElement* element, Ogre::Entity* ent, Ogre::SceneMana
 
 }
 
+void setMaterialId(OgreNewt::Body* body, WorldMaterials* wMaterials, int typeID)
+{
+	if (typeID == SelfIgnore)
+		body->setMaterialGroupID(wMaterials->selfIgnore_mat);
+	else if (typeID == PlayerIgnore)
+		body->setMaterialGroupID(wMaterials->playerIgnore_mat);
+	else
+	{
+		body->setType(typeID);
+
+		if (typeID == Pullup_old || typeID == Climb || typeID == Climb_Pullup || typeID == Dynamic_Pullup)
+			body->setMaterialGroupID(wMaterials->noCollide_mat);
+		else if (typeID == Slidable)
+			body->setMaterialGroupID(wMaterials->plSlide_mat);
+	}
+}
+
 OgreNewt::Body* loadPhysics(const XMLElement* rootElement, Entity* ent, SceneNode* node, OgreNewt::World* mWorld, EventsManager* mEventMgr, WorldMaterials* wMaterials)
 {
 	Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
 	auto eValue = getElementValue(rootElement, "ObjectModifier");
-	bool physicsOnly = false;
-	if (eValue == "DestroyNode")
-	{
-		physicsOnly = true;
-	}
+	bool physicsOnly = (eValue == "DestroyNode");
 
 	String typeName = getElementValue(rootElement, "BodyType");
 	myLog->logMessage("Physics type: " + typeName, LML_NORMAL);
@@ -1448,11 +1459,8 @@ OgreNewt::Body* loadPhysics(const XMLElement* rootElement, Entity* ent, SceneNod
 
 	if (typeName == "tree")
 	{
-
 		OgreNewt::CollisionPtr col = OgreNewt::CollisionPtr(new OgreNewt::CollisionPrimitives::TreeCollision(mWorld, ent, false, 0));
 		body = new OgreNewt::Body(mWorld, col);
-
-		myLog->logMessage("matID je: " + getElementValue(rootElement, "MaterialID", "??"), LML_NORMAL);
 
 		userD = new bodyUserData();
 		userD->material = getElementIntValue(rootElement, "MaterialID");
@@ -1463,17 +1471,8 @@ OgreNewt::Body* loadPhysics(const XMLElement* rootElement, Entity* ent, SceneNod
 		if (!physicsOnly)
 			body->attachNode(node);
 
-		auto type = getElementValue(rootElement, "Type");
-		myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
-
-		int typeID = Ogre::StringConverter::parseInt(type);
-
-		if (typeID == SelfIgnore)
-			body->setMaterialGroupID(wMaterials->selfIgnore_mat);
-		else if (typeID == PlayerIgnore)
-			body->setMaterialGroupID(wMaterials->playerIgnore_mat);
-		else
-			body->setType(typeID);
+		auto type = getElementIntValue(rootElement, "Type");
+		setMaterialId(body, wMaterials, type);
 
 		loadedBodies[ent->getName()] = body;
 
@@ -1482,7 +1481,6 @@ OgreNewt::Body* loadPhysics(const XMLElement* rootElement, Entity* ent, SceneNod
 	}
 	else if (typeName == "comp" && compoundBodiesParts.find(node->getName()) != compoundBodiesParts.end())
 	{
-
 		OgreNewt::CollisionPtr myCol = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld, ent, 0, node->_getDerivedOrientation()));
 
 		std::vector<OgreNewt::CollisionPtr> cols;
@@ -1513,7 +1511,6 @@ OgreNewt::Body* loadPhysics(const XMLElement* rootElement, Entity* ent, SceneNod
 				Global::mSceneMgr->destroySceneNode(info.node);
 				Global::mSceneMgr->destroyEntity(info.ent);
 			}
-
 		}
 
 		OgreNewt::CollisionPtr col = OgreNewt::CollisionPtr(new OgreNewt::CollisionPrimitives::CompoundCollision(mWorld, cols, 0));
@@ -1523,31 +1520,15 @@ OgreNewt::Body* loadPhysics(const XMLElement* rootElement, Entity* ent, SceneNod
 		OgreNewt::ConvexCollisionPtr convCol = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld, ent, 0));
 		convCol->calculateInertialMatrix(inertia, offset);
 
-		myLog->logMessage("matID je: " + getElementValue(rootElement, "MaterialID", "??"), LML_NORMAL);
-
 		userD = new bodyUserData();
 		userD->material = getElementIntValue(rootElement, "MaterialID");
 		body->setUserData(Ogre::Any(userD));
 
-		auto massStr = getElementValue(rootElement, "Mass");
-		myLog->logMessage("mass je: " + massStr, LML_NORMAL);
-		Real mass = Ogre::StringConverter::parseReal(massStr);
+		auto mass = getElementFloatValue(rootElement, "Mass");
 		body->setMassMatrix(mass, inertia);
 
-		auto type = getElementValue(rootElement, "Type");
-		myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
-
-		int typeID = Ogre::StringConverter::parseInt(type);
-
-		if (typeID == SelfIgnore)
-			body->setMaterialGroupID(wMaterials->selfIgnore_mat);
-		else if (typeID == PlayerIgnore)
-			body->setMaterialGroupID(wMaterials->playerIgnore_mat);
-		else
-			body->setType(typeID);
-
-		if (typeID == Pullup_old || typeID == Climb || typeID == Climb_Pullup || typeID == Dynamic_Pullup)
-			body->setMaterialGroupID(wMaterials->noCollide_mat);
+		auto type = getElementIntValue(rootElement, "Type");
+		setMaterialId(body, wMaterials, type);
 
 		body->setCenterOfMass(offset);
 		body->setLinearDamping(0.3);
@@ -1564,40 +1545,19 @@ OgreNewt::Body* loadPhysics(const XMLElement* rootElement, Entity* ent, SceneNod
 	else if (typeName == "conv")
 	{
 		OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(mWorld, ent, 0));
-
 		body = new OgreNewt::Body(mWorld, col);
 		Ogre::Vector3 inertia, offset;
 		col->calculateInertialMatrix(inertia, offset);
-#ifdef OGRENEWT_NO_COLLISION_SHAREDPTR
-		//no longer need the collision shape object
-		delete col;
-#endif
-
-		myLog->logMessage("matID je: " + getElementValue(rootElement, "MaterialID", "??"), LML_NORMAL);
 
 		userD = new bodyUserData();
 		userD->material = getElementIntValue(rootElement, "MaterialID");
 		body->setUserData(Ogre::Any(userD));
 
-		auto massStr = getElementValue(rootElement, "Mass");
-		myLog->logMessage("mass je: " + massStr, LML_NORMAL);
-		Real mass = Ogre::StringConverter::parseReal(massStr);
+		auto mass = getElementFloatValue(rootElement, "Mass");
 		body->setMassMatrix(mass, inertia);
 
-		auto type = getElementValue(rootElement, "Type");
-		myLog->logMessage("Body gametype is: " + type, LML_NORMAL);
-
-		int typeID = Ogre::StringConverter::parseInt(type);
-
-		if (typeID == SelfIgnore)
-			body->setMaterialGroupID(wMaterials->selfIgnore_mat);
-		else if (typeID == PlayerIgnore)
-			body->setMaterialGroupID(wMaterials->playerIgnore_mat);
-		else
-			body->setType(typeID);
-
-		if (typeID == Pullup_old || typeID == Climb || typeID == Climb_Pullup || typeID == Dynamic_Pullup)
-			body->setMaterialGroupID(wMaterials->noCollide_mat);
+		auto type = getElementIntValue(rootElement, "Type");
+		setMaterialId(body, wMaterials, type);
 
 		body->setCenterOfMass(offset);
 		body->setLinearDamping(0.3);
@@ -1610,8 +1570,8 @@ OgreNewt::Body* loadPhysics(const XMLElement* rootElement, Entity* ent, SceneNod
 
 		loadActions(rootElement, mEventMgr, body, userD, wMaterials->actionMaker_mat);
 
-		body->setStandardForceCallback();
-
+		if(mass > 0)
+			body->setStandardForceCallback();
 	}
 
 	if (userD)
@@ -1891,18 +1851,17 @@ void loadActions(const XMLElement* element, void* data, int id = 0)
 
 		EventTask* r = makeTask(rName);
 
-		if (r != NULL)
+		if (r)
 		{
 			EventTaskAndID er;
 			er.task = r;
-			r->taskDelay = delay;
 			r->setUserData(data);
 			//r->setIdentifier(id);
 			er.id = Ogre::StringConverter::parseInt(action);
 			loadedTasks.push_back(er);
 		}
 		else
-			myLog->logMessage("WARNING: No such function available", LML_NORMAL);
+			myLog->logMessage("WARNING: No such task available", LML_NORMAL);
 
 		//next
 		if (newForm)
@@ -2273,12 +2232,9 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 
 						EventTask* r = makeTask(rName);
 
-						if (r != NULL)
+						if (r)
 						{
 							r->setUserData(ent);
-							//r->setIdentifier(id);
-							r->taskDelay = delay;
-
 							mEventMgr->addTask(r);
 						}
 					}
@@ -2307,12 +2263,9 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 
 						EventTask* r = makeTask(rName);
 
-						if (r != NULL)
+						if (r)
 						{
 							r->setUserData(ent);
-							//r->setIdentifier(id);
-							r->taskDelay = delay;
-
 							mEventMgr->addTask(r);
 						}
 					}
