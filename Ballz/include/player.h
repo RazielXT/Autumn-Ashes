@@ -109,7 +109,7 @@ private:
 
 	inline void playWalkSound()
 	{
-		Global::audioLib->playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID, 0.3f);
+		pAudio.playWalkingSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID, 0.3f);
 	}
 
 	GameUi* ui;

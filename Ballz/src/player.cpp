@@ -348,6 +348,8 @@ void Player::update(Real time)
 
 	pPostProcess->update(tslf);
 
+	pAudio.update(tslf);
+
 	if (!alive)
 		return;
 

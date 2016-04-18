@@ -220,7 +220,7 @@ void PlayerParkour::doRoll()
 	if (dirAngleDiff < 45 && vel.length()>0.5f)
 	{
 		rolling = Global::camera->rollCamera(1.2f);
-		Global::audioLib->playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
+		p->pAudio.playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
 	}
 }
 

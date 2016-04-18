@@ -90,7 +90,7 @@ void PlayerClimbing::forcePullup(Vector3 climbNormal, float startOffset)
 
 	startClimbing(Climb_Pullup);
 
-	Global::audioLib->playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
+	p->pAudio.playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
 
 	climb_normal = climbNormal;
 	climb_pullup = 0.05f + startOffset;
@@ -109,7 +109,7 @@ bool PlayerClimbing::spacePressed()
 	}
 	else if (p->climbing == Pullup_old || p->climbing == Climb_Pullup)
 	{
-		Global::audioLib->playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
+		p->pAudio.playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
 		climb_pullup = 0.05f;
 	}
 	else if (p->climbing == Climb)

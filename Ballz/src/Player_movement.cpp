@@ -118,7 +118,7 @@ void Player::manageFall()
 		{
 			pPostProcess->vars->hurtEffect = std::min(fallVelocity / 7.0f, 8.0f);
 
-			Global::audioLib->playHurtSound(bodyPosition.x, bodyPosition.y, bodyPosition.z);
+			pAudio.playHurtSound(bodyPosition.x, bodyPosition.y, bodyPosition.z);
 
 			Global::camera->shaker.startShaking(1.5, 1.5, 0.5, 1, 1, 0.7, 0.35, 1, true);
 		}
@@ -128,7 +128,7 @@ void Player::manageFall()
 
 	pCamera->manageFall(fallVelocity);
 
-	Global::audioLib->playFallSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID);
+	pAudio.playFallSound(bodyPosition.x, bodyPosition.y - 2, bodyPosition.z, groundID);
 }
 
 void Player::updateMovement()
@@ -290,4 +290,6 @@ void Player::updateGroundStats()
 			surfaceSliding = false;
 		}
 	}
+
+	pAudio.surfaceSliding(surfaceSliding ? groundID : -1);
 }

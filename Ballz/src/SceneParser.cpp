@@ -1578,13 +1578,13 @@ OgreNewt::Body* loadPhysics(const XMLElement* rootElement, Entity* ent, SceneNod
 		switch (userD->material)
 		{
 		case 6:
-			userD->sounds = Global::audioLib->dynamicsAudio["Wood"];
+			userD->sounds = Global::player->pAudio.dynamicsAudio["Wood"];
 			break;
 		case 7:
-			userD->sounds = Global::audioLib->dynamicsAudio["Metal"];
+			userD->sounds = Global::player->pAudio.dynamicsAudio["Metal"];
 			break;
 		case 8:
-			userD->sounds = Global::audioLib->dynamicsAudio["Bush"];
+			userD->sounds = Global::player->pAudio.dynamicsAudio["Bush"];
 			break;
 		}
 
