@@ -38,6 +38,7 @@ private:
 	{
 		struct Sound
 		{
+			std::string name;
 			std::string file;
 		};
 
@@ -52,6 +53,16 @@ private:
 		std::map<std::string, Sound> namedSounds;
 	}
 	library;
+
+	struct ParseState
+	{
+		std::string path;
+		std::string type;
+		SoundLibrary::SoundGroup* currentGroup;
+	};
+
+	void loadCfg(std::string file);
+	void loadCfgElement(const void* xmlElement, ParseState state);
 
 	struct LoadedSounds
 	{

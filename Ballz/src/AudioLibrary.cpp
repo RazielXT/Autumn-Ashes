@@ -1,13 +1,17 @@
 #include "stdafx.h"
+#include "SUtils.h"
 
 using namespace Ogre;
 
+const char* audioDirectory = "../../media/audio/";
 
 AudioLibrary::AudioLibrary(Ogre::Camera* cam)
 {
 	Global::soundEngine = soundEngine = irrklang::createIrrKlangDevice();
 	soundEngine->setListenerPosition(irrklang::vec3df(0, 0, 0), irrklang::vec3df(0, 0, 1));
 	camera = cam;
+
+	loadCfg("sounds.xml");
 }
 
 AudioLibrary::~AudioLibrary()
@@ -132,6 +136,95 @@ irrklang::ISoundSource* AudioLibrary::preloadNamedSound(std::string name)
 
 	return source;
 }
+
+#include "tinyxml2.h"
+using namespace tinyxml2;
+
+static const XMLElement* IterateChildElements(const XMLElement* xmlElement, const XMLElement* childElement)
+{
+	if (xmlElement != 0)
+	{
+		if (childElement == 0)
+			childElement = xmlElement->FirstChildElement();
+		else
+			childElement = childElement->NextSiblingElement();
+
+		return childElement;
+	}
+
+	return 0;
+}
+
+void AudioLibrary::loadCfgElement(const void* element, ParseState state)
+{
+	XMLElement* xmlElement = (XMLElement*)element;
+	std::string name = xmlElement->Value();
+
+	if (name == "Group")
+	{
+		auto g = new SoundLibrary::SoundGroup();
+		auto path = xmlElement->Attribute("path");
+		if (path)
+			state.path += path + std::string("/");
+
+		auto type = xmlElement->Attribute("type");
+		if (type)
+			state.type = type;
+
+		auto type = xmlElement->Attribute("type");
+		if (type)
+			state.type = type;
+
+		g->path = state.path;
+		auto name = xmlElement->Attribute("name");
+		name = name ? name : (path ? path : "");
+
+		state.currentGroup->subGroups[name] = g;
+		state.currentGroup = g;
+
+		const XMLElement* childElement = 0;
+		while (childElement = IterateChildElements(xmlElement, childElement))
+			loadCfgElement(childElement, state);
+	}
+	if (name == "Sound")
+	{
+		auto file = xmlElement->Attribute("file");
+		auto name = xmlElement->Attribute("name");
+		if (!name) name = "";
+
+		state.currentGroup->sounds.push_back({ name, file + state.type });
+	}
+	if (name == "Sounds")
+	{
+		auto format = xmlElement->Attribute("format");
+		std::string files = xmlElement->Attribute("files");
+		
+		if (format == "array")
+		{
+			while (!files.empty())
+			{
+				auto file = SUtils::strtok_str(files, ',');
+				state.currentGroup->sounds.push_back({ "", file + state.type });
+			}
+		}	
+	}
+}
+
+void AudioLibrary::loadCfg(std::string file)
+{
+	file = audioDirectory + file;
+
+	XMLDocument document;
+	document.LoadFile(file.c_str());
+	auto root = document.RootElement();
+
+	const XMLElement* childElement = 0;
+	while (childElement = IterateChildElements(root, childElement))
+	{
+		loadCfgElement(childElement, {audioDirectory, ".wav", &library.groups});
+	}
+}
+
 
 /*
 void AudioLibrary::addPossibleSounds(std::vector<irrklang::ISoundSource*>* sounds, std::vector<std::string> soundFiles)
