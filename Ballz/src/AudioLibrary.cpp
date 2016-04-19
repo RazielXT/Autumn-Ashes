@@ -37,30 +37,30 @@ void AudioLibrary::update(float time)
 void AudioLibrary::reset()
 {
 	soundEngine->removeAllSoundSources();
-	preloadedSounds.clear();
-}
-
-void AudioLibrary::playRandom3D(std::vector<std::string>& sounds, Ogre::Vector3& pos, float maxDistance, float volume)
-{
-	int rand = (int)Ogre::Math::RangeRandom(0, sounds.size() - 0.01f);
-	String& sound = sounds[rand];
-
-	play3D(sound.c_str(), pos, maxDistance, volume);
-}
-
-void AudioLibrary::play3D(const char* name, Vector3& pos, float maxDistance, float volume)
-{
-	irrklang::ISound* s = soundEngine->play3D(AudioLibrary::getPath(name).c_str(), irrklang::vec3df(pos.x, pos.y + 2, pos.z), false, false, true, irrklang::ESM_AUTO_DETECT, true);
-	s->setMaxDistance(maxDistance);
-	s->setVolume(volume);
-
-	if (Global::timestep < 1)
+	
+	for (auto g : loaded.groups)
 	{
-		s->setPlaybackSpeed(Global::timestep);
-		s->getSoundEffectControl()->enableWavesReverbSoundEffect(0, -10 * Global::timestep, 2600, 0.5);
+		loaded.clearGroup(g.second);
+		delete g.second;
+	}
+}
+
+void AudioLibrary::LoadedSounds::clearGroup(LoadedGroup* group)
+{
+	for (auto g : group->subGroups)
+	{
+		clearGroup(g.second);	
 	}
 
-	s->drop();
+	delete group;
+}
+
+void AudioLibrary::playSoundRandom(std::vector<irrklang::ISoundSource*>& sounds, float x, float y, float z, float maxDistance, float volume)
+{
+	int rand = (int)Ogre::Math::RangeRandom(0, sounds.size() - 0.01f);
+	auto sound = sounds[rand];
+
+	playSound(sound, x, y, z, true, maxDistance, volume);
 }
 
 irrklang::ISound* AudioLibrary::playSound(irrklang::ISoundSource* sound, float x, float y, float z, bool drop, float maxDistance, float volume)
@@ -79,27 +79,61 @@ irrklang::ISound* AudioLibrary::playSound(irrklang::ISoundSource* sound, float x
 	return music;
 }
 
-irrklang::ISoundSource* AudioLibrary::getSoundSource(std::string path)
+irrklang::ISoundSource* AudioLibrary::getSound(std::string name)
 {
-	auto s = preloadedSounds.find(path);
+	auto s = loaded.namedSounds.find(name);
 	auto sound = s->second;
 
-	if (s == preloadedSounds.end())
-		sound = preloadSound(path);
+	if (s == loaded.namedSounds.end())
+		sound = preloadNamedSound(name);
 
 	return sound;
+}
+
+std::vector<irrklang::ISoundSource*> AudioLibrary::getSoundGroup(std::vector<std::string> groupPath)
+{
+	auto group = &library.groups;
+
+	for (auto& subGroup : groupPath)
+	{
+		auto it = group->subGroups.find(subGroup);
+		if (it == group->subGroups.end())
+			return{};
+
+		group = it->second;
+	}
+
+	std::vector<irrklang::ISoundSource*> out;
+	for (auto& s : group->sounds)
+	{
+		auto source = preloadSound(group->path + s.file);
+
+		if (source)
+			out.push_back(source);
+	}
+
+	return out;
 }
 
 irrklang::ISoundSource* AudioLibrary::preloadSound(std::string path)
 {
-	auto sound = soundEngine->addSoundSourceFromFile(path.c_str(), irrklang::ESM_AUTO_DETECT, true);
-
-	if (sound)
-		preloadedSounds[path] = sound;
-
-	return sound;
+	return soundEngine->addSoundSourceFromFile(path.c_str(), irrklang::ESM_AUTO_DETECT, true);
 }
 
+irrklang::ISoundSource* AudioLibrary::preloadNamedSound(std::string name)
+{
+	auto s = library.namedSounds.find(name);
+
+	if (s == library.namedSounds.end())
+		return nullptr;
+
+	auto source = soundEngine->addSoundSourceFromFile(s->second.file.c_str(), irrklang::ESM_AUTO_DETECT, true);
+	loaded.namedSounds[name] = source;
+
+	return source;
+}
+
+/*
 void AudioLibrary::addPossibleSounds(std::vector<irrklang::ISoundSource*>* sounds, std::vector<std::string> soundFiles)
 {
 	for (auto& soundFile : soundFiles)
@@ -109,4 +143,4 @@ void AudioLibrary::addPossibleSounds(std::vector<irrklang::ISoundSource*>* sound
 		if (sound)
 			sounds->push_back(sound);
 	}
-}
+}*/

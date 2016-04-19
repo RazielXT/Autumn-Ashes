@@ -2,16 +2,6 @@
 
 #include "stdafx.h"
 
-enum SoundType
-{
-	SoundEffect,
-	Character,
-	Music,
-	Ui
-};
-
-struct ObjectAudio;
-
 struct PhysicsAudio
 {
 	float fallSoundOffsetH;
@@ -25,40 +15,58 @@ public:
 	irrklang::ISoundEngine* soundEngine;
 	PhysicsAudio* physicsAudio = nullptr;
 
-	AudioLibrary(Ogre::Camera* cam);
+	AudioLibrary(Ogre::Camera* camera);
 	~AudioLibrary();
 
 	void update(float time);
 	void reset();
 
-	void play3D(const char* name, Ogre::Vector3& pos, float maxDistance = 10000000.f, float volume = 1.0f);
-	void playRandom3D(std::vector<std::string>& sounds, Ogre::Vector3& pos, float maxDistance = 10000000.f, float volume = 1.0f);
-
+	void playSoundRandom(std::vector<irrklang::ISoundSource*>& sounds, float x, float y, float z, float maxDistance = 10000000.f, float volume = 1.0f);
 	irrklang::ISound* playSound(irrklang::ISoundSource* sound, float x, float y, float z, bool drop = true, float maxDistance = 10000000.f, float volume = 1.0f);
 
-	irrklang::ISoundSource* getSoundSource(std::string path);
-
-	static std::string getPath(std::string file, SoundType type = SoundEffect)
-	{
-		switch (type)
-		{
-		case Music:
-			return std::string("../../media/audio/music/" + file);
-		case Character:
-			return std::string("../../media/audio/character/" + file);
-		case SoundEffect:
-		default:
-			return std::string("../../media/audio/effects/" + file);
-		}
-	}
-
-	void addPossibleSounds(std::vector<irrklang::ISoundSource*>* sounds, std::vector<std::string> soundFiles);
+	irrklang::ISoundSource* getSound(std::string name);
+	std::vector<irrklang::ISoundSource*> getSoundGroup(std::vector<std::string> groupPath);
 
 private:
 
+	irrklang::ISoundSource* preloadNamedSound(std::string name);
 	irrklang::ISoundSource* preloadSound(std::string path);
-	std::map<std::string, irrklang::ISoundSource*> preloadedSounds;
 
 	Ogre::Camera* camera;
 
+	struct SoundLibrary
+	{
+		struct Sound
+		{
+			std::string file;
+		};
+
+		struct SoundGroup
+		{
+			std::string path;
+			std::map<std::string, SoundGroup*> subGroups;
+			std::vector<Sound> sounds;
+		};
+
+		SoundGroup groups;
+		std::map<std::string, Sound> namedSounds;
+	}
+	library;
+
+	struct LoadedSounds
+	{
+		struct LoadedGroup
+		{
+			std::map<std::string, LoadedGroup*> subGroups;
+			std::vector<irrklang::ISoundSource*> sounds;
+
+		};
+
+		std::map<std::string, LoadedGroup*> groups;
+		std::map<std::string, irrklang::ISoundSource*> namedSounds;
+
+		void clearGroup(LoadedGroup* group);
+	}
+	loaded;
 };
+
