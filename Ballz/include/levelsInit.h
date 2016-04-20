@@ -53,11 +53,11 @@ void createLevelTuto()
 {
 	//Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBoxToDark");
 
-	irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("tokyostreetatnight.ogg").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
+	//irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("tokyostreetatnight.ogg").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
 	//music->setMinDistance(20);
 	//music->setMaxDistance(100);
-	music->setVolume(0.4);
-	(*Global::globalData)["tokyostreetatnight.ogg"] = music;
+	//music->setVolume(0.4);
+	//(*Global::globalData)["tokyostreetatnight.ogg"] = music;
 
 	//Global::mSceneMgr->setVisibilityMask(1);
 
@@ -262,12 +262,12 @@ void createLevel1_1()
 
 	Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
 
-	irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
+	//irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
 	//music->setMinDistance(20);
 	//music->setMaxDistance(100);
 
-	music->setVolume(0.4);
-	(*Global::globalData)["anton_wind1.wav"] = music;
+	//music->setVolume(0.4);
+	//(*Global::globalData)["anton_wind1.wav"] = music;
 
 	//Global::mSceneMgr->setVisibilityMask(1);
 
@@ -285,12 +285,12 @@ void createLevel2()
 	Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
 
 
-	irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(), true, false, true, irrklang::ESM_AUTO_DETECT, true);
+	//irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(), true, false, true, irrklang::ESM_AUTO_DETECT, true);
 	//music->setMinDistance(20);
 	//music->setMaxDistance(100);
 
-	music->setVolume(0.4);
-	(*Global::globalData)["anton_wind1.wav"] = music;
+	//music->setVolume(0.4);
+	//(*Global::globalData)["anton_wind1.wav"] = music;
 
 	PostProcessMgr* ppMgr = Global::mPPMgr;
 	ppMgr->setToScaryBloom();

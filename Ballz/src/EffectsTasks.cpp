@@ -22,30 +22,30 @@ bool QuickScaryBlink::start()
 	std::string soundName;
 	if(id==1)
 	{
-		soundName = AudioLibrary::getPath("staticBlinkRip.wav");
+		//soundName = AudioLibrary::getPath("staticBlinkRip.wav");
 		effectStr = 0.9;
 		totalTime = 0.45f;
 	}
 	else if(id==2)
 	{
-		soundName = AudioLibrary::getPath("staticBlinkShort.wav");
+		//soundName = AudioLibrary::getPath("staticBlinkShort.wav");
 		effectStr = 0.7;
 		totalTime = 0.4f;
 	}
 	else if(id==3)
 	{
-		soundName = AudioLibrary::getPath("staticBlinkLong.wav");
+		//soundName = AudioLibrary::getPath("staticBlinkLong.wav");
 		effectStr = 0.5;
 		totalTime = 0.85f;
 	}
 	else
 	{
-		soundName = AudioLibrary::getPath("staticBlink.wav");
+		//soundName = AudioLibrary::getPath("staticBlink.wav");
 		effectStr = 1;
 		totalTime = 0.55f;
 	}
 
-	Global::soundEngine->play2D(soundName.c_str(),false , false, false, irrklang::ESM_AUTO_DETECT, false);
+	//Global::soundEngine->play2D(soundName.c_str(),false , false, false, irrklang::ESM_AUTO_DETECT, false);
 
 	return true;
 }

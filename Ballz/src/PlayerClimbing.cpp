@@ -460,7 +460,7 @@ void PlayerClimbing::updateClimbingPossibility()
 			if (a)
 			{
 				Vector3 pos = pos + predsebou;
-				Global::audioLib->playRandom3D(a->highHitAudio, pos);
+				//Global::audioLib->playRandom3D(a->highHitAudio, pos);
 			}
 
 			startClimbing(BodyType(info.mBody->getType()));
@@ -578,7 +578,7 @@ bool PlayerClimbing::canClimb(Direction direction, bool soundIfTrue, bool needSp
 				if (a)
 					if (!secondPhase || a->climbDoubleFreq)
 					{
-						Global::audioLib->playRandom3D(a->lowHitAudio, targetPos);
+						//Global::audioLib->playRandom3D(a->lowHitAudio, targetPos);
 					}
 			}
 		}
@@ -613,7 +613,7 @@ bool PlayerClimbing::canClimb(Direction direction, bool soundIfTrue, bool needSp
 						if (a)
 							if (!secondPhase || a->climbDoubleFreq)
 							{
-								Global::audioLib->playRandom3D(a->lowHitAudio, targetPos);
+								//Global::audioLib->playRandom3D(a->lowHitAudio, targetPos);
 							}
 					}
 				}

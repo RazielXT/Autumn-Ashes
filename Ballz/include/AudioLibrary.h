@@ -28,10 +28,11 @@ public:
 	irrklang::ISoundSource* getSound(AudioId sound);
 	std::vector<irrklang::ISoundSource*> getSoundGroup(AudioId group);
 
+	irrklang::ISoundSource* loadSoundSource(std::string file);
+
 private:
 
 	irrklang::ISoundSource* loadNamedSound(AudioId name);
-	irrklang::ISoundSource* loadSoundSource(std::string path);
 	std::map<std::string, irrklang::ISoundSource*> loadedSources;
 
 	Ogre::Camera* camera;

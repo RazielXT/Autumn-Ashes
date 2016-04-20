@@ -1,0 +1,35 @@
+<info path="Character" type="wav">
+	<group name="WalkStone">
+		<sound file="Stone_Hard_Walk_01"/>
+		<sound file="Stone_Hard_Walk_02"/>
+		<sound file="Stone_Hard_Walk_03"/>
+	</group>
+	<group name="WalkGrass">
+		<sound file="grass_walk_01"/>
+		<sound file="grass_walk_02"/>
+		<sound file="grass_walk_03"/>
+		<sound file="dirt_walk_02"/>
+		<sound file="Dirt_Walk_03"/>
+	</group>
+	<group name="WalkMetal">
+		<sound file="metalgrate1"/>
+		<sound file="metalgrate2"/>
+		<sound file="metalgrate3"/>
+	</group>
+	<group name="WalkWood">
+		<sound file="wood_walk_01"/>
+		<sound file="wood_walk_02"/>
+		<sound file="wood_walk_03"/>
+	</group>
+	
+	<sound file="Stone_Hard_Walk_01" name="StoneFall"/>
+	<sound file="grass_run_02" name="GrassFall"/>
+	<sound file="wood_run_02" name="WoodFall"/>
+	<sound file="metalgrate1" name="MetalFall"/>
+	<sound file="pad" name="HeavyFall"/>
+	<sound file="pullup" name="Pullup"/>
+	
+	<info path="Slide">
+		<sound file="MetalSolidFootstep_Slide_Loop" name="MetalSlide" type="ogg"/>
+	</info>
+</info>

@@ -115,7 +115,7 @@ void PlayerAudio::playFallSound(float x, float y, float z, int groundID)
 
 void PlayerAudio::loadMaterialAudio()
 {
-	ObjectAudio* audio = new ObjectAudio;
+	/*ObjectAudio* audio = new ObjectAudio;
 	audio->highHitAudio.push_back(AudioLibrary::getPath("woodFall.wav"));
 	audio->lowHitAudio.push_back(AudioLibrary::getPath("wood_walk_01.wav"));
 	audio->lowHitAudio.push_back(AudioLibrary::getPath("wood_walk_02.wav"));
@@ -138,7 +138,7 @@ void PlayerAudio::loadMaterialAudio()
 	audio->lowHitAudio.push_back(AudioLibrary::getPath("bush1.wav"));
 	audio->lowHitAudio.push_back(AudioLibrary::getPath("bush3.wav"));
 	audio->climbDoubleFreq = false;
-	dynamicsAudio["Bush"] = audio;
+	dynamicsAudio["Bush"] = audio;*/
 }
 
 void PlayerAudio::loadMoveAudio()
@@ -146,11 +146,8 @@ void PlayerAudio::loadMoveAudio()
 	movementAudio.resize(MaterialsTypesMax + 1);
 
 	movementAudio[1] = audio->getSoundGroup(WalkStone);
-	
 	movementAudio[2] = movementAudio[0] = movementAudio[8] = audio->getSoundGroup(WalkGrass);
-
 	movementAudio[3] = movementAudio[7] = audio->getSoundGroup(WalkMetal);
-
 	movementAudio[4] = movementAudio[5] = movementAudio[6] = audio->getSoundGroup(WalkWood);
 
 	//-------------------------------------
@@ -159,7 +156,7 @@ void PlayerAudio::loadMoveAudio()
 	fallAudio[1] = audio->getSound(StoneFall);
 	fallAudio[0] = fallAudio[2] = fallAudio[8] = audio->getSound(GrassFall);
 	fallAudio[4] = fallAudio[5] = fallAudio[6] = audio->getSound(WoodFall);
-	fallAudio[3] = fallAudio[7] = audio->getSound(MetalFall); 
+	fallAudio[3] = fallAudio[7] = audio->getSound(MetalFall);
 
 	hurtAudio = audio->getSound(HeavyFall);
 	climbAudio = audio->getSound(Pullup); //audio->getSoundSource(AudioLibrary::getPath("pullup.wav"));

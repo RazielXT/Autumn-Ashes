@@ -19,7 +19,7 @@ enum AudioId
 	Invalid
 };
 
-static const char* audioIdNames[] = 
+static const char* audioIdNames[] =
 {
 	"WalkStone",
 	"WalkWood",
@@ -31,7 +31,6 @@ static const char* audioIdNames[] =
 	"GrassFall",
 	"MetalFall",
 
-	"StoneStep",
 	"MetalSlide",
 	"HeavyFall",
 	"Pullup",

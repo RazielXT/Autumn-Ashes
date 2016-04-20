@@ -1689,9 +1689,10 @@ void loadSound(const XMLElement* element, SceneNode* node, Ogre::SceneManager *m
 	childElement = childElement->NextSiblingElement();
 	float min = Ogre::StringConverter::parseReal(childElement->GetText());
 	childElement = childElement->NextSiblingElement();
-	Ogre::String soundName = Global::audioLib->getPath(Ogre::String(childElement->GetText()));
+	auto name = Ogre::String(childElement->GetText());
+	auto soundSource = Global::audioLib->loadSoundSource(name);
 
-	irrklang::ISound* sound = Global::soundEngine->play3D(soundName.c_str(), irrklang::vec3df(node->getPosition().x, node->getPosition().y, node->getPosition().z), loop, false, true, irrklang::ESM_AUTO_DETECT, false);
+	irrklang::ISound* sound = Global::soundEngine->play3D(soundSource, irrklang::vec3df(node->getPosition().x, node->getPosition().y, node->getPosition().z), loop, false, true, false);
 	sound->setMinDistance(min);
 	sound->setVolume(volume);
 
@@ -1702,7 +1703,7 @@ void loadSound(const XMLElement* element, SceneNode* node, Ogre::SceneManager *m
 	node->detachAllObjects();
 	mSceneMgr->destroySceneNode(node);
 
-	myLog->logMessage("Sound - " + soundName, LML_NORMAL);
+	myLog->logMessage("Sound - " + name, LML_NORMAL);
 }
 
 void loadCompoundBodyPart(const XMLElement* element, Entity* ent, SceneNode* node, OgreNewt::World* mWorld, Ogre::SceneManager *mSceneMgr)

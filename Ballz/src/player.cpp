@@ -183,7 +183,7 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
 	{
 	case OIS::KC_G:
 	{
-		irrklang::ISound* s = Global::audioLib->soundEngine->play3D(AudioLibrary::getPath("speedWind.wav").c_str(), irrklang::vec3df(bodyPosition.x + 2, bodyPosition.y + 3, bodyPosition.z), false, false, true, irrklang::ESM_AUTO_DETECT, false);
+		irrklang::ISound* s = Global::audioLib->soundEngine->play3D(Global::audioLib->loadSoundSource("speedWind.wav"), irrklang::vec3df(bodyPosition.x + 2, bodyPosition.y + 3, bodyPosition.z), false, false, true, false);
 		s->setMaxDistance(10);
 		s->setVolume(0.75f);
 
