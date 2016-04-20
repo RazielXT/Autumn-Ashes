@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "AudioId.h"
 
 struct PhysicsAudio
 {
@@ -24,13 +25,14 @@ public:
 	void playSoundRandom(std::vector<irrklang::ISoundSource*>& sounds, float x, float y, float z, float maxDistance = 10000000.f, float volume = 1.0f);
 	irrklang::ISound* playSound(irrklang::ISoundSource* sound, float x, float y, float z, bool drop = true, float maxDistance = 10000000.f, float volume = 1.0f);
 
-	irrklang::ISoundSource* getSound(std::string name);
-	std::vector<irrklang::ISoundSource*> getSoundGroup(std::vector<std::string> groupPath);
+	irrklang::ISoundSource* getSound(AudioId sound);
+	std::vector<irrklang::ISoundSource*> getSoundGroup(AudioId group);
 
 private:
 
-	irrklang::ISoundSource* preloadNamedSound(std::string name);
-	irrklang::ISoundSource* preloadSound(std::string path);
+	irrklang::ISoundSource* loadNamedSound(AudioId name);
+	irrklang::ISoundSource* loadSoundSource(std::string path);
+	std::map<std::string, irrklang::ISoundSource*> loadedSources;
 
 	Ogre::Camera* camera;
 
@@ -38,19 +40,18 @@ private:
 	{
 		struct Sound
 		{
-			std::string name;
+			AudioId name;
 			std::string file;
 		};
 
 		struct SoundGroup
 		{
 			std::string path;
-			std::map<std::string, SoundGroup*> subGroups;
 			std::vector<Sound> sounds;
 		};
 
-		SoundGroup groups;
-		std::map<std::string, Sound> namedSounds;
+		std::map<AudioId, SoundGroup> groups;
+		std::map<AudioId, Sound> namedSounds;
 	}
 	library;
 
@@ -58,7 +59,7 @@ private:
 	{
 		std::string path;
 		std::string type;
-		SoundLibrary::SoundGroup* currentGroup;
+		SoundLibrary::SoundGroup* group;
 	};
 
 	void loadCfg(std::string file);
@@ -68,16 +69,13 @@ private:
 	{
 		struct LoadedGroup
 		{
-			std::map<std::string, LoadedGroup*> subGroups;
 			std::vector<irrklang::ISoundSource*> sounds;
-
 		};
 
-		std::map<std::string, LoadedGroup*> groups;
-		std::map<std::string, irrklang::ISoundSource*> namedSounds;
-
-		void clearGroup(LoadedGroup* group);
+		std::map<AudioId, LoadedGroup> groups;
+		std::map<AudioId, irrklang::ISoundSource*> namedSounds;
 	}
 	loaded;
+
 };
 

@@ -30,10 +30,6 @@ private:
 	{
 		irrklang::ISound* s;
 		float x, y, z;
-
-		bool velocityVolume = false;
-		float velocityMul;
-		float velocityMax;
 	};
 	std::vector<LocalSound> localSounds;
 
@@ -44,7 +40,7 @@ private:
 	void loadMaterialAudio();
 	void loadMoveAudio();
 
-	std::vector< std::vector<irrklang::ISoundSource*>* > movementAudio;
+	std::vector< std::vector<irrklang::ISoundSource*> > movementAudio;
 	std::vector<irrklang::ISoundSource* > fallAudio;
 	irrklang::ISoundSource* hurtAudio;
 	irrklang::ISoundSource* climbAudio;

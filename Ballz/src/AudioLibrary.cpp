@@ -41,22 +41,9 @@ void AudioLibrary::update(float time)
 void AudioLibrary::reset()
 {
 	soundEngine->removeAllSoundSources();
-	
-	for (auto g : loaded.groups)
-	{
-		loaded.clearGroup(g.second);
-		delete g.second;
-	}
-}
-
-void AudioLibrary::LoadedSounds::clearGroup(LoadedGroup* group)
-{
-	for (auto g : group->subGroups)
-	{
-		clearGroup(g.second);	
-	}
-
-	delete group;
+	loaded.groups.clear();
+	loaded.namedSounds.clear();
+	loadedSources.clear();
 }
 
 void AudioLibrary::playSoundRandom(std::vector<irrklang::ISoundSource*>& sounds, float x, float y, float z, float maxDistance, float volume)
@@ -83,58 +70,64 @@ irrklang::ISound* AudioLibrary::playSound(irrklang::ISoundSource* sound, float x
 	return music;
 }
 
-irrklang::ISoundSource* AudioLibrary::getSound(std::string name)
+irrklang::ISoundSource* AudioLibrary::getSound(AudioId name)
 {
 	auto s = loaded.namedSounds.find(name);
-	auto sound = s->second;
 
-	if (s == loaded.namedSounds.end())
-		sound = preloadNamedSound(name);
-
-	return sound;
+	if (s != loaded.namedSounds.end())
+		return s->second;
+	else
+		return loadNamedSound(name);
 }
 
-std::vector<irrklang::ISoundSource*> AudioLibrary::getSoundGroup(std::vector<std::string> groupPath)
+std::vector<irrklang::ISoundSource*> AudioLibrary::getSoundGroup(AudioId group)
 {
-	auto group = &library.groups;
+	auto lg = loaded.groups.find(group);
 
-	for (auto& subGroup : groupPath)
+	if (lg != loaded.groups.end())
+		return lg->second.sounds;
+	else
 	{
-		auto it = group->subGroups.find(subGroup);
-		if (it == group->subGroups.end())
-			return{};
+		std::vector<irrklang::ISoundSource*> out;
 
-		group = it->second;
-	}
+		auto g = library.groups.find(group);
+		if (g != library.groups.end())
+			for (auto s : g->second.sounds)
+			{
+				out.push_back(loadSoundSource(g->second.path + s.file));
+			}
 
-	std::vector<irrklang::ISoundSource*> out;
-	for (auto& s : group->sounds)
-	{
-		auto source = preloadSound(group->path + s.file);
+		loaded.groups[group] = { out };
 
-		if (source)
-			out.push_back(source);
-	}
-
-	return out;
+		return out;
+	}	
 }
 
-irrklang::ISoundSource* AudioLibrary::preloadSound(std::string path)
-{
-	return soundEngine->addSoundSourceFromFile(path.c_str(), irrklang::ESM_AUTO_DETECT, true);
-}
-
-irrklang::ISoundSource* AudioLibrary::preloadNamedSound(std::string name)
+irrklang::ISoundSource* AudioLibrary::loadNamedSound(AudioId name)
 {
 	auto s = library.namedSounds.find(name);
 
 	if (s == library.namedSounds.end())
 		return nullptr;
 
-	auto source = soundEngine->addSoundSourceFromFile(s->second.file.c_str(), irrklang::ESM_AUTO_DETECT, true);
+	auto source = loadSoundSource(s->second.file);
 	loaded.namedSounds[name] = source;
 
 	return source;
+}
+
+irrklang::ISoundSource* AudioLibrary::loadSoundSource(std::string path)
+{
+	auto s = loadedSources.find(path);
+
+	if (s == loadedSources.end())
+	{
+		auto source = soundEngine->addSoundSourceFromFile(path.c_str(), irrklang::ESM_AUTO_DETECT, true);
+		loadedSources[path] = source;
+		return source;
+	}
+	else
+		return s->second;	
 }
 
 #include "tinyxml2.h"
@@ -155,32 +148,36 @@ static const XMLElement* IterateChildElements(const XMLElement* xmlElement, cons
 	return 0;
 }
 
+AudioId getAudioId(const char* str)
+{
+	if (str)
+		for (size_t i = 0; i < Invalid; i++)
+		{
+			if (strcmp(str, audioIdNames[i]) == 0)
+				return AudioId(i);
+		}
+
+	return Invalid;
+}
+
 void AudioLibrary::loadCfgElement(const void* element, ParseState state)
 {
 	XMLElement* xmlElement = (XMLElement*)element;
 	std::string name = xmlElement->Value();
 
+	auto path = xmlElement->Attribute("path");
+	if (path) state.path += path + std::string("/");
+
+	auto type = xmlElement->Attribute("type");
+	if (type) state.type = type;
+
 	if (name == "Group")
 	{
-		auto g = new SoundLibrary::SoundGroup();
-		auto path = xmlElement->Attribute("path");
-		if (path)
-			state.path += path + std::string("/");
+		auto g = SoundLibrary::SoundGroup();
 
-		auto type = xmlElement->Attribute("type");
-		if (type)
-			state.type = type;
-
-		auto type = xmlElement->Attribute("type");
-		if (type)
-			state.type = type;
-
-		g->path = state.path;
 		auto name = xmlElement->Attribute("name");
 		name = name ? name : (path ? path : "");
-
-		state.currentGroup->subGroups[name] = g;
-		state.currentGroup = g;
+		state.group = &g;
 
 		const XMLElement* childElement = 0;
 		while (childElement = IterateChildElements(xmlElement, childElement))
@@ -189,10 +186,13 @@ void AudioLibrary::loadCfgElement(const void* element, ParseState state)
 	if (name == "Sound")
 	{
 		auto file = xmlElement->Attribute("file");
-		auto name = xmlElement->Attribute("name");
-		if (!name) name = "";
+		auto name = getAudioId(xmlElement->Attribute("name"));
 
-		state.currentGroup->sounds.push_back({ name, file + state.type });
+		if(state.group)
+			state.group->sounds.push_back({ name , file + state.type });
+
+		if (name != Invalid)
+			library.namedSounds[name] = { name , file + state.type };
 	}
 	if (name == "Sounds")
 	{
@@ -204,7 +204,7 @@ void AudioLibrary::loadCfgElement(const void* element, ParseState state)
 			while (!files.empty())
 			{
 				auto file = SUtils::strtok_str(files, ',');
-				state.currentGroup->sounds.push_back({ "", file + state.type });
+				state.group->sounds.push_back({ Invalid, file + state.type });
 			}
 		}	
 	}
@@ -221,7 +221,7 @@ void AudioLibrary::loadCfg(std::string file)
 	const XMLElement* childElement = 0;
 	while (childElement = IterateChildElements(root, childElement))
 	{
-		loadCfgElement(childElement, {audioDirectory, ".wav", &library.groups});
+		loadCfgElement(childElement, {audioDirectory, ".wav", nullptr});
 	}
 }
 

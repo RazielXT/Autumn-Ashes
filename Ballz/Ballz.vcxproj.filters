@@ -670,6 +670,9 @@
     <ClInclude Include="include\PlayerAudio.h">
       <Filter>Files\Player</Filter>
     </ClInclude>
+    <ClInclude Include="include\AudioId.h">
+      <Filter>Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AutumnAshes.rc">

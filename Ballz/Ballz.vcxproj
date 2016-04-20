@@ -223,6 +223,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\AnimatedTrack.h" />
     <ClInclude Include="include\AnimationBlender.h" />
     <ClInclude Include="include\AudioLibrary.h" />
+    <ClInclude Include="include\AudioId.h" />
     <ClInclude Include="include\BasicPPListener.h" />
     <ClInclude Include="include\BillboardDetailGeometry.h" />
     <ClInclude Include="include\BridgeMaker.h" />
