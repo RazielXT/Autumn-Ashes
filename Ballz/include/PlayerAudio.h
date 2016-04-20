@@ -15,6 +15,7 @@ public:
 
 	void update(float tslf);
 
+	void slide(bool active);
 	void surfaceSliding(int groundId = -1);
 
 	void playWalkingSound(float x, float y, float z, int groundID, float volume = 1.0f);
@@ -24,16 +25,28 @@ public:
 
 	std::map<Ogre::String, ObjectAudio*> dynamicsAudio;
 
-private:
-
 	struct LocalSound
 	{
 		irrklang::ISound* s;
 		float x, y, z;
+
+		bool velocityVolume;
+		float velocityVolumeMul;
+		float velocityVolumeMax;
 	};
+
+	void addLocalSound(LocalSound sound);
+	void removeLocalSound(irrklang::ISound* audio);
+
+private:
+
 	std::vector<LocalSound> localSounds;
 
 	int lastSlidingId = -1;
+	irrklang::ISound* surfaceSlideAudio = nullptr;
+
+	bool wasSliding = false;
+	irrklang::ISound* slideAudio = nullptr;
 
 	static const int MaterialsTypesMax = 8;
 

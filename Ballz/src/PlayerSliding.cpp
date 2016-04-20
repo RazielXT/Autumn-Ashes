@@ -45,6 +45,8 @@ void PlayerSliding::update(float tslf, bool readyToSlide)
 		}
 	}
 
+	player->pAudio.slide(currentSlide != nullptr);
+
 	//todo allow autoslide
 	bool allowAutoAttach = readyToSlide && autoAttachUnavailableTimer <= 0;
 

@@ -31,8 +31,29 @@ void PlayerAudio::update(float tslf)
 	auto volumeVel = p->bodyVelocityL / 100.0f;
 	for (auto& s : localSounds)
 	{
-		s.s->setVolume(std::min(volumeVel, 0.2f));
+		if(s.velocityVolume)
+			s.s->setVolume(std::min(volumeVel*s.velocityVolumeMul,s.velocityVolumeMax));
+
 		s.s->setPosition(irrklang::vec3df(pos.x + s.x, pos.y + s.y, pos.z + s.z));
+	}
+}
+
+void PlayerAudio::slide(bool active)
+{
+	if (wasSliding != active)
+	{
+		if (slideAudio)
+		{
+			removeLocalSound(slideAudio);
+			slideAudio->drop();
+		}
+
+		slideAudio = audio->playSoundId(MetalSlide, 0, 0, 0, false, 10, 0.0f);
+		slideAudio->setIsLooped(true);
+		slideAudio->setVolume(0.2f);
+		addLocalSound({ slideAudio, 0, -2, 0 , false });
+
+		wasSliding = active;
 	}
 }
 
@@ -40,13 +61,11 @@ void PlayerAudio::surfaceSliding(int groundId)
 {
 	if (lastSlidingId != groundId)
 	{
-		if (!localSounds.empty())
+		if (surfaceSlideAudio)
 		{
-			localSounds[0].s->stop();
-			localSounds[0].s->drop();
-			localSounds.clear();
+			removeLocalSound(surfaceSlideAudio);
+			surfaceSlideAudio->drop();
 		}
-
 
 		switch (groundId)
 		{
@@ -54,10 +73,9 @@ void PlayerAudio::surfaceSliding(int groundId)
 			break;
 		case 0:
 		default:
-			auto s = audio->getSound(MetalSlide); // AudioLibrary::getPath("MetalSolidFootstep_Slide_Loop.ogg", Character));
-			auto a = audio->playSound(s, 0, 0, 0, false, 10, 0.0f);
-			a->setIsLooped(true);
-			localSounds.push_back({ a, 0, -2, 0 });
+			surfaceSlideAudio = audio->playSoundId(MetalSlide, 0, 0, 0, false, 10, 0.0f);
+			surfaceSlideAudio->setIsLooped(true);
+			addLocalSound({ surfaceSlideAudio, 0, -2, 0 , true, 1.0f, 0.2f });
 			break;
 		}
 
@@ -96,6 +114,16 @@ void PlayerAudio::playHurtSound(float x, float y, float z)
 void PlayerAudio::playClimbSound(float x, float y, float z)
 {
 	audio->playSound(climbAudio, x, y, z, true, 5, 0.5f);
+}
+
+void PlayerAudio::addLocalSound(LocalSound sound)
+{
+
+}
+
+void PlayerAudio::removeLocalSound(irrklang::ISound* audio)
+{
+
 }
 
 void PlayerAudio::playFallSound(float x, float y, float z, int groundID)

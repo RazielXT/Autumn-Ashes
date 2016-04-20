@@ -24,6 +24,7 @@ public:
 
 	void playSoundRandom(std::vector<irrklang::ISoundSource*>& sounds, float x, float y, float z, float maxDistance = 10000000.f, float volume = 1.0f);
 	irrklang::ISound* playSound(irrklang::ISoundSource* sound, float x, float y, float z, bool drop = true, float maxDistance = 10000000.f, float volume = 1.0f);
+	irrklang::ISound* playSoundId(AudioId sound, float x, float y, float z, bool drop = true, float maxDistance = 10000000.f, float volume = 1.0f);
 
 	irrklang::ISoundSource* getSound(AudioId sound);
 	std::vector<irrklang::ISoundSource*> getSoundGroup(AudioId group);

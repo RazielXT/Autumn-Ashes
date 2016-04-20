@@ -70,6 +70,11 @@ irrklang::ISound* AudioLibrary::playSound(irrklang::ISoundSource* sound, float x
 	return music;
 }
 
+irrklang::ISound* AudioLibrary::playSoundId(AudioId sound, float x, float y, float z, bool drop /*= true*/, float maxDistance /*= 10000000.f*/, float volume /*= 1.0f*/)
+{
+	return playSound(getSound(sound), x, y, z, drop, maxDistance, volume);
+}
+
 irrklang::ISoundSource* AudioLibrary::getSound(AudioId name)
 {
 	auto s = loaded.namedSounds.find(name);
