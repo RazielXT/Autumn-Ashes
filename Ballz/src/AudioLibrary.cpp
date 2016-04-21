@@ -56,13 +56,10 @@ void AudioLibrary::playSoundRandom(std::vector<irrklang::ISoundSource*>& sounds,
 
 irrklang::ISound* AudioLibrary::playSound(irrklang::ISoundSource* sound, float x, float y, float z, bool drop, float maxDistance, float volume)
 {
-	irrklang::ISound* music = soundEngine->play3D(sound, irrklang::vec3df(x, y, z), false, false, true, true);
+	irrklang::ISound* music = soundEngine->play3D(sound, irrklang::vec3df(x, y, z), false, false, true, false);
 	music->setMaxDistance(maxDistance);
 	music->setVolume(volume);
 	music->setPlaybackSpeed(Global::timestep);
-
-	if (Global::timestep < 1)
-		music->getSoundEffectControl()->enableWavesReverbSoundEffect(0, -10 * Global::timestep, 2600, 0.5);
 
 	if (drop)
 		music->drop();

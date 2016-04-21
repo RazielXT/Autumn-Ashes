@@ -24,12 +24,22 @@ PlayerSliding::~PlayerSliding()
 {
 }
 
-void PlayerSliding::slideStarted(Slide* slide)
+void PlayerSliding::setSlide(Slide* slide)
 {
 	if (currentSlide)
 		currentSlide->instantDetach(false);
 
 	currentSlide = slide;
+}
+
+void PlayerSliding::slidingStarted()
+{
+	player->pAudio.slide(true);
+}
+
+void PlayerSliding::slidingEnd()
+{
+	player->pAudio.slide(false);
 }
 
 void PlayerSliding::update(float tslf, bool readyToSlide)
@@ -44,8 +54,6 @@ void PlayerSliding::update(float tslf, bool readyToSlide)
 			autoAttachUnavailableTimer = 0.5f;
 		}
 	}
-
-	player->pAudio.slide(currentSlide != nullptr);
 
 	//todo allow autoslide
 	bool allowAutoAttach = readyToSlide && autoAttachUnavailableTimer <= 0;

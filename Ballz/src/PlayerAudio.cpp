@@ -45,13 +45,20 @@ void PlayerAudio::slide(bool active)
 		if (slideAudio)
 		{
 			removeLocalSound(slideAudio);
+			slideAudio->stop();
 			slideAudio->drop();
 		}
 
-		slideAudio = audio->playSoundId(MetalSlide, 0, 0, 0, false, 10, 0.0f);
-		slideAudio->setIsLooped(true);
-		slideAudio->setVolume(0.2f);
-		addLocalSound({ slideAudio, 0, -2, 0 , false });
+		if (active)
+		{
+			slideAudio = audio->playSoundId(Freefall, 0, 0, 0, false, 10, 0.0f);
+			slideAudio->setIsLooped(true);
+			slideAudio->setVolume(0.15f);
+
+			addLocalSound({ slideAudio, 0, 0, 0 , false });
+		}
+		else
+			slideAudio = nullptr;
 
 		wasSliding = active;
 	}
@@ -64,12 +71,14 @@ void PlayerAudio::surfaceSliding(int groundId)
 		if (surfaceSlideAudio)
 		{
 			removeLocalSound(surfaceSlideAudio);
+			surfaceSlideAudio->stop();
 			surfaceSlideAudio->drop();
 		}
 
 		switch (groundId)
 		{
 		case -1:
+			surfaceSlideAudio = nullptr;
 			break;
 		case 0:
 		default:
@@ -118,12 +127,19 @@ void PlayerAudio::playClimbSound(float x, float y, float z)
 
 void PlayerAudio::addLocalSound(LocalSound sound)
 {
-
+	localSounds.push_back(sound);
 }
 
 void PlayerAudio::removeLocalSound(irrklang::ISound* audio)
 {
-
+	for (auto it = localSounds.begin(); it != localSounds.end(); it++)
+	{
+		if (it->s == audio)
+		{
+			localSounds.erase(it);
+			return;
+		}
+	}
 }
 
 void PlayerAudio::playFallSound(float x, float y, float z, int groundID)

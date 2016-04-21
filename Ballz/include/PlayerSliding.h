@@ -24,7 +24,10 @@ public:
 	~PlayerSliding();
 
 	float autoAttachUnavailableTimer = 0;
-	void slideStarted(Slide* slide);
+	void setSlide(Slide* slide);
+
+	void slidingStarted();
+	void slidingEnd();
 
 	void update(float tslf, bool readyToSlide);
 

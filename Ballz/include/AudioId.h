@@ -13,6 +13,7 @@ enum AudioId
 	MetalFall,
 	//--------------
 	MetalSlide,
+	Freefall,
 	HeavyFall,
 	Pullup,
 	//--------------
@@ -32,6 +33,7 @@ static const char* audioIdNames[] =
 	"MetalFall",
 
 	"MetalSlide",
+	"Freefall",
 	"HeavyFall",
 	"Pullup",
 };

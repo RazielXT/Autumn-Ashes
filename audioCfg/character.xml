@@ -29,6 +29,8 @@
 	<sound file="pad" name="HeavyFall"/>
 	<sound file="pullup" name="Pullup"/>
 	
+	<sound file="Freefall_Loop" name="Freefall" type="ogg"/>
+
 	<info path="Slide">
 		<sound file="MetalSolidFootstep_Slide_Loop" name="MetalSlide" type="ogg"/>
 	</info>

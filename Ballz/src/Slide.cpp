@@ -117,7 +117,7 @@ bool Slide::start(Vector3& pos, bool withJump)
 		else
 			attach(false);
 
-		Global::player->pSliding->slideStarted(this);
+		Global::player->pSliding->setSlide(this);
 
 		return true;
 	}
@@ -137,12 +137,12 @@ bool Slide::start(float startOffset, bool withJump, float headArrivalTimer)
 
 	removeControlFromPlayer();
 
+	Global::player->pSliding->setSlide(this);
+
 	if (withJump)
 		startJumpToSlide();
 	else
 		attach(false, headArrivalTimer);
-
-	Global::player->pSliding->slideStarted(this);
 
 	return true;
 }
@@ -202,6 +202,7 @@ void Slide::attach(bool retainDirection, float headArrivalTime)
 	unavailableTimer = headArrivalTime;
 
 	Global::camera->shaker.nodHead(20);
+	Global::player->pSliding->slidingStarted();
 
 	mTrackerState->setEnabled(true);
 	mTrackerState->setLoop(loop);
@@ -232,6 +233,7 @@ void Slide::release(bool returnControl, bool manualJump)
 	mTrackerState->setEnabled(false);
 
 	sliding = false;
+	Global::player->pSliding->slidingEnd();
 }
 
 void Slide::updateHeadArrival(float time)
