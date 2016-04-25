@@ -13,6 +13,7 @@ PlayerAutoTarget::PlayerAutoTarget()
 	targetTimer = 0;
 	targetPole = nullptr;
 	preparedPole = nullptr;
+	closePole = nullptr;
 }
 
 PlayerAutoTarget::~PlayerAutoTarget()
@@ -27,12 +28,12 @@ bool PlayerAutoTarget::spacePressed()
 	{
 		return targetInfo.targetSlide->start(targetInfo.targetSlidePosOffset, true);
 	}
-	else if(targetPole)
+	/*else if(targetPole)
 	{
 		Global::player->pHanging->jumpTo(targetPole);
 
 		return true;
-	}
+	}*/
 
 	return false;
 }
@@ -144,9 +145,11 @@ bool PlayerAutoTarget::getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide* igno
 bool PlayerAutoTarget::getTargetPole(Ogre::Vector3 pos, Ogre::Vector3 dir, float rayDistance)
 {
 	Pole* ignored = Global::player->pHanging->currentPole;
-	Pole* target = nullptr;
+	Pole* target = preparedClosePole = nullptr;
+
 	float closest = rayDistance*rayDistance + 5;
-	float maxDistSq = 5;
+	const float maxDistSq = 5;
+	const float autoAttachDist = 4;
 
 	for (auto& pole : objects.poles)
 	{

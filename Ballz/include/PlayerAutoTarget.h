@@ -50,6 +50,7 @@ public:
 
 	TargetSlideInfo targetInfo;
 	Pole* targetPole;
+	Pole* closePole;
 
 	TargetableObjects objects;
 
@@ -66,6 +67,7 @@ private:
 
 	Slide* lastUnavailableSlide = nullptr;
 
+	Pole* preparedClosePole;
 	Pole* preparedPole;
 	Slide* preparedSlide;
 	float preparedSlideOffset;

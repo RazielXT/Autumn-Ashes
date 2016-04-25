@@ -9,17 +9,17 @@
 
 void PlayerHanging::jump()
 {
-	if (player->autoTarget->targetPole)
+	/*if (player->autoTarget->targetPole)
 	{
 		jumpTo(player->autoTarget->targetPole);
 	}
-	else
+	else*/
 	{
 		player->body->setPositionOrientation(hBody->getPosition(), Ogre::Quaternion::IDENTITY);
 		release();
 		player->pCamera->shaker.nodHead(1.5f);
-		player->pCamera->attachCameraWithTransition(0.3f);
-		player->body->setVelocity(currentDir * 7 + Ogre::Vector3::UNIT_Y * 3);
+		player->pCamera->attachCameraWithTransition(0.25f);
+		player->body->setVelocity(direction * 7 + Ogre::Vector3::UNIT_Y * 3);
 	}
 }
 
@@ -83,10 +83,6 @@ void PlayerHanging::update(float tslf)
 {
 	if (currentPole)
 	{
-		direction = currentPole->direction;
-		if (inversePoleDir)
-			direction *= -1;
-
 		if (state == Jumping)
 		{
 			if (transition.updateJump(tslf))
