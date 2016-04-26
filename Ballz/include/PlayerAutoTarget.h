@@ -26,11 +26,20 @@ private:
 	std::vector<Slide*> slides;
 };
 
-struct TargetSlideInfo
+struct AutoTargetInfo
 {
 	Slide* targetSlide = nullptr;
-	float targetSlidePosOffset;
-	Ogre::Vector3 targetSlidePos;
+	float targetSlideOffset;
+
+	Slide* closeSlide = nullptr;
+	Ogre::Vector3 closeSlidePos;
+
+	Pole* targetPole = nullptr;
+	Pole* closePole = nullptr;
+
+	JumpBox* targetJump = nullptr;
+
+	float closestTargetDistanceSq;
 };
 
 class PlayerAutoTarget
@@ -48,15 +57,14 @@ public:
 
 	void updateAutoTarget(Ogre::Vector3 pos, Ogre::Vector3 dir, float tslf, float rayDistance);
 
-	TargetSlideInfo targetInfo;
-	Pole* targetPole;
-	Pole* closePole;
+	AutoTargetInfo targetInfo;
 
 	TargetableObjects objects;
 
 private:
 
 	bool getTargetPole(Ogre::Vector3 pos, Ogre::Vector3 dir, float rayDistance);
+	bool getTargetJump(Ogre::Vector3 pos, Ogre::Vector3 dir, float rayDistance);
 
 	struct
 	{
@@ -67,11 +75,7 @@ private:
 
 	Slide* lastUnavailableSlide = nullptr;
 
-	Pole* preparedClosePole;
-	Pole* preparedPole;
-	Slide* preparedSlide;
-	float preparedSlideOffset;
-	Ogre::Vector3 preparedSlidePos;
+	AutoTargetInfo preparedInfo;
 
 	float targetTimer;
 

@@ -8,12 +8,20 @@
 #include "GameUi.h"
 #include "GameStateManager.h"
 
+const float TargetSlideMaxRayDistance = 20;
+const float TargetSlideMaxProbeDistance = 6;
+const float TouchSlideMaxDistance = 2;
+
+const float TargetPoleMaxRayDistance = 20;
+const float TargetPoleMaxProbeDistance = 2.5f;
+const float TouchPoleMaxDistance = 2;
+
+const float TargetJumpMaxRayDistance = 10;
+const float TargetJumpMaxProbeDistance = 2.5f;
+
 PlayerAutoTarget::PlayerAutoTarget()
 {
 	targetTimer = 0;
-	targetPole = nullptr;
-	preparedPole = nullptr;
-	closePole = nullptr;
 }
 
 PlayerAutoTarget::~PlayerAutoTarget()
@@ -24,11 +32,16 @@ PlayerAutoTarget::~PlayerAutoTarget()
 
 bool PlayerAutoTarget::spacePressed()
 {
-	if (targetInfo.targetSlide && targetInfo.targetSlidePosOffset != -1)
+	if (targetInfo.targetSlide)
 	{
-		return targetInfo.targetSlide->start(targetInfo.targetSlidePosOffset, true);
+		return targetInfo.targetSlide->start(targetInfo.targetSlideOffset, true);
 	}
-	/*else if(targetPole)
+	else if (targetInfo.targetJump)
+	{
+		targetInfo.targetJump->jumpToBox();
+		return true;
+	}
+	/*else if (targetInfo.targetJump)
 	{
 		Global::player->pHanging->jumpTo(targetPole);
 
@@ -61,15 +74,14 @@ void TargetableObjects::addLoadedPole(Pole pole)
 
 bool PlayerAutoTarget::getTargetSlideRay(Vector3 pos, Vector3 dir, float rayDistance, Slide* ignoredSlide)
 {
-	const float rayRadiusSq = 6 * 6;
+	rayDistance = std::min(rayDistance, TargetSlideMaxRayDistance);
+	const float rayRadiusSq = TargetSlideMaxProbeDistance * TargetSlideMaxProbeDistance;
 
 	//radius 6 at distance 30 (3 at 15 etc)
 	const float minRayRadiusW = rayRadiusSq * rayDistance / 30.0f;
 
 	Vector3 rayStart = pos + dir * 2;
 	Vector3 rayTarget = rayStart + dir*rayDistance;
-
-	float closest = rayRadiusSq;
 
 	for (auto s : objects.slides)
 	{
@@ -87,9 +99,9 @@ bool PlayerAutoTarget::getTargetSlideRay(Vector3 pos, Vector3 dir, float rayDist
 			auto r = MUtils::getLinesDistanceInfo(rayStart, rayTarget, s0, s1);
 			float minCompDist = minRayRadiusW*r.s1Pos;
 
-			if (r.sqMinDistance < minCompDist && r.sqMinDistance < closest)
+			if (r.sqMinDistance < minCompDist && r.sqMinDistance < 	preparedInfo.closestTargetDistanceSq)
 			{
-				closest = r.sqMinDistance;
+				preparedInfo.closestTargetDistanceSq = r.sqMinDistance;
 
 				foundSegmentPos = r.s2Pos;
 				foundSegmentId = i;
@@ -99,22 +111,23 @@ bool PlayerAutoTarget::getTargetSlideRay(Vector3 pos, Vector3 dir, float rayDist
 		//if new was found
 		if (foundSegmentId > 0)
 		{
-			preparedSlide = s;
+			preparedInfo.targetSlide = s;
 
 			auto s0 = s->trackPoints[foundSegmentId - 1].startOffset;
 			auto s1 = s->trackPoints[foundSegmentId].startOffset;
-			preparedSlideOffset = s0 + (s1 - s0)*foundSegmentPos;
+			preparedInfo.targetSlideOffset = s0 + (s1 - s0)*foundSegmentPos;
 		}
 
 	}
 
-	return closest<rayRadiusSq;
+	return preparedInfo.targetSlide;
 }
 
 bool PlayerAutoTarget::getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide* ignoredSlide)
 {
 	pos.y -= 2;
-	float maxDistSq = 3*3;
+	const float maxDistSq = TouchSlideMaxDistance*TouchSlideMaxDistance;
+	preparedInfo.closeSlide = nullptr;
 	float closest = maxDistSq;
 
 	for (auto s : objects.slides)
@@ -132,74 +145,108 @@ bool PlayerAutoTarget::getTargetSlideTouch(Vector3 pos, Vector3 dir, Slide* igno
 			if (r.sqMinDistance < closest)
 			{
 				closest = r.sqMinDistance;
-				preparedSlidePos = r.projPos;
-				preparedSlide = s;
-				preparedSlideOffset = -1;
+				preparedInfo.closeSlidePos = r.projPos;
+				preparedInfo.closeSlide = s;
 			}
 		}
 	}
 
-	return closest < maxDistSq;
+	return preparedInfo.closeSlide;
 }
 
 bool PlayerAutoTarget::getTargetPole(Ogre::Vector3 pos, Ogre::Vector3 dir, float rayDistance)
 {
-	Pole* ignored = Global::player->pHanging->currentPole;
-	Pole* target = preparedClosePole = nullptr;
+	rayDistance = std::min(rayDistance, TargetPoleMaxRayDistance);
 
-	float closest = rayDistance*rayDistance + 5;
-	const float maxDistSq = 5;
-	const float autoAttachDist = 4;
+	Pole* ignored = Global::player->pHanging->currentPole;
+	preparedInfo.targetPole = preparedInfo.closePole = nullptr;
+
+	const float maxDistSq = TargetPoleMaxProbeDistance * TargetPoleMaxProbeDistance;
+	const float maxTouchDistSq = TouchPoleMaxDistance * TouchPoleMaxDistance;
 
 	for (auto& pole : objects.poles)
 	{
 		float pDist = pole.position.squaredDistance(pos);
 
-		if (&pole != ignored && pDist < closest && abs(pole.pinDirection.dotProduct(dir)) < 0.8f)
+		if (&pole != ignored && pDist < preparedInfo.closestTargetDistanceSq && abs(pole.pinDirection.dotProduct(dir)) < 0.8f)
 		{
 			auto p = MUtils::getProjectedPointOnLine(pole.position, pos, pos + dir*rayDistance);
 
 			if (p.sqMinDistance < maxDistSq)
 			{
-				closest = pDist;
-				target = &pole;
+				preparedInfo.closestTargetDistanceSq = pDist;
+				preparedInfo.targetPole = &pole;
+			}
+
+			if (pDist < maxTouchDistSq)
+			{
+				preparedInfo.closePole = &pole;
 			}
 		}
 	}
 
-	preparedPole = target;
+	return preparedInfo.targetPole != nullptr;
+}
 
-	return preparedPole != nullptr;
+bool PlayerAutoTarget::getTargetJump(Ogre::Vector3 pos, Ogre::Vector3 dir, float rayDistance)
+{
+	rayDistance = std::min(rayDistance, TargetJumpMaxRayDistance);
+	preparedInfo.targetJump = nullptr;
+
+	const float maxDistSq = TargetJumpMaxProbeDistance * TargetJumpMaxProbeDistance;
+
+	for (auto& jump : objects.jumpBoxes)
+	{
+		float pDist = jump.position.squaredDistance(pos);
+
+		if (pDist < preparedInfo.closestTargetDistanceSq && abs(jump.faceDirection.dotProduct(dir)) > 0.5f)
+		{
+			auto p = MUtils::getProjectedPointOnLine(jump.position, pos, pos + dir*rayDistance);
+
+			if (p.sqMinDistance < maxDistSq)
+			{
+				preparedInfo.closestTargetDistanceSq = pDist;
+				preparedInfo.targetJump = &jump;
+			}
+		}
+	}
+
+	return preparedInfo.targetJump != nullptr;
 }
 
 bool PlayerAutoTarget::getTargetFunc(Vector3 pos, Vector3 dir, float rayDistance)
 {
+	preparedInfo.closestTargetDistanceSq = 9999;
+
 	getTargetPole(pos, dir, rayDistance);
 
-	if (!slidingState.autoAttach)
-		return getTargetSlideRay(pos, dir, rayDistance, slidingState.currentSlide);
-	else
-		return getTargetSlideTouch(pos, dir, slidingState.currentSlide);
+	getTargetJump(pos, dir, rayDistance);
+
+	getTargetSlideTouch(pos, dir, slidingState.currentSlide);
+
+	return getTargetSlideRay(pos, dir, rayDistance, slidingState.currentSlide);
 }
 
 void PlayerAutoTarget::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, float rayDistance)
 {
 	auto found = targetResult.valid() ? targetResult.get() : false;
 
+	targetInfo = preparedInfo;
+
 	if (found)
 	{
-		targetInfo.targetSlide = preparedSlide;
-		targetInfo.targetSlidePosOffset = preparedSlideOffset;
-		targetInfo.targetSlidePos = (preparedSlideOffset==-1) ? preparedSlidePos : targetInfo.targetSlide->getTrackPosition(targetInfo.targetSlidePosOffset);
+		//if((targetInfo.targetSlide))
+		//	targetInfo.slidePos = targetInfo.targetSlide->getTrackPosition(targetInfo.slidePosOffset);
 
-		if (preparedSlideOffset != -1)
+		if (targetInfo.targetSlide)
 		{
 			//Global::gameMgr->myMenu->showUseGui(Ui_Target);
 		}
-		else   //auto attach on touch
+		else  //auto attach on touch
 		{
-			if (lastUnavailableSlide != targetInfo.targetSlide)
-				targetInfo.targetSlide->start(targetInfo.targetSlidePos);
+			if (targetInfo.closeSlide)
+			if (lastUnavailableSlide != targetInfo.closeSlide)
+				targetInfo.closeSlide->start(targetInfo.closeSlidePos);
 		}
 	}
 	else
@@ -210,12 +257,11 @@ void PlayerAutoTarget::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, fl
 	if (slidingState.autoAttach && lastUnavailableSlide != targetInfo.targetSlide)
 		lastUnavailableSlide = nullptr;
 
-	targetPole = preparedPole;
-	if (targetPole)
+	if (targetInfo.targetPole)
 	{
 		Global::gameMgr->myMenu->gameUi->showUseGui(Ui_UseEnergy);
 	}
 
-	preparedSlide = nullptr;
 	targetResult = std::async(std::launch::async, &PlayerAutoTarget::getTargetFunc, this, pos, dir, rayDistance);
 }
+
