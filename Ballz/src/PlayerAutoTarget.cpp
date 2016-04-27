@@ -199,7 +199,7 @@ bool PlayerAutoTarget::getTargetJump(Ogre::Vector3 pos, Ogre::Vector3 dir, float
 	{
 		float pDist = jump.position.squaredDistance(pos);
 
-		if (pDist < preparedInfo.closestTargetDistanceSq && abs(jump.faceDirection.dotProduct(dir)) > 0.5f)
+		if (pDist < preparedInfo.closestTargetDistanceSq && jump.faceDirection.dotProduct(dir) > 0.5f)
 		{
 			auto p = MUtils::getProjectedPointOnLine(jump.position, pos, pos + dir*rayDistance);
 
@@ -245,8 +245,8 @@ void PlayerAutoTarget::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, fl
 		else  //auto attach on touch
 		{
 			if (targetInfo.closeSlide)
-			if (lastUnavailableSlide != targetInfo.closeSlide)
-				targetInfo.closeSlide->start(targetInfo.closeSlidePos);
+				if (lastUnavailableSlide != targetInfo.closeSlide)
+					targetInfo.closeSlide->start(targetInfo.closeSlidePos);
 		}
 	}
 	else

@@ -27,7 +27,10 @@ bool JumpBoxArrival::update(Ogre::Real tslf)
 
 		Global::player->enableControl(true);
 		Global::player->body->setPositionOrientation(target->position, Ogre::Quaternion::IDENTITY);
-		Global::player->body->setVelocity(target->jumpDirection);
+
+		auto jumpDirection = (target->faceDirection + Ogre::Vector3(0, 1.65f, 0)) * 15;
+
+		Global::player->body->setVelocity(jumpDirection);
 
 		Global::camera->attachCameraWithTransition(0.25f);
 		Global::camera->nodHead(50);

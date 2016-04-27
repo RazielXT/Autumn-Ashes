@@ -1166,7 +1166,7 @@ void loadJumpBox(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
 	JumpBox box;
 	box.position = node->_getDerivedPosition();
 	box.position.y += 1.5f;
-	box.jumpDirection = Ogre::Vector3(0, 30, 0);// node->getOrientation();
+	box.faceDirection = node->_getDerivedOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z;
 
 	Global::player->autoTarget->objects.addLoadedJumpBox(box);
 }

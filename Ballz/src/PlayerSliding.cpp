@@ -88,10 +88,10 @@ bool PlayerSliding::showPossibleSlideTarget()
 {
 	auto& target = player->autoTarget->targetInfo;
 
-	if (target.targetSlide && target.targetSlidePosOffset >= 0)
+	if (target.targetSlide)
 	{
 		targetBillboardSet->setVisible(true);
-		billboardNode->setPosition(target.targetSlidePos);
+		//billboardNode->setPosition(target.targetSlidePos);
 
 		return true;
 	}
@@ -104,7 +104,7 @@ bool PlayerSliding::foundTarget()
 {
 	auto& target = player->autoTarget->targetInfo;
 
-	return (target.targetSlide && target.targetSlidePosOffset >= 0);
+	return (target.targetSlide);
 }
 
 void PlayerSliding::portToTarget()
@@ -112,5 +112,5 @@ void PlayerSliding::portToTarget()
 	auto& targetInfo = player->autoTarget->targetInfo;
 
 	if (targetInfo.targetSlide)
-		targetInfo.targetSlide->start(targetInfo.targetSlidePosOffset, false, 0.1f);
+		targetInfo.targetSlide->start(targetInfo.targetSlideOffset, false, 0.1f);
 }
