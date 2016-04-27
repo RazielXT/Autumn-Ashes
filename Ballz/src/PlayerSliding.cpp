@@ -104,7 +104,7 @@ bool PlayerSliding::foundTarget()
 {
 	auto& target = player->autoTarget->targetInfo;
 
-	return (target.targetSlide);
+	return (target.targetSlide != nullptr);
 }
 
 void PlayerSliding::portToTarget()

@@ -214,6 +214,7 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
 	{
 	case OIS::KC_LSHIFT:
 		sprinting = true;
+		sprintTimer = 0;
 		break;
 
 	case OIS::KC_C:
@@ -369,6 +370,8 @@ void Player::updateStats()
 	moving = (right_key || forw_key || back_key || left_key) && inMoveControl;
 
 	bodyPosition = body->getPosition();
+
+	sprintTimer += tslf;
 
 	updateGroundStats();
 

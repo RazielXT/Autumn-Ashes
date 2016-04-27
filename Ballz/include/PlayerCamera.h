@@ -52,7 +52,7 @@ public:
 	void update();
 	void updateHead();
 
-	float rollCamera(float rollDuration);
+	float afterFall(float duration, bool doRoll);
 
 	Ogre::SceneNode* getCamNode();
 
@@ -72,12 +72,13 @@ private:
 			return rollingLeft > 0;
 		}
 		void update(float time);
-		float doRoll(float duration);
+		float doRoll(float duration, bool changeOr);
 
 		void setTargetNodes(Ogre::SceneNode* heightNode, Ogre::SceneNode* rollNode);
 
 	private:
 
+		bool changeOr;
 		float rollingLeft = 0, rollingDuration;
 		Ogre::SceneNode* rollNode;
 		Ogre::SceneNode* heightNode;

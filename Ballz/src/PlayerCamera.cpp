@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "Player.h"
+#include "GUtils.h"
 
 using namespace Ogre;
 
@@ -378,9 +379,9 @@ Ogre::SceneNode* PlayerCamera::getCamNode()
 	return camnode;
 }
 
-float PlayerCamera::rollCamera(float rollDuration)
+float PlayerCamera::afterFall(float rollDuration, bool doRoll)
 {
-	return rolling.doRoll(rollDuration);
+	return rolling.doRoll(rollDuration, doRoll);
 }
 
 void PlayerCamera::Rolling::update(float time)
@@ -404,13 +405,15 @@ void PlayerCamera::Rolling::update(float time)
 			rRoll *= -Ogre::Math::TWO_PI;
 
 			roll = rRoll;
-			heightDiff = std::max(-1.5f, -2 * std::min(rollingDuration - rollingLeft, rollingLeft));
+			heightDiff = std::max(-2.0f, -3 * std::min(rollingDuration - rollingLeft, rollingLeft));
 		}
 
 		Ogre::Quaternion q(roll, Vector3(1, 0, 0));
 
-		heightNode->setPosition(0, 1 + heightDiff, 0);
-		rollNode->setOrientation(q);
+		heightNode->setPosition(0, heightDiff, 0);
+
+		if(changeOr)
+			rollNode->setOrientation(q);
 	}
 }
 
@@ -420,11 +423,12 @@ void PlayerCamera::Rolling::setTargetNodes(Ogre::SceneNode* height, Ogre::SceneN
 	heightNode = height;
 }
 
-float PlayerCamera::Rolling::doRoll(float duration)
+float PlayerCamera::Rolling::doRoll(float duration, bool doRoll)
 {
 	if (rollingLeft > 0)
 		return rollingLeft;
 
+	changeOr = doRoll;
 	rollingDuration = rollingLeft = duration;
 
 	return duration;

@@ -206,7 +206,7 @@ void PlayerParkour::hitGround()
 	possibleWalljump = false;
 }
 
-void PlayerParkour::doRoll()
+bool PlayerParkour::afterFall(bool roll)
 {
 	Vector3 vel = body->getVelocity();
 	vel.normalise();
@@ -217,11 +217,15 @@ void PlayerParkour::doRoll()
 
 	Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
 
-	if (dirAngleDiff < 45 && vel.length()>0.5f)
+	if (dirAngleDiff < 45 && vel.length()>0.2f)
 	{
-		rolling = Global::camera->rollCamera(1.2f);
+		rolling = Global::camera->afterFall(1.2f, roll);
 		p->pAudio.playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
+
+		return true;
 	}
+	else
+		return false;
 }
 
 void PlayerParkour::updateRolling(float tslf)

@@ -41,7 +41,7 @@ public:
 	{
 		return rolling > 0;
 	}
-	void doRoll();
+	bool afterFall(bool roll);
 	void updateRolling(float tslf);
 
 	bool tryWallrun();

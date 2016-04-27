@@ -127,6 +127,7 @@ private:
 	bool alive, immortal;
 	bool moving, right_key, left_key, back_key, forw_key;
 	bool onGround, sprinting, inControl, inMoveControl;
+	float sprintTimer = 0;
 
 	//extern state
 	bool hanging, grabbedObj, wallrunning, sliding, transformed, surfaceSliding;

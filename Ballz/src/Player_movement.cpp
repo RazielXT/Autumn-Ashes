@@ -103,24 +103,25 @@ void Player::manageFall()
 	auto fallVelocity = bodyVelocityL * 3;
 	pParkour->hitGround();
 
-	if (fallVelocity > 60)
+	if (fallVelocity > 40)
 	{
 		if (!immortal && fallVelocity > 75)
 		{
 			die();
 		}
-		else
-		{
-			pParkour->doRoll();
-		}
 
-		//if (fallVelocity > 50)
+		bool controlled = sprintTimer < 0.3f;
+		controlled = controlled && pParkour->afterFall(controlled);
+
+		if(!controlled)
 		{
 			pPostProcess->vars->hurtEffect = std::min(fallVelocity / 7.0f, 8.0f);
 
 			pAudio.playHurtSound(bodyPosition.x, bodyPosition.y, bodyPosition.z);
 
 			Global::camera->shaker.startShaking(1.5, 1.5, 0.5, 1, 1, 0.7, 0.35, 1, true);
+
+			slowingDown = 0;
 		}
 	}
 	else
@@ -137,6 +138,11 @@ void Player::updateMovement()
 	{
 		slowingDown -= tslf;
 		if (slowingDown < 1) slowingDown = 1;
+	}
+	else if (slowingDown < 1)
+	{
+		slowingDown += tslf*0.4f;
+		if (slowingDown > 1) slowingDown = 1;
 	}
 
 	if (startMoveBoost)
