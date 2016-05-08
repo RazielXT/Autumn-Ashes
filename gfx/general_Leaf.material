@@ -61,6 +61,9 @@ material leaf_material_dynamic_op
 				param_named enlighten float $enlighten
 				param_named vcWeight float $vcWeight
 				param_named diffuseColor float3 $diffuseCol
+				
+				param_named gi_ColDistW float3 0 0 0
+				param_named gi_Pos float3 0 0 0
             }
 
 			texture_unit diffuseMap

@@ -6,7 +6,7 @@ struct VIn
 	float4 p : POSITION;
 	float3 n : NORMAL;
 	float3 t : TANGENT;
-	float3 c : COLOR;
+	float4 c : COLOR;
 	float2 uv : TEXCOORD0;
 };
 
@@ -22,7 +22,7 @@ struct VOut
 	float4 oLightPosition1 : TEXCOORD6;
 	float4 oLightPosition2 : TEXCOORD7;
 	float4 oLightPosition3 : TEXCOORD8;
-	float3 c : TEXCOORD9;
+	float4 c : TEXCOORD9;
 };
 
 struct PIn
@@ -36,7 +36,7 @@ struct PIn
 	float4 LightPosition1 : TEXCOORD6;
 	float4 LightPosition2 : TEXCOORD7;
 	float4 LightPosition3 : TEXCOORD8;
-	float3 c : TEXCOORD9;
+	float4 c : TEXCOORD9;
 };
 
 
@@ -171,6 +171,8 @@ void diffuse_ps(
 	uniform float3 ambientColor,
 	uniform float specular2Weight,
 	uniform float4x4 iTWMat,
+	uniform float3 gi_ColDistW,
+	uniform float3 gi_Pos,
 	float2 screenSpace : WPOS,
 	uniform sampler2D diffuseMap : register(s0),
 	uniform sampler2D normalMap : register(s1),
@@ -222,24 +224,6 @@ void diffuse_ps(
 	float3 halfVec = normalize(lightDir + camDir);
 	float3 specular = pow(max(dot(normal, halfVec), 0), matShininess);
 	
-	//indirect specular
-	tbn = transpose(tbn);
-
-	float3 ld = float3(1, 0, 1);
-	ld = mul(tbn, ld);
-	float3 halfVec2 = normalize(ld + camDir);
-	float3 specular2 = saturate(pow(max(dot(normal, halfVec2), 0), 64) / 3);
-
-	ld = float3(-1, 0, 1);
-	ld = mul(tbn, ld);
-	float3 halfVec3 = normalize(ld + camDir);
-	specular2 += saturate(pow(max(dot(normal, halfVec3), 0), 64) / 3);
-
-	ld = float3(0, -1, 1);
-	ld = mul(tbn, ld);
-	float3 halfVec4 = normalize(ld + camDir);
-	specular2 += saturate(pow(max(dot(normal, halfVec4), 0), 64) / 3);
-	
 	//shadow
 	float norm = diffuseLight;
 	float shadowing = 1.0f;
@@ -278,7 +262,32 @@ void diffuse_ps(
 
 	}
 
-	ambientColor *= ambientWeight;
+	float3 inColor = gi_ColDistW.x;
+	float inDist = gi_ColDistW.y;
+	float inWeight = gi_ColDistW.z;
+	
+	float d = length(IN.wp.xyz-gi_Pos);
+	d = max(0, 1 - d/inDist);
+	
+	float ambient = IN.c.w;
+	ambient *= lerp(1, d, inWeight);
+	
+	ambientColor += saturate(IN.c.rgb);
+	ambientColor *=  ambient * ambientWeight;
+
+	float3 underShadow = max(shadowing.xxx,ambientColor);
+	//ambient lighting
+	//float3 ambDifLight = saturate(-diffuseLight)*ambientColor;
+	
+	//slight gi normal mapping
+	float3 diffuseContrib = lerp(ambientColor, lightDif0.rgb, underShadow*abs(max(diffuseLight,diffuseLight)));
+	
+	float specWeight = specular2Weight;
+	float3 specularContrib = (specular * matSpec0.rgb*specWeight );
+	
+	float4 output = float4(diffuseContrib*diffuseTex + specularContrib, 1);
+	/*
+	//ambientColor *= ambientWeight;
 	float3 vertexLight = ambientColor+(1-ambientColor)*saturate(IN.c.rgb);
 	
 	//slight gi normal mapping
@@ -294,7 +303,7 @@ void diffuse_ps(
 	float3 darkness = max(shadowing.xxx,vertexLight);
 	float3 ambientLight = (vertexLight);
 	float4 output = float4(rawColor*diffuseTex.rgb*lerp(ambientLight, max(directLight,vertexLight),darkness),1);
-	
+	*/
 	//distance fog
 	float insideFog = saturate((distance - fogParams.y) / fogParams.z)*fogColor.a;
 	float3 atmFog = fogColor.rgb;

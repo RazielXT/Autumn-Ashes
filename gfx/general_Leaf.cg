@@ -136,6 +136,8 @@ void diffuse_ps_bop(
 	uniform float4x4 iTWMat,
 	uniform float enlighten,
 	uniform float vcWeight,
+	uniform float3 gi_ColDistW,
+	uniform float3 gi_Pos,
 	uniform sampler2D diffuseMap : register(s0),
 	uniform sampler2D normalMap : register(s1),
 	uniform sampler2D shadowMap0: register(s2),
@@ -206,8 +208,22 @@ void diffuse_ps_bop(
 		}
 	}
 
+	float3 inColor = gi_ColDistW.x;
+	float inDist = gi_ColDistW.y;
+	float inWeight = gi_ColDistW.z;
+	
+	float d = length(IN.wp.xyz-gi_Pos);
+	d = max(0, 1 - d/inDist);
+
+	float ambient = lerp(1, d, saturate(inWeight));
+	
 	//ambientColor*IN.wp.w;//
-	ambientColor = lerp(ambientColor,lerp(0,IN.wp.w,vcWeight),IN.wp.w);//*ambientColor *enlighten;
+	ambientColor = lerp(ambientColor,lerp(0,IN.wp.w,vcWeight),ambient*IN.wp.w);//*ambientColor *enlighten;
+	
+	//float3 gi_ColDistW = float3(0,50,1);
+	//float3 gi_Pos = float3(-20,0,0);
+	
+
 	
 	float3 diffuseContrib = (diffuse * lightDif0 * diffuseTex.rgb);
 	float3 specularContrib = shadowing*(specular * matSpec0.rgb);

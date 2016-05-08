@@ -56,10 +56,7 @@ material gateTransparent : material_transparent
 
 	set $difUV "1.0 1.0"
 	set $diffuseCol "0.5 0.5 0.6"
-	// specular colour multiplier (for example, red-ish)
-
 	set $specularCol "10.967 10.97 10.98"
-	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "128"
 }
 
@@ -75,14 +72,38 @@ material waterWaves : material_water_dynamic
 
 	set $difUV "1.0 1.0"
 	set $diffuseCol "0.5 0.5 0.6"
-	// specular colour multiplier (for example, red-ish)
-
 	set $specularCol "10.967 10.97 10.98"
-	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "128"
 	
     set $speedUV "0.3"
 	set $waveSizeSpeed "0.25 1.5"
+}
+
+material redFlag : 1t_material_static 
+{
+	set_texture_alias diffuseMap Moss0162_10_S.jpg
+	set_texture_alias normalMap Moss0162_10_S_NORM.tga
+	set_texture_alias dispMap Moss0162_10_S_DISP.bmp
+	
+	set $uvScale "0.75"
+	set $detailScale "0.4"
+	
+	set $diffuseCol "2 0.5 0.5"
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	set $shininess "16"
+}
+
+material planksVC : 1t_vc_material_static 
+{
+	set_texture_alias diffuseMap wood.png
+	set_texture_alias normalMap wood_NORM.tga
+
+	set $difUV "1 1"
+	set $diffuseCol "1 1 1"
+	set $brightness "0.05"
+	set $specularCol "0.1036 0.101 0.152"
+	set $shininess "32"
 }
 
 material waterSheer : material_water_static
@@ -94,10 +115,7 @@ material waterSheer : material_water_static
 
 	set $difUV "1.0 1.0"
 	set $diffuseCol "0.5 0.5 0.6"
-	// specular colour multiplier (for example, red-ish)
-
 	set $specularCol "10.967 10.97 10.98"
-	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "128"
 
     set $speedUV "2"
@@ -120,11 +138,8 @@ material grassMat : 1t_material_static
 	set $detailScale "0.4"
 	
 	set $diffuseCol "1 1 1"
-	// specular colour multiplier (for example, red-ish)
-
 	set $specularCol "0.02 0.02 0.05"
 	set $brightness "0.005"
-	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "16"
 }
 
@@ -139,13 +154,9 @@ material fallenLeaves : 1t_material_static
 	set $detailScale "5"
 	
 	set $diffuseCol "1 1 1"
-	// specular colour multiplier (for example, red-ish)
-
 	set $specularCol "0.02 0.02 0.05"
 	set $brightness "0.005"
-	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "16"
-
 }
 
 material whiteConcreteMat : 1t_material_static 
@@ -159,11 +170,8 @@ material whiteConcreteMat : 1t_material_static
 	set $detailScale "5"
 	
 	set $diffuseCol "1 1 1"
-	// specular colour multiplier (for example, red-ish)
-
 	set $specularCol "0.02 0.02 0.05"
 	set $brightness "0.005"
-	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "16"
 }
 
@@ -178,13 +186,9 @@ material concreteMat : 1tEnv_material_static
 	set $detailScale "5"
 	
 	set $diffuseCol "1 1 1"
-	// specular colour multiplier (for example, red-ish)
-
 	set $specularCol "0.02 0.02 0.05"
 	set $brightness "0.005"
-	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "16"
-
 }
 
 material grassMat : 1t_material_static 
@@ -203,13 +207,9 @@ material grassMat : 1t_material_static
 	set $detailScale "0.4"
 	
 	set $diffuseCol "1 1 1"
-	// specular colour multiplier (for example, red-ish)
-
 	set $specularCol "0.02 0.02 0.05"
 	set $brightness "0.005"
-	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "16"
-
 }
 
 material crow : 1tAT_material_static
@@ -261,14 +261,12 @@ material wood03png : 1t_vc_material_static
 	set $uv2Scale "1" 
 	set $uvMinMaxDetailScale "3.7 0.15" 
 
-	set_texture_alias dispMap wood0_DISP.png
-	set_texture_alias spreadMap wood0_DISP.png
-	
 	set_texture_alias diffuseMap bark_deciduous.dds
-	set_texture_alias normalMap wood_NORM.tga
-
+	set_texture_alias normalMap rock3_NORM_NORM.tga
+	set_texture_alias normalDetailMap rock3_NORM_NORM.tga
+	
 	set $diffuseCol "1 1 1"
-	set $specularCol "0.1 0.1 0.05"
+	set $specularCol "0.1 0.1 0.1"
 }
 
 material wood1Mat : 1t_material_static 
@@ -372,15 +370,11 @@ material terrainGrassRock : 2t_material_static
 	set_texture_alias spreadMap spread.png
 
 	set $diffuseCol "1 1 1"
-	// specular colour multiplier (for example, red-ish)
-
 	set $specularCol "0.106281215 0.106281215 0.15081215"
 	set $specular2Weight "0"
 	
 	set $brightness "0.015"
-	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "64"
-
 }
 
 material rockWall : 2t_vc_material_static
@@ -399,15 +393,12 @@ material rockWall : 2t_vc_material_static
 	set_texture_alias diffuseMap2 3.jpg
 	set_texture_alias normalMap2 3_NORM.tga
 	set $diffuseCol "1 1 1"
-	// specular colour multiplier (for example, red-ish)
 
 	set $specularCol "0.106281215 0.106281215 0.15081215"
 	set $specular2Weight "0"
 	
 	set $brightness "0.015"
-	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "64"
-
 }
 
 material terrainRock : 2t_vc_material_static
@@ -433,13 +424,11 @@ material terrainRock : 2t_vc_material_static
 	set_texture_alias normalMap2 SilveryBlue_NORM.tga
 
 	set $diffuseCol "1 1 1"
-	// specular colour multiplier (for example, red-ish)
 
 	set $specularCol "0.106281215 0.106281215 0.15081215"
 	set $specular2Weight "0"
 	
 	set $brightness "0.015"
-	// specular power (shininess) (the higher, the sharper the highlights)
 	set $shininess "64"
 
 }
