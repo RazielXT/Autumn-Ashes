@@ -10,6 +10,8 @@ using namespace Ogre;
 
 int DetailGeometry::matID = 0;
 
+std::vector<LoadedDG> BasicDetailGeometry::loadedDG;
+
 void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryParams& params)
 {
 	init(params);
@@ -34,6 +36,8 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 	sg->setOrigin(gridRegion / 2.0f + gridInfo.node->getPosition());
 	sg->setRenderingDistance(info.maxDistance);
 	int bgc = 0;
+
+	Ogre::AxisAlignedBox bbox;
 
 	for (float x = xStart; x <= xEnd; x+=xStep)
 		for (float y = yStart; y <= yEnd; y += yStep)
@@ -66,11 +70,22 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 				float scale = info.generalScale*scaleMask*Ogre::Math::RangeRandom(params.minmaxScale.x, params.minmaxScale.y);
 				placeObject(ray.pos, MUtils::quaternionFromNormal(ray.normal), scale, params.color);
 
+				bbox.merge(ray.pos);
+
 				bgc++;
 			}
 		}
 
 	sg->build();
+
+	LoadedDG dgInfo;
+	dgInfo.sg = sg;
+	dgInfo.name = params.name + "_" + gridInfo.node->getName();
+	dgInfo.id = 0;
+	dgInfo.bbox = bbox;
+	dgInfo.usedMats = mats.getGeneratedMaterials();
+
+	loadedDG.push_back(dgInfo);
 
 	for (auto e : temps)
 		Global::mSceneMgr->destroyEntity(e);

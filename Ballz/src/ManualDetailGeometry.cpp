@@ -7,7 +7,7 @@
 using namespace Ogre;
 
 std::map<int, ManualDetailGeometry*> ManualDetailGeometry::mdg;
-std::vector<LoadedManualDG> ManualDetailGeometry::loadedMDG;
+std::vector<LoadedDG> ManualDetailGeometry::loadedMDG;
 
 ManualDetailGeometry::ManualDetailGeometry(int id)
 {
@@ -87,12 +87,12 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
 	}
 }
 
-LoadedManualDG* ManualDetailGeometry::getClosest()
+LoadedDG* ManualDetailGeometry::getClosest()
 {
 	if (!Global::player)
 		return nullptr;
 
-	LoadedManualDG* dgOut = nullptr;
+	LoadedDG* dgOut = nullptr;
 	float closest = 999999;
 	auto pos = Global::camera->getPosition();
 

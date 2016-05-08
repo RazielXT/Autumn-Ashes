@@ -1,8 +1,6 @@
-#pragma once
-
 #include "stdafx.h"
 
-#include "SceneParser.h"
+#include "GameScene.h"
 #include "tinyxml2.h"
 #include "GrassHeightFunction.h"
 #include "BridgeMaker.h"
@@ -1189,7 +1187,13 @@ void loadPole(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
 void loadEnergy(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
 {
 	auto energy = SceneEnergies::createEnergy();
-	energy->hover(node->getPosition());
+	auto pos = node->getPosition();
+
+	if (getElementBoolValue(element, "RayGround"))
+		if (GUtils::getVerticalRayPos(pos, 0, 10))
+			pos.y += 2;
+
+	energy->hover(pos);
 
 	node->detachAllObjects();
 	Global::mSceneMgr->destroyEntity(ent);
@@ -2714,10 +2718,10 @@ bool isInPreloadPass(std::string type)
 
 }
 
-namespace SceneParser
+namespace GameScene
 {
 
-void reloadScene(Ogre::String filename)
+void reloadScene(std::string filename)
 {
 	Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("RELOADING SCENE :: filename \"" + filename + "\"", LML_NORMAL);
 
@@ -2753,7 +2757,9 @@ void reloadScene(Ogre::String filename)
 	Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("-----------------------------------------------------------", LML_NORMAL);
 }
 
-void loadScene(Ogre::String filename)
+std::time_t lastLoadTime;
+
+void loadScene(std::string filename)
 {
 	Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("LOADING SCENE :: filename \"" + filename + "\"", LML_NORMAL);
 
@@ -2827,5 +2833,7 @@ void loadScene(Ogre::String filename)
 
 	Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("LOADING COMPLETED :: filename \"" + filename + "\"", LML_NORMAL);
 	Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("-----------------------------------------------------------", LML_NORMAL);
+
+	lastLoadTime = std::time(nullptr);
 }
 }

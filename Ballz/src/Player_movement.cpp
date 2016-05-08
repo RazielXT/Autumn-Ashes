@@ -42,7 +42,7 @@ void Player::updateDirectionForce()
 {
 	forceDirection = Vector3::ZERO;
 
-	if (!wallrunning && !climbing && !pParkour->isRolling())
+	if (!wallrunning && !climbing)// && !pParkour->isRolling())
 	{
 		if (!moving)
 		{
@@ -54,7 +54,7 @@ void Player::updateDirectionForce()
 			updateMovement();
 		}
 	}
-	else if (pParkour->isRolling())
+	if (pParkour->isRolling())
 	{
 		pParkour->updateRolling(tslf);
 	}
@@ -103,7 +103,7 @@ void Player::manageFall()
 	auto fallVelocity = bodyVelocityL * 3;
 	pParkour->hitGround();
 
-	if (fallVelocity > 40)
+	if (fallVelocity > 50)
 	{
 		if (!immortal && fallVelocity > 75)
 		{
@@ -111,7 +111,7 @@ void Player::manageFall()
 		}
 
 		bool controlled = sprintTimer < 0.3f;
-		controlled = controlled && pParkour->afterFall(controlled);
+		pParkour->afterFall(controlled);
 
 		if(!controlled)
 		{
@@ -125,7 +125,13 @@ void Player::manageFall()
 		}
 	}
 	else
-		slowingDown = std::max(1.0f,fallVelocity/20.0f);
+	{
+		if(sprintTimer < 0.3f)
+			pParkour->afterFall(false);
+
+		slowingDown = std::max(1.0f, fallVelocity / 20.0f);
+	}
+
 
 	pCamera->manageFall(fallVelocity);
 

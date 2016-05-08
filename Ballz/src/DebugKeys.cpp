@@ -73,6 +73,12 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 	}
 	break;
 
+	case OIS::KC_NUMPAD3:
+	{
+		Global::gameMgr->reloadMeshes();
+	}
+	break;
+
 	case OIS::KC_M:
 	{
 		if (Global::gameMgr->gameState == GAME)
@@ -125,7 +131,7 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 		Global::camera->shaker.startShaking(1.2, 1.5, 10, 1, 1, 0.1, 0.35, 1, true);
 		break;
 
-	case OIS::KC_NUMPAD3:
+	case OIS::KC_NUMPADENTER:
 		if (Global::gameMgr->gameState == MENU)
 		{
 			Global::gameMgr->switchToLevel(5);

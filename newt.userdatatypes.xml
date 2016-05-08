@@ -413,6 +413,7 @@
 
 <class name="Energy" usage="object">
 	<data name="Auto obtain" type="bool" defaultValue="false"/>
+	<data name="RayGround" type="bool" defaultValue="false"/>
 </class>
 
 <class name="JumpBox" usage="object">

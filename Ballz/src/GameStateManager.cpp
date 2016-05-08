@@ -39,6 +39,7 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : 
 	info.name = "MainMenu";
 	info.path = "../../media/menu/";
 	info.sceneFile = "menu.scene";
+	info.prefix = "test";
 	info.init = createMenuLevel;
 	info.fogColor = Ogre::ColourValue(0.5f, 0.55f, 0.65f, 0.5f);
 	info.fogStartDistance = 80;
@@ -147,7 +148,7 @@ void GameStateManager::switchToLevel(int lvl)
 
 	auto& lvlInfo = levels[lvl];
 
-	SceneParser::loadScene(lvlInfo.path + lvlInfo.sceneFile);
+	GameScene::loadScene(lvlInfo.path + lvlInfo.sceneFile);
 
 	loadSceneSettings();
 	sceneEdits.loadChanges();
@@ -177,7 +178,12 @@ void GameStateManager::restartLevel()
 
 void GameStateManager::reloadLevel()
 {
-	SceneParser::reloadScene(levels[lastLVL].path + levels[lastLVL].sceneFile);
+	GameScene::reloadScene(levels[lastLVL].path + levels[lastLVL].sceneFile);
+}
+
+void GameStateManager::reloadMeshes()
+{
+	GameScene::reloadMeshes(levels[lastLVL].path, levels[lastLVL].prefix);
 }
 
 bool GameStateManager::insideMenuPressed()

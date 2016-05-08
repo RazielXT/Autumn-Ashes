@@ -5,7 +5,7 @@
 #include "GeometryManager.h"
 #include "PostProcessMgr.h"
 #include "lvl_update.h"
-#include "SceneParser.h"
+#include "GameScene.h"
 #include "CrowWatch.h"
 #include "SceneCubeMap.h"
 

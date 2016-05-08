@@ -20,7 +20,7 @@ public:
 
 	PlayerFlash(Player* player, PlayerEnergies* energies);
 
-	void portForward();
+	bool portForward();
 };
 
 class PlayerAbilities

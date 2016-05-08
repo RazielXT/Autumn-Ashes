@@ -32,8 +32,7 @@ bool PlayerAbilities::pressedKey(const OIS::KeyEvent &arg)
 	switch (arg.key)
 	{
 	case OIS::KC_F:
-		flash.portForward();
-		break;
+		return flash.portForward();
 
 	case OIS::KC_R:
 		timeshift.shiftBack();
@@ -65,7 +64,7 @@ bool PlayerAbilities::releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButton
 }
 
 
-void PlayerFlash::portForward()
+bool PlayerFlash::portForward()
 {
 	auto target = pEnergies->facingEnergy();
 	auto e = pEnergies->getAvailableEnergy();
@@ -81,7 +80,11 @@ void PlayerFlash::portForward()
 
 		portStartPos = cameraPortNode->getPosition();
 		portTargetPos = target->position;
+
+		return true;
 	}
+
+	return false;
 }
 
 void PlayerFlash::update(float tslf)

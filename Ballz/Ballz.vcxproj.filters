@@ -242,9 +242,6 @@
     <ClCompile Include="src\Energy.cpp">
       <Filter>Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\SceneParser.cpp">
-      <Filter>Files\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="src\ParticleManager.cpp">
       <Filter>Files\Core</Filter>
     </ClCompile>
@@ -334,6 +331,12 @@
     </ClCompile>
     <ClCompile Include="src\PlayerAudio.cpp">
       <Filter>Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sceneParser.cpp">
+      <Filter>Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MeshReload.cpp">
+      <Filter>Files\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -482,9 +485,6 @@
       <Filter>Files\Physics</Filter>
     </ClInclude>
     <ClInclude Include="include\tinyxml2.h">
-      <Filter>Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SceneParser.h">
       <Filter>Files\Scene</Filter>
     </ClInclude>
     <ClInclude Include="include\levelsInit.h">
@@ -672,6 +672,9 @@
     </ClInclude>
     <ClInclude Include="include\AudioId.h">
       <Filter>Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameScene.h">
+      <Filter>Files\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

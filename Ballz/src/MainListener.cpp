@@ -4,7 +4,7 @@
 #include "GameStateManager.h"
 #include "Tasks.h"
 #include "GeometryManager.h"
-#include "SceneParser.h"
+#include "GameScene.h"
 #include "DefaultObjectContactCallback.h"
 #include "TriggerObjectContactCallback.h"
 #include "TriggerPlayerContactCallback.h"

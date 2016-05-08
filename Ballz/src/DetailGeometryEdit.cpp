@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "DetailGeometryEdit.h"
 #include "ManualDetailGeometry.h"
+#include "BasicDetailGeometry.h"
 
-DetailGeometryEdit::DetailGeometryEdit(LoadedManualDG* manualDG)
+DetailGeometryEdit::DetailGeometryEdit(LoadedDG* manualDG)
 {
 	sg = manualDG->sg;
 	entity = nullptr;
@@ -20,6 +21,7 @@ DetailGeometryEdit::DetailGeometryEdit(LoadedManualDG* manualDG)
 
 	materialPtr = matsArray[currentMatId];
 	loadMaterial();
+	mainMaterial = originName;
 	dgName = manualDG->name;
 
 	changedMaterial = Global::gameMgr->sceneEdits.loadSavedDetailGeometryChanges(*this, dgName);
@@ -97,7 +99,12 @@ DetailGeometryEdit* DetailGeometryEdit::query()
 	auto dg = ManualDetailGeometry::getClosest();
 
 	if (!dg || dg->usedMats.empty())
-		return nullptr;
+	{
+		dg = &BasicDetailGeometry::loadedDG[0];
+
+		if (!dg || dg->usedMats.empty())
+			return nullptr;
+	}
 
 	auto edit = new DetailGeometryEdit(dg);
 
@@ -110,12 +117,25 @@ void DetailGeometryEdit::applyChanges(std::map < std::string, DetailGeometryEdit
 	{
 		auto& loadedDg = ManualDetailGeometry::loadedMDG;
 
-		LoadedManualDG* dgInfo = nullptr;
+		LoadedDG* dgInfo = nullptr;
 		for (auto& ldg : loadedDg)
 		{
 			if (ldg.name == savedDg.first)
 			{
 				dgInfo = &ldg;
+			}
+		}
+
+		if (!dgInfo)
+		{
+			auto& loadedDg = BasicDetailGeometry::loadedDG;
+
+			for (auto& ldg : loadedDg)
+			{
+				if (ldg.name == savedDg.first)
+				{
+					dgInfo = &ldg;
+				}
 			}
 		}
 

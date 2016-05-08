@@ -2,20 +2,22 @@
 
 #include "MaterialEdit.h"
 
-struct LoadedManualDG;
+struct LoadedDG;
 
 struct DetailGeometryEdit : public MaterialEdit
 {
 	DetailGeometryEdit() {}
-	DetailGeometryEdit(LoadedManualDG* manualDG);
+	DetailGeometryEdit(LoadedDG* manualDG);
 	virtual ~DetailGeometryEdit() {}
 
+	std::string mainMaterial;
 	std::vector<EditVariable> geometryParams;
 	std::string dgName;
 
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version)
 	{
+		ar & mainMaterial;
 		ar & dgName;
 		ar & vsVariablesMap;
 		ar & psVariablesMap;

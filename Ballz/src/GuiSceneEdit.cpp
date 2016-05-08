@@ -52,6 +52,21 @@ bool GuiSceneEdit::pressedKey(const OIS::KeyEvent &arg)
 
 	switch (arg.key)
 	{
+	case OIS::KC_P:
+	{
+		if (activeLvl == 3)
+		{
+			auto& var = currentVars->at(activeVarId);
+			if (var.size >= 3)
+			{
+				var.buffer[0] = Global::player->bodyPosition.x;
+				var.buffer[1] = Global::player->bodyPosition.y;
+				var.buffer[2] = Global::player->bodyPosition.z;
+				currentEdit->editChanged(var, base[activeBaseId].name);
+			}
+		}
+	}
+	break;
 	case OIS::KC_LEFT:
 	{
 		activeLvl = Ogre::Math::Clamp(activeLvl - 1, 1, 3);

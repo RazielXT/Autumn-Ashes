@@ -14,6 +14,8 @@ public:
 	virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryParams& info);
 	virtual void clear();
 
+	static std::vector<LoadedDG> loadedDG;
+
 protected:
 
 	virtual void init(DetailGeometryParams& info);

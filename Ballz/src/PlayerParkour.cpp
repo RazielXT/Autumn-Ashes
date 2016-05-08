@@ -208,7 +208,7 @@ void PlayerParkour::hitGround()
 
 bool PlayerParkour::afterFall(bool roll)
 {
-	Vector3 vel = body->getVelocity();
+	/*Vector3 vel = body->getVelocity();
 	vel.normalise();
 	vel.y = 0;
 
@@ -218,14 +218,14 @@ bool PlayerParkour::afterFall(bool roll)
 	Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
 
 	if (dirAngleDiff < 45 && vel.length()>0.2f)
-	{
-		rolling = Global::camera->afterFall(1.2f, roll);
-		p->pAudio.playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
+	{*/
+	rolling = Global::camera->afterFall(1.2f, roll);
+	p->pAudio.playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
 
-		return true;
-	}
+	return true;
+	/*}
 	else
-		return false;
+		return false;*/
 }
 
 void PlayerParkour::updateRolling(float tslf)
@@ -378,7 +378,7 @@ void PlayerParkour::updateWallrunning()
 			wallrunSide = 0;
 			stopWallrun();
 
-			body->setVelocity(wallrunCurrentDir*wallrunSpeed*wallrunTimer - Ogre::Vector3(0, 1, 0)*wallrunTimer);
+			body->setVelocity(wallrunCurrentDir*wallrunSpeed - Ogre::Vector3(0, 1, 0)*wallrunTimer);
 		}
 	}
 }

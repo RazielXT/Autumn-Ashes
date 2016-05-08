@@ -29,7 +29,7 @@ public:
 
 	void wallrun_callback(OgreNewt::Body* me, float timeStep, int threadIndex)
 	{
-		me->setVelocity(wallrunCurrentDir*wallrunSpeed*wallrunTimer - wall_normal - Ogre::Vector3(0, 0.5f, 0)*wallrunTimer);
+		me->setVelocity(wallrunCurrentDir*wallrunSpeed*(0.5f + wallrunTimer*0.5f) - wall_normal - Ogre::Vector3(0, 0.5f, 0)*wallrunTimer);
 	}
 
 	PlayerParkour(Player* player);

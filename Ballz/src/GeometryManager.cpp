@@ -70,7 +70,7 @@ void GeometryManager::clear()
 	detailGeometries.clear();
 
 	DetailGeometryMaterial::reset();
-
+	BasicDetailGeometry::loadedDG.clear();
 	optimizedGroups.clear();
 }
 

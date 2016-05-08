@@ -20,6 +20,7 @@ struct LevelInfo
 	std::string name;
 	std::string path;
 	std::string sceneFile;
+	std::string prefix;
 	std::function<void()> init;
 
 	std::string skyboxName;
@@ -55,6 +56,7 @@ public:
 
 	void restartLevel();
 	void reloadLevel();
+	void reloadMeshes();
 	void loadSceneSettings();
 
 	void switchState(int target, float time = 1.0f);

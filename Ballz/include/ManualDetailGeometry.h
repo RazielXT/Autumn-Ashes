@@ -5,15 +5,6 @@
 #include "DetailGeometryMaterial.h"
 #include "Player.h"
 
-struct LoadedManualDG
-{
-	Ogre::AxisAlignedBox bbox;
-	Ogre::StaticGeometry* sg = nullptr;
-	int id;
-	std::string name;
-	std::vector<Ogre::Material*> usedMats;
-};
-
 class ManualDetailGeometry
 {
 public:
@@ -22,15 +13,14 @@ public:
 
 	void addObject(Ogre::SceneNode* node, std::string type, bool keepMesh, Ogre::Vector3 color);
 
-
-	static std::vector<LoadedManualDG> loadedMDG;
-	static LoadedManualDG* getClosest();
+	static std::vector<LoadedDG> loadedMDG;
+	static LoadedDG* getClosest();
 	static void buildAll();
 	static ManualDetailGeometry* get(int id);
 
 protected:
 
-	LoadedManualDG info;
+	LoadedDG info;
 	std::vector<Ogre::Entity*> usedEntities;
 	DetailGeometryMaterial materialHelper;
 

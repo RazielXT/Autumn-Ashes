@@ -171,6 +171,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\ManualDetailGeometry.cpp" />
     <ClCompile Include="src\MaterialEdit.cpp" />
     <ClCompile Include="src\GUtils.cpp" />
+    <ClCompile Include="src\MeshReload.cpp" />
     <ClCompile Include="src\OptimizedGroupEdit.cpp" />
     <ClCompile Include="src\ParticleEdit.cpp" />
     <ClCompile Include="src\ParticleManager.cpp" />
@@ -191,7 +192,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\BasicDetailGeometry.cpp" />
     <ClCompile Include="src\SceneCubeMap.cpp" />
     <ClCompile Include="src\SceneEditsLibrary.cpp" />
-    <ClCompile Include="src\SceneParser.cpp" />
+    <ClCompile Include="src\sceneParser.cpp" />
     <ClCompile Include="src\PlayerAutoTarget.cpp" />
     <ClCompile Include="src\PlayerPostProcess.cpp" />
     <ClCompile Include="src\Tasks.cpp" />
@@ -308,7 +309,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\Reflection.h" />
     <ClInclude Include="include\SceneCubeMap.h" />
     <ClInclude Include="include\SceneEditsLibrary.h" />
-    <ClInclude Include="include\SceneParser.h" />
+    <ClInclude Include="include\GameScene.h" />
     <ClInclude Include="include\PlayerAutoTarget.h" />
     <ClInclude Include="include\SUtils.h" />
     <ClInclude Include="include\tinyxml2.h" />

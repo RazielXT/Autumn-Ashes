@@ -29,6 +29,8 @@ void SceneEditsLibrary::removeMaterialEdit(std::string entName)
 			materialEditHistory.data.erase(ent);
 			break;
 		}
+
+		ent++;
 	}
 
 	saveMaterialHistory(Global::gameMgr->getCurrentLvlInfo()->path);
@@ -247,7 +249,7 @@ bool SceneEditsLibrary::loadSavedDetailGeometryChanges(DetailGeometryEdit& edit,
 		if (dg->first == name)
 		{
 			//dgs have unique mats
-			if (edit.originName != dg->second.originName)
+			if (edit.mainMaterial != dg->second.mainMaterial)
 			{
 				//old save, erase it
 				dgEditHistory.data.erase(dg);
@@ -270,7 +272,10 @@ void SceneEditsLibrary::addDetailGeometryEdit(DetailGeometryEdit& edit, std::str
 	auto& dg = dgEditHistory.data[name];
 
 	if (dg.dgName.empty())
+	{
 		dg.dgName = edit.dgName;
+		dg.mainMaterial = edit.mainMaterial;
+	}
 
 	dg.merge(edit, true);
 

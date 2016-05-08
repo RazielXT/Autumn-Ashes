@@ -428,6 +428,9 @@ float PlayerCamera::Rolling::doRoll(float duration, bool doRoll)
 	if (rollingLeft > 0)
 		return rollingLeft;
 
+	if (doRoll)
+		duration *= 0.85f;
+
 	changeOr = doRoll;
 	rollingDuration = rollingLeft = duration;
 

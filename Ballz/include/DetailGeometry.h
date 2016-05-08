@@ -43,6 +43,15 @@ struct DetailGeometryParams
 	DetailGeometryCustomEdit customEdit;
 };
 
+struct LoadedDG
+{
+	Ogre::AxisAlignedBox bbox;
+	Ogre::StaticGeometry* sg = nullptr;
+	int id;
+	std::string name;
+	std::vector<Ogre::Material*> usedMats;
+};
+
 class DetailGeometry
 {
 public:

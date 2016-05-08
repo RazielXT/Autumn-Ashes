@@ -229,6 +229,10 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
 		body->setVelocity(body->getVelocity() + Vector3(0, 9, 0));
 		break;
 
+	case OIS::KC_F:
+		body->setVelocity(facingDir*15);
+		break;
+
 	case OIS::KC_G:
 	{
 		Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("Pbody: "+Ogre::StringConverter::toString(body->getPosition()),Ogre::LML_NORMAL);
