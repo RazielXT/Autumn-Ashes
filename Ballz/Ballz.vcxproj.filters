@@ -63,6 +63,9 @@
     <Filter Include="Files\Core\SceneEdit\Edits">
       <UniqueIdentifier>{fd2f772b-1602-4e68-b0ba-27c84f2a7c67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\Core\Progress">
+      <UniqueIdentifier>{9d72eda4-65a9-409b-bf57-c8d1ad02272a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CrowPath.cpp">
@@ -337,6 +340,9 @@
     </ClCompile>
     <ClCompile Include="src\MeshReload.cpp">
       <Filter>Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StateSave.cpp">
+      <Filter>Files\Core\Progress</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -675,6 +681,9 @@
     </ClInclude>
     <ClInclude Include="include\GameScene.h">
       <Filter>Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StateSave.h">
+      <Filter>Files\Core\Progress</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
