@@ -263,6 +263,9 @@ bool PlayerParkour::tryWallrun()
 
 	if (wallrunSide && correctDot)
 	{
+		if (p->bodyVelocityL < 5 || (p->body->getVelocity() / p->bodyVelocityL).dotProduct(frontDir) < 0.35f)
+			return false;
+
 		wallrunCurrentDir = Quaternion(Degree(90 * wallrunSide), Vector3(0, 1, 0))*wall_normal;
 
 		wallrunSpeed = 10;
@@ -273,7 +276,6 @@ bool PlayerParkour::tryWallrun()
 		wallrunTimer = std::min(1.0f, (p->bodyVelocityL*wallDirVelocity) / wallrunSpeed);
 
 		//GUtils::DebugPrint("Start wallrun with start velocity dot " + std::to_string(wallDirVelocity), true);
-
 
 		Ogre::Vector3 size(0.2, 0.2, 0.2);
 		Ogre::Real mass = 0.3;
