@@ -29,8 +29,18 @@ enum BodyType
 	Slidable = 13
 };
 
+enum VisualType
+{
+	None,
+	Entity,
+	OptGroup
+};
+
 struct bodyUserData
 {
+	void* visualData = nullptr;
+	VisualType visualDataType;
+
 	TriggerInfo* trigger = nullptr;
 	ObjectAudio* sounds = nullptr;
 	short material = 0;
