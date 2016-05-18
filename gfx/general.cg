@@ -1,0 +1,5 @@
+float3 offsetCubemapUV(in float3 v, float3 CubemapPositionWS, float3 PositionWS, float EnvMapOffset)
+{  
+	float3 ReflDirectionWS = v;
+	return (normalize(PositionWS - CubemapPositionWS)*EnvMapOffset + ReflDirectionWS);
+}

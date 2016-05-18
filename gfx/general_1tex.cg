@@ -1,3 +1,5 @@
+#include "general.cg"
+
 #define shTex 512
 #define shFil 5
 
@@ -167,6 +169,7 @@ void diffuse_ps(
 	uniform float specular2Weight,
 	uniform float4x4 iTWMat,
 	uniform float4x4 viewMat,
+	uniform float4 cubemapWPOffset,
 	float2 screenSpace : WPOS,
 	uniform sampler2D diffuseMap : register(s0),
 	uniform sampler2D normalMap : register(s1),
@@ -176,6 +179,7 @@ void diffuse_ps(
 	uniform sampler2D shadowMap2 : register(s5),
 	uniform sampler2D shadowMap3 : register(s6),
 	uniform sampler2D normalDetailMap : register(s7),
+	uniform samplerCube envMap : register(s8),
 	out float4 color0 : COLOR0,
 	out float4 color1 : COLOR1,
 	out float4 color2 : COLOR2,
@@ -212,6 +216,14 @@ void diffuse_ps(
 	eyeDir = normalize(eyeDir);
 
 	float4 diffuseTex = tex2D(diffuseMap, texCoordBase);
+	
+	float3 ReflectDir = reflect(eyeDir,normal);
+	ReflectDir.z *= -1;
+	float3 cubeDir = offsetCubemapUV(ReflectDir,cubemapWPOffset.xyz,IN.wp.xyz, cubemapWPOffset.w);	
+	float fresnel = 1 - pow(-dot(eyeDir, normal.xyz), 2);
+	//fresnel *= 0.8;
+	diffuseTex.rgb = lerp(diffuseTex.rgb, texCUBE(envMap,cubeDir).rgb, fresnel*0.5);
+	
 	diffuseTex.rgb *= diffuseColor;
 	
 	float diffuseGeomLight = dot(lightDir, IN.n.xyz);
