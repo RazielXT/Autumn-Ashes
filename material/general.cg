@@ -1,0 +1,55 @@
+#include "filters.cg"
+
+float3 offsetCubemapUV(in float3 v, float3 CubemapPositionWS, float3 PositionWS, float EnvMapOffset)
+{  
+	float3 ReflDirectionWS = v;
+	return (normalize(PositionWS - CubemapPositionWS)*EnvMapOffset + ReflDirectionWS);
+}
+
+float4 getCubemapReflection(float3 eyeDir, float3 normal, float3 wp, float4 cubemapWPOffset)
+{
+	float3 ReflectDir = reflect(eyeDir,normal);
+	ReflectDir.z *= -1;
+	float3 cubeDir = offsetCubemapUV(ReflectDir,cubemapWPOffset.xyz, wp.xyz, cubemapWPOffset.w);
+	float fresnel = 1 - pow(-dot(eyeDir, normal.xyz), 2);
+
+	return float4(texCUBE(envMap,cubeDir).rgb,fresnel);
+}
+
+float3 transformNormal(float3 t, float3 b, float3 n, float3 normalTex, float4x4 iTWMat)
+{
+	float3x3 tbn = float3x3(IN.t.xyz, IN.b.xyz, IN.n.xyz);
+	float3 normal = mul(transpose(tbn), normalTex.xyz*2 - 1); // to object space
+	normal = normalize(mul((float3x3)iTWMat, normal));
+	
+	return normal;
+}
+
+float3 applyFog(float3 image, float dist, float4 fogParams, float4 fogColor)
+{
+	float insideFog = saturate((dist - fogParams.y) / fogParams.z)*fogColor.a;
+	float3 atmFog = fogColor.rgb;
+	
+	return lerp(output.rgb, atmFog, insideFog);
+}
+
+float2 getDisplacementOffset(sampler2D dispMap, float2 uv, float3 viewDir)
+{
+	float height = tex2D(dispMap, uv IN.uv.xy * uvScale).x;
+	return (0.025 * height - 0.015) * normalize(viewDir).xy;
+}
+
+float3 blendMaps(sampler2D map1, sampler2D map2, float2 texCoord1, float2 texCoord2)
+{
+	float3 tex1 = tex2D(map1, texCoord1).rgb;
+	float3 tex2 = tex2D(map2, texCoord2).rgb;
+	return color_blend(tex1,tex2).rgb;
+}
+
+float4 getSpecular(float3 lightDir, float3 camDir, float3 normal, float4 specColorPow)
+{
+	float3 halfVec = normalize(lightDir - camDir);
+	float specular = pow(max(dot(normal, halfVec), 0), specColorPow.w);
+	
+	return float4(specular*specColorPow.rgb,specular);
+}
