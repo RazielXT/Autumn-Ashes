@@ -110,8 +110,8 @@ void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& ch
 			auto e = Global::mSceneMgr->getEntity(ent.first);
 			auto curMat = e->getSubEntity(0)->getMaterial();
 
-			//if (SUtils::startsWith(curMat->getName(), ent.second.originName))
-			if (ent.second.originName == curMat->getName())
+			if (SUtils::startsWith(curMat->getName(), ent.second.originName))
+				//if (ent.second.originName == curMat->getName())
 			{
 				auto newMat = curMat->clone(curMat->getName() + std::to_string(idCounter++));
 				e->setMaterial(newMat);
@@ -124,15 +124,21 @@ void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& ch
 
 void MaterialEdit::applyMaterialChanges(Ogre::MaterialPtr mat, const MaterialEdit& changes)
 {
+	int pass = mat->getTechnique(0)->getNumPasses() - 1;
+	auto& vsParams = mat->getTechnique(0)->getPass(pass)->getVertexProgramParameters()->getConstantDefinitions().map;
+
 	for (auto& var : changes.vsVariables)
 	{
-		int pass = mat->getTechnique(0)->getNumPasses() - 1;
-		mat->getTechnique(0)->getPass(pass)->getVertexProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+		if(vsParams.find(var.name) != vsParams.end())
+			mat->getTechnique(0)->getPass(pass)->getVertexProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
 	}
+
+	auto& psParams = mat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->getConstantDefinitions().map;
+
 	for (auto& var : changes.psVariables)
 	{
-		int pass = mat->getTechnique(0)->getNumPasses() - 1;
-		mat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
+		if (psParams.find(var.name) != psParams.end())
+			mat->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
 	}
 }
 

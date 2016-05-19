@@ -53,7 +53,7 @@ float shadowSmooth(sampler2D shadowMap, float4 shadowMapPos, float blur, float t
 	return fShadowTerm;
 }
 
-float getPssmShadow(float surfaceNormalDot, sampler2D shadowMap0, float4 shadowMapPos0, sampler2D shadowMap1, float4 shadowMapPos1, sampler2D shadowMap2, float4 shadowMapPos2, sampler2D shadowMap3, float4 shadowMapPos3)
+float getPssmShadow(float surfaceNormalDot, float depth, sampler2D shadowMap0, float4 shadowMapPos0, sampler2D shadowMap1, float4 shadowMapPos1, sampler2D shadowMap2, float4 shadowMapPos2, sampler2D shadowMap3, float4 shadowMapPos3)
 {
 	float norm = surfaceNormalDot;
 	float shadowing = 1.0f;
@@ -67,22 +67,21 @@ float getPssmShadow(float surfaceNormalDot, sampler2D shadowMap0, float4 shadowM
 		if (norm < 0.5)
 			adder += (0.5 - norm) * shFil*5;
 
-
-		if (IN.uv.z <= 12)                                                                     
+		if (depth <= 12)                                                                     
 		{
-			shadowing = shadowSmooth(shadowMap0, IN.LightPosition0, 0.0000015*adder, shTex);
+			shadowing = shadowSmooth(shadowMap0, shadowMapPos0, 0.0000015*adder, shTex);
 		}
-		else if (IN.uv.z <= 30)
+		else if (depth <= 30)
 		{
-			shadowing = shadowSmooth(shadowMap1, IN.LightPosition1, 0.000000235*adder, shTex);
+			shadowing = shadowSmooth(shadowMap1, shadowMapPos1, 0.000000235*adder, shTex);
 		}
-		else if (IN.uv.z <= 120)
+		else if (depth <= 120)
 		{
-			shadowing = shadowSmooth(shadowMap2, IN.LightPosition2, 0.00000037*adder, shTex);
+			shadowing = shadowSmooth(shadowMap2, shadowMapPos2, 0.00000037*adder, shTex);
 		}
-		else if (IN.uv.z <= 600)
+		else if (depth <= 600)
 		{
-			shadowing = shadowSmooth(shadowMap3, IN.LightPosition3, 0.00000032, shTex);
+			shadowing = shadowSmooth(shadowMap3, shadowMapPos3, 0.00000032, shTex);
 		}
 
 		if (norm < 0.5)

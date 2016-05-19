@@ -1,0 +1,28 @@
+import basic_1tex from "basic_1tex.material"
+
+material redFlag : basic_1tex 
+{
+	set_texture_alias diffuseMap Moss0162_10_S.jpg
+	set_texture_alias normalMap Moss0162_10_S_NORM.tga
+	set_texture_alias dispMap Moss0162_10_S_DISP.bmp
+	
+	set $uvScale "0.75"
+	set $detailScale "0.4"
+	
+	set $diffuseCol "2 0.5 0.5"
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	set $shininess "16"
+}
+
+material planksVC : basic_1tex 
+{
+	set_texture_alias diffuseMap wood.png
+	set_texture_alias normalMap wood_NORM.tga
+
+	set $difUV "1 1"
+	set $diffuseCol "1 1 1"
+	set $brightness "0.05"
+	set $specularCol "0.1036 0.101 0.152"
+	set $shininess "32"
+}

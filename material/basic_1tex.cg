@@ -1,5 +1,6 @@
 #include "shadow.cg"
-#include "general.cg"
+#include "filters.cg"
+#include "common.cg"
 
 struct VIn
 {
@@ -129,7 +130,7 @@ void main_ps(
 	float4 diffuseTex = tex2D(diffuseMap, texCoordBase);
 	diffuseTex.rgb *= diffuseColor;
 	
-	float4 cmReflect = getCubemapReflection(camDir,normal,IN.wp.xyz,cubemapWPOffset);
+	float4 cmReflect = getCubemapReflection(envMap, camDir,normal,IN.wp.xyz,cubemapWPOffset);
 	
 	diffuseTex.rgb = lerp(diffuseTex.rgb, cmReflect.rgb, cmReflect.w*0.5);	
 	
@@ -137,7 +138,7 @@ void main_ps(
 	
 	float4 specular = getSpecular(lightDir, camDir, normal, specColorPow);
 	
-	float shadowing = getPssmShadow(lighting, shadowMap0, IN.LightPosition0, shadowMap1, IN.LightPosition1, shadowMap2, IN.LightPosition2, shadowMap3, IN.LightPosition3);
+	float shadowing = getPssmShadow(lighting, IN.uv.z, shadowMap0, IN.LightPosition0, shadowMap1, IN.LightPosition1, shadowMap2, IN.LightPosition2, shadowMap3, IN.LightPosition3);
 	
 	ambientColor *= ambientWeight;
 	

@@ -1,4 +1,17 @@
-#include "filters.cg"
+float3 whiteout_blend(float3 n1, float3 n2)
+{
+    float3 t = n1.xyz*float3( 2,  2, 2) + float3(-1, -1,  0);
+    float3 u = n2.xyz*float3(-2, -2, 2) + float3( 1,  1, -1);
+    float3 r = t*dot(t, u) - u*t.z;
+    return normalize(r);
+}
+
+float3 color_blend(float3 normalTex, float3 normalTex2)
+{
+	float3 r;
+	r = (normalTex < 0.5 ? (2.0 * normalTex * normalTex2) : (1.0 - 2.0 * (1.0 - normalTex) * (1.0 - normalTex2)));
+	return r;
+}
 
 float3 offsetCubemapUV(in float3 v, float3 CubemapPositionWS, float3 PositionWS, float EnvMapOffset)
 {  
@@ -6,7 +19,7 @@ float3 offsetCubemapUV(in float3 v, float3 CubemapPositionWS, float3 PositionWS,
 	return (normalize(PositionWS - CubemapPositionWS)*EnvMapOffset + ReflDirectionWS);
 }
 
-float4 getCubemapReflection(float3 eyeDir, float3 normal, float3 wp, float4 cubemapWPOffset)
+float4 getCubemapReflection(samplerCube envMap, float3 eyeDir, float3 normal, float3 wp, float4 cubemapWPOffset)
 {
 	float3 ReflectDir = reflect(eyeDir,normal);
 	ReflectDir.z *= -1;
@@ -18,7 +31,7 @@ float4 getCubemapReflection(float3 eyeDir, float3 normal, float3 wp, float4 cube
 
 float3 transformNormal(float3 t, float3 b, float3 n, float3 normalTex, float4x4 iTWMat)
 {
-	float3x3 tbn = float3x3(IN.t.xyz, IN.b.xyz, IN.n.xyz);
+	float3x3 tbn = float3x3(t, b, n);
 	float3 normal = mul(transpose(tbn), normalTex.xyz*2 - 1); // to object space
 	normal = normalize(mul((float3x3)iTWMat, normal));
 	
@@ -30,12 +43,12 @@ float3 applyFog(float3 image, float dist, float4 fogParams, float4 fogColor)
 	float insideFog = saturate((dist - fogParams.y) / fogParams.z)*fogColor.a;
 	float3 atmFog = fogColor.rgb;
 	
-	return lerp(output.rgb, atmFog, insideFog);
+	return lerp(image, atmFog, insideFog);
 }
 
 float2 getDisplacementOffset(sampler2D dispMap, float2 uv, float3 viewDir)
 {
-	float height = tex2D(dispMap, uv IN.uv.xy * uvScale).x;
+	float height = tex2D(dispMap, uv).x;
 	return (0.025 * height - 0.015) * normalize(viewDir).xy;
 }
 
