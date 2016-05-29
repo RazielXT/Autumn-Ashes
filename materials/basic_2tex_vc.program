@@ -1,6 +1,6 @@
-vertex_program diffuse_vs_vc2tex cg
+vertex_program basic_2tex_vc_vs cg
 {
-    source general_2tex_vc.cg
+    source basic_2tex_vc.cg
 	profiles vs_3_0 arbvp1
     entry_point diffuse_vs
  
@@ -17,18 +17,16 @@ vertex_program diffuse_vs_vc2tex cg
     }
 }
 
-fragment_program diffuse_ps_vc2tex cg
+fragment_program basic_2tex_vc_ps cg
 {
-    source general_2tex_vc.cg
+    source basic_2tex_vc.cg
     profiles ps_3_0 arbfp1
     entry_point diffuse_ps
  
     default_params
     {
         param_named_auto lightDif0 light_diffuse_colour 0
-        param_named_auto matSpec0 surface_specular_colour 0
         param_named_auto camPos camera_position
-        param_named_auto matShininess surface_shininess
         param_named_auto lightPos0 light_position 0
         param_named_auto iTWMat inverse_transpose_world_matrix
         param_named_auto fogColor fog_colour

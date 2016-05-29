@@ -25,7 +25,6 @@ fragment_program basic_1tex_ps cg
  
     default_params
     {
-		param_named_auto diffuseColor surface_diffuse_colour 0
         param_named_auto lightDif0 light_diffuse_colour 0
         param_named_auto camPos camera_position
         param_named_auto lightPos0 light_position 0

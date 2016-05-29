@@ -6,11 +6,9 @@ float3 whiteout_blend(float3 n1, float3 n2)
     return normalize(r);
 }
 
-float3 color_blend(float3 normalTex, float3 normalTex2)
+float3 color_blend(float3 color1, float3 color2)
 {
-	float3 r;
-	r = (normalTex < 0.5 ? (2.0 * normalTex * normalTex2) : (1.0 - 2.0 * (1.0 - normalTex) * (1.0 - normalTex2)));
-	return r;
+	return (color1 < 0.5 ? (2.0 * color1 * color2) : (1.0 - 2.0 * (1.0 - color1) * (1.0 - color2)));
 }
 
 float3 offsetCubemapUV(in float3 v, float3 CubemapPositionWS, float3 PositionWS, float EnvMapOffset)

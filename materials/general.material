@@ -1,0 +1,104 @@
+import basic_1tex from "basic_1tex.material"
+import basic_2tex_vc from "basic_2tex_vc.material"
+
+material redFlag : basic_1tex 
+{
+	set_texture_alias diffuseMap Moss0162_10_S.jpg
+	set_texture_alias normalMap Moss0162_10_S_NORM.tga
+	set_texture_alias dispMap Moss0162_10_S_DISP.bmp
+	
+	set $uvScale "0.75"
+	set $detailScale "0.4"
+	
+	set $diffuseCol "2 0.5 0.5"
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	set $shininess "16"
+}
+
+material planksVC : basic_1tex 
+{
+	set_texture_alias diffuseMap wood.png
+	set_texture_alias normalMap wood_NORM.tga
+
+	set $diffuseCol "1 1 1"
+	set $brightness "0.05"
+	set $specularCol "1 1 1"
+	set $shininess "32"
+}
+
+material grassMat : basic_1tex 
+{
+	set_texture_alias diffuseMap Moss0162_10_S.jpg
+	set_texture_alias normalMap Moss0162_10_S_NORM.tga
+	set_texture_alias dispMap Moss0162_10_S_DISP.bmp
+	set_texture_alias normalDetailMap SilveryBlue_NORM.tga
+	
+	set $uvScale "0.75"
+	set $detailScale "0.4"
+	
+	set $diffuseCol "1 1 1"
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	set $shininess "16"
+}
+
+material terrainRock : basic_2tex_vc
+{
+	set $uvScale "2"
+	set $uv2Scale "2"
+
+	set_texture_alias diffuseMap rock2.png
+	set_texture_alias normalMap rock2_NORM.tga
+	set_texture_alias dispMap rock2_DISP.png
+	
+	set_texture_alias diffuseMap2 SilveryBlue.jpg
+	set_texture_alias normalMap2 SilveryBlue_NORM.tga
+	
+	set_texture_alias normalDetailMap rock3_NORM_NORM.tga
+	set_texture_alias spreadMap spread.png
+
+	set $diffuseCol "1 1 1"
+	set $specularCol "1 1 1"
+	set $shininess "64"
+}
+
+material oldWallMat : basic_2tex_vc
+{
+	set $uvScale "2"
+	set $uv2Scale "2"
+
+	set_texture_alias diffuseMap brick19.jpg
+	set_texture_alias normalMap brick19_NORM.tga
+	set_texture_alias dispMap brick19_DISP.jpg
+
+	set_texture_alias diffuseMap2 rock2.png
+	set_texture_alias normalMap2 rock2_NORM.tga
+	
+	set_texture_alias normalDetailMap rock2_NORM.tga
+	set_texture_alias spreadMap brick19_DISP.jpg
+
+	set $diffuseCol "1 1 1"
+	set $specularCol "1 1 1"
+	set $shininess "64"
+}
+
+material oldWoodFloor : basic_2tex_vc
+{
+	set $uvScale "2"
+	set $uv2Scale "2"
+
+	set_texture_alias diffuseMap wood0.png
+	set_texture_alias normalMap wood0_NORM.tga
+	set_texture_alias dispMap wood0_DISP.png
+
+	set_texture_alias diffuseMap2 rock2.png
+	set_texture_alias normalMap2 rock2_NORM.tga
+	
+	set_texture_alias normalDetailMap rock2_NORM.tga
+	set_texture_alias spreadMap brick19_DISP.jpg
+
+	set $diffuseCol "1 1 1"
+	set $specularCol "1 1 1"
+	set $shininess "64"
+}

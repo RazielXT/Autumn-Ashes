@@ -79,33 +79,6 @@ material waterWaves : material_water_dynamic
 	set $waveSizeSpeed "0.25 1.5"
 }
 
-material redFlag : 1t_material_static 
-{
-	set_texture_alias diffuseMap Moss0162_10_S.jpg
-	set_texture_alias normalMap Moss0162_10_S_NORM.tga
-	set_texture_alias dispMap Moss0162_10_S_DISP.bmp
-	
-	set $uvScale "0.75"
-	set $detailScale "0.4"
-	
-	set $diffuseCol "2 0.5 0.5"
-	set $specularCol "0.02 0.02 0.05"
-	set $brightness "0.005"
-	set $shininess "16"
-}
-
-material planksVC : 1t_vc_material_static 
-{
-	set_texture_alias diffuseMap wood.png
-	set_texture_alias normalMap wood_NORM.tga
-
-	set $difUV "1 1"
-	set $diffuseCol "1 1 1"
-	set $brightness "0.05"
-	set $specularCol "0.1036 0.101 0.152"
-	set $shininess "32"
-}
-
 material waterSheer : material_water_static
 {
 	set_texture_alias diffuseMap water.png
@@ -120,27 +93,6 @@ material waterSheer : material_water_static
 
     set $speedUV "2"
 	set $difUV "1 1"
-}
-
-material grassMat : 1t_material_static 
-{
-	set_texture_alias diffuseMap Moss0162_10_S.jpg
-	set_texture_alias normalMap Moss0162_10_S_NORM.tga
-	set_texture_alias dispMap Moss0162_10_S_DISP.bmp
-	set_texture_alias normalDetailMap SilveryBlue_NORM.tga
-
-	//set_texture_alias diffuseMap NZjZrKrvsTA.jpg
-	//set_texture_alias normalMap NZjZrKrvsTA_NORM.tga
-	//set_texture_alias dispMap NZjZrKrvsTA_DISP.bmp
-	//set_texture_alias normalDetailMap SilveryBlue_NORM.tga
-	
-	set $uvScale "0.75"
-	set $detailScale "0.4"
-	
-	set $diffuseCol "1 1 1"
-	set $specularCol "0.02 0.02 0.05"
-	set $brightness "0.005"
-	set $shininess "16"
 }
 
 material fallenLeaves : 1t_material_static 
@@ -184,27 +136,6 @@ material concreteMat : 1tEnv_material_static
 	
 	set $uvScale "0.75"
 	set $detailScale "5"
-	
-	set $diffuseCol "1 1 1"
-	set $specularCol "0.02 0.02 0.05"
-	set $brightness "0.005"
-	set $shininess "16"
-}
-
-material grassMat : 1t_material_static 
-{
-	//set_texture_alias diffuseMap Moss0162_10_S.jpg
-	//set_texture_alias normalMap Moss0162_10_S_NORM.tga
-	//set_texture_alias dispMap Moss0162_10_S_DISP.bmp
-	//set_texture_alias normalDetailMap SilveryBlue_NORM.tga
-
-	set_texture_alias diffuseMap NZjZrKrvsTA.jpg
-	set_texture_alias normalMap NZjZrKrvsTA_NORM.tga
-	set_texture_alias dispMap NZjZrKrvsTA_DISP.bmp
-	set_texture_alias normalDetailMap SilveryBlue_NORM.tga
-	
-	set $uvScale "0.75"
-	set $detailScale "0.4"
 	
 	set $diffuseCol "1 1 1"
 	set $specularCol "0.02 0.02 0.05"
@@ -399,36 +330,4 @@ material rockWall : 2t_vc_material_static
 	
 	set $brightness "0.015"
 	set $shininess "64"
-}
-
-material terrainRock : 2t_vc_material_static
-{
-	set $uvScale "2"
-	set $uv2Scale "2"
-	
-	//set_texture_alias diffuseMap ConcreteNew0007_2_S.bmp
-	//set_texture_alias normalMap ConcreteNew0007_2_S_NORM.tga
-
-	set_texture_alias diffuseMap rock2.png
-	set_texture_alias normalMap rock2_NORM.tga
-	set_texture_alias dispMap rock2_DISP.png
-	
-	//set_texture_alias diffuseMap 3.jpg
-	//set_texture_alias normalMap 3_NORM.tga
-	//set_texture_alias dispMap 3_DISP.bmp
-	
-	set_texture_alias normalDetailMap rock3_NORM_NORM.tga
-	set_texture_alias spreadMap spread.png
-
-	set_texture_alias diffuseMap2 SilveryBlue.jpg
-	set_texture_alias normalMap2 SilveryBlue_NORM.tga
-
-	set $diffuseCol "1 1 1"
-
-	set $specularCol "0.106281215 0.106281215 0.15081215"
-	set $specular2Weight "0"
-	
-	set $brightness "0.015"
-	set $shininess "64"
-
 }

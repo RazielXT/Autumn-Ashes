@@ -80,6 +80,7 @@ void main_ps(
 	uniform float4 lightDif0,
 	uniform float4 lightPos0,
 	uniform float4 specColorPow,
+	uniform float2 specularEnvWeight,
 	uniform float brightness,
 	uniform float ambientWeight,
 	uniform float uvScale,
@@ -132,7 +133,7 @@ void main_ps(
 	
 	float4 cmReflect = getCubemapReflection(envMap, camDir,normal,IN.wp.xyz,cubemapWPOffset);
 	
-	diffuseTex.rgb = lerp(diffuseTex.rgb, cmReflect.rgb, cmReflect.w*0.5);	
+	diffuseTex.rgb = lerp(diffuseTex.rgb, cmReflect.rgb, cmReflect.w*specularEnvWeight.y*0.5);	
 	
 	float lighting = dot(lightDir, normal);
 	
@@ -146,7 +147,7 @@ void main_ps(
 	lighting = abs(max(lighting,lighting/2));		
 	float3 diffuse = lerp(ambientColor, lightDif0.rgb, underShadow*lighting);
 	
-	float3 outColor = (diffuse*diffuseTex + specular.rgb);
+	float3 outColor = (diffuse*diffuseTex.rgb + specular.rgb*specularEnvWeight.x);
 	outColor = applyFog(outColor, distance, fogParams, fogColor);
 	
 	color0 = float4(outColor, 1);

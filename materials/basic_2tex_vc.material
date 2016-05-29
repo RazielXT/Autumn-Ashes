@@ -1,23 +1,9 @@
-vertex_program SSAO/GBuffer_vp hlsl
-{
-    source GBuffer.cg
-    entry_point GBuffer_vp
-    target vs_3_0
-}
-
-fragment_program SSAO/GBuffer_fp hlsl
-{
-    source GBuffer.cg
-    entry_point GBuffer_fp
-    target ps_3_0 
-}
-
-material 2t_vc_material_static
+material basic_2tex_vc
 {
 	set $ambientWeight "1" 
 	
     set $diffuseCol "1 1 1"
-	set $specularEnvWeight "1 1 1 1"
+	set $specularEnvWeight "0 0 1 1"
     set $specularCol "1 1 1"
     set $shininess "32"
     set $brightness "0.5"  
@@ -27,7 +13,7 @@ material 2t_vc_material_static
 	set $uvSpreadScale "0.5" 
 	set $uv2Scale "1" 
 	set $uvMinMaxDetailScale "3.7 0.15" 
-	set $uvMinMaxDetailW "1 1" 
+	set $uvMinMaxDetailW "0.5 0.5" 
 	set $spreadMinMaxW "0.25 1 1 1"
 	
     technique
@@ -47,12 +33,13 @@ material 2t_vc_material_static
         {
 			depth_write off
 			
-            vertex_program_ref diffuse_vs_vc2tex
+            vertex_program_ref basic_2tex_vc_vs
             {
             }
 
-            fragment_program_ref diffuse_ps_vc2tex
+            fragment_program_ref basic_2tex_vc_ps
             {
+				param_named diffuseColor float3 $diffuseCol
 				param_named ambientWeight float $ambientWeight
 				param_named uvScale float $uvScale
 				param_named uvSpreadScale float $uvSpreadScale
@@ -60,13 +47,14 @@ material 2t_vc_material_static
 				param_named uvMinMaxDetailScale float2 $uvMinMaxDetailScale
 				param_named uvMinMaxDetailW float2 $uvMinMaxDetailW
 				param_named vcBase float $vcBase
+				
+				param_named specColorPow float4 $specularCol $shininess
+				param_named brightness float $brightness
 				param_named specularEnvWeight float4 $specularEnvWeight
 				param_named spreadMinMaxW float4 $spreadMinMaxW
 				param_named cubemapWPOffset float4 0 0 0 0
             }
 
-            diffuse $diffuseCol
-            specular $specularCol $brightness $shininess
             ambient 0 0 0 0
 
 			texture_unit diffuseMap

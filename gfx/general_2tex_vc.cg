@@ -1,3 +1,5 @@
+#include "common.cg"
+
 #define shTex 512
 #define shFil 5
 
@@ -131,32 +133,6 @@ float shadowSmooth(sampler2D shadowMap, float4 shadowMapPos, float blur, float t
 	return fShadowTerm;
 }
 
-float3 whiteout_blend(float3 n1, float3 n2)
-{
-    float3 t = n1.xyz*float3( 2,  2, 2) + float3(-1, -1,  0);
-    float3 u = n2.xyz*float3(-2, -2, 2) + float3( 1,  1, -1);
-    float3 r = t*dot(t, u) - u*t.z;
-    return normalize(r);
-}
-
-float3 color_blend2(float3 n1, float3 n2)
-{
-    n1 = n1;
-    float3 a = n1 < 0.5 ? 1 : -1;
-    float3 b = n1 < 0.5 ?  0 : 1;
-    n1 =  2*a + n1;
-    n2 = n2*a + b;
-    float3 r = n1*n2 - a;
-    return r;
-}
-
-float3 color_blend(float3 normalTex, float3 normalTex2)
-{
-	float3 r;
-	r = (normalTex < 0.5 ? (2.0 * normalTex * normalTex2) : (1.0 - 2.0 * (1.0 - normalTex) * (1.0 - normalTex2)));
-	return r;
-}
-
 void diffuse_ps(
 	PIn IN,
 	uniform float4 lightDif0,
@@ -166,14 +142,17 @@ void diffuse_ps(
 	uniform float uvScale,
 	uniform float uvSpreadScale,
 	uniform float uv2Scale,
+	uniform float4 spreadMinMaxW,
 	uniform float2 uvMinMaxDetailScale,
 	uniform float2 uvMinMaxDetailW,
-	uniform float specular2Weight,
+	uniform float4 cubemapWPOffset,
+	uniform float4 specularEnvWeight,
 	uniform float3 camPos,
 	uniform float ambientWeight,
 	uniform float3 ambientColor,
 	uniform float4 fogColor,
 	uniform float4 fogParams,
+	uniform float vcBase,
 	uniform float4x4 iTWMat,
 	float2 screenSpace : WPOS,
 	uniform sampler2D diffuseMap : register(s0),
@@ -187,13 +166,14 @@ void diffuse_ps(
 	uniform sampler2D shadowMap2 : register(s8),
 	uniform sampler2D shadowMap3 : register(s9),
 	uniform sampler2D normalDetailMap : register(s10),
+	uniform samplerCube envMap : register(s11),
 	out float4 color0 : COLOR0,
 	out float4 color1 : COLOR1,
 	out float4 color2 : COLOR2,
 	out float4 color3 : COLOR3
 	)
 {
-	float uvDetailScale = uvScale*uvMinMaxDetailScale.x;
+	float uvDetailScale = uvScale*uvMinMaxDetailScale.x+min(cubemapWPOffset.x,0);
 	float uvMaxScale = uvScale*uvMinMaxDetailScale.y;
 	
 	// direction
@@ -202,24 +182,24 @@ void diffuse_ps(
 	//pm offset
 	float height = tex2D(dispMap, IN.uv.xy * uvScale).x;
 	float3 vVec = float3(IN.t.w, IN.b.w, IN.n.w);
-	float2 texCoordDispOffset = (0.05 * height - 0.025) * normalize(vVec).xy;
+	float2 texCoordDispOffset = 0;//(0.05 * height - 0.025) * normalize(vVec).xy;
 	
 	float2 texCoordBase = IN.uv.xy * uvScale + texCoordDispOffset;
-	float2 texCoordBase2 = IN.uv.xy * uv2Scale + texCoordDispOffset;
-	float2 texCoordMax = IN.uv.xy * uvMaxScale + texCoordDispOffset;
+	float2 texCoordBase2 = IN.uv.xy * uv2Scale;
+	float2 texCoordMax = IN.uv.xy * uvMaxScale;
 	float2 texCoordDetail = IN.uv.xy * uvDetailScale + texCoordDispOffset;
 	float2 texCoordSpread = IN.uv.xy * uvSpreadScale + texCoordDispOffset;
-	
+
 	//spread
 	//////////////////////////////////////////////////
-	float spreadVC = 1 - IN.vc.w;
-	float inside=smoothstep(0.25,1,spreadVC);
+	float spreadVC = IN.vc.w;
+	float inside=smoothstep(spreadMinMaxW.x,spreadMinMaxW.y,spreadVC);
 	//inside+=smoothstep(0.381385,1,spreadVC);
 
 	//inside=pow(inside,1);
 
-	float spread0=tex2D(spreadMap,texCoordSpread).g;
-	float spread1=tex2D(spreadMap, texCoordSpread*3).g;
+	float spread1=tex2D(dispMap, texCoordBase).x;
+	float spread0=tex2D(spreadMap, texCoordSpread).g;
 
 	spread0+=inside;
 	spread0=pow(spread0,1+spreadVC);
@@ -228,7 +208,7 @@ void diffuse_ps(
 	spread1=pow(spread1,1+spreadVC);	
 
 	spread0*=inside+spread1;
-	spread0=smoothstep(0.121,0.3450,spread0);
+	spread0=smoothstep(0.121*spreadMinMaxW.z,0.3450*spreadMinMaxW.w,spread0);
 	spreadVC=smoothstep(0.01,0.125,spreadVC);
 	float inter=saturate(spread0*spreadVC+inside);
 	///////////////////////////////////////////////////////
@@ -246,42 +226,23 @@ void diffuse_ps(
 
 	//blend with max detail normal
 	normalTex2 = tex2D(normalDetailMap, texCoordMax).rgb;
-	normalTex = lerp(normalTex, color_blend(normalTex,normalTex2).rgb,uvMinMaxDetailW.y);//lerp(normalTex.rgb, color_blend(normalTex,normalTex2).rgb, IN.wp.w);
+	//normalTex = lerp(normalTex, color_blend(normalTex,normalTex2).rgb,uvMinMaxDetailW.y);//lerp(normalTex.rgb, color_blend(normalTex,normalTex2).rgb, IN.wp.w);
+	
+	detailN = lerp(detailN,pow(normalTex2.r + normalTex2.g,2),uvMinMaxDetailW.y);
 	
 	//lighting
 	float3x3 tbn = float3x3(IN.t.xyz, IN.b.xyz, IN.n.xyz);
 	float3 normal = mul(transpose(tbn), normalTex.xyz*2 - 1); // to object space
 	normal = normalize(mul((float3x3)iTWMat, normal));
 
-	float3 eyeDir = IN.wp.xyz - camPos.xyz;
-	float dist = length(eyeDir);
-	eyeDir = normalize(eyeDir);
-
 	float4 diffuseTex = lerp(tex2D(diffuseMap2, texCoordBase2), tex2D(diffuseMap, texCoordBase), inter);
 	float diffuseLight = dot(lightDir, normal);
-
-	float3 camDir = normalize(camPos - IN.wp.xyz);
-	float3 halfVec = normalize(lightDir + camDir);
-	float3 specular = pow(max(dot(normal, halfVec), 0), matShininess);
-
 	
-	//indirect specular
-	tbn = transpose(tbn);
-
-	float3 ld = float3(1, 0, 1);
-	ld = mul(tbn, ld);
-	float3 halfVec2 = normalize(ld + camDir);
-	float3 specular2 = saturate(pow(max(dot(normal, halfVec2), 0), 64) / 3);
-
-	ld = float3(-1, 0, 1);
-	ld = mul(tbn, ld);
-	float3 halfVec3 = normalize(ld + camDir);
-	specular2 += saturate(pow(max(dot(normal, halfVec3), 0), 64) / 3);
-
-	ld = float3(0, -1, 1);
-	ld = mul(tbn, ld);
-	float3 halfVec4 = normalize(ld + camDir);
-	specular2 += saturate(pow(max(dot(normal, halfVec4), 0), 64) / 3);
+	float3 camDir = IN.wp.xyz - camPos;
+	float dist = length(camDir);
+	camDir = normalize(camDir);
+	float3 halfVec = normalize(lightDir - camDir);
+	float3 specular = pow(max(dot(normal, halfVec), 0), matShininess);
 	
 	//shadow
 	float norm = diffuseLight;
@@ -291,16 +252,13 @@ void diffuse_ps(
 		shadowing = 0;
 	else
 	{
-
 		float adder = 1;
 
 		if (norm < 0.5)
 			adder += (0.5 - norm) * shFil*5;
 
-
 		if (IN.uv.z <= 12)                                                                     
 		{
-
 			shadowing = shadowSmooth(shadowMap0, IN.LightPosition0, 0.0000015*adder, shTex);
 		}
 		else if (IN.uv.z <= 30)
@@ -318,32 +276,35 @@ void diffuse_ps(
 
 		if (norm < 0.5)
 			shadowing *= norm * 2;
-
 	}
 
 	ambientColor *= ambientWeight;
-	float3 vertexLight = ambientColor+(1-ambientColor)*saturate(IN.vc.rgb);
-	
-	//slight gi normal mapping
-	diffuseLight = abs(max(diffuseLight,diffuseLight/2));
 
-	float3 diffuseContrib = saturate(diffuseLight* lightDif0.rgb + vertexLight)*detailN;
-	float specWeight = lerp(specular2Weight, 1, inter);
-	float3 specularContrib = ((specular + specular2*3) * matSpec0.rgb*specWeight );
-	float3 rawColor = (diffuseContrib + specularContrib)*diffuseTex;
+	float3 vcGi = saturate((IN.vc.rgb-vcBase)*1/(1-vcBase));
+	float3 vcDark = saturate((IN.vc.rgb+1-vcBase)*1/(vcBase));
 	
-	float3 directLight = saturate(shadowing + vertexLight);
+	ambientColor += vcGi;
+	ambientColor *= vcDark;
 	
-	float3 darkness = max(shadowing.xxx,vertexLight);
-	float3 ambientLight = (vertexLight);
-	float4 output = float4(rawColor*lerp(ambientLight, max(directLight,vertexLight),darkness),1);
+	float3 underShadow = max(shadowing.xxx,ambientColor);
 	
+	float4 cmReflect = getCubemapReflection(envMap, camDir,normal,IN.wp.xyz,cubemapWPOffset);
+	float envWeight = lerp(specularEnvWeight.z, specularEnvWeight.w, inter);
+	diffuseTex.rgb = lerp(diffuseTex.rgb, cmReflect.rgb, cmReflect.w*envWeight*0.5);	
+	
+	diffuseLight = abs(max(diffuseLight,diffuseLight/2));		
+	float3 diffuse = lerp(ambientColor, lightDif0.rgb, underShadow*diffuseLight)*detailN;
+	
+	float specWeight = lerp(specularEnvWeight.x, specularEnvWeight.y, inter);
+	float3 specularContrib = (specular* matSpec0.rgb*specWeight );
+	float3 output = (diffuse*diffuseTex + specularContrib);
+
 	//distance fog
 	float insideFog = saturate((dist - fogParams.y) / fogParams.z)*fogColor.a;
 	float3 atmFog = fogColor.rgb;
 	output.rgb = lerp(output.rgb, atmFog, insideFog);
 
-	color0 = output;
+	color0 = float4(output,1);
 	color1 = float4(0.5, 0.5, 0.5, saturate(matSpec0.a + specular.r / 2));
 	color2 = float4(0, 0, 0, 1);
 	color3 = float4(1 - IN.uv.z / IN.uv.w, dist, 0, 1);
