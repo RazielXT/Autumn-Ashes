@@ -79,34 +79,56 @@ void LevelEdit::init()
 	originName = level->name;
 
 	rows = { { originName,EditRow::Caption } ,{ "Save",EditRow::Action },{ "Temp",EditRow::Params },{ "PP",EditRow::Params } , { "Scene",EditRow::Params } };
-
-	generateParams();
 }
 
 static float yaw;
 static float pitch;
 
+static void mergeDefaults(std::vector<EditVariable>& from, std::vector<EditVariable>& target)
+{
+	for (auto& var : from)
+	{
+		bool found = false;
+
+		for (auto& mvar : target)
+		{
+			if (mvar.name == var.name)
+			{
+				found = true;
+			}
+		}
+
+		if(!found)
+			target.push_back(var);
+	}
+
+	from.clear();
+}
+
 void LevelEdit::generateParams()
 {
-	clear();
+	std::vector<EditVariable> temp;
+	temp.push_back({ "BloomAdd" , level->bloomAdd });
+	temp.push_back({ "BloomSize" , level->bloomSize });
+	temp.push_back({ "BloomDepth" , level->bloomDepth });
+	temp.push_back({ "BloomStr" , level->bloomStr });
+	temp.push_back({ "ColorShift" , level->ColorShift, 0.01f });
+	temp.push_back({ "ContSatSharpNoise", level->ContSatuSharpNoise, 0.01f });
+	mergeDefaults(temp, ppVariables);
 
-	ppVariables.push_back({ "BloomAdd" , level->bloomAdd });
-	ppVariables.push_back({ "BloomSize" , level->bloomSize });
-	ppVariables.push_back({ "BloomDepth" , level->bloomDepth });
-	ppVariables.push_back({ "BloomStr" , level->bloomStr });
-	ppVariables.push_back({ "ColorShift" , level->ColorShift, 0.01f });
-	ppVariables.push_back({ "ContSatSharpNoise", level->ContSatuSharpNoise, 0.01f });
-
-	envVariables.push_back({ "Ambient", level->ambientColor, 0.025f });
-	envVariables.push_back({ "FogColor", level->fogColor, 0.025f });
-	envVariables.push_back({ "FogStartEnd", level->fogStartDistance, level->fogEndDistance});
+	temp.push_back({ "Ambient", level->ambientColor, 0.025f });
+	temp.push_back({ "FogColor", level->fogColor, 0.025f });
+	temp.push_back({ "FogStartEnd", level->fogStartDistance, level->fogEndDistance});
+	temp.push_back({ "SunColor", level->sunColor, 0.025f });
+	mergeDefaults(temp, envVariables);
 
 	auto& sunOr = Global::mSceneMgr->getLight("Sun")->getParentSceneNode()->getOrientation();
 	EditVariable var( "SunDir", sunOr.getPitch().valueDegrees(), sunOr.getYaw().valueDegrees());
 	var.step = 5.0f;
-	tempVariables.push_back(var);
+	temp.push_back(var);
 	yaw = var.buffer[0];
 	pitch = var.buffer[1];
+	mergeDefaults(temp, tempVariables);
 }
 
 void LevelEdit::applyPPEdit(EditVariable& var)
@@ -136,7 +158,7 @@ void LevelEdit::applySceneEdit(EditVariable& var)
 	}
 	if (var.name == "FogColor")
 	{
-		level->ambientColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2]);
+		level->fogColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2]);
 
 		level->applyFog();
 	}
@@ -146,6 +168,13 @@ void LevelEdit::applySceneEdit(EditVariable& var)
 		level->fogEndDistance = var.buffer[1];
 
 		level->applyFog();
+	}
+	if (var.name == "SunColor")
+	{
+		auto sun = Global::mSceneMgr->getLight("Sun");
+
+		level->sunColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2]);
+		sun->setDiffuseColour(level->sunColor);
 	}
 	if (var.name == "SunDir")
 	{

@@ -22,7 +22,7 @@ void LevelInfo::applyPostProcessing()
 
 void LevelInfo::applyFog()
 {
-	Global::mSceneMgr->setFog(Ogre::FOG_LINEAR, ambientColor, 1, fogStartDistance, fogEndDistance);
+	Global::mSceneMgr->setFog(Ogre::FOG_LINEAR, fogColor, 1, fogStartDistance, fogEndDistance);
 }
 
 GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : audioLib(cam)
@@ -47,6 +47,7 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : 
 	info.ColorShift = Ogre::Vector4(1.08f, 1.12f, 1.16f, 1);
 	info.ContSatuSharpNoise = 0;
 	info.ambientColor = ColourValue(0.35f, 0.35f, 0.35f);
+	info.sunColor = ColourValue(1, 1, 1);
 	info.skyboxName = "TCENoonSkyBox";
 	info.bloomStr = 1;
 	info.bloomDepth = 0.35f;
@@ -61,8 +62,8 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : 
 	levels[1] = info;
 
 	info.name = "Caves";
-	info.path = "../../media/";
-	info.sceneFile = "caves.scene";
+	info.path = "../../media/park/";
+	info.sceneFile = "park.scene";
 	info.init = createLevel1_1;
 	levels[2] = info;
 

@@ -21,6 +21,8 @@ struct LevelEdit : public Edit
 		ar & ppVariables;
 		ar & envVariables;
 		ar & reserved;
+
+		generateParams();
 	}
 
 	virtual EditVariables* getParams(const std::string& row) override;

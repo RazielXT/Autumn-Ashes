@@ -29,6 +29,7 @@ struct LevelInfo
 	float fogStartDistance;
 	float fogEndDistance;
 	Ogre::ColourValue ambientColor;
+	Ogre::ColourValue sunColor;
 
 	Ogre::Vector4 ContSatuSharpNoise;
 	Ogre::Vector4 ColorShift;
