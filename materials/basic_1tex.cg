@@ -46,7 +46,6 @@ VOut main_vs(VIn IN,
 	uniform float4x4 texWorldViewProjMatrix1,
 	uniform float4x4 texWorldViewProjMatrix2,
 	uniform float4x4 texWorldViewProjMatrix3
-
 	)
 {
 	VOut OUT;
@@ -80,17 +79,17 @@ void main_ps(
 	uniform float4 lightDif0,
 	uniform float4 lightPos0,
 	uniform float4 specColorPow,
-	uniform float2 specularEnvWeight,
 	uniform float brightness,
-	uniform float ambientWeight,
 	uniform float uvScale,
-	uniform float detailScale,
+	uniform float4 detailMinMaxScaleW,
+	uniform float4 cubemapWPOffset,
+	uniform float2 specularEnvWeight,
 	uniform float3 camPos,
+	uniform float ambientWeight,
+	uniform float3 ambientColor,
 	uniform float4 fogColor,
 	uniform float4 fogParams,
-	uniform float3 ambientColor,
 	uniform float4x4 iTWMat,
-	uniform float4 cubemapWPOffset,
 	float2 screenSpace : WPOS,
 	uniform sampler2D diffuseMap : register(s0),
 	uniform sampler2D normalMap : register(s1),
@@ -107,51 +106,55 @@ void main_ps(
 	out float4 color3 : COLOR3
 	)
 {
-	float uvDetailScale = uvScale*detailScale;
-	
+	float uvDetailScale = uvScale*detailMinMaxScaleW.x;
+	float uvMaxScale = uvScale*detailMinMaxScaleW.y;
+
 	// direction
 	float3 lightDir = normalize(lightPos0.xyz - (lightPos0.w * IN.wp.xyz));
 
 	//pm offset
 	float3 vVec = float3(IN.t.w, IN.b.w, IN.n.w);	
 	float2 texCoordDispOffset = getDisplacementOffset(dispMap, IN.uv.xy * uvScale, vVec);
-	
+
 	float2 texCoordBase = IN.uv.xy * uvScale + texCoordDispOffset;
+	float2 texCoordMax = IN.uv.xy * uvMaxScale + texCoordDispOffset;
 	float2 texCoordDetail = IN.uv.xy * uvDetailScale + texCoordDispOffset;
-	
-	//base normal+detail
-	float3 normalTex = blendMaps(normalMap, normalDetailMap, texCoordBase, texCoordDetail);
-	
-	//lighting
-	float3 normal = transformNormal(IN.t, IN.b, IN.n, normalTex, iTWMat);
-	float3 camDir = IN.wp.xyz - camPos.xyz;
-	float distance = length(camDir);
+
+	float4 normalDetail = getNormal(normalMap, normalDetailMap, texCoordBase, texCoordDetail, texCoordMax, detailMinMaxScaleW.zw);
+	float3 normalTex = normalDetail.rgb;
+	float detailN = normalDetail.w;
+
+	float3 normal = transformNormal(IN.t.xyz, IN.b.xyz, IN.n.xyz, normalTex, iTWMat);
+	float3 camDir = IN.wp.xyz - camPos;
+	float dist = length(camDir);
 	camDir = normalize(camDir);
 
 	float4 diffuseTex = tex2D(diffuseMap, texCoordBase);
 	diffuseTex.rgb *= diffuseColor;
-	
-	float4 cmReflect = getCubemapReflection(envMap, camDir,normal,IN.wp.xyz,cubemapWPOffset);
-	
-	diffuseTex.rgb = lerp(diffuseTex.rgb, cmReflect.rgb, cmReflect.w*specularEnvWeight.y*0.5);	
-	
+
 	float lighting = dot(lightDir, normal);
-	
+
 	float4 specular = getSpecular(lightDir, camDir, normal, specColorPow);
-	
+
 	float shadowing = getPssmShadow(lighting, IN.uv.z, shadowMap0, IN.LightPosition0, shadowMap1, IN.LightPosition1, shadowMap2, IN.LightPosition2, shadowMap3, IN.LightPosition3);
-	
+
 	ambientColor *= ambientWeight;
-	
+
 	float3 underShadow = max(shadowing.xxx,ambientColor);
-	lighting = abs(max(lighting,lighting/2));		
-	float3 diffuse = lerp(ambientColor, lightDif0.rgb, underShadow*lighting);
-	
-	float3 outColor = (diffuse*diffuseTex.rgb + specular.rgb*specularEnvWeight.x);
-	outColor = applyFog(outColor, distance, fogParams, fogColor);
-	
+
+	float4 cmReflect = getCubemapReflection(envMap, camDir,normal,IN.wp.xyz,cubemapWPOffset);
+	float envWeight = specularEnvWeight.y;
+	diffuseTex.rgb = lerp(diffuseTex.rgb, cmReflect.rgb, cmReflect.w*envWeight*0.5);
+
+	lighting = abs(max(lighting,lighting/2));
+	float3 diffuse = lerp(ambientColor, lightDif0.rgb, underShadow*lighting)*detailN;
+
+	float specWeight = specularEnvWeight.x;
+	float3 outColor = (diffuse*diffuseTex.rgb + specular.rgb*specWeight);
+	outColor = applyFog(outColor, dist, fogParams, fogColor);
+
 	color0 = float4(outColor, 1);
 	color1 = float4(0, 0, 0, brightness + saturate(specular.w / 2));
 	color2 = float4(0, 0, 0, 1);
-	color3 = float4(1 - IN.uv.z / IN.uv.w, distance, 0, 1);
+	color3 = float4(1 - IN.uv.z / IN.uv.w, dist, 0, 1);
 }

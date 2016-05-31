@@ -1,24 +1,22 @@
 material basic_2tex_vc
 {
 	set $ambientWeight "1" 
-	
-    set $diffuseCol "1 1 1"
+	set $diffuseCol "1 1 1"
 	set $specularEnvWeight "0 0 1 1"
-    set $specularCol "1 1 1"
-    set $shininess "32"
-    set $brightness "0.5"  
+	set $specularCol "1 1 1"
+	set $shininess "32"
+	set $brightness "0.5"
 	set $vcBase "0.25"  
-
 	set $uvScale "1"
 	set $uvSpreadScale "0.5" 
 	set $uv2Scale "1" 
 	set $uvMinMaxDetailScale "3.7 0.15" 
 	set $uvMinMaxDetailW "0.5 0.5" 
 	set $spreadMinMaxW "0.25 1 1 1"
-	
-    technique
-    {
-        
+
+	technique
+	{
+
 		pass
 		{
 			lighting off
@@ -29,33 +27,29 @@ material basic_2tex_vc
 			}
 		}
 
-        pass
-        {
+		pass
+		{
 			depth_write off
 			
-            vertex_program_ref basic_2tex_vc_vs
-            {
-            }
+			vertex_program_ref basic_2tex_vc_vs
+			{
+			}
 
-            fragment_program_ref basic_2tex_vc_ps
-            {
+			fragment_program_ref basic_2tex_vc_ps
+			{
 				param_named diffuseColor float3 $diffuseCol
 				param_named ambientWeight float $ambientWeight
 				param_named uvScale float $uvScale
 				param_named uvSpreadScale float $uvSpreadScale
 				param_named uv2Scale float $uv2Scale
-				param_named uvMinMaxDetailScale float2 $uvMinMaxDetailScale
-				param_named uvMinMaxDetailW float2 $uvMinMaxDetailW
+				param_named detailMinMaxScaleW float4 $uvMinMaxDetailScale $uvMinMaxDetailW
 				param_named vcBase float $vcBase
-				
 				param_named specColorPow float4 $specularCol $shininess
 				param_named brightness float $brightness
 				param_named specularEnvWeight float4 $specularEnvWeight
 				param_named spreadMinMaxW float4 $spreadMinMaxW
 				param_named cubemapWPOffset float4 0 0 0 0
-            }
-
-            ambient 0 0 0 0
+			}
 
 			texture_unit diffuseMap
 			{
@@ -131,8 +125,8 @@ material basic_2tex_vc
 				cubic_texture imgs.png combinedUVW
 				filtering anisotropic
 				max_anisotropy 8
-			}	
-        }		
-    }
+			}
+		}
+	}
 }
 

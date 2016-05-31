@@ -9,14 +9,13 @@ struct VIn
 	float3 t : TANGENT;
 	float4 c : COLOR;
 	float2 uv : TEXCOORD0;
-	float2 uv2 : TEXCOORD1;
 };
 
 struct VOut
 {
 	float4 p : POSITION;
 	float4 uv : TEXCOORD0;
-	float4 wp : TEXCOORD1;
+	float3 wp : TEXCOORD1;
 	float4 n : TEXCOORD2;
 	float4 t : TEXCOORD3;
 	float4 b : TEXCOORD4;
@@ -42,7 +41,7 @@ struct PIn
 };
 
 
-VOut diffuse_vs(VIn IN,
+VOut main_vs(VIn IN,
 	uniform float4x4 wMat,
 	uniform float4x4 wvpMat,
 	uniform float3 camPos,
@@ -55,8 +54,7 @@ VOut diffuse_vs(VIn IN,
 {
 	VOut OUT;
 	OUT.wp.xyz = mul(wMat, IN.p).xyz;
-	OUT.wp.w = 1-IN.uv2.x;
-	
+
 	OUT.p = mul(wvpMat, IN.p);
 	OUT.vc = IN.c;
 
@@ -80,7 +78,7 @@ VOut diffuse_vs(VIn IN,
 	return OUT;
 }
 
-void diffuse_ps(
+void main_ps(
 	PIn IN,
 	uniform float4 lightDif0,
 	uniform float4 lightPos0,
@@ -90,8 +88,7 @@ void diffuse_ps(
 	uniform float uvSpreadScale,
 	uniform float uv2Scale,
 	uniform float4 spreadMinMaxW,
-	uniform float2 uvMinMaxDetailScale,
-	uniform float2 uvMinMaxDetailW,
+	uniform float4 detailMinMaxScaleW,
 	uniform float4 cubemapWPOffset,
 	uniform float4 specularEnvWeight,
 	uniform float3 camPos,
@@ -120,9 +117,9 @@ void diffuse_ps(
 	out float4 color3 : COLOR3
 	)
 {
-	float uvDetailScale = uvScale*uvMinMaxDetailScale.x;
-	float uvMaxScale = uvScale*uvMinMaxDetailScale.y;
-	
+	float uvDetailScale = uvScale*detailMinMaxScaleW.x;
+	float uvMaxScale = uvScale*detailMinMaxScaleW.y;
+
 	// direction
 	float3 lightDir = normalize(lightPos0.xyz - (lightPos0.w * IN.wp.xyz));
 
@@ -130,90 +127,54 @@ void diffuse_ps(
 	float height = tex2D(dispMap, IN.uv.xy * uvScale).x;
 	float3 vVec = float3(IN.t.w, IN.b.w, IN.n.w);
 	float2 texCoordDispOffset = 0;//(0.05 * height - 0.025) * normalize(vVec).xy;
-	
+
 	float2 texCoordBase = IN.uv.xy * uvScale + texCoordDispOffset;
 	float2 texCoordBase2 = IN.uv.xy * uv2Scale;
-	float2 texCoordMax = IN.uv.xy * uvMaxScale;
+	float2 texCoordMax = IN.uv.xy * uvMaxScale + texCoordDispOffset;
 	float2 texCoordDetail = IN.uv.xy * uvDetailScale + texCoordDispOffset;
 	float2 texCoordSpread = IN.uv.xy * uvSpreadScale + texCoordDispOffset;
 
-	//spread
-	//////////////////////////////////////////////////
-	float spreadVC = IN.vc.w;
-	float inside=smoothstep(spreadMinMaxW.x,spreadMinMaxW.y,spreadVC);
-	//inside+=smoothstep(0.381385,1,spreadVC);
+	float spread = getSpreadWeight(height, tex2D(spreadMap, texCoordSpread).g, IN.vc.w, spreadMinMaxW);
 
-	//inside=pow(inside,1);
-
-	float spread1=tex2D(dispMap, texCoordBase).x;
-	float spread0=tex2D(spreadMap, texCoordSpread).g;
-
-	spread0+=inside;
-	spread0=pow(spread0,1+spreadVC);
-
-	spread1-=(1-spreadVC)/2;
-	spread1=pow(spread1,1+spreadVC);	
-
-	spread0*=inside+spread1;
-	spread0=smoothstep(0.121*spreadMinMaxW.z,0.3450*spreadMinMaxW.w,spread0);
-	spreadVC=smoothstep(0.01,0.125,spreadVC);
-	float inter=saturate(spread0*spreadVC+inside);
-	///////////////////////////////////////////////////////
-
-	
-	//base normal+detail
-	float3 normalTex = tex2D(normalMap, texCoordBase).rgb;
-	float3 normalTex2 = tex2D(normalDetailMap, texCoordDetail).rgb;
-	//normalTex = color_blend(normalTex,normalTex2).rgb;
-	float detailN = lerp(1,pow(normalTex2.r + normalTex2.g,2),uvMinMaxDetailW.x);
-	
-	//lerp with 2. normal
-	normalTex2 = tex2D(normalMap2, texCoordBase2).rgb;
-	normalTex = lerp(normalTex2, normalTex, inter);
-
-	//blend with max detail normal
-	normalTex2 = tex2D(normalDetailMap, texCoordMax).rgb;
-	//normalTex = lerp(normalTex, color_blend(normalTex,normalTex2).rgb,uvMinMaxDetailW.y);//lerp(normalTex.rgb, color_blend(normalTex,normalTex2).rgb, IN.wp.w);
-	
-	detailN = lerp(detailN,pow(normalTex2.r + normalTex2.g,2),uvMinMaxDetailW.y);
+	float4 normalDetail = getNormals(normalMap, normalMap2, spread, normalDetailMap, texCoordBase, texCoordBase2, texCoordDetail, texCoordMax, detailMinMaxScaleW.zw);
+	float3 normalTex = normalDetail.rgb;
+	float detailN = normalDetail.w;
 
 	float3 normal = transformNormal(IN.t.xyz, IN.b.xyz, IN.n.xyz, normalTex, iTWMat);
-		
-	float4 diffuseTex = lerp(tex2D(diffuseMap2, texCoordBase2), tex2D(diffuseMap, texCoordBase), inter);
-	float lighting = dot(lightDir, normal);
-	
 	float3 camDir = IN.wp.xyz - camPos;
 	float dist = length(camDir);
 	camDir = normalize(camDir);
+
+	float4 diffuseTex = lerp(tex2D(diffuseMap2, texCoordBase2), tex2D(diffuseMap, texCoordBase), spread);
+	float lighting = dot(lightDir, normal);
+
 	float4 specular = getSpecular(lightDir, camDir, normal, specColorPow);
-	
-	//shadow
+
 	float shadowing = getPssmShadow(lighting, IN.uv.z, shadowMap0, IN.LightPosition0, shadowMap1, IN.LightPosition1, shadowMap2, IN.LightPosition2, shadowMap3, IN.LightPosition3);
 
 	ambientColor *= ambientWeight;
 
 	float3 vcGi = saturate((IN.vc.rgb-vcBase)*1/(1-vcBase));
 	float3 vcDark = saturate((IN.vc.rgb+1-vcBase)*1/(vcBase));
-	
+
 	ambientColor += vcGi;
 	ambientColor *= vcDark;
-	
+
 	float3 underShadow = max(shadowing.xxx,ambientColor);
-	
+
 	float4 cmReflect = getCubemapReflection(envMap, camDir,normal,IN.wp.xyz,cubemapWPOffset);
-	float envWeight = lerp(specularEnvWeight.z, specularEnvWeight.w, inter);
-	diffuseTex.rgb = lerp(diffuseTex.rgb, cmReflect.rgb, cmReflect.w*envWeight*0.5);	
-	
+	float envWeight = lerp(specularEnvWeight.z, specularEnvWeight.w, spread);
+	diffuseTex.rgb = lerp(diffuseTex.rgb, cmReflect.rgb, cmReflect.w*envWeight*0.5);
+
 	lighting = abs(max(lighting,lighting/2));		
 	float3 diffuse = lerp(ambientColor, lightDif0.rgb, underShadow*lighting)*detailN;
-	
-	float specWeight = lerp(specularEnvWeight.x, specularEnvWeight.y, inter);
-	float3 specularContrib = (specular.rgb*specWeight );
-	float3 outColor = (diffuse*diffuseTex.rgb + specularContrib);
+
+	float specWeight = lerp(specularEnvWeight.x, specularEnvWeight.y, spread);
+	float3 outColor = (diffuse*diffuseTex.rgb + specular.rgb*specWeight);
 	outColor = applyFog(outColor, dist, fogParams, fogColor);
-		
+
 	color0 = float4(outColor,1);
-	color1 = float4(0.5, 0.5, 0.5, brightness + saturate(specular.w / 2));
+	color1 = float4(0, 0, 0, brightness + saturate(specular.w / 2));
 	color2 = float4(0, 0, 0, 1);
 	color3 = float4(1 - IN.uv.z / IN.uv.w, dist, 0, 1);
 }

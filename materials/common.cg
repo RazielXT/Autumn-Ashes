@@ -1,9 +1,9 @@
 float3 whiteout_blend(float3 n1, float3 n2)
 {
-    float3 t = n1.xyz*float3( 2,  2, 2) + float3(-1, -1,  0);
-    float3 u = n2.xyz*float3(-2, -2, 2) + float3( 1,  1, -1);
-    float3 r = t*dot(t, u) - u*t.z;
-    return normalize(r);
+	float3 t = n1.xyz*float3( 2,  2, 2) + float3(-1, -1,  0);
+	float3 u = n2.xyz*float3(-2, -2, 2) + float3( 1,  1, -1);
+	float3 r = t*dot(t, u) - u*t.z;
+	return normalize(r);
 }
 
 float3 color_blend(float3 color1, float3 color2)
@@ -12,7 +12,7 @@ float3 color_blend(float3 color1, float3 color2)
 }
 
 float3 offsetCubemapUV(in float3 v, float3 CubemapPositionWS, float3 PositionWS, float EnvMapOffset)
-{  
+{
 	float3 ReflDirectionWS = v;
 	return (normalize(PositionWS - CubemapPositionWS)*EnvMapOffset + ReflDirectionWS);
 }
@@ -40,7 +40,7 @@ float3 applyFog(float3 image, float dist, float4 fogParams, float4 fogColor)
 {
 	float insideFog = saturate((dist - fogParams.y) / fogParams.z)*fogColor.a;
 	float3 atmFog = fogColor.rgb;
-	
+
 	return lerp(image, atmFog, insideFog);
 }
 
@@ -61,6 +61,66 @@ float4 getSpecular(float3 lightDir, float3 camDir, float3 normal, float4 specCol
 {
 	float3 halfVec = normalize(lightDir - camDir);
 	float specular = pow(max(dot(normal, halfVec), 0), specColorPow.w);
-	
+
 	return float4(specular*specColorPow.rgb,specular);
+}
+
+float4 getNormal(sampler2D normalMap, sampler2D detailMap, float2 texCoordBase, float2 texCoordDetail, float2 texCoordMax, float2 detailW)
+{
+	//base normal+detail
+	float3 normalTex = tex2D(normalMap, texCoordBase).rgb;
+	float3 normalTex2 = tex2D(normalDetailMap, texCoordDetail).rgb;
+	//normalTex = color_blend(normalTex,normalTex2).rgb;
+	float detailN = lerp(1,pow(normalTex2.r + normalTex2.g,2),detailW.x);
+
+	//blend with max detail normal
+	normalTex2 = tex2D(normalDetailMap, texCoordMax).rgb;
+	//normalTex = lerp(normalTex, color_blend(normalTex,normalTex2).rgb,uvMinMaxDetailW.y);//lerp(normalTex.rgb, color_blend(normalTex,normalTex2).rgb, IN.wp.w);
+
+	detailN = lerp(detailN,pow(normalTex2.r + normalTex2.g,2),detailW.y);
+
+	return float4(normalTex, detailN);
+}
+
+float4 getNormals(sampler2D normalMap, sampler2D normalMap2, float spread, sampler2D detailMap, float2 texCoordBase, float2 texCoordBase2, float2 texCoordDetail, float2 texCoordMax, float2 detailW)
+{
+	//base normal+detail
+	float3 normalTex = tex2D(normalMap, texCoordBase).rgb;
+	float3 normalTex2 = tex2D(normalDetailMap, texCoordDetail).rgb;
+	//normalTex = color_blend(normalTex,normalTex2).rgb;
+	float detailN = lerp(1,pow(normalTex2.r + normalTex2.g,2),detailW.x);
+
+	//lerp with 2. normal
+	normalTex2 = tex2D(normalMap2, texCoordBase2).rgb;
+	normalTex = lerp(normalTex2, normalTex, spread);
+
+	//blend with max detail normal
+	normalTex2 = tex2D(normalDetailMap, texCoordMax).rgb;
+	//normalTex = lerp(normalTex, color_blend(normalTex,normalTex2).rgb,uvMinMaxDetailW.y);//lerp(normalTex.rgb, color_blend(normalTex,normalTex2).rgb, IN.wp.w);
+
+	detailN = lerp(detailN,pow(normalTex2.r + normalTex2.g,2),detailW.y);
+
+	return float4(normalTex, detailN);
+}
+
+float getSpreadWeight(float detailSpread, float macroSpread, float spreadVC, float4 spreadMinMaxW)
+{
+	float inside = smoothstep(spreadMinMaxW.x,spreadMinMaxW.y,spreadVC);
+	//inside+=smoothstep(0.381385,1,spreadVC);
+	//inside=pow(inside,1);
+
+	float spread1 = detailSpread;
+	float spread0 = macroSpread;
+
+	spread0+=inside;
+	spread0=pow(spread0,1+spreadVC);
+
+	spread1-=(1-spreadVC)/2;
+	spread1=pow(spread1,1+spreadVC);
+
+	spread0*=inside+spread1;
+	spread0=smoothstep(0.121*spreadMinMaxW.z,0.3450*spreadMinMaxW.w,spread0);
+	spreadVC=smoothstep(0.01,0.125,spreadVC);
+
+	return saturate(spread0*spreadVC+inside);
 }

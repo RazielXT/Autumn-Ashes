@@ -1,36 +1,36 @@
 vertex_program basic_2tex_vc_vs cg
 {
-    source basic_2tex_vc.cg
+	source basic_2tex_vc.cg
 	profiles vs_3_0 arbvp1
-    entry_point diffuse_vs
- 
-    default_params
-    {
+	entry_point main_vs
+
+	default_params
+	{
 		param_named_auto texWorldViewProjMatrix0	texture_worldviewproj_matrix 0
 		param_named_auto texWorldViewProjMatrix1	texture_worldviewproj_matrix 1
 		param_named_auto texWorldViewProjMatrix2	texture_worldviewproj_matrix 2
 		param_named_auto texWorldViewProjMatrix3	texture_worldviewproj_matrix 3
 
-        param_named_auto wMat world_matrix
-        param_named_auto wvpMat worldviewproj_matrix
+		param_named_auto wMat world_matrix
+		param_named_auto wvpMat worldviewproj_matrix
 		param_named_auto camPos camera_position_object_space
-    }
+	}
 }
 
 fragment_program basic_2tex_vc_ps cg
 {
-    source basic_2tex_vc.cg
-    profiles ps_3_0 arbfp1
-    entry_point diffuse_ps
- 
-    default_params
-    {
-        param_named_auto lightDif0 light_diffuse_colour 0
-        param_named_auto camPos camera_position
-        param_named_auto lightPos0 light_position 0
-        param_named_auto iTWMat inverse_transpose_world_matrix
-        param_named_auto fogColor fog_colour
+	source basic_2tex_vc.cg
+	profiles ps_3_0 arbfp1
+	entry_point main_ps
+
+	default_params
+	{
+		param_named_auto lightDif0 light_diffuse_colour 0
+		param_named_auto camPos camera_position
+		param_named_auto lightPos0 light_position 0
+		param_named_auto iTWMat inverse_transpose_world_matrix
+		param_named_auto fogColor fog_colour
 		param_named_auto fogParams fog_params
 		param_named_auto ambientColor	ambient_light_colour
-    }
+	}
 }
