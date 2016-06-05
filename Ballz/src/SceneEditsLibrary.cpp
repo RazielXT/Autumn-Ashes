@@ -15,7 +15,7 @@ void SceneEditsLibrary::addMaterialEdit(MaterialEdit& edit, std::string entName)
 
 	ent.merge(edit, true);
 
-	saveMaterialHistory(Global::gameMgr->getCurrentLvlInfo()->path);
+	saveMaterialHistory(Global::gameMgr->getCurrentLvlPath());
 }
 
 void SceneEditsLibrary::removeMaterialEdit(std::string entName)
@@ -33,7 +33,7 @@ void SceneEditsLibrary::removeMaterialEdit(std::string entName)
 		ent++;
 	}
 
-	saveMaterialHistory(Global::gameMgr->getCurrentLvlInfo()->path);
+	saveMaterialHistory(Global::gameMgr->getCurrentLvlPath());
 }
 
 bool SceneEditsLibrary::loadSavedMaterialChanges(MaterialEdit& edit, std::string entName)
@@ -65,7 +65,7 @@ bool SceneEditsLibrary::loadSavedMaterialChanges(MaterialEdit& edit, std::string
 
 void SceneEditsLibrary::loadChanges()
 {
-	auto path = Global::gameMgr->getCurrentLvlInfo()->path;
+	auto path = Global::gameMgr->getCurrentLvlPath();
 
 	loadMaterialHistory(path);
 	MaterialEdit::applyChanges(materialEditHistory.data);
@@ -99,7 +99,7 @@ void SceneEditsLibrary::saveLevelEdit(std::string path)
 
 void SceneEditsLibrary::saveLevelEdit()
 {
-	saveLevelEdit(Global::gameMgr->getCurrentLvlInfo()->path);
+	saveLevelEdit(Global::gameMgr->getCurrentLvlPath());
 }
 
 void SceneEditsLibrary::loadLevelEdit(std::string path)
@@ -219,7 +219,7 @@ void SceneEditsLibrary::addParticleEdit(ParticleEdit& edit, std::string particle
 
 	ent.merge(edit, true);
 
-	saveParticleHistory(Global::gameMgr->getCurrentLvlInfo()->path);
+	saveParticleHistory(Global::gameMgr->getCurrentLvlPath());
 }
 
 void SceneEditsLibrary::removeParticleEdit(std::string particleName)
@@ -237,7 +237,7 @@ void SceneEditsLibrary::removeParticleEdit(std::string particleName)
 		ent++;
 	}
 
-	saveParticleHistory(Global::gameMgr->getCurrentLvlInfo()->path);
+	saveParticleHistory(Global::gameMgr->getCurrentLvlPath());
 }
 
 bool SceneEditsLibrary::loadSavedDetailGeometryChanges(DetailGeometryEdit& edit, std::string name)
@@ -279,7 +279,7 @@ void SceneEditsLibrary::addDetailGeometryEdit(DetailGeometryEdit& edit, std::str
 
 	dg.merge(edit, true);
 
-	saveDgHistory(Global::gameMgr->getCurrentLvlInfo()->path);
+	saveDgHistory(Global::gameMgr->getCurrentLvlPath());
 }
 
 void SceneEditsLibrary::removeDetailGeometryEdit(std::string name)
@@ -297,7 +297,7 @@ void SceneEditsLibrary::removeDetailGeometryEdit(std::string name)
 		dg++;
 	}
 
-	saveDgHistory(Global::gameMgr->getCurrentLvlInfo()->path);
+	saveDgHistory(Global::gameMgr->getCurrentLvlPath());
 }
 
 bool SceneEditsLibrary::loadSavedOptimizedGroupChanges(OptimizedGroupEdit& edit, std::string name)
@@ -336,7 +336,7 @@ void SceneEditsLibrary::addOptimizedGroupEdit(OptimizedGroupEdit& edit, std::str
 
 	og.merge(edit, true);
 
-	saveOgHistory(Global::gameMgr->getCurrentLvlInfo()->path);
+	saveOgHistory(Global::gameMgr->getCurrentLvlPath());
 }
 
 void SceneEditsLibrary::removeOptimizedGroupEdit(std::string name)
@@ -354,7 +354,7 @@ void SceneEditsLibrary::removeOptimizedGroupEdit(std::string name)
 		og++;
 	}
 
-	saveOgHistory(Global::gameMgr->getCurrentLvlInfo()->path);
+	saveOgHistory(Global::gameMgr->getCurrentLvlPath());
 }
 
 LevelEdit* SceneEditsLibrary::getLevelEdit()

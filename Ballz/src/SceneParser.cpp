@@ -1232,7 +1232,10 @@ void loadSceneCubeMap(const XMLElement* element, Ogre::Entity* ent, SceneNode* n
 	auto edit = getElementBoolValue(element, "Editable");
 	auto minDist = getElementFloatValue(element, "MinRenderDistance");
 
-	cube->init(node->getName(), res, edit, minDist);
+	if (edit)
+		cube->setAsEditable(getElementValue(element, "Filter", "Cone"), getElementFloatValue(element, "Angle", 90), getElementFloatValue(element, "Gamma", 1));
+
+	cube->init(node->getName(), res, minDist);
 
 	auto offsetW = getElementFloatValue(element, "PositionOffsetW");
 	auto radius = getElementFloatValue(element, "ObjectsRadius");
@@ -1697,6 +1700,10 @@ void loadSound(const XMLElement* element, SceneNode* node, Ogre::SceneManager *m
 	auto soundSource = Global::audioLib->loadSoundSource(name);
 
 	irrklang::ISound* sound = Global::soundEngine->play3D(soundSource, irrklang::vec3df(node->getPosition().x, node->getPosition().y, node->getPosition().z), loop, false, true, false);
+
+	if (!sound)
+		return;
+
 	sound->setMinDistance(min);
 	sound->setVolume(volume);
 
@@ -2693,18 +2700,9 @@ void parseSceneSettings(const XMLElement* sceneElement)
 
 			if (rootTag == "SceneSettings")
 			{
-				auto ambient = getElementV3Value(root, "AmbientColor");
-				auto fogColor = getElementV3Value(root, "FogColor");
-				auto fogW = getElementFloatValue(root, "FogWeight");
-				auto fogStart = getElementFloatValue(root, "FogStart");
-				auto fogEnd = getElementFloatValue(root, "FogEnd");
 				auto skybox = getElementValue(root, "Skybox");
 
 				auto lvl = Global::gameMgr->getCurrentLvlInfo();
-				lvl->ambientColor = Ogre::ColourValue(ambient.x, ambient.y, ambient.z);
-				lvl->fogColor = Ogre::ColourValue(fogColor.x, fogColor.y, fogColor.z, fogW);
-				lvl->fogStartDistance = fogStart;
-				lvl->fogEndDistance = fogEnd;
 				lvl->skyboxName = skybox;
 			}
 		}
@@ -2834,6 +2832,7 @@ void loadScene(std::string filename)
 	Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("LOADING COMPLETED :: filename \"" + filename + "\"", LML_NORMAL);
 	Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("-----------------------------------------------------------", LML_NORMAL);
 
+	Global::mSceneMgr->setSkyBox(true, Global::gameMgr->getCurrentLvlInfo()->skyboxName);
 	lastLoadTime = std::time(nullptr);
 }
 }

@@ -69,12 +69,12 @@ float4 getNormal(sampler2D normalMap, sampler2D detailMap, float2 texCoordBase, 
 {
 	//base normal+detail
 	float3 normalTex = tex2D(normalMap, texCoordBase).rgb;
-	float3 normalTex2 = tex2D(normalDetailMap, texCoordDetail).rgb;
+	float3 normalTex2 = tex2D(detailMap, texCoordDetail).rgb;
 	//normalTex = color_blend(normalTex,normalTex2).rgb;
 	float detailN = lerp(1,pow(normalTex2.r + normalTex2.g,2),detailW.x);
 
 	//blend with max detail normal
-	normalTex2 = tex2D(normalDetailMap, texCoordMax).rgb;
+	normalTex2 = tex2D(detailMap, texCoordMax).rgb;
 	//normalTex = lerp(normalTex, color_blend(normalTex,normalTex2).rgb,uvMinMaxDetailW.y);//lerp(normalTex.rgb, color_blend(normalTex,normalTex2).rgb, IN.wp.w);
 
 	detailN = lerp(detailN,pow(normalTex2.r + normalTex2.g,2),detailW.y);
@@ -86,7 +86,7 @@ float4 getNormals(sampler2D normalMap, sampler2D normalMap2, float spread, sampl
 {
 	//base normal+detail
 	float3 normalTex = tex2D(normalMap, texCoordBase).rgb;
-	float3 normalTex2 = tex2D(normalDetailMap, texCoordDetail).rgb;
+	float3 normalTex2 = tex2D(detailMap, texCoordDetail).rgb;
 	//normalTex = color_blend(normalTex,normalTex2).rgb;
 	float detailN = lerp(1,pow(normalTex2.r + normalTex2.g,2),detailW.x);
 
@@ -95,7 +95,7 @@ float4 getNormals(sampler2D normalMap, sampler2D normalMap2, float spread, sampl
 	normalTex = lerp(normalTex2, normalTex, spread);
 
 	//blend with max detail normal
-	normalTex2 = tex2D(normalDetailMap, texCoordMax).rgb;
+	normalTex2 = tex2D(detailMap, texCoordMax).rgb;
 	//normalTex = lerp(normalTex, color_blend(normalTex,normalTex2).rgb,uvMinMaxDetailW.y);//lerp(normalTex.rgb, color_blend(normalTex,normalTex2).rgb, IN.wp.w);
 
 	detailN = lerp(detailN,pow(normalTex2.r + normalTex2.g,2),detailW.y);

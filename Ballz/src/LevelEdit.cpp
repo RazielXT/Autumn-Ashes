@@ -55,6 +55,9 @@ LevelEdit* LevelEdit::query()
 
 void LevelEdit::applyChanges()
 {
+	applyPostProcessing();
+	applyFog();
+
 	for (auto& var : ppVariables)
 	{
 		applyPPEdit(var);
@@ -75,8 +78,17 @@ void LevelEdit::clear()
 
 void LevelEdit::init()
 {
-	level = Global::gameMgr->getCurrentLvlInfo();
-	originName = level->name;
+	originName = Global::gameMgr->getCurrentLvlInfo()->name;
+
+	level.fogColor = Ogre::ColourValue(0.5f, 0.55f, 0.65f, 0.5f);
+	level.fogStartDistance = 80;
+	level.fogEndDistance = 150;
+	level.ColorShift = Ogre::Vector4(1.08f, 1.12f, 1.16f, 1);
+	level.ContSatuSharpNoise = 0;
+	level.ambientColor = Ogre::ColourValue(0.35f, 0.35f, 0.35f);
+	level.sunColor = Ogre::ColourValue(1, 1, 1);
+	level.bloomStr = 1;
+	level.bloomDepth = 0.35f;
 
 	rows = { { originName,EditRow::Caption } ,{ "Save",EditRow::Action },{ "Temp",EditRow::Params },{ "PP",EditRow::Params } , { "Scene",EditRow::Params } };
 }
@@ -108,18 +120,18 @@ static void mergeDefaults(std::vector<EditVariable>& from, std::vector<EditVaria
 void LevelEdit::generateParams()
 {
 	std::vector<EditVariable> temp;
-	temp.push_back({ "BloomAdd" , level->bloomAdd });
-	temp.push_back({ "BloomSize" , level->bloomSize });
-	temp.push_back({ "BloomDepth" , level->bloomDepth });
-	temp.push_back({ "BloomStr" , level->bloomStr });
-	temp.push_back({ "ColorShift" , level->ColorShift, 0.01f });
-	temp.push_back({ "ContSatSharpNoise", level->ContSatuSharpNoise, 0.01f });
+	temp.push_back({ "BloomAdd" , level.bloomAdd });
+	temp.push_back({ "BloomSize" , level.bloomSize });
+	temp.push_back({ "BloomDepth" , level.bloomDepth });
+	temp.push_back({ "BloomStr" , level.bloomStr });
+	temp.push_back({ "ColorShift" , level.ColorShift, 0.01f });
+	temp.push_back({ "ContSatSharpNoise", level.ContSatuSharpNoise, 0.01f });
 	mergeDefaults(temp, ppVariables);
 
-	temp.push_back({ "Ambient", level->ambientColor, 0.025f });
-	temp.push_back({ "FogColor", level->fogColor, 0.025f });
-	temp.push_back({ "FogStartEnd", level->fogStartDistance, level->fogEndDistance});
-	temp.push_back({ "SunColor", level->sunColor, 0.025f });
+	temp.push_back({ "Ambient", level.ambientColor, 0.025f });
+	temp.push_back({ "FogColor", level.fogColor, 0.025f });
+	temp.push_back({ "FogStartEnd", level.fogStartDistance, level.fogEndDistance});
+	temp.push_back({ "SunColor", level.sunColor, 0.025f });
 	mergeDefaults(temp, envVariables);
 
 	auto& sunOr = Global::mSceneMgr->getLight("Sun")->getParentSceneNode()->getOrientation();
@@ -134,47 +146,47 @@ void LevelEdit::generateParams()
 void LevelEdit::applyPPEdit(EditVariable& var)
 {
 	if (var.name == "BloomAdd")
-		level->bloomAdd = var.buffer[0];
+		level.bloomAdd = var.buffer[0];
 	if (var.name == "BloomSize")
-		level->bloomSize = var.buffer[0];
+		level.bloomSize = var.buffer[0];
 	if (var.name == "BloomDepth")
-		level->bloomDepth = var.buffer[0];
+		level.bloomDepth = var.buffer[0];
 	if (var.name == "BloomStr")
-		level->bloomStr = var.buffer[0];
+		level.bloomStr = var.buffer[0];
 	if (var.name == "ColorShift")
-		level->ColorShift = Ogre::Vector4(var.buffer);
+		level.ColorShift = Ogre::Vector4(var.buffer);
 	if (var.name == "ContSatSharpNoise")
-		level->ContSatuSharpNoise = Ogre::Vector4(var.buffer);
+		level.ContSatuSharpNoise = Ogre::Vector4(var.buffer);
 
-	level->applyPostProcessing();
+	applyPostProcessing();
 }
 
 void LevelEdit::applySceneEdit(EditVariable& var)
 {
 	if (var.name == "Ambient")
 	{
-		level->ambientColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2]);
-		Global::mSceneMgr->setAmbientLight(level->ambientColor);
+		level.ambientColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2]);
+		Global::mSceneMgr->setAmbientLight(level.ambientColor);
 	}
 	if (var.name == "FogColor")
 	{
-		level->fogColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2]);
+		level.fogColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2]);
 
-		level->applyFog();
+		applyFog();
 	}
 	if (var.name == "FogStartEnd")
 	{
-		level->fogStartDistance = var.buffer[0];
-		level->fogEndDistance = var.buffer[1];
+		level.fogStartDistance = var.buffer[0];
+		level.fogEndDistance = var.buffer[1];
 
-		level->applyFog();
+		applyFog();
 	}
 	if (var.name == "SunColor")
 	{
 		auto sun = Global::mSceneMgr->getLight("Sun");
 
-		level->sunColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2]);
-		sun->setDiffuseColour(level->sunColor);
+		level.sunColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2]);
+		sun->setDiffuseColour(level.sunColor);
 	}
 	if (var.name == "SunDir")
 	{
@@ -195,3 +207,19 @@ void LevelEdit::applySceneEdit(EditVariable& var)
 	}
 }
 
+void LevelEdit::applyPostProcessing()
+{
+	PostProcessMgr* postProcMgr = Global::mPPMgr;
+
+	postProcMgr->vars.ColouringShift = level.ColorShift;
+	postProcMgr->vars.ContSatuSharpNoise = level.ContSatuSharpNoise;
+	postProcMgr->vars.bloomStrDepAddSize.z = level.bloomAdd;
+	postProcMgr->vars.bloomStrDepAddSize.x = level.bloomStr;
+	postProcMgr->vars.bloomStrDepAddSize.y = level.bloomDepth;
+	postProcMgr->vars.bloomStrDepAddSize.w = level.bloomSize;
+}
+
+void LevelEdit::applyFog()
+{
+	Global::mSceneMgr->setFog(Ogre::FOG_LINEAR, level.fogColor, 1, level.fogStartDistance, level.fogEndDistance);
+}

@@ -35,6 +35,29 @@ void SceneCubeMap::renderAll()
 	{
 		cubemap.second->update();
 	}
+
+	exportEditsList();
+}
+
+void SceneCubeMap::exportEditsList()
+{
+	std::string list;
+
+	for (auto cubemap : cubeMaps)
+	{
+		if (cubemap.second->editable)
+		{
+			list += cubemap.second->getTextureFullName() + "\t";
+			list += cubemap.second->editFilter + "\t";
+			list += std::to_string(cubemap.second->filterAngle) + "\t";
+			list += std::to_string(cubemap.second->editGamma) + "\n";
+		}
+	}
+
+	std::ofstream file(getTexturePath(true) + "cmList.txt");
+
+	if(file.good())
+		file << list;
 }
 
 Ogre::MaterialPtr SceneCubeMap::applyCubemap(Ogre::MaterialPtr mat, Ogre::Vector3 pos)
@@ -74,7 +97,7 @@ Ogre::MaterialPtr SceneCubeMap::applyCubemap(Ogre::MaterialPtr mat, Ogre::Vector
 	auto pass = newMat->getTechnique(0)->getPass(1);
 	Ogre::TextureUnitState* t = pass->getTextureUnitState("envCubeMap");
 	if (r->detectedEdited)
-		t->setCubicTextureName(r->getTextureNamePrefix() + ".png", true);
+		t->setTextureName(r->getTextureFullName() + ".dds", Ogre::TEX_TYPE_CUBE_MAP);
 	else
 		t->setTexture(r->texture);
 
@@ -100,10 +123,9 @@ void SceneCubeMap::clearAll()
 	matId = 0;
 }
 
-void SceneCubeMap::init(std::string name, int size, bool editable, float minRenderDistance)
+void SceneCubeMap::init(std::string name, int size, float minRenderDistance)
 {
 	this->size = size;
-	this->editable = editable;
 	this->name = name;
 	this->minRenderDistance = minRenderDistance;
 	cubeMaps[name] = this;
@@ -131,28 +153,34 @@ void SceneCubeMap::init(std::string name, int size, bool editable, float minRend
 	loadGpuTexture();
 }
 
+void SceneCubeMap::setAsEditable(std::string editFilter_, float filterAngle_, float gamma)
+{
+	editable = true;
+	editFilter = editFilter_;
+	filterAngle = filterAngle_;
+	editGamma = gamma;
+}
+
 std::string SceneCubeMap::getTexturePath(bool edited)
 {
-	String path = getTextureNamePrefix();
+	auto path = Global::gameMgr->getCurrentLvlPath() + "cubemaps/";
 
-	if (edited)
-		path = "..\\..\\media\\cubemaps\\precomputed\\" + path;
-	else
-		path = "..\\..\\media\\cubemaps\\" + path;
+	if (!edited)
+		path += "generated/";
 
 	return path;
 }
 
-std::string SceneCubeMap::getTextureNamePrefix()
+std::string SceneCubeMap::getTextureFullName()
 {
-	return Global::gameMgr->getCurrentLvlInfo()->name + "_" + name;
+	return name + "_" + Global::gameMgr->getCurrentLvlInfo()->name;
 }
 
 void SceneCubeMap::loadGpuTexture()
 {
 	if (editable)
 	{
-		std::ifstream ifile(getTexturePath(true) + "_lf.png");
+		std::ifstream ifile(getTexturePath(true) + getTextureFullName() + ".dds");
 		if (ifile)
 		{
 			detectedEdited = true;
@@ -191,6 +219,12 @@ bool SceneCubeMap::update()
 
 	mReflectCam->setPosition(position);
 
+	if (editable)
+	{
+		CreateDirectory(getTexturePath(true).data(), NULL);
+		CreateDirectory(getTexturePath(false).data(), NULL);
+	}
+
 	for (int i = 0; i < 6; i++)
 	{
 		mReflectCam->setOrientation(Ogre::Quaternion::IDENTITY);
@@ -220,7 +254,7 @@ bool SceneCubeMap::update()
 		renderTarget->update();
 
 		if (editable)
-			renderTarget->writeContentsToFile(getTexturePath() + "_" + std::to_string(i) + ".jpg");
+			renderTarget->writeContentsToFile(getTexturePath() + getTextureFullName() + "_" + std::to_string(i) + ".jpg");
 	}
 
 

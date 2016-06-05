@@ -13,7 +13,8 @@ public:
 	~SceneCubeMap();
 
 	bool update();
-	void init(std::string name, int size, bool editable, float minRenderDistance);
+	void init(std::string name, int size, float minRenderDistance);
+	void setAsEditable(std::string editFilter, float filterAngle, float gamma);
 
 	Ogre::Vector3 position;
 	float posessionRadius;
@@ -38,8 +39,10 @@ public:
 
 private:
 
-	std::string getTexturePath(bool edited = false);
-	std::string getTextureNamePrefix();
+	static void exportEditsList();
+
+	static std::string getTexturePath(bool edited = false);
+	std::string getTextureFullName();
 
 	void loadGpuTexture();
 
@@ -53,7 +56,12 @@ private:
 	Ogre::Entity* mEntity;
 	int visibilityFlag;
 	int size;
-	bool editable;
+
+	bool editable = false;
+	std::string editFilter;
+	float filterAngle;
+	float editGamma;
+
 	bool detectedEdited;
 	float minRenderDistance;
 

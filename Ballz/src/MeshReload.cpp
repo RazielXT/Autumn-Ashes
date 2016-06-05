@@ -50,7 +50,11 @@ void reloadMeshes(std::string directory, std::string meshPrefix)
 			if (Global::mSceneMgr->hasEntity(name))
 			{
 				auto e = Global::mSceneMgr->getEntity(name);
+
+				Ogre::MaterialPtr mat = e->getSubEntity(0)->getMaterial();
 				e->getMesh()->reload();
+				e->setMaterial(mat);
+				e->getMesh()->getSubMesh(0)->setMaterialName(mat->getName());
 
 				reloaded++;
 			}

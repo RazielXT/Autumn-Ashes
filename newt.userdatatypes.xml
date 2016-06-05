@@ -359,15 +359,25 @@
 	
 </class>
 
+<enum name="CubeMapFilter" type="string">
+		<enumItem name="Cone" value="Cone" />
+		<enumItem name="Gauss" value="AngularGaussian" />
+		<enumItem name="Cosine" value="Cosine" />
+		<enumItem name="Irradiance" value="Irradiance" />
+</enum>
+
 <class name="SceneCubeMap" usage="object">
 
 	<data name="Resolution" type="int" defaultValue="64" groupName="Cubemap"/>
 	<data name="MinRenderDistance" type="float" defaultValue="2" groupName="Cubemap"/>
-	<data name="Editable" type="bool" defaultValue="false" groupName="Cubemap"/>
 			
 	<data name="PositionOffsetW" type="float" defaultValue="0.5" groupName="Materials"/>
 	<data name="ObjectsRadius" type="float" defaultValue="100" groupName="Materials"/>
 
+	<data name="Editable" type="bool" defaultValue="false" groupName="Edit"/>
+	<data name="Filter" type="CubeMapFilter" defaultValue="Cone" groupName="Edit"/>
+	<data name="Angle" type="float" defaultValue="90" groupName="Edit"/>
+	<data name="Gamma" type="float" defaultValue="1" groupName="Edit"/>
 </class>
 
 <class name="DeathVolume" usage="object">

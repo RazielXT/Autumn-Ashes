@@ -96,7 +96,7 @@ material basic_1tex
 
 			texture_unit envCubeMap
 			{
-				cubic_texture imgs.png combinedUVW
+				texture Cubemap.dds cubic
 				filtering anisotropic
 				max_anisotropy 8
 			}

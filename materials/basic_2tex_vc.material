@@ -37,7 +37,6 @@ material basic_2tex_vc
 
 			fragment_program_ref basic_2tex_vc_ps
 			{
-				param_named diffuseColor float3 $diffuseCol
 				param_named ambientWeight float $ambientWeight
 				param_named uvScale float $uvScale
 				param_named uvSpreadScale float $uvSpreadScale
@@ -122,7 +121,7 @@ material basic_2tex_vc
 			 
 			texture_unit envCubeMap
 			{
-				cubic_texture imgs.png combinedUVW
+				texture Cubemap.dds cubic
 				filtering anisotropic
 				max_anisotropy 8
 			}

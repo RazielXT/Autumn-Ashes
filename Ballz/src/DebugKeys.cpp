@@ -213,7 +213,7 @@ void DebugKeys::makecube(bool platform)
 	node->attachObject(ent);
 	node->setScale(size);
 	ent->setCastShadows(true);
-	ent->setMaterialName("murbob");
+	ent->setMaterialName("planksVC");
 	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::mWorld, size, 0));
 	OgreNewt::Body* body = new OgreNewt::Body(Global::mWorld, col);
 

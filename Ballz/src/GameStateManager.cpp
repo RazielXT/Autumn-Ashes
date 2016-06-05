@@ -8,23 +8,6 @@
 #include "Energy.h"
 #include "Gate.h"
 
-void LevelInfo::applyPostProcessing()
-{
-	PostProcessMgr* postProcMgr = Global::mPPMgr;
-
-	postProcMgr->vars.ColouringShift = ColorShift;
-	postProcMgr->vars.ContSatuSharpNoise = ContSatuSharpNoise;
-	postProcMgr->vars.bloomStrDepAddSize.z = bloomAdd;
-	postProcMgr->vars.bloomStrDepAddSize.x = bloomStr;
-	postProcMgr->vars.bloomStrDepAddSize.y = bloomDepth;
-	postProcMgr->vars.bloomStrDepAddSize.w = bloomSize;
-}
-
-void LevelInfo::applyFog()
-{
-	Global::mSceneMgr->setFog(Ogre::FOG_LINEAR, fogColor, 1, fogStartDistance, fogEndDistance);
-}
-
 GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : audioLib(cam)
 {
 	Global::audioLib = &audioLib;
@@ -36,63 +19,29 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : 
 	wMaterials.init();
 
 	LevelInfo info;
-	info.name = "MainMenu";
-	info.path = "../../media/menu/";
-	info.sceneFile = "menu.scene";
-	info.prefix = "test";
+	info.name = "menu";
 	info.init = createMenuLevel;
-	info.fogColor = Ogre::ColourValue(0.5f, 0.55f, 0.65f, 0.5f);
-	info.fogStartDistance = 80;
-	info.fogEndDistance = 150;
-	info.ColorShift = Ogre::Vector4(1.08f, 1.12f, 1.16f, 1);
-	info.ContSatuSharpNoise = 0;
-	info.ambientColor = ColourValue(0.35f, 0.35f, 0.35f);
-	info.sunColor = ColourValue(1, 1, 1);
 	info.skyboxName = "TCENoonSkyBox";
-	info.bloomStr = 1;
-	info.bloomDepth = 0.35f;
 	levels[0] = info;
 
-	info.name = "Park";
-	info.path = "../../media/park/";
-	info.sceneFile = "park.scene";
+	info.name = "park";
 	info.init = createLevelTuto;
-	info.bloomStr = 1.5f;
-	info.bloomDepth = 0.5f;
 	levels[1] = info;
 
-	info.name = "Caves";
-	info.path = "../../media/park/";
-	info.sceneFile = "park.scene";
+	info.name = "caves";
 	info.init = createLevel1_1;
 	levels[2] = info;
 
-	info.name = "Valley";
-	info.path = "../../media/valley/";
-	info.sceneFile = "valley.scene";
+	info.name = "valley";
 	info.init = createLevel2;
 	levels[3] = info;
 
 	info.name = "Test1";
-	info.path = "../../media/testLvl/";
-	info.sceneFile = "test.scene";
 	info.init = createTestLevel;
-	info.fogColor = Ogre::ColourValue(0.5f, 0.55f, 0.65f, 0.5f);
-	info.fogStartDistance = 80;
-	info.fogEndDistance = 150;
-	info.ColorShift = Ogre::Vector4(1.0f, 1.0f, 1.02f, 1);
-	info.ContSatuSharpNoise = Ogre::Vector4(0, 0, 0, 0);
-	info.ambientColor = ColourValue(0.35f, 0.35f, 0.35f);
 	info.skyboxName = "TCENoonSkyBox";
-	info.bloomStr = 1.1f;
-	info.bloomDepth = 0.38f;
-	info.bloomAdd = 0.45f;
-	info.bloomSize = 1.5f;
 	levels[4] = info;
 
-	info.name = "Test2";
-	info.path = "../../media/testLvl2/";
-	info.sceneFile = "test.scene";
+	info.name = "testLvl2";
 	info.init = createTestLevel2;
 	levels[5] = info;
 
@@ -109,6 +58,16 @@ GameStateManager::~GameStateManager()
 void GameStateManager::switchToMainMenu()
 {
 	switchToLevel(0);
+}
+
+std::string GameStateManager::getCurrentLvlPath()
+{
+	return Path::Levels + levels[lastLVL].name + "/";
+}
+
+std::string GameStateManager::getCurrentLvlScenePath()
+{
+	return getCurrentLvlPath() + levels[lastLVL].name + ".scene";
 }
 
 LevelInfo* GameStateManager::getCurrentLvlInfo()
@@ -149,9 +108,8 @@ void GameStateManager::switchToLevel(int lvl)
 
 	auto& lvlInfo = levels[lvl];
 
-	GameScene::loadScene(lvlInfo.path + lvlInfo.sceneFile);
+	GameScene::loadScene(getCurrentLvlScenePath());
 
-	loadSceneSettings();
 	sceneEdits.loadChanges();
 	lvlInfo.init();
 
@@ -161,17 +119,6 @@ void GameStateManager::switchToLevel(int lvl)
 	Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
 }
 
-void GameStateManager::loadSceneSettings()
-{
-	auto& lvlInfo = levels[lastLVL];
-
-	Global::mSceneMgr->setAmbientLight(lvlInfo.ambientColor);
-	Global::mSceneMgr->setSkyBox(true, lvlInfo.skyboxName);
-
-	lvlInfo.applyPostProcessing();
-	lvlInfo.applyFog();
-}
-
 void GameStateManager::restartLevel()
 {
 	switchToLevel(lastLVL);
@@ -179,12 +126,12 @@ void GameStateManager::restartLevel()
 
 void GameStateManager::reloadLevel()
 {
-	GameScene::reloadScene(levels[lastLVL].path + levels[lastLVL].sceneFile);
+	GameScene::reloadScene(getCurrentLvlScenePath());
 }
 
 void GameStateManager::reloadMeshes()
 {
-	GameScene::reloadMeshes(levels[lastLVL].path, levels[lastLVL].prefix);
+	GameScene::reloadMeshes(getCurrentLvlPath(), levels[lastLVL].name);
 }
 
 bool GameStateManager::insideMenuPressed()

@@ -253,6 +253,8 @@ void PlaySound::setUserData(void* data)
 bool PlaySound::start()
 {
 	//Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("Task playing sound "+sound+", lifetime "+Ogre::StringConverter::toString(lifetime),Ogre::LML_NORMAL);
+	if (sound.empty())
+		return false;
 
 	if(timer && lifetime)
 	{

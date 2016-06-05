@@ -96,7 +96,7 @@ material oldWoodFloor : basic_2tex_vc
 	set_texture_alias normalMap2 rock2_NORM.tga
 	
 	set_texture_alias normalDetailMap rock2_NORM.tga
-	set_texture_alias spreadMap brick19_DISP.jpg
+	set_texture_alias spreadMap spread.png
 
 	set $diffuseCol "1 1 1"
 	set $specularCol "1 1 1"

@@ -14,3 +14,6 @@ PostProcessMgr* Global::mPPMgr = nullptr;
 std::map<std::string,void*>* Global::globalData = new std::map<std::string,void*>();
 
 bool continueExecution = true;
+
+const char* Path::Levels = "../../media/levels/";
+const char* Path::Audio = "../../media/audio/";

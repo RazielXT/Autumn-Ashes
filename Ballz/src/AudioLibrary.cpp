@@ -3,7 +3,7 @@
 
 using namespace Ogre;
 
-const char* audioDirectory = "../../media/audio/";
+const char* audioDirectory = Path::Audio;
 
 AudioLibrary::AudioLibrary(Ogre::Camera* cam)
 {

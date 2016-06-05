@@ -2,6 +2,7 @@
 
 #include "Gorilla.h"
 #include "Edit.h"
+#include "FloatsMap.h"
 
 #define EDIT_BASE_ROWS_MAX 8
 #define EDIT_PARAMS_ROWS_MAX 7
@@ -28,6 +29,7 @@ private:
 
 	void updateBase();
 
+	FloatsMap customSteps;
 	EditBaseRows base;
 	EditVariables* currentVars;
 	Edit* currentEdit;

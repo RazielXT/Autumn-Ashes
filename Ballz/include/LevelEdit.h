@@ -41,7 +41,25 @@ protected:
 	void applyPPEdit(EditVariable& var);
 	void applySceneEdit(EditVariable& var);
 
-	LevelInfo* level;
+	void applyPostProcessing();
+	void applyFog();
+
+	struct
+	{
+		Ogre::ColourValue fogColor;
+		float fogStartDistance;
+		float fogEndDistance;
+		Ogre::ColourValue ambientColor;
+		Ogre::ColourValue sunColor;
+
+		Ogre::Vector4 ContSatuSharpNoise;
+		Ogre::Vector4 ColorShift;
+		float bloomAdd;
+		float bloomSize;
+		float bloomStr;
+		float bloomDepth;
+	}
+	level;
 };
 
 //BOOST_CLASS_VERSION(LevelEdit, 1)

@@ -31,6 +31,12 @@ class PlayerSwimming
 
 	void enteredWater();
 	void leftWater();
+	struct
+	{
+		Ogre::Vector4 ColorShift;
+		Ogre::ColourValue fogColor;
+		float fogStart, fogEnd;
+	} lastPPValues;
 
 public:
 

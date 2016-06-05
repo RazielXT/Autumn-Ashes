@@ -53,4 +53,10 @@ extern std::map<std::string, void*>* globalData;
 
 };
 
+namespace Path
+{
+extern const char* Levels;
+extern const char* Audio;
+};
+
 extern bool continueExecution;

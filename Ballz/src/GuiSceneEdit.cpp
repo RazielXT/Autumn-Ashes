@@ -8,6 +8,8 @@
 
 void GuiSceneEdit::initUi(Gorilla::Layer* layer)
 {
+	customSteps.loadFile("..//..//media//materials//steps.txt");
+
 	float uiBaseX = 50;
 	float uiBaseY = 700;
 
@@ -89,6 +91,9 @@ bool GuiSceneEdit::pressedKey(const OIS::KeyEvent &arg)
 				activeVarId = 0;
 				activeParamId = 0;
 				currentVars = currentEdit->getParams(base[activeBaseId].name);
+
+				for (auto& var : *currentVars)
+					var.step = customSteps.get(var.name, var.step);
 			}
 
 			if(currentVars)
