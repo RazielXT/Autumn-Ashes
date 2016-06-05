@@ -126,6 +126,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="JumpBox.cpp" />
+    <ClCompile Include="src\FloatsMap.cpp" />
     <ClCompile Include="src\LevelEdit.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\AnimatedTrack.cpp" />
@@ -248,6 +249,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\EntityMovementTask.h" />
     <ClInclude Include="include\EventsManager.h" />
     <ClInclude Include="include\FilteredRaycast.h" />
+    <ClInclude Include="include\FloatsMap.h" />
     <ClInclude Include="include\GameConfig.h" />
     <ClInclude Include="include\DetailGeometry.h" />
     <ClInclude Include="include\StateSave.h" />

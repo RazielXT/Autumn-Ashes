@@ -344,6 +344,9 @@
     <ClCompile Include="src\StateSave.cpp">
       <Filter>Files\Core\Progress</Filter>
     </ClCompile>
+    <ClCompile Include="src\FloatsMap.cpp">
+      <Filter>Files\Core\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -684,6 +687,9 @@
     </ClInclude>
     <ClInclude Include="include\StateSave.h">
       <Filter>Files\Core\Progress</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FloatsMap.h">
+      <Filter>Files\Core\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
