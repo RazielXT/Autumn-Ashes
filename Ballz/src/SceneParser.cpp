@@ -2648,7 +2648,6 @@ bool isCompoundBody(const XMLElement* nodeElement)
 	return false;
 }
 
-
 std::string getUserDataType(const XMLElement* nodeElement)
 {
 	const XMLElement* childElement = nodeElement->FirstChildElement("entity");
@@ -2684,30 +2683,33 @@ struct SceneSettings
 	std::string skybox;
 };
 
-void parseSceneSettings(const XMLElement* sceneElement)
+void loadSceneSettings(const XMLElement* sceneElement)
 {
 	SceneSettings settings = { "TCENoonSkyBox" };
 
-	Ogre::String userData;
-	GetChildText(sceneElement, userData);
-
-	Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
-	myLog->logMessage(userData, LML_NORMAL);
-
-	XMLDocument document;
-	document.Parse(userData.c_str());
-
-	if (!document.Error())
+	if (sceneElement)
 	{
-		XMLElement *root = document.RootElement();
+		Ogre::String userData;
+		GetChildText(sceneElement, userData);
 
-		if (root->Value() != NULL)
+		Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
+		myLog->logMessage(userData, LML_NORMAL);
+
+		XMLDocument document;
+		document.Parse(userData.c_str());
+
+		if (!document.Error())
 		{
-			Ogre::String rootTag(root->Value());
+			XMLElement *root = document.RootElement();
 
-			if (rootTag == "SceneSettings")
+			if (root->Value() != NULL)
 			{
-				settings.skybox = getElementValue(root, "Skybox");
+				Ogre::String rootTag(root->Value());
+
+				if (rootTag == "SceneSettings")
+				{
+					settings.skybox = getElementValue(root, "Skybox");
+				}
 			}
 		}
 	}
@@ -2737,7 +2739,7 @@ void reloadScene(std::string filename)
 	auto nodesElement = mainElement->FirstChildElement("nodes");
 	auto sceneElement = mainElement->FirstChildElement("userData");
 
-	parseSceneSettings(sceneElement);
+	loadSceneSettings(sceneElement);
 
 	String elementName;
 	const XMLElement* childElement = 0;
@@ -2779,7 +2781,7 @@ void loadScene(std::string filename)
 	if (Global::player != NULL)
 		loadedBodies["Player"] = Global::player->body;
 
-	parseSceneSettings(sceneElement);
+	loadSceneSettings(sceneElement);
 
 	std::vector<const XMLElement*> compBodies;
 	String elementName;
