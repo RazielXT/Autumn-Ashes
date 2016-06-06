@@ -126,6 +126,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="JumpBox.cpp" />
+    <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\FloatsMap.cpp" />
     <ClCompile Include="src\LevelEdit.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -225,6 +226,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
   <ItemGroup>
     <ClInclude Include="include\AnimatedTrack.h" />
     <ClInclude Include="include\AnimationBlender.h" />
+    <ClInclude Include="include\Application.h" />
     <ClInclude Include="include\AudioLibrary.h" />
     <ClInclude Include="include\AudioId.h" />
     <ClInclude Include="include\BasicPPListener.h" />
@@ -327,7 +329,6 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\Slide.h" />
     <ClInclude Include="include\ZipLineSlide.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="include\start.h" />
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\TriggerObjectContactCallback.h" />
     <ClInclude Include="include\TriggerPlayerContactCallback.h" />
