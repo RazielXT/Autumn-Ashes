@@ -19,8 +19,6 @@ struct LevelInfo
 {
 	std::string name;
 	std::function<void()> init;
-
-	std::string skyboxName;
 };
 
 class GameStateManager

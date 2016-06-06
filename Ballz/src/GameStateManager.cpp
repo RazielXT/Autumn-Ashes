@@ -21,7 +21,6 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : 
 	LevelInfo info;
 	info.name = "menu";
 	info.init = createMenuLevel;
-	info.skyboxName = "TCENoonSkyBox";
 	levels[0] = info;
 
 	info.name = "park";
@@ -38,7 +37,6 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : 
 
 	info.name = "Test1";
 	info.init = createTestLevel;
-	info.skyboxName = "TCENoonSkyBox";
 	levels[4] = info;
 
 	info.name = "testLvl2";

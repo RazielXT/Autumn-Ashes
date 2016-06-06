@@ -2679,8 +2679,15 @@ std::string getUserDataType(const XMLElement* nodeElement)
 	return "";
 }
 
+struct SceneSettings
+{
+	std::string skybox;
+};
+
 void parseSceneSettings(const XMLElement* sceneElement)
 {
+	SceneSettings settings = { "TCENoonSkyBox" };
+
 	Ogre::String userData;
 	GetChildText(sceneElement, userData);
 
@@ -2700,13 +2707,12 @@ void parseSceneSettings(const XMLElement* sceneElement)
 
 			if (rootTag == "SceneSettings")
 			{
-				auto skybox = getElementValue(root, "Skybox");
-
-				auto lvl = Global::gameMgr->getCurrentLvlInfo();
-				lvl->skyboxName = skybox;
+				settings.skybox = getElementValue(root, "Skybox");
 			}
 		}
 	}
+
+	Global::mSceneMgr->setSkyBox(true, settings.skybox);
 }
 
 bool isInPreloadPass(std::string type)
@@ -2731,8 +2737,7 @@ void reloadScene(std::string filename)
 	auto nodesElement = mainElement->FirstChildElement("nodes");
 	auto sceneElement = mainElement->FirstChildElement("userData");
 
-	if (sceneElement)
-		parseSceneSettings(sceneElement);
+	parseSceneSettings(sceneElement);
 
 	String elementName;
 	const XMLElement* childElement = 0;
@@ -2774,8 +2779,7 @@ void loadScene(std::string filename)
 	if (Global::player != NULL)
 		loadedBodies["Player"] = Global::player->body;
 
-	if (sceneElement)
-		parseSceneSettings(sceneElement);
+	parseSceneSettings(sceneElement);
 
 	std::vector<const XMLElement*> compBodies;
 	String elementName;
@@ -2832,7 +2836,6 @@ void loadScene(std::string filename)
 	Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("LOADING COMPLETED :: filename \"" + filename + "\"", LML_NORMAL);
 	Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("-----------------------------------------------------------", LML_NORMAL);
 
-	Global::mSceneMgr->setSkyBox(true, Global::gameMgr->getCurrentLvlInfo()->skyboxName);
 	lastLoadTime = std::time(nullptr);
 }
 }
