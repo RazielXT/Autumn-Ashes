@@ -63,6 +63,8 @@ void Application::defineResources()
 			}
 		}
 	}
+
+	ResourceGroupManager::getSingleton().addResourceLocation(Path::LutTexture, typeName, secName);
 }
 
 

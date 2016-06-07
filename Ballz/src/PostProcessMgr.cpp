@@ -4,19 +4,19 @@
 
 using namespace Ogre;
 
-#include "BasicPPListener.h"
-#include "ScaryPPListener.h"
+#include "PPListener.h"
 
-PostProcessMgr::PostProcessMgr(Ogre::Camera* cam)
+PostProcessMgr::PostProcessMgr(Ogre::Camera* cam) : camera(cam), ppListener(&vars)
 {
+	auto t = lut.loadTexture(defaultLut);
+	getMaterial->setTexture(t);
+
 	resetValues();
 	setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 
-	camera = cam;
-
-	scaryList = new AaPostProcessListener(&vars);
-
-	setToScaryBloom();
+	Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor);
+	bloomCompositor->addListener(&ppListener);
+	Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor, true);
 
 	vars.colourOverlaying = 1;
 	totalBlacktime = currentBlacktime = 0;
@@ -26,7 +26,6 @@ PostProcessMgr::PostProcessMgr(Ogre::Camera* cam)
 
 PostProcessMgr::~PostProcessMgr()
 {
-	delete scaryList;
 }
 
 void PostProcessMgr::resetValues()
@@ -94,15 +93,6 @@ void PostProcessMgr::update(float tslf)
 	skipFadeFrame = false;
 }
 
-void PostProcessMgr::setToScaryBloom()
-{
-	//Ogre::CompositorManager::getSingleton().removeCompositor(camera->getViewport(), currentCompositor);
-	currentCompositor = "ScaryBloomNoSSAO";
-	Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor);
-	bloomCompositor->addListener(scaryList);
-	Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor, true);
-}
-
 void PostProcessMgr::fadeOut(Ogre::Vector3 colour, float duration, bool skipFrame)
 {
 	vars.colourOverlaying = colour;
@@ -121,4 +111,14 @@ void PostProcessMgr::fadeIn(Ogre::Vector3 colour, float duration, bool skipFrame
 	totalBlacktime = duration;
 	currentBlacktime = 0;
 	skipFadeFrame = skipFrame;
+}
+
+std::vector<std::string> PostProcessMgr::getColorGradingPresets()
+{
+	return lut.getAvailableTextures();
+}
+
+void PostProcessMgr::setColorGradingPreset(std::string name)
+{
+	lut.loadTexture(name);
 }

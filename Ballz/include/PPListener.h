@@ -2,13 +2,43 @@
 
 #include "stdafx.h"
 
-struct PostProcessVariables;
+struct PostProcessVariables
+{
+	Ogre::Matrix4 ipm;
+	Ogre::Matrix4 projm;
+	Ogre::Matrix4 ivp;
+	Ogre::Matrix4 pvp;
+	Ogre::Real hurtEffect;
+	Ogre::Real godrayEdge;
+	Ogre::Vector3 radialHorizBlurVignette;
+	Ogre::Vector4 ContSatuSharpNoise, ColouringShift, bloomStrDepAddSize;
+	Ogre::Real mbAmount;
+	Ogre::Real ppDistortionIgnore;
 
-class AaPostProcessListener : public Ogre::CompositorInstance::Listener
+	Ogre::Vector4 colourOverlaying;
+	Ogre::Vector4 SunScreenSpacePosition;
+
+	void reset()
+	{
+		ivp = Ogre::Matrix4::IDENTITY;
+		pvp = Ogre::Matrix4::IDENTITY;
+		ipm = Ogre::Matrix4::IDENTITY;
+		hurtEffect = 0;
+		godrayEdge = 0.2;
+		ContSatuSharpNoise = 0;
+		radialHorizBlurVignette = 0;
+		mbAmount = 1;
+		ppDistortionIgnore = 1;
+		ColouringShift = Ogre::Vector4(1, 1, 1, 0);
+		bloomStrDepAddSize = Ogre::Vector4(1, 1, 0, 1);
+	}
+};
+
+class PostProcessListener : public Ogre::CompositorInstance::Listener
 {
 public:
 
-	AaPostProcessListener(PostProcessVariables* vars)
+	PostProcessListener(PostProcessVariables* vars)
 	{
 		this->vars = vars;
 	}

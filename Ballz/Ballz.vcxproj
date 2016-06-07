@@ -129,6 +129,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\FloatsMap.cpp" />
     <ClCompile Include="src\LevelEdit.cpp" />
+    <ClCompile Include="src\LutTexture.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\AnimatedTrack.cpp" />
     <ClCompile Include="src\AnimationBlender.cpp" />
@@ -229,7 +230,6 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\Application.h" />
     <ClInclude Include="include\AudioLibrary.h" />
     <ClInclude Include="include\AudioId.h" />
-    <ClInclude Include="include\BasicPPListener.h" />
     <ClInclude Include="include\BillboardDetailGeometry.h" />
     <ClInclude Include="include\BridgeMaker.h" />
     <ClInclude Include="include\CameraShaker.h" />
@@ -254,6 +254,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\FloatsMap.h" />
     <ClInclude Include="include\GameConfig.h" />
     <ClInclude Include="include\DetailGeometry.h" />
+    <ClInclude Include="include\LutTexture.h" />
     <ClInclude Include="include\StateSave.h" />
     <ClInclude Include="include\GameUi.h" />
     <ClInclude Include="include\GameUiActions.h" />
@@ -270,7 +271,6 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\MainListener.h" />
     <ClInclude Include="include\GameStateManager.h" />
     <ClInclude Include="include\globals.h" />
-    <ClInclude Include="include\GodrayListener.h" />
     <ClInclude Include="include\Gorilla.h" />
     <ClInclude Include="include\GrassHeightFunction.h" />
     <ClInclude Include="include\HandGripTask.h" />
@@ -306,7 +306,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\PlayerSwimming.h" />
     <ClInclude Include="include\PlayerTimeshift.h" />
     <ClInclude Include="include\Pole.h" />
-    <ClInclude Include="include\ScaryPPListener.h" />
+    <ClInclude Include="include\PPListener.h" />
     <ClInclude Include="include\PSSMCamera.h" />
     <ClInclude Include="include\OgreGpuCommandBufferFlush.h" />
     <ClInclude Include="include\Player.h" />

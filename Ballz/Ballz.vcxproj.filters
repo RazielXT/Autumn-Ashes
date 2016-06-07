@@ -350,6 +350,9 @@
     <ClCompile Include="src\Application.cpp">
       <Filter>Files\Core\Base</Filter>
     </ClCompile>
+    <ClCompile Include="src\LutTexture.cpp">
+      <Filter>Files\Core\RenderObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -415,9 +418,6 @@
     <ClInclude Include="include\AudioLibrary.h">
       <Filter>Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="include\BasicPPListener.h">
-      <Filter>Files\Listeners</Filter>
-    </ClInclude>
     <ClInclude Include="include\DebugKeys.h">
       <Filter>Files\Core</Filter>
     </ClInclude>
@@ -438,9 +438,6 @@
     </ClInclude>
     <ClInclude Include="include\globals.h">
       <Filter>Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GodrayListener.h">
-      <Filter>Files\Listeners</Filter>
     </ClInclude>
     <ClInclude Include="include\InputListener.h">
       <Filter>Files\Listeners</Filter>
@@ -549,9 +546,6 @@
     </ClInclude>
     <ClInclude Include="include\WaterCurrent.h">
       <Filter>Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ScaryPPListener.h">
-      <Filter>Files\Listeners</Filter>
     </ClInclude>
     <ClInclude Include="include\PlayerAbilities.h">
       <Filter>Files\Player</Filter>
@@ -693,6 +687,12 @@
     </ClInclude>
     <ClInclude Include="include\Application.h">
       <Filter>Files\Core\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PPListener.h">
+      <Filter>Files\Listeners</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LutTexture.h">
+      <Filter>Files\Core\RenderObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

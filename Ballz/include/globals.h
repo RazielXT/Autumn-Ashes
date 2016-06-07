@@ -34,29 +34,29 @@ enum RenderQueueID
 
 namespace Global
 {
-extern Ogre::SceneManager* mSceneMgr;
-extern OgreNewt::World* mWorld;
-extern irrklang::ISoundEngine* soundEngine;
-extern Ogre::RenderWindow* mWindow;
+	extern Ogre::SceneManager* mSceneMgr;
+	extern OgreNewt::World* mWorld;
+	extern irrklang::ISoundEngine* soundEngine;
+	extern Ogre::RenderWindow* mWindow;
 
-extern EventsManager* mEventsMgr;
-extern GameStateManager* gameMgr;
-extern PostProcessMgr* mPPMgr;
+	extern EventsManager* mEventsMgr;
+	extern GameStateManager* gameMgr;
+	extern PostProcessMgr* mPPMgr;
 
-extern PlayerCamera* camera;
-extern Player* player;
-extern float timestep;
-extern AudioLibrary* audioLib;
-extern CameraShaker* shaker;
+	extern PlayerCamera* camera;
+	extern Player* player;
+	extern float timestep;
+	extern AudioLibrary* audioLib;
+	extern CameraShaker* shaker;
 
-extern std::map<std::string, void*>* globalData;
-
+	extern std::map<std::string, void*>* globalData;
 };
 
 namespace Path
 {
-extern const char* Levels;
-extern const char* Audio;
+	extern const char* Levels;
+	extern const char* Audio;
+	extern const char* LutTextures;
 };
 
 extern bool continueExecution;

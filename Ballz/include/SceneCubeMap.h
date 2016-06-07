@@ -3,8 +3,6 @@
 #include "stdafx.h"
 #include "OgreTexture.h"
 
-#include "stdafx.h"
-
 class SceneCubeMap
 {
 public:
