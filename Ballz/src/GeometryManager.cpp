@@ -51,6 +51,12 @@ void GeometryManager::addPagedGeometry(Forests::PagedGeometry *g)
 	pagedGeometries.push_back(g);
 }
 
+void GeometryManager::addPagedGeometry(Forests::PagedGeometry *g, std::string name, LightBakeInfo& info)
+{
+	addPagedGeometry(g, name);
+	lightBakingTodo.push_back(info);
+}
+
 void GeometryManager::clear()
 {
 	for(auto g : pagedGeometries)
@@ -77,6 +83,8 @@ void GeometryManager::clear()
 void GeometryManager::postLoad()
 {
 	ManualDetailGeometry::buildAll();
+	bakeLights();
+	update();
 }
 
 void GeometryManager::update()
@@ -85,6 +93,85 @@ void GeometryManager::update()
 	{
 		g->update();
 	}
+}
+
+void GeometryManager::bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::TexturePtr texture)
+{
+	cam->setFarClipDistance(info.distance);
+	cam->setOrthoWindow(info.size.x, info.size.y);
+	cam->setPosition(info.pos);
+	cam->setOrientation(Ogre::Quaternion(Ogre::Radian(Ogre::Degree(-90)), Ogre::Vector3(1, 0, 0)));
+
+	auto v = cam->getViewport();
+	uint32_t flag = VisibilityFlag_Normal;
+	Ogre::Entity* ent = nullptr;
+
+	if (info.groundName.empty())
+	{
+		v->setVisibilityMask(VisibilityFlag_Normal);
+		cam->setVisibilityFlags(VisibilityFlag_Normal);
+	}
+	else
+	{
+		v->setVisibilityMask(VisibilityFlag_Temp);
+		cam->setVisibilityFlags(VisibilityFlag_Temp);
+
+		ent = Global::mSceneMgr->getEntity(info.groundName);
+		flag = ent->getVisibilityFlags();
+		ent->setVisibilityFlags(VisibilityFlag_Temp);
+	}
+
+	auto target = texture->getBuffer()->getRenderTarget();
+	target->update();
+
+	target->writeContentsToFile("baking.jpg");
+	info.layer->setColorMap(texture);
+
+	if (ent)
+		ent->setVisibilityFlags(flag);
+}
+
+void GeometryManager::bakeLights()
+{
+	Ogre::SceneManager::MovableObjectIterator iterator = Global::mSceneMgr->getMovableObjectIterator("Entity");
+	while (iterator.hasMoreElements())
+	{
+		Ogre::Entity* e = static_cast<Ogre::Entity*>(iterator.getNext());
+
+		Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage(e->getName() + "\t" + std::to_string(e->getVisibilityFlags()));
+		//e->setVisibilityFlags(e->getVisibilityFlags() & ~VisibilityFlag_Temp);
+	}
+
+	Global::mSceneMgr->setFog(FOG_LINEAR, ColourValue::White, 0, 1000,2000);
+
+	auto lightBakingCam = Global::mSceneMgr->createCamera("lightBaking");
+	lightBakingCam->setNearClipDistance(1);
+	lightBakingCam->setFarClipDistance(100);
+	//mReflectCam->setAspectRatio(1);
+	lightBakingCam->setProjectionType(PT_ORTHOGRAPHIC);
+	lightBakingCam->setDirection(0, -1, 0);
+
+	auto texture = TextureManager::getSingleton().createManual("bakeLight",
+	               ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D,
+	               512, 512, 0, PF_R8G8B8A8, TU_RENDERTARGET);
+
+	auto rttTex = texture->getBuffer()->getRenderTarget();
+
+	Viewport *v = rttTex->addViewport(lightBakingCam);
+	v->setClearEveryFrame(true);
+	v->setSkiesEnabled(false);
+	v->setShadowsEnabled(true);
+	v->setBackgroundColour(ColourValue(1,0,0,0));
+	v->setVisibilityMask(VisibilityFlag_Normal);
+
+	for (auto& info : lightBakingTodo)
+		bakeLight(info, lightBakingCam, texture);
+
+	texture->unload();
+	lightBakingTodo.clear();
+	Global::mSceneMgr->destroyCamera(lightBakingCam);
+
+	Global::gameMgr->sceneEdits.getLevelEdit()->applyFog();
 }
 
 DetailGeometry* GeometryManager::getInstance(std::string name)

@@ -8,15 +8,17 @@ using namespace Ogre;
 
 PostProcessMgr::PostProcessMgr(Ogre::Camera* cam) : camera(cam), ppListener(&vars)
 {
-	auto t = lut.loadTexture(defaultLut);
-	getMaterial->setTexture(t);
+	auto t = lut.loadTexture("normal.png");
+	MaterialPtr mat = Ogre::MaterialManager::getSingleton().getByName("ScaryGlowDelay");
+	mat->getTechnique(0)->getPass(0)->getTextureUnitState("lut")->setTexture(t);
 
 	resetValues();
 	setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 
-	Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), currentCompositor);
+	auto compositorName = "ScaryBloomNoSSAO";
+	Ogre::CompositorInstance *bloomCompositor = Ogre::CompositorManager::getSingleton().addCompositor(camera->getViewport(), compositorName);
 	bloomCompositor->addListener(&ppListener);
-	Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), currentCompositor, true);
+	Ogre::CompositorManager::getSingleton().setCompositorEnabled(camera->getViewport(), compositorName, true);
 
 	vars.colourOverlaying = 1;
 	totalBlacktime = currentBlacktime = 0;

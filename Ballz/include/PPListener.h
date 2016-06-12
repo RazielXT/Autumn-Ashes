@@ -82,8 +82,8 @@ public:
 			params->setNamedConstant("hurtCoef", vars->hurtEffect);
 			params->setNamedConstant("colourOverlaying", vars->colourOverlaying);
 			params->setNamedConstant("ContSatuSharpNoise", vars->ContSatuSharpNoise);
-			params->setNamedConstant("ColouringShift", vars->ColouringShift);
-			params->setNamedConstant("bloomStrDep", vars->bloomStrDepAddSize);
+			//params->setNamedConstant("ColouringShift", vars->ColouringShift);
+			params->setNamedConstant("bloomStrDep", &(vars->bloomStrDepAddSize.x), 2);
 		}
 		else if (pass_id == 14)
 		{

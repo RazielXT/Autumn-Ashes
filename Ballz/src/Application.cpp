@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Application.h"
+#include "MainListener.h"
 #include "PSSMCamera.h"
 
 using namespace Ogre;
@@ -64,7 +65,7 @@ void Application::defineResources()
 		}
 	}
 
-	ResourceGroupManager::getSingleton().addResourceLocation(Path::LutTexture, typeName, secName);
+	ResourceGroupManager::getSingleton().addResourceLocation(Path::LutTextures, "FileSystem", secName);
 }
 
 

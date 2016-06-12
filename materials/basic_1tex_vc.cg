@@ -6,6 +6,7 @@ struct VIn
 {
 	float4 p : POSITION;
 	float3 n : NORMAL;
+	float4 c : COLOR;
 	float3 t : TANGENT;
 	float2 uv : TEXCOORD0;
 };
@@ -18,10 +19,11 @@ struct VOut
 	float4 n : TEXCOORD2;
 	float4 t : TEXCOORD3;
 	float4 b : TEXCOORD4;
-	float4 oLightPosition0 : TEXCOORD5;
-	float4 oLightPosition1 : TEXCOORD6;
-	float4 oLightPosition2 : TEXCOORD7;
-	float4 oLightPosition3 : TEXCOORD8;
+	float4 vc : TEXCOORD5;
+	float4 oLightPosition0 : TEXCOORD6;
+	float4 oLightPosition1 : TEXCOORD7;
+	float4 oLightPosition2 : TEXCOORD8;
+	float4 oLightPosition3 : TEXCOORD9;
 };
 
 struct PIn
@@ -31,10 +33,11 @@ struct PIn
 	float4 n : TEXCOORD2;
 	float4 t : TEXCOORD3;
 	float4 b : TEXCOORD4;
-	float4 LightPosition0 : TEXCOORD5;
-	float4 LightPosition1 : TEXCOORD6;
-	float4 LightPosition2 : TEXCOORD7;
-	float4 LightPosition3 : TEXCOORD8;
+	float4 vc : TEXCOORD5;
+	float4 LightPosition0 : TEXCOORD6;
+	float4 LightPosition1 : TEXCOORD7;
+	float4 LightPosition2 : TEXCOORD8;
+	float4 LightPosition3 : TEXCOORD9;
 };
 
 
@@ -52,7 +55,8 @@ VOut main_vs(VIn IN,
 	OUT.wp.xyz = mul(wMat, IN.p).xyz;
 	
 	OUT.p = mul(wvpMat, IN.p);
-
+	OUT.vc = IN.c;
+	
 	OUT.uv.xy = IN.uv.xy;
 	OUT.uv.zw = OUT.p.zw;
 
@@ -138,7 +142,9 @@ void main_ps(
 
 	float shadowing = getPssmShadow(lighting, IN.uv.z, shadowMap0, IN.LightPosition0, shadowMap1, IN.LightPosition1, shadowMap2, IN.LightPosition2, shadowMap3, IN.LightPosition3);
 
-	ambientColor *= ambientWeight;
+	ambientColor += saturate(IN.vc.rgb);
+	ambientColor *=  IN.vc.a * ambientWeight;	
+	//ambientColor *= ambientWeight;
 
 	float3 underShadow = max(shadowing.xxx,ambientColor);
 

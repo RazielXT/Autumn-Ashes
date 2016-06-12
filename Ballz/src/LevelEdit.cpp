@@ -49,7 +49,6 @@ void LevelEdit::customAction(std::string name)
 LevelEdit* LevelEdit::query()
 {
 	auto lvl = Global::gameMgr->sceneEdits.getLevelEdit();
-
 	return lvl;
 }
 
@@ -80,7 +79,7 @@ void LevelEdit::init()
 {
 	originName = Global::gameMgr->getCurrentLvlInfo()->name;
 
-	level.fogColor = Ogre::ColourValue(0.5f, 0.55f, 0.65f, 0.5f);
+	level.fogColor = Ogre::ColourValue(0.5f, 0.55f, 0.65f, 1.0f);
 	level.fogStartDistance = 80;
 	level.fogEndDistance = 150;
 	level.ColorShift = Ogre::Vector4(1.08f, 1.12f, 1.16f, 1);

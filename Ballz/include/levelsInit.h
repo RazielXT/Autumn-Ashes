@@ -62,7 +62,6 @@ void createLevelTuto()
 	//Global::mSceneMgr->setVisibilityMask(1);
 
 	auto ppMgr = Global::mPPMgr;
-	ppMgr->setToScaryBloom();
 	ppMgr->vars.ContSatuSharpNoise = 0.0;
 	ppMgr->vars.radialHorizBlurVignette = 0.0;
 	ppMgr->vars.ColouringShift = Ogre::Vector4(0.95, 0.98, 0.83, 0);
@@ -252,12 +251,10 @@ void createLevelTuto()
 
 	b=new Bird(mSceneMgr,mWorld,Vector3(50,200,0),node,flag_mat);
 	*/
-
 }
 
 void createLevel1_1()
 {
-
 	//Rope* rr=new Rope(mSceneMgr,mWorld,Vector3(13,11,6),10,0.5);
 
 	Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
@@ -272,7 +269,6 @@ void createLevel1_1()
 	//Global::mSceneMgr->setVisibilityMask(1);
 
 	PostProcessMgr* ppMgr = Global::mPPMgr;
-	ppMgr->setToScaryBloom();
 	ppMgr->vars.ContSatuSharpNoise = 0.0;
 	ppMgr->vars.radialHorizBlurVignette = 0.0;
 	ppMgr->vars.ColouringShift = Ogre::Vector4(0.95, 0.89, 1, 0);
@@ -284,7 +280,6 @@ void createLevel2()
 {
 	Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
 
-
 	//irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(), true, false, true, irrklang::ESM_AUTO_DETECT, true);
 	//music->setMinDistance(20);
 	//music->setMaxDistance(100);
@@ -293,7 +288,6 @@ void createLevel2()
 	//(*Global::globalData)["anton_wind1.wav"] = music;
 
 	PostProcessMgr* ppMgr = Global::mPPMgr;
-	ppMgr->setToScaryBloom();
 	ppMgr->vars.ContSatuSharpNoise = 0.0;
 	ppMgr->vars.radialHorizBlurVignette = 0.0;
 	ppMgr->vars.ColouringShift = Ogre::Vector4(0.95, 0.89, 1, 0);

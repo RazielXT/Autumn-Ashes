@@ -109,9 +109,9 @@ void GameStateManager::switchToLevel(int lvl)
 	GameScene::loadScene(getCurrentLvlScenePath());
 
 	sceneEdits.loadChanges();
+	geometryMgr->postLoad();
 	lvlInfo.init();
 
-	geometryMgr->update();
 	SceneCubeMap::renderAll();
 
 	Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);

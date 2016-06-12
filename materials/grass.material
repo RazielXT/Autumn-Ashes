@@ -1,0 +1,69 @@
+//--------------------------------------------------------------------------------
+//  grass shadowed pssm
+vertex_program grassVP cg 
+{ 
+	source grass.cg 
+	entry_point main_vp 
+	profiles vs_3_0
+
+	default_params
+	{ 
+		param_named_auto lightDir light_direction 0 
+		
+		param_named_auto camPos  camera_position_object_space
+		param_named_auto worldViewProj worldviewproj_matrix 
+
+		param_named time float 1
+		param_named frequency float 1
+		param_named direction float4 0 1 0 0
+
+		param_named fadeRange float 1
+
+		param_named_auto fogColor fog_colour
+		param_named_auto fogParams fog_params
+	} 
+} 
+
+fragment_program grassFP cg 
+{ 
+	source grass.cg 
+	entry_point main_fp 
+	profiles ps_3_0 arbfp1 
+
+	default_params
+	{ 
+		param_named_auto fogColor fog_colour
+	}
+}
+
+material grassStatic
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			lighting off
+	
+			cull_hardware none
+			scene_blend alpha_blend
+			
+			vertex_program_ref   grassVP { }
+			fragment_program_ref grassFP { }
+
+			texture_unit diffuseMap
+			{
+				texture grass2.png //grass_white.png
+			}
+		}
+	}
+}
+
+material grassHop : grassStatic
+{
+}
+
+material flowerHop : grassStatic
+{
+	set_texture_alias diffuseMap plant1.png
+}

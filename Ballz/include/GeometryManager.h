@@ -14,6 +14,16 @@ struct OptimizedGroup
 	std::string name;
 };
 
+struct LightBakeInfo
+{
+	Forests::GrassLayer* layer;
+	Ogre::Vector3 pos;
+	Ogre::Vector2 size;
+	float distance;
+
+	std::string groundName;
+};
+
 class GeometryManager
 {
 public:
@@ -21,6 +31,7 @@ public:
 	void forgetPagedGeometry(Forests::PagedGeometry *g);
 	void addPagedGeometry(Forests::PagedGeometry *g);
 	void addPagedGeometry(Forests::PagedGeometry *g, std::string name);
+	void addPagedGeometry(Forests::PagedGeometry *g, std::string name, LightBakeInfo& info);
 
 	void clear();
 	void update();
@@ -39,6 +50,10 @@ public:
 	std::vector<OptimizedGroup>& getOptGroups();
 
 private:
+
+	std::vector<LightBakeInfo> lightBakingTodo;
+	void bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::TexturePtr target);
+	void bakeLights();
 
 	std::vector<OptimizedGroup> optimizedGroups;
 

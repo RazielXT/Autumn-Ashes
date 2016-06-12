@@ -23,9 +23,6 @@ public:
 	void update(float time);
 	void clear();
 
-	void show();
-	void hide();
-
 private:
 
 	float infoTextTimer;
@@ -36,6 +33,4 @@ private:
 	Gorilla::Caption* infoTextCaption;
 	Gorilla::Caption* useTextCaption;
 	Gorilla::Caption* gameCaption;
-
-	Gorilla::Polygon* slideBar;
 };

@@ -79,6 +79,18 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 	}
 	break;
 
+	case OIS::KC_I:
+	{
+		static auto imgs = Global::mPPMgr->getColorGradingPresets();
+		static int id = 0;
+
+		id = (id + 1) % imgs.size();
+
+		Global::mPPMgr->setColorGradingPreset(imgs[id]);
+		GUtils::DebugPrint(imgs[id]);
+	}
+	break;
+
 	case OIS::KC_M:
 	{
 		if (Global::gameMgr->gameState == GAME)

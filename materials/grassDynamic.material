@@ -1,0 +1,87 @@
+//--------------------------------------------------------------------------------
+//  grass shadowed pssm
+vertex_program grassDVP cg 
+{ 
+	source grassDynamic.cg 
+	entry_point main_vp 
+	profiles vs_3_0
+
+	default_params
+	{ 
+		param_named_auto lightDir light_direction 0 
+		
+		param_named_auto camPos  camera_position_object_space
+		param_named_auto worldViewProj worldviewproj_matrix 
+
+		param_named time float 1
+		param_named frequency float 1
+		param_named direction float4 0 1 0 0
+
+		param_named fadeRange float 1
+
+		param_named_auto texWorldViewProjMatrix0  texture_worldviewproj_matrix 0
+		param_named_auto texWorldViewProjMatrix1  texture_worldviewproj_matrix 1
+		param_named_auto texWorldViewProjMatrix2  texture_worldviewproj_matrix 2
+		param_named_auto texWorldViewProjMatrix3 texture_worldviewproj_matrix 3
+
+		param_named_auto fogColor fog_colour
+		param_named_auto fogParams fog_params
+	} 
+} 
+
+fragment_program grassDFP cg 
+{ 
+	source grassDynamic.cg 
+	entry_point main_fp 
+	profiles ps_3_0 arbfp1 
+
+	default_params
+	{ 
+		param_named_auto ambientColor	ambient_light_colour
+	}
+}
+
+material grassDynamic
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			lighting off
+	
+			cull_hardware none
+			scene_blend alpha_blend
+			
+			vertex_program_ref   grassDVP { }
+			fragment_program_ref grassDFP { }
+
+			texture_unit diffuseMap
+			{
+				texture grass2.png //grass_white.png
+			}
+			
+			texture_unit shadow_tex0
+			{
+				content_type shadow
+				tex_address_mode clamp
+			}
+			texture_unit shadow_tex1
+			{
+				content_type shadow
+				tex_address_mode clamp
+			}
+			texture_unit shadow_tex2
+			{
+				content_type shadow
+				tex_address_mode clamp
+			}
+			texture_unit shadow_tex3
+			{
+				content_type shadow
+				tex_address_mode clamp
+			}
+
+		}
+	}
+}

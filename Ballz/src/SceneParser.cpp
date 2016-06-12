@@ -958,7 +958,7 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
 {
 	Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
 
-	int pageSize = Ogre::StringConverter::parseInt(element->GetText());
+	float pageSize = Ogre::StringConverter::parseReal(element->GetText());
 	element = element->NextSiblingElement();
 	int maxRange = Ogre::StringConverter::parseInt(element->GetText());
 	element = element->NextSiblingElement();
@@ -996,8 +996,18 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
 	bool usesDensityMap = (!densityMaps.empty());
 	bool usesColorMap = (!colorMaps.empty());
 
-	Forests::PagedGeometry *grass = new Forests::PagedGeometry(mSceneMgr->getCamera("Camera"), (float)pageSize, RenderQueueGroupID(RenderQueue_Grass));
+	Ogre::Vector4 bounds;
+	bounds.x = ent->getBoundingBox().getMinimum().x*node->getScale().x + node->getPosition().x;
+	bounds.y = ent->getBoundingBox().getMinimum().z*node->getScale().z + node->getPosition().z;
+	bounds.z = ent->getBoundingBox().getMaximum().x*node->getScale().x + node->getPosition().x;
+	bounds.w = ent->getBoundingBox().getMaximum().z*node->getScale().z + node->getPosition().z;
+	auto size = std::max(bounds.z - bounds.x, bounds.w - bounds.y);
+	pageSize = std::min(pageSize, std::max(25.0f, size));
+
+	Forests::PagedGeometry *grass = new Forests::PagedGeometry(mSceneMgr->getCamera("Camera"), pageSize, RenderQueueGroupID(RenderQueue_Grass));
 	grass->setVisibilityFlags(VisibilityFlag_Normal);
+	grass->setBounds(Forests::TBounds(bounds.x, bounds.y, bounds.x + size, bounds.y + size));
+
 	grass->addDetailLevel<Forests::GrassPage>((float)maxRange, (float)transLength);
 
 	TerrainHeightQueryData* offsets = new TerrainHeightQueryData();
@@ -1008,11 +1018,13 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
 	Forests::GrassLoader *grassLoader = new Forests::GrassLoader(grass);
 
 	auto belement = element->NextSiblingElement("BodyFilter");
+	std::string targetBody;
+
 	if (belement && belement->GetText())
 	{
 		LoadedFilteredGrassArea g;
 		g.data = offsets;
-		g.targetBody = belement->GetText();
+		targetBody = g.targetBody = belement->GetText();
 
 		loadedGrassAreas.push_back(g);
 		grassLoader->setHeightFunction(&HeightFunction::getTerrainHeightFiltered, offsets);
@@ -1030,6 +1042,8 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
 
 	grass->setPageLoader(grassLoader);
 	char delim = ';';
+
+	LightBakeInfo bakeInfo{};
 
 	for (int i = 0; i < layersNum; i++)
 	{
@@ -1064,9 +1078,17 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
 
 		if (usesColorMap)
 		{
-			String curColMat = SUtils::strtok_str(colorMaps, delim);
-			layer->setColorMap(curColMat);
+			/*String curColMat = SUtils::strtok_str(colorMaps, delim);
+			layer->setColorMap("dejavu.png");
 			myLog->logMessage("Grass Area loaded color map " + curColMat, LML_NORMAL);
+			*/
+			bakeInfo.distance = offsets->offset_maxY - offsets->offset_minY;
+			bakeInfo.pos = node->getPosition();
+			bakeInfo.pos.y = offsets->offset_maxY;
+			bakeInfo.layer = layer;
+			bakeInfo.size.x = ent->getBoundingBox().getMaximum().x*node->getScale().x*2.0f;
+			bakeInfo.size.y = ent->getBoundingBox().getMaximum().z*node->getScale().z*2.0f;
+			bakeInfo.groundName = targetBody;
 		}
 
 		if (fadeTech == 0)
@@ -1076,18 +1098,12 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
 		else
 			layer->setFadeTechnique(Forests::FADETECH_ALPHAGROW);
 
-		Ogre::Vector4 bounds;
-
-		bounds.x = ent->getBoundingBox().getMinimum().x*node->getScale().x + node->getPosition().x;
-		bounds.y = ent->getBoundingBox().getMinimum().z*node->getScale().z + node->getPosition().z;
-		bounds.z = ent->getBoundingBox().getMaximum().x*node->getScale().x + node->getPosition().x;
-		bounds.w = ent->getBoundingBox().getMaximum().z*node->getScale().z + node->getPosition().z;
-
 		layer->setMapBounds(Forests::TBounds(bounds.x, bounds.y, bounds.z, bounds.w));
+
 		myLog->logMessage("Grass Area ended loading layer number " + Ogre::StringConverter::toString(i), LML_NORMAL);
 	}
 
-	Global::gameMgr->geometryMgr->addPagedGeometry(grass, node->getName());
+	Global::gameMgr->geometryMgr->addPagedGeometry(grass, node->getName(), bakeInfo);
 
 	node->detachObject(ent);
 	mSceneMgr->destroyEntity(ent);
@@ -1997,7 +2013,7 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 	ent->setCastShadows(castShadows);
 
 	auto visFlagsStr = GetStringAttribute(entityElement, "visibilityFlags");
-	auto visFlags = visFlagsStr.empty() ? VisibilityFlag_Normal : Ogre::StringConverter::parseLong(visFlagsStr);
+	auto visFlags = VisibilityFlag_Normal;// visFlagsStr.empty() ? VisibilityFlag_Normal : Ogre::StringConverter::parseLong(visFlagsStr);
 	ent->setVisibilityFlags(visFlags);
 
 	Ogre::uint8 renderQueue = ParseRenderQueue(GetStringAttribute(entityElement, "renderQueue"));
@@ -2833,7 +2849,6 @@ void loadScene(std::string filename)
 	loadedForests.clear();
 
 	optimizeEntities();
-	Global::gameMgr->geometryMgr->postLoad();
 
 	Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("LOADING COMPLETED :: filename \"" + filename + "\"", LML_NORMAL);
 	Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("-----------------------------------------------------------", LML_NORMAL);

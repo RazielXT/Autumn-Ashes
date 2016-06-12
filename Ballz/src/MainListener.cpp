@@ -62,7 +62,6 @@ MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneMana
 	Global::gameMgr->geometryMgr = geometryMgr;
 
 	postProcMgr = new PostProcessMgr(mCamera);
-	postProcMgr->setToScaryBloom();
 	Global::mPPMgr = postProcMgr;
 
 	mKeyboard = keyboard;

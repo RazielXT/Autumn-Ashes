@@ -109,8 +109,9 @@ void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& ch
 		{
 			auto e = Global::mSceneMgr->getEntity(ent.first);
 			auto curMat = e->getSubEntity(0)->getMaterial();
+			auto baseMatName = ent.second.originName.substr(0, ent.second.originName.find_first_of('_'));
 
-			if (SUtils::startsWith(curMat->getName(), ent.second.originName))
+			if (SUtils::startsWith(curMat->getName(), baseMatName))
 				//if (ent.second.originName == curMat->getName())
 			{
 				auto newMat = curMat->clone(curMat->getName() + std::to_string(idCounter++));

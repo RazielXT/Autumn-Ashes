@@ -149,7 +149,7 @@ float3 HSLToRGB(float3 hsl)
 float3 ContrastSaturation(float3 color, float con, float sat)
 {
 	// Increase or decrease theese values to adjust r, g and b color channels seperately
-	const float AvgLumR = 0.4;
+	const float AvgLumR = 0.5;
 	const float AvgLumG = 0.5;
 	const float AvgLumB = 0.5;
 	
@@ -270,6 +270,7 @@ float4 GlowDelay_fp
 		uniform sampler2D brightness: register(s2),
 		//uniform sampler2D noiseTex: register(s3),
 		uniform sampler2D sceneLow: register(s3),
+		uniform sampler3D lut: register(s4),
         uniform float4 invTexSize,
 	    uniform float hurtCoef,
 		uniform float time,
@@ -293,6 +294,10 @@ float4 sceneCol = tex2D(scene, texUV);
 float3 col = sceneCol.rgb;
 
 float bright=(col.r+col.g+col.b)/3;
+
+float sat=saturate(1-hurtCoef/8)-ContSatuSharpNoise.g;
+float contr=ContSatuSharpNoise.r;
+col=saturate(ContrastSaturation(col,contr,sat));
 
 float2 move = invTexSize.xy*2;
 float3 col2 = tex2D(sceneLow, texUV + float2(move.x,0)).rgb/4;
@@ -320,30 +325,28 @@ blurom  += tex2D(bloomp,float2(uv.x,uv.y+ps));
 blurom  += tex2D(bloomp,float2(uv.x,uv.y-ps));
 blurom = saturate(blurom/5);
 
-
 blurom+=blurom*b*b*(1 + (1-bright)*2)*bloomStrDep.x;
 blurom*=bloomStrDep.y;
 
 col=col*clamp(b+b*b*b,0.81,1.5);
 
-float sat=saturate(1-hurtCoef/8)-ContSatuSharpNoise.g;
-float contr=1.35+ContSatuSharpNoise.r;
+col.rgb += blurom.rgb;
 
-col=ContrastSaturation(col,contr,sat)+blurom.rgb;
+//coldblue-0.97,0.98,0.85
+//pinkred-0.8,0.98,1.03
+//yellow-0.85,0.9,1.05
+//col = colorgrade_shadows(col,ColouringShift.rgb);
+
+float lutSize = 16;
+float3 scale = (lutSize - 1.0) / lutSize;
+float3 offset = 1.0 / (2.0 * lutSize);
+col.rgb = tex3D(lut, scale * col.rgb + offset);
+float luma =  dot(col.rgb, float3(0.299, 0.587, 0.114));
 
 float3 blood=float3(1,0,0);
 col=lerp(col,blood,clamp(uv.y-1+hurtCoef/7,0,1));
 
-float luma =  dot(col.rgb, float3(0.299, 0.587, 0.114));
-//coldblue-0.97,0.98,0.85
-//pinkred-0.8,0.98,1.03
-//yellow-0.85,0.9,1.05
-col = colorgrade_shadows(col,ColouringShift.rgb);
-
 col=lerp(colourOverlaying.rgb,col.rgb,colourOverlaying.a);
-uv.y -= time*6;
-//float3 noise = tex2D(noiseTex,uv*5).rgb;
-//col=lerp(col,col*noise*1,ContSatuSharpNoise.w*(1-bright));
 
 return float4(col,luma);
 }

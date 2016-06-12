@@ -34,15 +34,15 @@ struct LevelEdit : public Edit
 	void clear();
 	void init();
 
+	void applyFog();
+	void applyPostProcessing();
+
 protected:
 
 	void generateParams();
 
 	void applyPPEdit(EditVariable& var);
 	void applySceneEdit(EditVariable& var);
-
-	void applyPostProcessing();
-	void applyFog();
 
 	struct
 	{

@@ -60,7 +60,7 @@ material ScaryGlowDelay
 			
 			texture_unit
 			{
-				 tex_coord_set 0
+				tex_coord_set 0
 				tex_address_mode clamp
 				filtering none
 			}
@@ -70,6 +70,13 @@ material ScaryGlowDelay
 				tex_coord_set 0
 				tex_address_mode clamp
 				filtering bilinear
+			}
+			
+			texture_unit lut
+			{
+				tex_address_mode clamp
+				filtering trilinear
+				texture RGBTable16x1.dds 3d 0
 			}
 		}
 	}
