@@ -195,7 +195,11 @@
 	<data name="DensityMap" displayName="Density map" groupName="Grass Layer" type="string"/>
 	<data name="ColorMap" displayName="Color map" groupName="Grass Layer" type="string"/>
 	
+	<data name="Lightmap" displayName="Lightmap" groupName="Grass Layer" type="bool" defaultValue="true"/>
+	<data name="LightmapW" displayName="Lightmap w" groupName="Grass Layer" type="float" defaultValue="0"/>
+
 	<data name="BodyFilter" displayName="Body Filter" groupName="Grass Layer" type="string"/>
+	<data name="BodyEvade" displayName="Body Evade" groupName="Grass Layer" type="string"/>
 	
 	<data name="PlaneOffsetStart" displayName="Plane Offset Start" groupName="Grass Layer" type="string"/>
 	<data name="PlaneOffsetEnd" displayName="Plane Offset End" groupName="Grass Layer" type="string"/>
