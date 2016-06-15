@@ -395,9 +395,9 @@
 <class name="Rope" usage="object">
 </class>
 
-<class name="Player" usage="object">
-	<data name="reactions" displayName="Reactions [int;int...]" groupName="Player" type="string"/>
-	<data name="rfunctions" displayName="Functions" groupName="Player" type="string"/>
+<class name="Spawn" usage="object">
+	<data name="RayGround" groupName="Player" type="bool" defaultValue="true"/>
+	<data name="Radius" groupName="Player" type="float" defaultValue="10"/>
 </class>
 
 <enum name="gateType" type="int">

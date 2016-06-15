@@ -1216,6 +1216,27 @@ void loadEnergy(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
 	Global::mSceneMgr->destroySceneNode(node);
 }
 
+void loadSpawn(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
+{
+	if (Global::player != nullptr)
+	{
+		auto pos = node->_getDerivedPosition();
+		if (getElementBoolValue(element, "RayGround"))
+		{
+			GUtils::getVerticalRayPos(pos, 0, 10);
+			pos.y += 2;
+		}
+		Global::player->setPosition(pos);
+
+		Quaternion q = node->_getDerivedOrientation();
+		Global::camera->rotateCamera(Ogre::Degree(q.getYaw()).valueDegrees(), -Ogre::Degree(q.getPitch()).valueDegrees());
+	}
+
+	node->detachAllObjects();
+	Global::mSceneMgr->destroyEntity(ent);
+	Global::mSceneMgr->destroySceneNode(node);
+}
+
 void loadGate(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
 {
 	auto type = getElementValue(element, "Type");
@@ -2176,6 +2197,10 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 				{
 					loadWaterCurrent(root, ent, node, mSceneMgr);
 				}
+				else if (rootTag == "Spawn")
+				{
+					loadSpawn(root, ent, node);
+				}
 				else if (rootTag == "PhysicalBodyTrigger")
 				{
 					setModifierStart(root, &ent, &node, mSceneMgr);
@@ -2318,57 +2343,6 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 	}
 }
 
-
-void loadPlayerInfo(const XMLElement* nodeElement)
-{
-	String elementName;
-	const XMLElement* childElement = 0;
-	while (childElement = IterateChildElements(nodeElement, childElement))
-	{
-		elementName = childElement->Value();
-
-		if (elementName == "position")
-			Global::player->setPosition(LoadXYZ(childElement));
-		else if (elementName == "rotation")
-		{
-			Quaternion q = LoadRotation(childElement);
-			Global::camera->rotateCamera(Ogre::Degree(q.getYaw()).valueDegrees(), -Ogre::Degree(q.getPitch()).valueDegrees());
-		}
-		else if (elementName == "entity")
-		{
-			const XMLElement* userdataElement = childElement->FirstChildElement("userData");
-
-			if (userdataElement != NULL)
-			{
-				Ogre::String userData;
-				GetChildText(userdataElement, userData);
-
-				Ogre::Log* myLog = Ogre::LogManager::getSingleton().getLog("Loading.log");
-				myLog->logMessage(userData, LML_NORMAL);
-
-				XMLDocument document;
-				document.Parse(userData.c_str());
-				if (!document.Error())
-				{
-					XMLElement *root = document.RootElement();
-
-					if (root->Value() != NULL)
-					{
-						Ogre::String rootTag(root->Value());
-						XMLElement *element = root->FirstChildElement();
-
-						if (rootTag == "Player")
-						{
-							loadActions(element, Global::player->body);
-						}
-					}
-				}
-			}
-
-		}
-	}
-}
-
 inline void fixSpline(Quaternion& rotation, Quaternion previous)
 {
 	float fCos = previous.Dot(rotation);
@@ -2439,63 +2413,49 @@ void loadNode(const XMLElement* nodeElement)
 	Ogre::String name;
 	name = nodeElement->Attribute("name");
 
-	if (name == "Player" &&  Global::player != NULL)
+	Ogre::SceneManager *mSceneMgr = Global::mSceneMgr;
+	OgreNewt::World* mWorld = Global::mWorld;
+	EventsManager* mEventMgr = Global::mEventsMgr;
+	WorldMaterials* wMaterials = &Global::gameMgr->wMaterials;
+
+	node = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
+
+	bool visible = true;
+	if (nodeElement->Attribute("visibility") != NULL)
 	{
-		loadPlayerInfo(nodeElement);
+		Ogre::String v = nodeElement->Attribute("visibility");
+
+		if (v == "hidden") visible = false;
 	}
-	else
+
+	//first properties, then content
+	String elementName;
+	const XMLElement* childElement = 0;
+	while (childElement = IterateChildElements(nodeElement, childElement))
 	{
+		elementName = childElement->Value();
 
-		Ogre::SceneManager *mSceneMgr = Global::mSceneMgr;
-		OgreNewt::World* mWorld = Global::mWorld;
-		EventsManager* mEventMgr = Global::mEventsMgr;
-		WorldMaterials* wMaterials = &Global::gameMgr->wMaterials;
+		if (elementName == "position")
+			node->setPosition(LoadXYZ(childElement));
+		else if (elementName == "rotation")
+			node->setOrientation(LoadRotation(childElement));
+		else if (elementName == "scale")
+			node->setScale(LoadXYZ(childElement));
+		else if (elementName == "animations")
+			loadAnimations(childElement, node, mSceneMgr);
+	}
 
-		node = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
+	childElement = 0;
+	while (childElement = IterateChildElements(nodeElement, childElement))
+	{
+		elementName = childElement->Value();
 
-		bool visible = true;
-		if (nodeElement->Attribute("visibility") != NULL)
-		{
-			Ogre::String v = nodeElement->Attribute("visibility");
-
-			if (v == "hidden") visible = false;
-		}
-
-
-		//first properties, then content
-		String elementName;
-		const XMLElement* childElement = 0;
-
-
-		while (childElement = IterateChildElements(nodeElement, childElement))
-		{
-			elementName = childElement->Value();
-
-			if (elementName == "position")
-				node->setPosition(LoadXYZ(childElement));
-			else if (elementName == "rotation")
-				node->setOrientation(LoadRotation(childElement));
-			else if (elementName == "scale")
-				node->setScale(LoadXYZ(childElement));
-			else if (elementName == "animations")
-				loadAnimations(childElement, node, mSceneMgr);
-		}
-
-
-		childElement = 0;
-
-		while (childElement = IterateChildElements(nodeElement, childElement))
-		{
-			elementName = childElement->Value();
-
-			if (elementName == "entity")
-				loadEntity(childElement, node, visible, mSceneMgr, mWorld, mEventMgr, wMaterials);
-			else if (elementName == "light")
-				loadLight(childElement, node, mSceneMgr);
-			else if (elementName == "plane")
-				loadPlane(childElement, node, mSceneMgr);
-		}
-
+		if (elementName == "entity")
+			loadEntity(childElement, node, visible, mSceneMgr, mWorld, mEventMgr, wMaterials);
+		else if (elementName == "light")
+			loadLight(childElement, node, mSceneMgr);
+		else if (elementName == "plane")
+			loadPlane(childElement, node, mSceneMgr);
 	}
 }
 
@@ -2694,14 +2654,9 @@ std::string getUserDataType(const XMLElement* nodeElement)
 	return "";
 }
 
-struct SceneSettings
-{
-	std::string skybox;
-};
-
 void loadSceneSettings(const XMLElement* sceneElement)
 {
-	SceneSettings settings = { "TCENoonSkyBox" };
+	std::string skybox = "TCENoonSkyBox";
 
 	if (sceneElement)
 	{
@@ -2724,13 +2679,13 @@ void loadSceneSettings(const XMLElement* sceneElement)
 
 				if (rootTag == "SceneSettings")
 				{
-					settings.skybox = getElementValue(root, "Skybox");
+					skybox = getElementValue(root, "Skybox");
 				}
 			}
 		}
 	}
 
-	Global::mSceneMgr->setSkyBox(true, settings.skybox);
+	Global::mSceneMgr->setSkyBox(true, skybox);
 }
 
 bool isInPreloadPass(std::string type)
@@ -2803,7 +2758,7 @@ void loadScene(std::string filename)
 	String elementName;
 
 	//preload pass
-	const XMLElement* childElement = 0;
+	const XMLElement* childElement = nullptr;
 	while (childElement = IterateChildElements(nodesElement, childElement))
 	{
 		elementName = childElement->Value();
@@ -2817,7 +2772,7 @@ void loadScene(std::string filename)
 		}
 	}
 
-	childElement = 0;
+	childElement = nullptr;
 	while (childElement = IterateChildElements(nodesElement, childElement))
 	{
 		elementName = childElement->Value();
@@ -2833,8 +2788,6 @@ void loadScene(std::string filename)
 			else
 				compBodies.push_back(childElement);
 		}
-		/*else if (elementName == "skyBox")
-		LoadSkyBox(childElement);*/
 	}
 
 	for (uint i = 0; i < compBodies.size(); i++)
