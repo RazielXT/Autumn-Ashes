@@ -2,6 +2,7 @@
 #include "Slide.h"
 #include "Player.h"
 #include "MUtils.h"
+#include "GUtils.h"
 
 using namespace Ogre;
 
@@ -94,7 +95,7 @@ bool Slide::start(bool withJump)
 
 bool Slide::start(Vector3& pos, bool withJump)
 {
-	if (sliding)
+	if (sliding || unavailableTimer > 0)
 		return false;
 
 	if (mTrackerState == nullptr)
@@ -127,7 +128,7 @@ bool Slide::start(Vector3& pos, bool withJump)
 
 bool Slide::start(float startOffset, bool withJump, float headArrivalTimer)
 {
-	if (sliding)
+	if (sliding && unavailableTimer<=0)
 		return false;
 
 	setCorrectDirection(bidirectional, startOffset);
@@ -214,18 +215,22 @@ void Slide::release(bool returnControl, bool manualJump)
 {
 	if (returnControl)
 	{
-		Global::camera->attachCameraWithTransition(0.2f);
-		Global::camera->nodHead(40);
+		unavailableTimer = 0.5f;
+
+		//GUtils::DebugPrint(Ogre::StringConverter::toString(head->_getDerivedPosition()));
 		Global::player->body->setPositionOrientation(head->_getDerivedPosition(), Ogre::Quaternion::IDENTITY);
+		//Global::camera->attachCamera();
+		Global::camera->attachCameraWithTransition(0.2f);
 
 		float releaseSpeed = pow(std::max(1.0f, currentSpeed * 0.5f), 0.75f);
 
 		if (!manualJump)
 			Global::player->body->setVelocity(getDirectionState()*Vector3(0, 0, -1 * releaseSpeed) + Vector3(0, 3, 0));
 		else
-			Global::player->body->setVelocity(10 * Global::camera->getFacingDirection() + Vector3(0, 5, 0));
+			Global::player->body->setVelocity(10 * Global::camera->getFacingDirection() + Vector3(0, 10, 0));
 
-		Global::camera->shaker.startShaking(0.65, 1.0, 0.25, 1, 1, 0.5, 0.35, 1, true);
+		Global::camera->shaker.nodHead(3);
+		//Global::camera->shaker.startShaking(0.8f, 1.0f, 0.5f, 1, 1, 0.4f, 0.25f, 1, true);
 
 		enablePlayerControl = true;
 	}
@@ -329,5 +334,5 @@ bool Slide::update(Ogre::Real tslf)
 		enablePlayerControl = false;
 	}
 
-	return jumpingToSlide || sliding;
+	return jumpingToSlide || sliding || unavailableTimer>0;
 }

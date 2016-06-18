@@ -109,7 +109,7 @@ void TopSlide::updateSlidingState(float time)
 
 	//GUtils::DebugPrint(GUtils::v2s(newUp), true);
 	//GUtils::DebugPrint(GUtils::v2s(oldUp), true);
-	GUtils::DebugPrint(std::to_string(manualRoll), true);
+	//GUtils::DebugPrint(std::to_string(manualRoll), true);
 }
 
 void TopSlide::updateSlidingCamera(float time)

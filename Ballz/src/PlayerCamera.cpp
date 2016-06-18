@@ -155,6 +155,8 @@ void PlayerCamera::attachCamera(bool silent)
 	camnode->setOrientation(Ogre::Quaternion::IDENTITY);
 	//camnode->setPosition(Vector3(0,0,0));
 
+	rotateCamera(camera->getDerivedOrientation());
+
 	camera->detachFromParent();
 	camera->setDirection(Ogre::Vector3(0, 0, -1));
 	camnode->attachObject(camera);
@@ -172,7 +174,6 @@ void PlayerCamera::attachCameraWithTransition(float duration)
 	cameraArrival.tempNode->setOrientation(cameraArrival.dir);
 
 	attachCamera();
-	rotateCamera(cameraArrival.dir);
 
 	camera->detachFromParent();
 	cameraArrival.tempNode->attachObject(camera);

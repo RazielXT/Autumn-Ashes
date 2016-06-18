@@ -34,7 +34,7 @@ bool PlayerAutoTarget::spacePressed()
 {
 	if (targetInfo.targetSlide)
 	{
-		return targetInfo.targetSlide->start(targetInfo.targetSlideOffset, true);
+		//return targetInfo.targetSlide->start(targetInfo.targetSlideOffset, true);
 	}
 	else if (targetInfo.targetJump)
 	{
@@ -238,11 +238,11 @@ void PlayerAutoTarget::updateAutoTarget(Vector3 pos, Vector3 dir, float tslf, fl
 		//if((targetInfo.targetSlide))
 		//	targetInfo.slidePos = targetInfo.targetSlide->getTrackPosition(targetInfo.slidePosOffset);
 
-		if (targetInfo.targetSlide)
+		/*if (targetInfo.targetSlide)
 		{
 			//Global::gameMgr->myMenu->showUseGui(Ui_Target);
 		}
-		else  //auto attach on touch
+		else  //auto attach on touch*/
 		{
 			if (targetInfo.closeSlide)
 				if (lastUnavailableSlide != targetInfo.closeSlide)
