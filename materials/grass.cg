@@ -2,7 +2,6 @@ void main_vp(
 			float4 iPosition : POSITION,
 			float4 iColor    : COLOR,
 			float2 iUV       : TEXCOORD0,
-			float3 tNormal    : NORMAL,	
 			out float4 oPosition : POSITION,
 			out float4 oColor    : COLOR,
 			out float4 oUV       : TEXCOORD0,
@@ -33,11 +32,6 @@ void main_vp(
 		offset = sin(time + oldposx * frequency);
 		position += direction * offset;
 	}
-	/*else
-	{	
-		float diffuse = saturate(dot(-lightDir,tNormal.xyz));
-		oColor.rgb *= lerp(0.35,1,diffuse);
-	}*/
 
 	oPosition = mul(worldViewProj, position);
 	oUV.xy = iUV.xy;

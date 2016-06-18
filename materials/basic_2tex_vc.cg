@@ -173,7 +173,7 @@ void main_ps(
 	float3 outColor = (diffuse*diffuseTex.rgb + specular.rgb*specWeight);
 	outColor = applyFog(outColor, dist, fogParams, fogColor);
 
-	color0 = float4(outColor,1);
+	color0 = float4(outColor,spread);
 	color1 = float4(0, 0, 0, brightness + saturate(specular.w / 2));
 	color2 = float4(0, 0, 0, 1);
 	color3 = float4(1 - IN.uv.z / IN.uv.w, dist, 0, 1);

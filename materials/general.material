@@ -17,7 +17,24 @@ material redFlag : basic_1tex
 	set $shininess "16"
 }
 
-material planksVC : basic_1tex 
+material wood03png : basic_1tex_vc
+{
+	set $uvScale "1"
+	set $uvSpreadScale "0.5" 
+	set $uv2Scale "1" 
+	set $uvMinMaxDetailScale "3.7 0.15" 
+
+	set_texture_alias dispMap wood0_DISP.png
+	set_texture_alias spreadMap wood0_DISP.png
+	
+	set_texture_alias diffuseMap bark_deciduous.dds
+	set_texture_alias normalMap wood_NORM.tga
+
+	set $diffuseCol "1 1 1"
+	set $specularCol "0.1 0.1 0.05"
+}
+
+material planksVC : basic_1tex_vc 
 {
 	set_texture_alias diffuseMap wood.png
 	set_texture_alias normalMap wood_NORM.tga
@@ -28,7 +45,33 @@ material planksVC : basic_1tex
 	set $shininess "32"
 }
 
-material grassMat : basic_1tex 
+material concreteVc : basic_1tex_vc 
+{
+	set_texture_alias diffuseMap water.png
+	set_texture_alias normalMap ConcreteNew0007_2_S_NORM.tga
+
+	set $diffuseCol "1 1 1"
+	set $brightness "0.05"
+	set $specularCol "1 1 1"
+	set $shininess "32"
+}
+
+material glass : basic_1tex
+{
+	set_texture_alias diffuseMap water.png
+	set_texture_alias normalMap ConcreteNew0007_2_S_NORM.tga
+	
+	set $uvScale "2.0"
+	set $detailScale "0.4"
+	set $specularEnvWeight "1 2"
+	
+	set $diffuseCol "1 1 1"
+	set $specularCol "0.2 0.2 0.2"
+	set $brightness "0.5"
+	set $shininess "16"
+}
+
+material grassMat : basic_1tex_vc 
 {
 	set_texture_alias diffuseMap Moss0162_10_S.jpg
 	set_texture_alias normalMap Moss0162_10_S_NORM.tga
@@ -45,6 +88,22 @@ material grassMat : basic_1tex
 }
 
 material grassVc : basic_1tex_vc
+{
+	set_texture_alias diffuseMap Moss0162_10_S.jpg
+	set_texture_alias normalMap Moss0162_10_S_NORM.tga
+	set_texture_alias dispMap Moss0162_10_S_DISP.bmp
+	set_texture_alias normalDetailMap SilveryBlue_NORM.tga
+	
+	set $uvScale "0.75"
+	set $detailScale "0.4"
+	
+	set $diffuseCol "1 1 1"
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	set $shininess "16"
+}
+
+material wood1Mat : basic_1tex_vc
 {
 	set_texture_alias diffuseMap Moss0162_10_S.jpg
 	set_texture_alias normalMap Moss0162_10_S_NORM.tga

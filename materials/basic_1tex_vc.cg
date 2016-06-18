@@ -155,7 +155,7 @@ void main_ps(
 	lighting = abs(max(lighting,lighting/2));
 	float3 diffuse = lerp(ambientColor, lightDif0.rgb, underShadow*lighting)*detailN;
 
-	float specWeight = specularEnvWeight.x;
+	float specWeight = specularEnvWeight.x*shadowing;
 	float3 outColor = (diffuse*diffuseTex.rgb + specular.rgb*specWeight);
 	outColor = applyFog(outColor, dist, fogParams, fogColor);
 	

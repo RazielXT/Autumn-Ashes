@@ -185,7 +185,7 @@ material  branch_summer2png: leaf_material_dynamic_op
 	set $specularCol "0.1046281215 0.13446281215 0.10546281215"
 }
 
-material wood03png : 1t_vc_material_static
+material wood03png_ : 1t_vc_material_static
 {
 	set $uvScale "1"
 	set $uvSpreadScale "0.5" 

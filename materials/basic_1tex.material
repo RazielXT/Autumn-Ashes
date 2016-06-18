@@ -2,7 +2,7 @@ material basic_1tex
 {
 	set $diffuseCol "1 1 1"
 	set $specularCol "1 1 1"
-	set $specularEnvWeight "1 1"
+	set $specularEnvWeight "0.25 1"
 	set $shininess "32"
 	set $brightness "0.5"
 	set $ambientWeight "1"
