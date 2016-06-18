@@ -127,6 +127,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
   <ItemGroup>
     <ClCompile Include="JumpBox.cpp" />
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\DetailGeometryMaterial.cpp" />
     <ClCompile Include="src\FloatsMap.cpp" />
     <ClCompile Include="src\LevelEdit.cpp" />
     <ClCompile Include="src\LutTexture.cpp" />

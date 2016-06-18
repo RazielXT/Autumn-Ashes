@@ -16,7 +16,7 @@ using namespace Ogre;
 namespace HeightFunction
 {
 
-	const float MaxSlope = 0.65f;
+const float MaxSlope = 0.65f;
 
 inline float getTerrainHeight(const float x, const float z, void *userData )
 {

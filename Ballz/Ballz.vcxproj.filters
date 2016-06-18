@@ -353,6 +353,9 @@
     <ClCompile Include="src\LutTexture.cpp">
       <Filter>Files\Core\RenderObjects</Filter>
     </ClCompile>
+    <ClCompile Include="src\DetailGeometryMaterial.cpp">
+      <Filter>Files\Core\DetailGeometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">

@@ -9,9 +9,6 @@
 
 using namespace Ogre;
 
-std::map<std::string, VCEditFunc> DetailGeometryMaterial::editVCMeshes;
-std::vector<std::string> DetailGeometryMaterial::editVCMeshesDone;
-
 void GeometryManager::forgetPagedGeometry(Forests::PagedGeometry *g)
 {
 	auto it = std::find(pagedGeometries.begin(), pagedGeometries.end(), g);
