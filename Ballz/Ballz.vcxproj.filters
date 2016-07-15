@@ -341,9 +341,6 @@
     <ClCompile Include="src\MeshReload.cpp">
       <Filter>Files\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\StateSave.cpp">
-      <Filter>Files\Core\Progress</Filter>
-    </ClCompile>
     <ClCompile Include="src\FloatsMap.cpp">
       <Filter>Files\Core\Utils</Filter>
     </ClCompile>
@@ -355,6 +352,9 @@
     </ClCompile>
     <ClCompile Include="src\DetailGeometryMaterial.cpp">
       <Filter>Files\Core\DetailGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Progress.cpp">
+      <Filter>Files\Core\Progress</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -682,9 +682,6 @@
     <ClInclude Include="include\GameScene.h">
       <Filter>Files\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="include\StateSave.h">
-      <Filter>Files\Core\Progress</Filter>
-    </ClInclude>
     <ClInclude Include="include\FloatsMap.h">
       <Filter>Files\Core\Utils</Filter>
     </ClInclude>
@@ -696,6 +693,9 @@
     </ClInclude>
     <ClInclude Include="include\LutTexture.h">
       <Filter>Files\Core\RenderObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Progress.h">
+      <Filter>Files\Core\Progress</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
