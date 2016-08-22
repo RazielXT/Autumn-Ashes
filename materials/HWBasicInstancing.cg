@@ -1,0 +1,115 @@
+struct VIn
+{
+	float4 p    : POSITION;
+	float3 n    : NORMAL;
+	float3 t    : TANGENT;
+	float2 uv   : TEXCOORD0;
+	float4 c : COLOR;
+	
+	float4 mat14	:	TEXCOORD1;
+	float4 mat24	:	TEXCOORD2;
+	float4 mat34	:	TEXCOORD3;
+};
+
+struct VOut
+{
+	float4 p    : POSITION;
+	float4 uv   : TEXCOORD0;
+	float4 wp   : TEXCOORD1;
+	float3 n    : TEXCOORD2;
+	/*float3 t    : TEXCOORD3;
+	float3 b    : TEXCOORD4;
+	float4 oLightPosition0	: TEXCOORD6;
+	float4 oLightPosition1	: TEXCOORD7;
+	float4 oLightPosition2	: TEXCOORD8;
+	float4 oLightPosition3	: TEXCOORD9;*/
+};
+
+struct PIn
+{
+	float4 uv   : TEXCOORD0;
+	float4 wp   : TEXCOORD1;
+	float3 n    : TEXCOORD2;
+	/*float3 t    : TEXCOORD3;
+	float3 b    : TEXCOORD4;
+	float4 LightPosition0	: TEXCOORD6;
+	float4 LightPosition1	: TEXCOORD7;
+	float4 LightPosition2	: TEXCOORD8;
+	float4 LightPosition3	: TEXCOORD9;*/
+};
+
+VOut main_vs( in VIn input,
+				uniform float4x4 viewProjMatrix
+				)
+{
+	VOut output;
+
+	float3x4 worldMatrix;
+	worldMatrix[0] = input.mat14;
+	worldMatrix[1] = input.mat24;
+	worldMatrix[2] = input.mat34;
+	
+	float4 worldPos = float4( mul( worldMatrix, input.p ).xyz, 1.0f );
+	float3 worldNorm= mul( (float3x3)(worldMatrix), input.n );
+	
+	//Transform the position
+	output.p		= mul( viewProjMatrix, worldPos );
+	output.wp = worldPos;	
+	output.uv.xy		= input.uv;
+	output.uv.zw		= output.p.zw;
+	//Pass Normal and position for Blinn Phong lighting
+	output.n	= normalize(worldNorm);
+	
+	return output;
+}
+
+void main_ps( PIn input ,
+				uniform float4	lightPosition,
+				uniform float3	cameraPosition,
+				uniform half3 	lightAmbient,
+				uniform half3	lightDiffuse,
+				uniform half3	lightSpecular,
+				uniform half4	lightAttenuation,
+				uniform half	lightGloss,
+
+				//Textures
+				uniform sampler2D diffuseMap : register(s0),
+
+				out float4 color0 : COLOR0,
+				out float4 color1 : COLOR1,
+				out float4 color2 : COLOR2,
+				out float4 color3 : COLOR3
+			)
+{
+	float fShadow = 1.0f;
+
+	const half4 baseColour = tex2D( diffuseMap, input.uv.xy );
+	
+	if(baseColour.a < 0.35) 
+		discard;
+	
+	//Blinn-Phong lighting
+	const half3 normal		= normalize( input.n );
+	half3 lightDir			= lightPosition.xyz - input.wp * lightPosition.w;
+	half3 eyeDir			= normalize( cameraPosition - input.wp  );
+	float distance			= length( cameraPosition - input.wp );
+	
+	const half fLength		= length( lightDir );
+	lightDir				= normalize( lightDir );
+
+	const half NdotL = max( 0.0f, dot( normal, lightDir ) );
+	half3 halfVector = normalize(lightDir + eyeDir);
+	const half HdotN = max( 0.0f, dot( halfVector, normal ) );
+	
+	const half3 ambient  = lightAmbient * baseColour.xyz;
+	const half3 diffuse  = lightDiffuse * NdotL * baseColour.xyz;
+	const half3 specular = lightSpecular * pow( HdotN, lightGloss );
+	
+	const half3 directLighting = (diffuse + specular) * fShadow;
+	
+	color0 = half4( baseColour.rgb , baseColour.a );
+	
+	color1=float4(0.5,0.5,0.5,0.2);
+	color2=float4(0,0,0,1);
+	color3=float4(1 - input.uv.z/input.uv.w,distance,0,1);
+}

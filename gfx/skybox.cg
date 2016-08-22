@@ -13,6 +13,8 @@ in float2 uvIn : TEXCOORD0
 
 void skybox_ps(
 		uniform sampler2D material: register(s0),
+		uniform sampler2D material2: register(s1),
+		uniform float time,
 		in float2 uv : TEXCOORD0,
 		out float4 color0 : COLOR0,
    		out float4 color1 : COLOR1,
@@ -22,6 +24,8 @@ void skybox_ps(
 {
 	color0=tex2D(material, uv);
 
+	color0 = lerp(color0, tex2D(material, uv), fmod(time,10)/10);
+	//color0.rgb = lerp(color0.rgb,1, uv.y);
 	float brightess =  pow((color0.r + color0.g + color0.b)/3.0,2);
 	float add = brightess == 1 ? 2 : 0;
 	color1=float4(0, 0, 0, brightess + add);
@@ -29,18 +33,3 @@ void skybox_ps(
 	color3=float4(0,8000,0,1);
 }
 
-void skyboxToDark_ps(
-		uniform sampler2D material: register(s0),
-		in float2 uv : TEXCOORD0,
-		out float4 color0 : COLOR0,
-   		out float4 color1 : COLOR1,
- 		out float4 color2 : COLOR2,
- 		out float4 color3 : COLOR3,
-		uniform float4 dark
-		)
-{
-	color0=tex2D(material, uv)*dark;
-	color1=float4(0.5,0.5,0.3,0.3);
-	color2=color0;
-	color3=float4(0,64000,0,1);
-}

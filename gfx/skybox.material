@@ -4,11 +4,10 @@ vertex_program skybox_vs cg
     profiles vs_3_0
     entry_point skybox_vs
 
-default_params
+	default_params
     {
         param_named_auto wmat worldviewproj_matrix
     }
-
 }
 
 fragment_program skybox_ps cg
@@ -17,20 +16,10 @@ fragment_program skybox_ps cg
     profiles ps_3_0
     entry_point skybox_ps
 
-
-}
-
-fragment_program skybox_ps_d cg
-{
-    source skybox.cg
-    profiles ps_3_0
-    entry_point skyboxToDark_ps
-
 	default_params
     {
-        param_named_auto dark ambient_light_colour    
-}
-
+		param_named_auto time time
+    }
 }
 
 material SkyboxMaterial
@@ -59,6 +48,18 @@ material SkyboxMaterial
 				//morning.jpg
 				//sky8m.jpg
 				cubic_texture clouds.png separateUV
+				tex_address_mode clamp
+			}
+			
+			texture_unit skybox1
+			{
+				//stormydays.tga 
+				//amethyst.jpg
+				//sunset02.jpg
+				//stormy.jpg
+				//morning.jpg
+				//sky8m.jpg
+				cubic_texture morning.jpg separateUV
 				tex_address_mode clamp
 			}
 

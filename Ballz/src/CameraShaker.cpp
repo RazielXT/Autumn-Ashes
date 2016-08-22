@@ -9,11 +9,13 @@ void CameraShaker::update(float time)
 	if (!camShaking)
 		return;
 
+	//float w = 2*std::max(0.1f,camShakeTimer/shakingDuration);
+
 	camShakeTimer = std::min(time + camShakeTimer, camShakeTimerEnd);
 	current = Ogre::Quaternion::Slerp(camShakeTimer / camShakeTimerEnd, camShakePrev, camShakeTarget);
 
 	//last target duration passed, end shaking
-	if (!permanent && camShakeTimer == camShakeTimerEnd && camShakeTimeLeft<0)
+	if (!permanent && /*camShakeTimer == camShakeTimerEnd &&*/ camShakeTimeLeft<0)
 	{
 		camShaking = false;
 		current = Quaternion::IDENTITY;
@@ -112,7 +114,7 @@ void CameraShaker::startShaking(float power, float freq, float duration, float a
 
 void CameraShaker::nodHead(float power)
 {
-	startShaking(power, 2.5, 0.1, 1, 1, 0.7, 0, 1, true);
+	startShaking(power, 1 + 0.5f*power, 0.5f, 1, 1, 0.05f, 0, 1, true);
 }
 
 void CameraShaker::stopShaking()

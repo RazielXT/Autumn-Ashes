@@ -1,15 +1,17 @@
 vertex_program basic_2tex_vc_vs cg
 {
-	source basic_2tex_vc.cg
+	source basic.cg
 	profiles vs_3_0 arbvp1
 	entry_point main_vs
 
+	compile_arguments -DUSE_2TEX -DUSE_VC
+		
 	default_params
 	{
-		param_named_auto texWorldViewProjMatrix0	texture_worldviewproj_matrix 0
-		param_named_auto texWorldViewProjMatrix1	texture_worldviewproj_matrix 1
-		param_named_auto texWorldViewProjMatrix2	texture_worldviewproj_matrix 2
-		param_named_auto texWorldViewProjMatrix3	texture_worldviewproj_matrix 3
+		param_named_auto texWorldViewProjMatrix0	texture_viewproj_matrix 0
+		param_named_auto texWorldViewProjMatrix1	texture_viewproj_matrix 1
+		param_named_auto texWorldViewProjMatrix2	texture_viewproj_matrix 2
+		param_named_auto texWorldViewProjMatrix3	texture_viewproj_matrix 3
 
 		param_named_auto wMat world_matrix
 		param_named_auto wvpMat worldviewproj_matrix
@@ -19,10 +21,12 @@ vertex_program basic_2tex_vc_vs cg
 
 fragment_program basic_2tex_vc_ps cg
 {
-	source basic_2tex_vc.cg
+	source basic.cg
 	profiles ps_3_0 arbfp1
 	entry_point main_ps
 
+	compile_arguments -DUSE_2TEX -DUSE_VC
+	
 	default_params
 	{
 		param_named_auto lightDif0 light_diffuse_colour 0

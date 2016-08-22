@@ -30,8 +30,12 @@ PlayerCamera::PlayerCamera(Player* p, Ogre::SceneNode* base)
 	shakeNode->setPosition(Vector3(0, 0, 0));
 
 	camnode = shakeNode->createChildSceneNode("CamNod");
-	camnode->attachObject(camera);
+	//camnode->attachObject(camera);
 	camnode->setPosition(Vector3(0, 0, 0));
+
+	auto tnode = camnode->createChildSceneNode("tNod");
+	tnode->attachObject(camera);
+	tnode->setPosition(Vector3(0, 5, 20));
 
 	rolling.setTargetNodes(camnode, headnode);
 
@@ -59,8 +63,7 @@ Vector3 PlayerCamera::getPosition() const
 
 void PlayerCamera::startCameraShake(float time, float power, float impulse)
 {
-	//shaker->startCameraShake(time,power,impulse);
-	Global::camera->shaker.startShaking(power, impulse, time);
+	shaker.startShaking(power, impulse, time);
 }
 
 Ogre::Vector3 PlayerCamera::getFacingDirection() const
@@ -240,8 +243,8 @@ void PlayerCamera::rotateCamera(Real yaw, Real pitch)
 	else
 	{
 		//damping of turning speed if moving quickly midair
-		if (!player->onGround && player->bodyVelocityL > 10)
-			yaw *= std::max(0.1f, (100 - player->bodyVelocityL) / 90.f);
+		//if (!player->onGround && player->bodyVelocityL > 10)
+		//	yaw *= std::max(0.1f, (100 - player->bodyVelocityL) / 90.f);
 
 		necknode->yaw(Degree(yaw), Node::TS_WORLD);
 	}

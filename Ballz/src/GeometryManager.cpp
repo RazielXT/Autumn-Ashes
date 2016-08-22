@@ -6,6 +6,7 @@
 #include "ManualDetailGeometry.h"
 #include "BillboardDetailGeometry.h"
 #include "Player.h"
+#include "PSSMCamera.h"
 
 using namespace Ogre;
 
@@ -99,6 +100,15 @@ void GeometryManager::bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::Te
 	cam->setPosition(info.pos);
 	cam->setOrientation(Ogre::Quaternion(Ogre::Radian(Ogre::Degree(-90)), Ogre::Vector3(1, 0, 0)));
 
+	auto shSetup = Global::mSceneMgr->getShadowCameraSetup();
+	PSSMShadowCameraSetup2* pssmSetup = (PSSMShadowCameraSetup2*)shSetup.get();
+
+	Ogre::PSSMShadowCameraSetup2::SplitPointList splitPointList = pssmSetup->getSplitPoints();
+	auto origSplit = splitPointList[pssmSetup->getSplitCount()];
+	auto bestSplit = std::max(origSplit, std::max(info.size.x, info.size.y));
+	splitPointList[pssmSetup->getSplitCount()] = bestSplit;
+	pssmSetup->setSplitPoints(splitPointList);
+
 	auto v = cam->getViewport();
 	uint32_t flag = VisibilityFlag_Normal;
 	Ogre::Entity* ent = nullptr;
@@ -122,7 +132,11 @@ void GeometryManager::bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::Te
 	target->update();
 
 	target->writeContentsToFile("baking.jpg");
+
 	info.layer->setColorMap(texture);
+
+	splitPointList[pssmSetup->getSplitCount()] = origSplit;
+	pssmSetup->setSplitPoints(splitPointList);
 
 	if (ent)
 		ent->setVisibilityFlags(flag);
@@ -135,11 +149,11 @@ void GeometryManager::bakeLights()
 	{
 		Ogre::Entity* e = static_cast<Ogre::Entity*>(iterator.getNext());
 
-		Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage(e->getName() + "\t" + std::to_string(e->getVisibilityFlags()));
+		Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage(e->getName() + "\t" + std::to_string(e->getVisibilityFlags()) + "\t" + e->getSubEntity(0)->getMaterialName());
 		//e->setVisibilityFlags(e->getVisibilityFlags() & ~VisibilityFlag_Temp);
 	}
 
-	Global::mSceneMgr->setFog(FOG_LINEAR, ColourValue::White, 0, 1000,2000);
+	Global::mSceneMgr->setFog(FOG_LINEAR, ColourValue::White, 0, 10000,15000);
 
 	auto lightBakingCam = Global::mSceneMgr->createCamera("lightBaking");
 	lightBakingCam->setNearClipDistance(1);
@@ -378,7 +392,7 @@ std::vector<OptimizedGroup>& GeometryManager::getOptGroups()
 
 std::vector<OptimizedGroup> GeometryManager::getClosestOptGroup(float radius)
 {
-	auto pos = Global::camera->getPosition();
+	auto pos = Global::mSceneMgr->getCamera("Camera")->getDerivedPosition();
 	std::vector<std::pair<float, OptimizedGroup>> inReach;
 
 	for (auto& g : optimizedGroups)

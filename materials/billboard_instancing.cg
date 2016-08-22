@@ -1,0 +1,188 @@
+struct VIn
+{
+	float4 p    : POSITION;
+	float3 n    : NORMAL;
+	float3 t    : TANGENT;
+	float2 uv   : TEXCOORD0;
+	float4 c : COLOR;
+	
+	float4 mat14	:	TEXCOORD1;
+	float4 mat24	:	TEXCOORD2;
+	float4 mat34	:	TEXCOORD3;
+};
+
+struct VOut
+{
+	float4 p    : POSITION;
+	float4 uv   : TEXCOORD0;
+	float4 wp   : TEXCOORD1;
+	float3 n    : TEXCOORD2;
+	/*float3 t    : TEXCOORD3;
+	float3 b    : TEXCOORD4;
+	float4 oLightPosition0	: TEXCOORD6;
+	float4 oLightPosition1	: TEXCOORD7;
+	float4 oLightPosition2	: TEXCOORD8;
+	float4 oLightPosition3	: TEXCOORD9;*/
+	
+	float4 oLightPosition3	: TEXCOORD9;
+};
+
+struct PIn
+{
+	float4 uv   : TEXCOORD0;
+	float4 wp   : TEXCOORD1;
+	float3 n    : TEXCOORD2;
+	/*float3 t    : TEXCOORD3;
+	float3 b    : TEXCOORD4;
+	float4 LightPosition0	: TEXCOORD6;
+	float4 LightPosition1	: TEXCOORD7;
+	float4 LightPosition2	: TEXCOORD8;
+	float4 LightPosition3	: TEXCOORD9;*/
+	
+	float4 LightPosition3	: TEXCOORD9;
+};
+
+VOut main_vs( in VIn input,
+				uniform float4x4 viewProjMatrix,
+				uniform float3	cameraPosition,
+				uniform float4x4 texWorldViewProjMatrix3
+				)
+{
+	VOut output;
+
+	float3x4 worldMatrix;
+	worldMatrix[0] = input.mat14;
+	worldMatrix[1] = input.mat24;
+	worldMatrix[2] = input.mat34;
+
+	float2 size = float2(20,30)*1.5;
+	
+	input.p.y += -input.uv.y*size.y;
+	
+	float4 worldPos = float4( mul( worldMatrix, input.p ).xyz, 1.0f );
+	float3 worldNorm= mul( (float3x3)(worldMatrix), input.n );
+
+	worldPos.y += 45;	//tmp
+	
+	//float3 rightDir = cross(normalize(worldPos-cameraPosition), float3(0,1,0));
+	float3 camDir = normalize(worldPos-cameraPosition);
+	float3 rightDir = (float3(-camDir.z, 0, camDir.x));
+	worldPos.xz += rightDir.xz*(input.uv.x-0.5)*size.x;
+	
+	
+	
+	//Transform the position
+	output.p		= mul( viewProjMatrix, worldPos );
+	output.wp = worldPos;	
+	output.uv.xy		= input.uv;
+	output.uv.zw		= output.p.zw;
+	//Pass Normal and position for Blinn Phong lighting
+	output.n	= normalize(worldNorm);
+	
+	output.oLightPosition3 = mul(texWorldViewProjMatrix3, worldPos);
+	
+	return output;
+}
+
+float shadowBilinear(sampler2D shadowMapSampler, float4 shadowMapPos,float offset,float texRes)
+{
+	shadowMapPos = shadowMapPos / shadowMapPos.w;
+	float4 vTexCoord=float4(shadowMapPos.xy,1,1);
+	float fShadowTerm = 0.0f;
+	float fLightDepth=shadowMapPos.z;
+
+	// transform to texel space
+	float2 vShadowMapCoord = texRes * vTexCoord;    
+	// Determine the lerp amounts           
+	float2 vLerps = frac(vShadowMapCoord);
+
+	// read in bilerp stamp, doing the shadow checks
+	float fSamples[4];
+
+	fSamples[0] = (tex2Dlod(shadowMapSampler, vTexCoord).x + offset < fLightDepth) ? 0.0f: 1.0f;  
+	fSamples[1] = (tex2Dlod(shadowMapSampler, vTexCoord + float4(1.0/texRes, 0,0,0)).x + offset < fLightDepth) ? 0.0f: 1.0f;  
+	fSamples[2] = (tex2Dlod(shadowMapSampler, vTexCoord + float4(0, 1.0/texRes,0,0)).x + offset < fLightDepth) ? 0.0f: 1.0f;  
+	fSamples[3] = (tex2Dlod(shadowMapSampler, vTexCoord + float4(1.0/texRes, 1.0/texRes,0,0)).x + offset < fLightDepth) ? 0.0f: 1.0f;  
+	
+	//lerp between the shadow values to calculate our light amount
+	fShadowTerm = lerp(lerp(fSamples[0], fSamples[1], vLerps.x ),
+	lerp( fSamples[2], fSamples[3], vLerps.x ), vLerps.y );                              
+		
+	return fShadowTerm;                                 
+}
+
+void main_ps( PIn input ,
+				uniform float4	lightPosition,
+				uniform float3	cameraPosition,
+				uniform half3 	lightAmbient,
+				uniform half3	lightDiffuse,
+				uniform half3	lightSpecular,
+				uniform half4	lightAttenuation,
+				uniform half	lightGloss,
+				uniform float4 	fogColor,
+				uniform float4	fogParams,
+	
+				//Textures
+				uniform sampler2D diffuseMap : register(s0),
+				uniform sampler2D shadowMap3: register(s4), 
+				
+				out float4 color0 : COLOR0,
+				out float4 color1 : COLOR1,
+				out float4 color2 : COLOR2,
+				out float4 color3 : COLOR3
+			)
+{
+	float fShadow = 1.0f;
+
+	half4 baseColour = tex2D( diffuseMap, input.uv.xy );
+	
+	float distance			= length( cameraPosition - input.wp );
+	
+	float2 distancingParams = float2(2000,300);
+	float distAdjParam = (distancingParams.x/distancingParams.y)+0.5;
+	baseColour.a *= saturate(distAdjParam - distance/distancingParams.y);
+	
+	float2 closingParams = float2(200,100);
+	float closingAdj = saturate((distance-closingParams)/100);
+	baseColour.a *= closingAdj;
+	
+	if(baseColour.a < 0.235) 
+		discard;
+	
+	baseColour.rgb *= half3(1.1,1.05,1.6);
+	
+	//Blinn-Phong lighting
+	const half3 normal		= normalize( input.n );
+	half3 lightDir			= lightPosition.xyz - input.wp * lightPosition.w;
+	half3 eyeDir			= normalize( cameraPosition - input.wp  );
+		
+	const half fLength		= length( lightDir );
+	lightDir				= normalize( lightDir );
+
+	const half NdotL = max( 0.0f, dot( normal, lightDir ) );
+	half3 halfVector = normalize(lightDir + eyeDir);
+	const half HdotN = max( 0.0f, dot( halfVector, normal ) );
+	
+	const half3 ambient  = lightAmbient * baseColour.xyz;
+	const half3 diffuse  = lightDiffuse * NdotL * baseColour.xyz;
+	const half3 specular = lightSpecular * pow( HdotN, lightGloss );
+	
+	const half3 directLighting = (diffuse + specular) * fShadow;
+	
+	float3 shadow = 1;
+	//if (distance <= 1000)
+	{
+		shadow = shadowBilinear(shadowMap3, input.LightPosition3,0.0000002,512);
+		shadow = saturate(shadow + lightAmbient + 0.15);
+	}
+	
+	color0 = half4( baseColour.rgb * shadow , baseColour.a );
+	
+	float insideFog = saturate((distance - fogParams.y) / fogParams.z)*fogColor.a;
+	float3 atmFog = fogColor.rgb;
+	color0.rgb = lerp(color0.rgb, atmFog, insideFog);
+	
+	color1=float4(0.5,0.5,0.5,0.2);
+	color2=float4(0,0,0,1);
+	color3=float4(1 - input.uv.z/input.uv.w,distance,0,1);
+}

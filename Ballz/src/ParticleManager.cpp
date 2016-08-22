@@ -18,13 +18,13 @@ Ogre::ParticleSystem* ParticleManager::getClosestParticle()
 
 	if (!particles.empty())
 	{
-		float closestDist = 99999;
+		float closestDist = 0;
 		auto pos = Global::camera->getPosition();
 
 		for (auto p : particles)
 		{
 			float cdist = p->getParentSceneNode()->getPosition().squaredDistance(pos);
-			if (cdist < closestDist)
+			if (closestDist == 0 || cdist < closestDist)
 			{
 				closestDist = cdist;
 				ps = p;

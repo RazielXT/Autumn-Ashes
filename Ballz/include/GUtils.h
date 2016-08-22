@@ -11,11 +11,12 @@ namespace GUtils
 extern std::vector<std::string> debug;
 extern void DebugPrint(const std::string line, bool logFile = false);
 
-inline Ogre::Entity* MakeEntity(const std::string name, Ogre::Vector3 pos = Ogre::Vector3::ZERO)
+inline Ogre::Entity* MakeEntity(const std::string name, Ogre::Vector3 pos = Ogre::Vector3::ZERO, Ogre::Vector3 scale = Ogre::Vector3::UNIT_SCALE)
 {
 	auto ent = Global::mSceneMgr->createEntity(name);
 	auto node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
 	node->attachObject(ent);
+	node->setScale(scale);
 
 	return ent;
 }

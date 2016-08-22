@@ -1,0 +1,437 @@
+vertex_program pp_vp cg
+{
+	source PostProcThroughs.cg
+	profiles vs_3_0
+
+	entry_point pp_vp
+	
+	default_params
+    {
+        param_named_auto wvpMat worldviewproj_matrix
+    }
+	
+}
+
+fragment_program ReconstructSSR_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_3_0
+
+	entry_point ReconstructSSR_fp
+	
+}
+
+material ReconstructSSR
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			vertex_program_ref pp_vp
+			{
+			}
+			
+			fragment_program_ref ReconstructSSR_fp
+			{
+			}
+			
+			texture_unit SSROrig
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering bilinear
+			}
+			
+			texture_unit Depth
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering none
+			}
+		}
+	}
+}
+
+fragment_program PutThrough_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_2_x
+
+	entry_point PutThrough_fp
+	
+}
+
+material PutThrough
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			fragment_program_ref PutThrough_fp
+			{
+			}
+
+			texture_unit map
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering bilinear
+			}
+		}
+	}
+}
+
+fragment_program CubemapBlur_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_3_0
+
+	entry_point CubemapBlur_fp
+	
+}
+
+material CubemapBlur
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			vertex_program_ref pp_vp
+			{
+			}
+			
+			fragment_program_ref CubemapBlur_fp
+			{
+			}
+			
+			texture_unit CubemapOrig
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering bilinear
+			}
+		}
+	}
+}
+
+material CubemapBlur2
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			vertex_program_ref pp_vp
+			{
+			}
+			
+			fragment_program_ref CubemapBlur_fp
+			{
+			}
+			
+			texture_unit CubemapOrig
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering bilinear
+			}
+		}
+	}
+}
+
+fragment_program PrepareGodrayRt_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_2_x
+
+	entry_point PrepareGodrayRt_fp
+	
+}
+
+material PrepareGodrayRt
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			fragment_program_ref PrepareGodrayRt_fp
+			{
+			}
+
+			texture_unit map
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering none
+			}
+			
+			texture_unit map2
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering none
+			}
+			
+			texture_unit map3
+			{
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering none
+			}
+		}
+	}
+}
+
+fragment_program MinThrough_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_2_x
+
+	entry_point MinThrough_fp
+	
+}
+
+material MinThrough
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+                        fragment_program_ref MinThrough_fp
+                        {
+                        }
+
+						texture_unit map
+                        {
+                            tex_coord_set 0
+                            tex_address_mode clamp
+                            filtering none
+                        }
+						
+						texture_unit map2
+                        {
+                            tex_coord_set 0
+                            tex_address_mode clamp
+                            filtering none
+                        }
+            }
+        }
+}
+
+fragment_program ModThrough_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_2_x
+
+	entry_point ModThrough_fp
+	
+}
+
+material ModThrough
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+                        fragment_program_ref ModThrough_fp
+                        {
+                        }
+
+                        texture_unit scene
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering none
+                        }
+
+                        texture_unit adder
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering anisotropic
+						max_anisotropy 8
+                        }
+
+
+            }
+        }
+}
+
+fragment_program AddThrough_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_2_x
+
+	entry_point AddThrough_fp
+	
+}
+
+material AddThrough
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+                        fragment_program_ref AddThrough_fp
+                        {
+                        }
+
+                        texture_unit scene
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering none
+                        }
+
+                        texture_unit adder
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering trilinear
+                        }
+            }
+        }
+}
+
+fragment_program MulThrough_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_2_x
+
+	entry_point MulThrough_fp
+	
+}
+
+material MulThrough
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+                        fragment_program_ref MulThrough_fp
+                        {
+                        }
+
+                        texture_unit scene
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                filtering none
+                        }
+
+                        texture_unit muller
+                        {
+                                tex_coord_set 0
+                                tex_address_mode clamp
+                                //filtering none
+                        }
+            }
+        }
+}
+
+fragment_program CombineScene_fp cg
+{
+	source PostProcThroughs.cg
+	profiles ps_2_x
+
+	entry_point CombineScene_fp
+	
+	default_params
+    {
+		param_named_auto time time
+    }
+}
+
+material CombineScene
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			fragment_program_ref CombineScene_fp
+			{
+			}
+
+			texture_unit scene
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+					filtering none
+			}
+
+			texture_unit sceneDepth
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+					filtering none
+			}
+			
+			texture_unit smoke
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+					filtering anisotropic
+					max_anisotropy 8
+			}
+
+			texture_unit sceneTransparent
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+					filtering none
+			}
+			
+			texture_unit sceneDistortion
+			{
+					tex_coord_set 0
+					tex_address_mode clamp
+					filtering none
+			}
+			
+			texture_unit ppDistortion
+			{
+					filtering trilinear	
+					texture underwater_n.tga
+			}
+        }
+    }
+}

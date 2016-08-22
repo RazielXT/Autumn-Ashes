@@ -1,6 +1,19 @@
 #define shTex 512
 #define shFil 5
 
+float shadowRead(sampler2D shadowMap, float4 shadowMapPos, float offset)
+{
+	shadowMapPos = shadowMapPos / shadowMapPos.w;
+	float2 vTapCoord = shadowMapPos.xy;
+
+	float cSampleAccum = 0;
+	
+	if(tex2Dlod(shadowMap, float4(vTapCoord.x,vTapCoord.y,0,0)).x + offset >= shadowMapPos.z) 
+		cSampleAccum=1;
+
+	return cSampleAccum;
+}
+
 float shadowSmooth(sampler2D shadowMap, float4 shadowMapPos, float blur, float texRes)
 {
 	shadowMapPos = shadowMapPos / shadowMapPos.w;
@@ -70,11 +83,11 @@ float getPssmShadow(float surfaceNormalDot, float depth, sampler2D shadowMap0, f
 		{
 			shadowing = shadowSmooth(shadowMap1, shadowMapPos1, 0.000000235*adder, shTex);
 		}
-		else */if (depth <= 120)
+		else if (depth <= 120)
 		{
 			shadowing = shadowSmooth(shadowMap2, shadowMapPos2, 0.00000037*adder, shTex);
 		}
-		else if (depth <= 600)
+		else// if (depth <= 600)*/
 		{
 			shadowing = shadowSmooth(shadowMap3, shadowMapPos3, 0.00000032, shTex);
 		}

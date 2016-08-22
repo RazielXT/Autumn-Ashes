@@ -189,7 +189,7 @@ void Application::setupScene()
 	mSceneMgr->setShadowTextureSettings(512, 4, PF_FLOAT32_R);
 	mSceneMgr->setShadowTextureSelfShadow(true);
 	mSceneMgr->setShadowTextureCasterMaterial("PSSM/shadow_caster");
-	mSceneMgr->setShadowFarDistance(450);
+	mSceneMgr->setShadowFarDistance(600);
 
 	//shadow camera setup
 	PSSMShadowCameraSetup2* pssmSetup = new PSSMShadowCameraSetup2();
@@ -200,7 +200,7 @@ void Application::setupScene()
 	splitPointList[1] = 15;
 	splitPointList[2] = 35;
 	splitPointList[3] = 140;
-	splitPointList[4] = 450;
+	splitPointList[4] = 600;
 	pssmSetup->setSplitPoints(splitPointList);
 	mSceneMgr->setShadowCasterRenderBackFaces(false);
 	mSceneMgr->setShadowCameraSetup(ShadowCameraSetupPtr(pssmSetup));

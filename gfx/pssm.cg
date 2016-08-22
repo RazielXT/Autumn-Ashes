@@ -1,3 +1,77 @@
+void shadow_caster_billboard_instancing_vs(
+	float4 position         : POSITION,
+	float2 uv         : TEXCOORD0, // get UV of material's texture
+	float4 mat14	:	TEXCOORD1,
+	float4 mat24	:	TEXCOORD2,
+	float4 mat34	:	TEXCOORD3,
+	
+	out float4 oPosition   : POSITION,
+	out float2 oDepth      : TEXCOORD0,
+	out float2 ouv   :TEXCOORD1, // translate UV to pixel shader
+
+	uniform float4x4 viewProjMatrix,
+	uniform float3	cameraPosition)
+{
+
+	float3x4 worldMatrix;
+	worldMatrix[0] = mat14;
+	worldMatrix[1] = mat24;
+	worldMatrix[2] = mat34;
+
+	float2 size = float2(20,30)*0.5;
+	position.y += -uv.y*size.y;
+	
+	float4 worldPos = float4( mul( worldMatrix, position ).xyz, 1.0f );
+	
+	worldPos.y += 30;	//tmp
+	
+	//float3 rightDir = cross(normalize(worldPos-cameraPosition), float3(0,1,0));
+	float3 camDir = normalize(worldPos-cameraPosition);
+	float3 rightDir = (float3(-camDir.z, 0, camDir.x));
+	
+	worldPos.xz += rightDir.xz*(uv.x-0.5)*size.x;
+	
+   // this is the view space position
+   oPosition = mul(viewProjMatrix, worldPos);
+
+   // depth info for the fragment.
+   oDepth.x = oPosition.z;
+   oDepth.y = oPosition.w;
+
+   ouv = uv;
+}
+
+void shadow_caster_instancing_vs(
+   float4 position         : POSITION,
+   float2 uv         : TEXCOORD0, // get UV of material's texture
+	float4 mat14	:	TEXCOORD1,
+	float4 mat24	:	TEXCOORD2,
+	float4 mat34	:	TEXCOORD3,
+	
+   out float4 oPosition   : POSITION,
+   out float2 oDepth      : TEXCOORD0,
+   out float2 ouv   :TEXCOORD1, // translate UV to pixel shader
+
+   uniform float4x4 viewProjMatrix)
+{
+
+	float3x4 worldMatrix;
+	worldMatrix[0] = mat14;
+	worldMatrix[1] = mat24;
+	worldMatrix[2] = mat34;
+
+	float4 worldPos = float4( mul( worldMatrix, position ).xyz, 1.0f );
+	
+   // this is the view space position
+   oPosition = mul(viewProjMatrix, worldPos);
+
+   // depth info for the fragment.
+   oDepth.x = oPosition.z;
+   oDepth.y = oPosition.w;
+
+   ouv = uv;
+}
+
 void shadow_caster_vs(
    float4 position         : POSITION,
    float2 uv         : TEXCOORD0, // get UV of material's texture

@@ -68,24 +68,6 @@ material basic_2tex_vc
 				texture gray.bmp
 			}
 
-			texture_unit spreadMap
-			{
-				//filtering trilinear
-				texture gray.bmp
-			}
-
-			texture_unit diffuseMap2
-			{
-				//filtering trilinear
-				texture white.bmp
-			}
-
-			texture_unit normalMap2
-			{
-				//filtering trilinear
-				texture flat_n.png
-			}
-
 			texture_unit shadow_tex0
 			{
 				filtering none
@@ -124,6 +106,24 @@ material basic_2tex_vc
 				texture Cubemap.dds cubic
 				filtering anisotropic
 				max_anisotropy 8
+			}
+				
+			texture_unit spreadMap
+			{
+				//filtering trilinear
+				texture gray.bmp
+			}
+
+			texture_unit diffuseMap2
+			{
+				//filtering trilinear
+				texture white.bmp
+			}
+
+			texture_unit normalMap2
+			{
+				//filtering trilinear
+				texture flat_n.png
 			}
 		}
 	}

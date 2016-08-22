@@ -324,7 +324,7 @@
 
 <class name="DetailGeometryMask" usage="object">
 
-	<data name="Ray" displayName="Ray length" type="float" defaultValue="10" maxValue="1000"/>
+	<data name="Ray" displayName="Ray length" type="float" defaultValue="10" maxValue="5000"/>
 	<data name="Target" displayName="Target body" type="string" defaultValue=""/>
 	
 	<data name="R" type="bool" groupName="1" defaultValue="false"/>

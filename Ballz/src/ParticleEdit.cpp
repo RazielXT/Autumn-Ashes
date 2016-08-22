@@ -142,6 +142,8 @@ void ParticleEdit::setParticleParam(Ogre::ParticleSystem* ps, EditVariable& var)
 {
 	if (var.name == "Angle")
 		ps->getEmitter(0)->setAngle(Ogre::Degree(var.buffer[0]));
+	if (var.name == "Rotation")
+		ps->getEmitter(0)->setRotation(Ogre::Degree(var.buffer[0]));
 	if (var.name == "MinMaxVelocity")
 		ps->getEmitter(0)->setParticleVelocity(var.buffer[0], var.buffer[1]);
 	if (var.name == "Emission")
@@ -163,6 +165,11 @@ void ParticleEdit::generateParticleParams()
 	var.name = "Angle";
 	var.size = 1;
 	var.buffer[0] = emitter->getAngle().valueDegrees();
+	particleParams.push_back(var);
+
+	var.name = "Rotation";
+	var.size = 1;
+	var.buffer[0] = emitter->getRotation().valueDegrees();
 	particleParams.push_back(var);
 
 	var.name = "MinMaxVelocity";

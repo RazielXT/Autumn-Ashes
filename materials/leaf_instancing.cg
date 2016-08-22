@@ -1,0 +1,255 @@
+#define shTex 512
+#define shFil 3
+
+struct VIn
+{
+	float4 p    : POSITION;
+	float3 n    : NORMAL;
+	float3 t    : TANGENT;
+	float2 uv   : TEXCOORD0;
+	float4 c : COLOR;
+	
+	float4 mat14	:	TEXCOORD1;
+	float4 mat24	:	TEXCOORD2;
+	float4 mat34	:	TEXCOORD3;
+};
+
+struct VOut
+{
+	float4 p    : POSITION;
+	float4 uv   : TEXCOORD0;
+	float4 wp   : TEXCOORD1;
+	float4 n    : TEXCOORD2;
+	//float3 t    : TEXCOORD3;
+	//float3 b    : TEXCOORD4;
+	float4 oLightPosition0	: TEXCOORD6;
+	float4 oLightPosition1	: TEXCOORD7;
+	float4 oLightPosition2	: TEXCOORD8;
+	float4 oLightPosition3	: TEXCOORD9;
+};
+
+struct PIn
+{
+	float4 uv   : TEXCOORD0;
+	float4 wp   : TEXCOORD1;
+	float4 n    : TEXCOORD2;
+	//float3 t    : TEXCOORD3;
+	//float3 b    : TEXCOORD4;
+	float4 LightPosition0	: TEXCOORD6;
+	float4 LightPosition1	: TEXCOORD7;
+	float4 LightPosition2	: TEXCOORD8;
+	float4 LightPosition3	: TEXCOORD9;
+};
+
+
+VOut diffuse_vs(VIn IN,
+uniform float4x4 vpMat,
+uniform float3 camPos,
+uniform float4x4 texWorldViewProjMatrix0,
+uniform float4x4 texWorldViewProjMatrix1,
+uniform float4x4 texWorldViewProjMatrix2,
+uniform float4x4 texWorldViewProjMatrix3,
+uniform float time,
+uniform float speed,
+uniform float4 lightDir
+)
+{
+	VOut OUT;
+	speed = saturate(speed/3);
+	
+	float3x4 worldMatrix;
+	worldMatrix[0] = IN.mat14;
+	worldMatrix[1] = IN.mat24;
+	worldMatrix[2] = IN.mat34;
+
+	float4 wpos = float4( mul( worldMatrix, IN.p ).xyz, 1.0f );
+	OUT.n.xyz = mul( (float3x3)(worldMatrix), IN.n );
+	
+	wpos.y -= 10;
+	/*float3 plVector = wpos.xyz-camPos;
+	float playerDist = 3;
+	float plTouchW = max(0,1 - length(plVector)/playerDist);
+	wpos.y += -2*plTouchW*speed;
+	*/
+   float add = max((3-length(wpos-camPos))/3,0)*speed;
+
+	float animSpeed = 3;
+	float animScale = 2.5;
+	float animSize = 3;
+	
+	float var = animSize*sin(time+IN.p.x*animScale*3)*(add+0.2)/6;
+	float var2 = animSize*sin(time*animSpeed+(IN.p.z + IN.p.y + IN.p.x)*animScale)*(add+0.2)/3;
+	float var3 = sin(time*3+IN.p.y*animScale+var + var2)*add;
+	
+	wpos.x+=(var-var2)*IN.c.w;
+	wpos.z+=(var2+var3)*IN.c.w;
+
+	OUT.wp.xyz = wpos.xyz;
+	OUT.wp.w = IN.c.w;//*0.5 + 0.5;
+	
+	float4 centerWp = float4( mul( worldMatrix, float4(0,0,0,1) ).xyz, 1.0f );
+	OUT.n.w = fmod(worldMatrix[2].w,2);
+	OUT.wp.w = abs(dot(centerWp.xyz - wpos.xyz, lightDir.xyz))/30;
+	
+	OUT.p = mul(vpMat, wpos);
+
+	OUT.uv.xy = IN.uv.xy;
+	OUT.uv.zw=OUT.p.zw;
+
+	OUT.oLightPosition0 = mul(texWorldViewProjMatrix0, wpos);
+	OUT.oLightPosition1 = mul(texWorldViewProjMatrix1, wpos);
+	OUT.oLightPosition2 = mul(texWorldViewProjMatrix2, wpos);
+	OUT.oLightPosition3 = mul(texWorldViewProjMatrix3, wpos);
+
+	return OUT;
+}
+
+
+float shadowBilinear(sampler2D shadowMapSampler, float4 shadowMapPos,float offset,float texRes)
+{
+	shadowMapPos = shadowMapPos / shadowMapPos.w;
+	float4 vTexCoord=float4(shadowMapPos.xy,1,1);
+	float fShadowTerm = 0.0f;
+	float fLightDepth=shadowMapPos.z;
+
+	// transform to texel space
+	float2 vShadowMapCoord = texRes * vTexCoord;    
+	// Determine the lerp amounts           
+	float2 vLerps = frac(vShadowMapCoord);
+
+	// read in bilerp stamp, doing the shadow checks
+	float fSamples[4];
+
+	fSamples[0] = (tex2Dlod(shadowMapSampler, vTexCoord).x + offset < fLightDepth) ? 0.0f: 1.0f;  
+	fSamples[1] = (tex2Dlod(shadowMapSampler, vTexCoord + float4(1.0/texRes, 0,0,0)).x + offset < fLightDepth) ? 0.0f: 1.0f;  
+	fSamples[2] = (tex2Dlod(shadowMapSampler, vTexCoord + float4(0, 1.0/texRes,0,0)).x + offset < fLightDepth) ? 0.0f: 1.0f;  
+	fSamples[3] = (tex2Dlod(shadowMapSampler, vTexCoord + float4(1.0/texRes, 1.0/texRes,0,0)).x + offset < fLightDepth) ? 0.0f: 1.0f;  
+	
+	//lerp between the shadow values to calculate our light amount
+	fShadowTerm = lerp(lerp(fSamples[0], fSamples[1], vLerps.x ),
+	lerp( fSamples[2], fSamples[3], vLerps.x ), vLerps.y );                              
+		
+	return fShadowTerm;                                 
+}
+
+
+void diffuse_ps(
+	PIn IN,
+	uniform float3 diffuseColor,
+	uniform float3 lightDif0,
+	uniform float4 lightPos0,
+	uniform float4 matSpec0,
+	uniform float4 fogColor,
+	uniform float4 fogParams,
+	uniform float3 ambientColor,
+	uniform float matShininess,
+	uniform float alphaTest,
+	uniform float3 camPos,
+	uniform float4x4 iTWMat,
+	uniform float enlighten,
+	uniform float vcWeight,
+	uniform float3 gi_ColDistW,
+	uniform float3 gi_Pos,
+	uniform sampler2D diffuseMap : register(s0),
+	uniform sampler2D normalMap : register(s1),
+	uniform sampler2D shadowMap0: register(s2),
+	uniform sampler2D shadowMap1: register(s3),
+	uniform sampler2D shadowMap2: register(s4), 
+	uniform sampler2D shadowMap3: register(s5), 
+	out float4 color0 : COLOR0,
+	out float4 color1 : COLOR1,
+	out float4 color2 : COLOR2,
+	out float4 color3 : COLOR3
+)
+{	
+	// direction
+	float3 ld0 = normalize(lightPos0.xyz - (lightPos0.w * IN.wp.xyz));
+
+	float2 texCoord = IN.uv.xy;	
+	/*float4 normalTex = tex2D(normalMap, texCoord);
+	
+	float3x3 tbn = float3x3(IN.t.xyz,IN.b.xyz, IN.n.xyz);
+	float3 normal = mul(transpose(tbn), normalTex.xyz*2-1); // to object space
+	normal = normalize(mul((float3x3)iTWMat, normal));*/
+	float3 normal = IN.n.xyz;
+	
+	float3 eyeDir = IN.wp.xyz - camPos.xyz;
+	float distance = length(eyeDir);
+
+	float3 diffuse = IN.wp.w;//abs(dot(ld0, normal));//*0.8 + 0.2;
+	diffuse.r += IN.n.w/5;
+
+	float3 camDir = normalize(camPos - IN.wp.xyz);
+	float3 halfVec = normalize(ld0 + camDir);
+	float3 specular = pow(max(dot(normal, halfVec), 0), matShininess);
+
+	float4 diffuseTex = tex2D(diffuseMap, texCoord);
+	diffuseTex.rgb += 0.3;
+	diffuseTex.rgb = saturate(diffuseTex.rgb);
+	diffuseTex.rgb *= enlighten;
+	diffuseTex.rgb *= normalize(diffuseColor.rgb*2);
+	
+	float2 closingParams = float2(250,50);
+	float closingAdj = 1 - saturate((distance-closingParams.x)/closingParams.y);
+	diffuseTex.a *= closingAdj;
+		
+	if(diffuseTex.a<alphaTest)
+		discard;
+
+	float norm=abs(dot(normal, ld0));
+	float shadowing = 1.0f;
+
+	if(norm<0)
+		shadowing=0;
+	else
+	{
+		float adder=1;
+
+		if(norm<0.5)
+		adder+=(0.5-norm)*3;
+
+		if (IN.uv.z <= 15)
+		{
+			shadowing = shadowBilinear(shadowMap0, IN.LightPosition0,0.0000015*adder,shTex);
+		}
+		else if (IN.uv.z <= 35)
+		{
+			shadowing = shadowBilinear(shadowMap1, IN.LightPosition1,0.00000018*adder,shTex);
+		}
+		else if (IN.uv.z <= 140)
+		{
+			shadowing = shadowBilinear(shadowMap2, IN.LightPosition2,0.0000002*adder ,shTex);
+		}
+		else if (IN.uv.z <= 600)
+		{
+			shadowing = shadowBilinear(shadowMap3, IN.LightPosition3,0.0000002,shTex);
+		}
+	}
+
+	//ambientColor*IN.wp.w;//
+	//ambientColor = lerp(ambientColor,lerp(0,IN.wp.w,vcWeight),IN.wp.w);//*ambientColor *enlighten;
+	
+	//float3 gi_ColDistW = float3(0,50,1);
+	//float3 gi_Pos = float3(-20,0,0);
+
+	shadowing += IN.wp.w*0.75;
+	shadowing = saturate(shadowing);
+
+	float3 diffuseContrib = (diffuse * lightDif0 * diffuseTex.rgb);
+	float3 specularContrib = shadowing*(specular * matSpec0.rgb);
+	float3 light0C = saturate(diffuseContrib*shadowing + specularContrib + ambientColor);
+
+	// final lighting with diffuse and spec
+	float3 oColour = saturate(diffuse*shadowing);
+
+	float4 output=(diffuseTex*float4(light0C, 1));
+
+	float insideFog = saturate((distance - fogParams.y) / fogParams.z)*fogColor.a;
+	float3 atmFog = fogColor.rgb;
+	output.rgb = lerp(output.rgb, atmFog, insideFog);
+
+	color0=output;
+	color1=float4(0.5,0.5,0.5,saturate(matSpec0.a+specular.r/2) + 0.2);
+	color2=float4(0,0,0,1);
+	color3=float4(1 - IN.uv.z/IN.uv.w,distance,0,1);
+}

@@ -11,6 +11,8 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 {
 	auto postProcMgr = Global::mPPMgr;
 	static Ogre::Vector3 debugPos;
+	static float shake[8] = {0};
+	static float shakesign = 0.1f;
 
 	if (Global::gameMgr->myMenu->pressedKey(arg))
 		return;
@@ -79,6 +81,133 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 	}
 	break;
 
+	case OIS::KC_P:
+	{
+		shakesign *= -1;
+	}
+	break;
+
+	case OIS::KC_9:
+	{
+		shake[0] = 1;
+		shake[1] = 2;
+		shake[2] = 0.5;
+		shake[3] = 1;
+		shake[4] = 1;
+		shake[5] = 0.1;
+		shake[6] = 0;
+		shake[7] = 1;
+
+		std::string txt;
+		for (int i = 0; i < 8; i++)
+			txt += std::to_string(shake[i]) + " ";
+
+		GUtils::DebugPrint(txt);
+	}
+	break;
+
+	case OIS::KC_1:
+	{
+		shake[0] += shakesign;
+
+		std::string txt;
+		for (int i = 0; i < 8; i++)
+			txt += std::to_string(shake[i]) + " ";
+
+		GUtils::DebugPrint(txt);
+	}
+	break;
+
+	case OIS::KC_2:
+	{
+		shake[1] += shakesign;
+
+		std::string txt;
+		for (int i = 0; i < 8; i++)
+			txt += std::to_string(shake[i]) + " ";
+
+		GUtils::DebugPrint(txt);
+	}
+	break;
+
+	case OIS::KC_3:
+	{
+		shake[2] += shakesign;
+
+		std::string txt;
+		for (int i = 0; i < 8; i++)
+			txt += std::to_string(shake[i]) + " ";
+
+		GUtils::DebugPrint(txt);
+	}
+	break;
+
+	case OIS::KC_4:
+	{
+		shake[3] += shakesign;
+
+		std::string txt;
+		for (int i = 0; i < 8; i++)
+			txt += std::to_string(shake[i]) + " ";
+
+		GUtils::DebugPrint(txt);
+	}
+	break;
+
+	case OIS::KC_5:
+	{
+		shake[4] += shakesign;
+
+		std::string txt;
+		for (int i = 0; i < 8; i++)
+			txt += std::to_string(shake[i]) + " ";
+
+		GUtils::DebugPrint(txt);
+	}
+	break;
+
+	case OIS::KC_6:
+	{
+		shake[5] += shakesign;
+
+		std::string txt;
+		for (int i = 0; i < 8; i++)
+			txt += std::to_string(shake[i]) + " ";
+
+		GUtils::DebugPrint(txt);
+	}
+	break;
+
+	case OIS::KC_7:
+	{
+		shake[6] += shakesign;
+
+		std::string txt;
+		for (int i = 0; i < 8; i++)
+			txt += std::to_string(shake[i]) + " ";
+
+		GUtils::DebugPrint(txt);
+	}
+	break;
+
+	case OIS::KC_8:
+	{
+		shake[7] += shakesign;
+
+		std::string txt;
+		for (int i = 0; i < 8; i++)
+			txt += std::to_string(shake[i]) + " ";
+
+		GUtils::DebugPrint(txt);
+	}
+	break;
+
+	case OIS::KC_0:
+	{
+		Global::camera->shaker.startShaking(shake[0], shake[1], shake[2], shake[3], shake[4], shake[5], shake[6], shake[7]);
+	}
+	break;
+
 	case OIS::KC_I:
 	{
 		static auto imgs = Global::mPPMgr->getColorGradingPresets();
@@ -123,7 +252,7 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 		GUtils::debug.clear();
 		break;
 
-	case OIS::KC_1:
+	/*case OIS::KC_1:
 		Global::camera->shaker.startShaking(0.3, 1.5, 0.0, 1, 1, 0.7, 0.55, 0.5, true);
 		break;
 
@@ -141,7 +270,7 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 
 	case OIS::KC_5:
 		Global::camera->shaker.startShaking(1.2, 1.5, 10, 1, 1, 0.1, 0.35, 1, true);
-		break;
+		break;*/
 
 	case OIS::KC_NUMPADENTER:
 		if (Global::gameMgr->gameState == MENU)

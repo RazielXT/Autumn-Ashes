@@ -1,30 +1,44 @@
-// declare the vertex shader (CG for the language)
+vertex_program PSSM/shadow_caster_billboard_instancing_vs cg
+{
+	source pssm.cg
+	entry_point shadow_caster_billboard_instancing_vs
+	profiles vs_3_0
+
+	default_params
+	{
+		param_named_auto	viewProjMatrix	viewproj_matrix
+		param_named_auto	cameraPosition	camera_position			0
+	}
+}
+
+vertex_program PSSM/shadow_caster_instancing_vs cg
+{
+	source pssm.cg
+	entry_point shadow_caster_instancing_vs
+	profiles vs_3_0
+
+	default_params
+	{
+		param_named_auto	viewProjMatrix	viewproj_matrix
+	}
+}
+
 vertex_program PSSM/shadow_caster_vs cg
 {
-	// source file
 	source pssm.cg
-	// will run on vertex shader 1.1+
-	profiles vs_3_0 arbvp1
-	// entry function
+	profiles vs_3_0
 	entry_point shadow_caster_vs
 
 	default_params
 	{
 		param_named_auto wvpMat worldviewproj_matrix
-		// this is the scene's depth range
-		//param_named_auto depthRange			scene_depth_range
-		//param_named_auto optimalAdustFactor	custom 0
 	}
 }
 
-// declare the fragment shader (CG for the language)
 fragment_program PSSM/shadow_caster_ps cg
 {
-	// source file
 	source pssm.cg
-	// will run on pixel shader 2.0+
-	profiles ps_3_0 arbfp1
-	// entry function
+	profiles ps_3_0
 	entry_point shadow_caster_ps
 
 	default_params

@@ -66,6 +66,9 @@
     <Filter Include="Files\Core\Base">
       <UniqueIdentifier>{a7231673-5de4-46f7-a722-ba11cb79d047}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\Core\Ogre">
+      <UniqueIdentifier>{acc1c4b1-3b33-4394-a527-5d188c497cd9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CrowPath.cpp">
@@ -355,6 +358,12 @@
     </ClCompile>
     <ClCompile Include="src\DetailGeometryMaterial.cpp">
       <Filter>Files\Core\DetailGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="ogre\OgreProgressiveMeshGenerator.cpp">
+      <Filter>Files\Core\Ogre</Filter>
+    </ClCompile>
+    <ClCompile Include="ogre\OgreAbsoluteLodStrategy.cpp">
+      <Filter>Files\Core\Ogre</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -696,6 +705,12 @@
     </ClInclude>
     <ClInclude Include="include\LutTexture.h">
       <Filter>Files\Core\RenderObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="ogre\OgreProgressiveMeshGenerator.h">
+      <Filter>Files\Core\Ogre</Filter>
+    </ClInclude>
+    <ClInclude Include="ogre\OgreAbsoluteLodStrategy.h">
+      <Filter>Files\Core\Ogre</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

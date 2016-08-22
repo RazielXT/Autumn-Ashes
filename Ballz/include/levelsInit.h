@@ -8,6 +8,9 @@
 #include "GameScene.h"
 #include "CrowWatch.h"
 #include "SceneCubeMap.h"
+#include "OgreProgressiveMeshGenerator.h"
+#include "OgreAbsoluteLodStrategy.h"
+#include "OgreDistanceLodStrategy.h"
 
 using namespace Ogre;
 
@@ -45,6 +48,35 @@ void createTestLevel2()
 	ppMgr->vars.radialHorizBlurVignette = 0.0;
 
 	ppMgr->setAutoGodraySunDirection();
+
+	//auto e = GUtils::MakeEntity("aspenTrunk.mesh", Ogre::Vector3(0, 50, 0), Ogre::Vector3(5,5,5));
+
+	Ogre::ProgressiveMeshGenerator gen;
+	Ogre::LodConfig lod;
+	lod.mesh = Global::mSceneMgr->getEntity("Plane009")->getMesh();
+	lod.strategy = new Ogre::DistanceLodStrategy();
+
+	Ogre::LodLevel lvl;
+
+	lvl.distance = 0;
+	lvl.reductionMethod = Ogre::LodLevel::VRM_PROPORTIONAL;
+	lvl.reductionValue = 0.0f;
+
+	lod.levels.push_back(lvl);
+
+	lvl.distance = 1000;
+	lvl.reductionMethod = Ogre::LodLevel::VRM_PROPORTIONAL;
+	lvl.reductionValue = 0.35f;
+
+	lod.levels.push_back(lvl);
+
+	lvl.distance = 1500;
+	lvl.reductionMethod = Ogre::LodLevel::VRM_PROPORTIONAL;
+	lvl.reductionValue = 0.65f;
+
+	lod.levels.push_back(lvl);
+
+	gen.generateLodLevels(lod);
 
 	new CrowWatch();
 }

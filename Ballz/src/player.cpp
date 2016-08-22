@@ -107,8 +107,11 @@ void Player::initBody()
 	Ogre::Entity* ent = mSceneMgr->createEntity("playerBody", "play2.mesh");
 	SceneNode* node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CenterNode");
 	node->attachObject(ent);
-	ent->setCastShadows(false);
-	ent->setVisible(false);
+	node->setScale(0.5, 0.5, 0.5);
+	ent->setCastShadows(true);
+	ent->setVisible(true);
+	ent->setMaterialName("redConcrete");
+	ent->setVisibilityFlags(1);
 	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World, ent, 10));
 	body = new OgreNewt::Body(m_World, col);
 
@@ -183,14 +186,41 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
 	{
 	case OIS::KC_G:
 	{
-		irrklang::ISound* s = Global::audioLib->soundEngine->play3D(Global::audioLib->loadSoundSource("speedWind.wav"), irrklang::vec3df(bodyPosition.x + 2, bodyPosition.y + 3, bodyPosition.z), false, false, true, false);
-		s->setMaxDistance(10);
-		s->setVolume(0.75f);
+		static OgreNewt::BallAndSocket* gJoint = nullptr;
+		static OgreNewt::BallAndSocket* gJoint2 = nullptr;
+		static OgreNewt::Body* hbody = nullptr;
 
-		s->setPlaybackSpeed(1.7f);
-		//s->getSoundEffectControl()->enable.WavesReverbSoundEffect(0, -10 * Global::timestep, 2600, 0.5);
+		if (!hbody)
+		{
+			OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::mWorld, Ogre::Vector3(1,1,1), 0));
+			hbody = new OgreNewt::Body(Global::mWorld, col);
 
-		s->drop();
+			Ogre::Vector3 inertia, offset;
+			col->calculateInertialMatrix(inertia, offset);
+			hbody->setMassMatrix(0.2f, inertia);
+			hbody->setLinearDamping(1);
+			hbody->setCenterOfMass(offset);
+			hbody->setPositionOrientation(bodyPosition, Ogre::Quaternion::IDENTITY);
+			hbody->setMaterialGroupID(wmaterials->plNoMove_mat);
+			//body->setCustomForceAndTorqueCallback<Player>(&Player::move_callback, this);
+		}
+
+		if (!gJoint)
+		{
+			hbody->setPositionOrientation(pCamera->getPosition(), Ogre::Quaternion::IDENTITY);
+
+			gJoint = new OgreNewt::BallAndSocket(body, hbody, pCamera->getPosition(), 0);
+			gJoint->setCollisionState(0);
+
+			gJoint2 = new OgreNewt::BallAndSocket(hbody, NULL, pCamera->getPosition() + pCamera->getFacingDirection() * 10, 0);
+		}
+		else
+		{
+			delete gJoint;
+			gJoint = nullptr;
+			delete gJoint2;
+			gJoint2 = nullptr;
+		}
 	}
 	break;
 	case OIS::KC_D:
@@ -230,7 +260,11 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
 		break;
 
 	case OIS::KC_F:
-		body->setVelocity(facingDir*15);
+		if(body->getVelocity().normalisedCopy().dotProduct(facingDir) < 0.7f)
+			body->setVelocity(facingDir*15);
+		else
+			body->setVelocity(body->getVelocity() + facingDir * 15);
+
 		break;
 
 	case OIS::KC_G:

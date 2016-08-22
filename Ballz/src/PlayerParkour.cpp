@@ -263,8 +263,8 @@ bool PlayerParkour::tryWallrun()
 
 	if (wallrunSide && correctDot)
 	{
-		if (p->bodyVelocityL < 5 || (p->body->getVelocity() / p->bodyVelocityL).dotProduct(frontDir) < 0.35f)
-			return false;
+		//if (p->bodyVelocityL < 5 || (p->body->getVelocity() / p->bodyVelocityL).dotProduct(frontDir) < 0.35f)
+		//	return false;
 
 		wallrunCurrentDir = Quaternion(Degree(90 * wallrunSide), Vector3(0, 1, 0))*wall_normal;
 

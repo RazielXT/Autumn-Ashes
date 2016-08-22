@@ -23,10 +23,13 @@ float4 Brightcheck_fp
 	float4 sharp = tex2D(scene,uv);
 	sharp.rbg-=0.4-sharp.a*0.4;
 
-	float matBrightness = bloomAdd + tex2D(sceneLum,uv).a;
+	float matBrightness = tex2D(sceneLum,uv).a;
 	float2 transBrightness = tex2D(transLum,uv).ba;
 	
-	matBrightness = lerp(matBrightness, bloomAdd + transBrightness.x, transBrightness.y);
+	matBrightness *= 1 - transBrightness.y;
+	bloomAdd += 5*transBrightness.x;
+	
+	matBrightness += bloomAdd;
 	
 	//b > 0.8 -> 0.5-10
 	matBrightness = max(matBrightness, (matBrightness-0.75)*30);

@@ -21,6 +21,7 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : 
 	LevelInfo info;
 	info.name = "menu";
 	info.init = createMenuLevel;
+	info.lut = "normal.png";
 	levels[0] = info;
 
 	info.name = "park";
@@ -41,6 +42,7 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : 
 
 	info.name = "testLvl2";
 	info.init = createTestLevel2;
+	info.lut = "LUT_Filmic7.png";
 	levels[5] = info;
 
 	dbg = new DebugKeys();
@@ -114,6 +116,7 @@ void GameStateManager::switchToLevel(int lvl)
 
 	SceneCubeMap::renderAll();
 
+	Global::mPPMgr->setColorGradingPreset(lvlInfo.lut);
 	Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
 }
 
@@ -269,5 +272,5 @@ void GameStateManager::clearLevel()
 	sceneEdits.clear();
 	particleMgr.clear();
 
-	Global::mWorld->setWorldSize(Vector3(-2000, -500, -2000), Vector3(2000, 500, 2000));
+	Global::mWorld->setWorldSize(Vector3(-15000, -500, -15000), Vector3(15000, 2000, 15000));
 }

@@ -1,0 +1,88 @@
+material leaf_instancing
+{
+    set $diffuseCol "1 1 1"
+    set $specularCol "1 1 1"
+    set $shininess "32"
+    set $brightness "0.05"
+	set $alphaTest "0.37" 
+	set $enlighten "1.0"
+	set $vcWeight "0.7"
+	
+    technique
+    {
+		shadow_caster_material instancing/shadow_caster
+		
+		pass
+		{
+			//depth_write off
+			cull_hardware none
+
+            specular $specularCol $brightness $shininess
+			
+            vertex_program_ref leafInst_vs
+            {
+            }
+
+            fragment_program_ref leafInst_ps
+            {
+				param_named alphaTest float $alphaTest
+				param_named enlighten float $enlighten
+				param_named vcWeight float $vcWeight
+				param_named diffuseColor float3 $diffuseCol
+				
+				param_named gi_ColDistW float3 0 0 0
+				param_named gi_Pos float3 0 0 0
+            }
+
+			texture_unit diffuseMap
+			{
+				filtering anisotropic
+				max_anisotropy 8
+
+				texture white.bmp
+			}
+
+			texture_unit normalMap
+			{
+				filtering anisotropic
+				max_anisotropy 8
+
+				texture flat_n.png
+			}
+
+			 texture_unit shadow_tex0
+			 {
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			 }
+
+			texture_unit shadow_tex1
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+
+			texture_unit shadow_tex2
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+
+			texture_unit shadow_tex3
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+        }		
+    }
+}
+
+material aspenTreeInstanced : leaf_instancing
+{
+	set_texture_alias diffuseMap bush_a.tga
+	set_texture_alias normalMap bush_a_NORM.tga
+}

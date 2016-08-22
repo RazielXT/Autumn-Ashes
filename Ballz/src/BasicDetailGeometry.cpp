@@ -5,12 +5,18 @@
 #include "GUtils.h"
 #include "GameStateManager.h"
 #include "DetailGeometryMaterial.h"
+#include "OgreProgressiveMesh.h"
 
 using namespace Ogre;
 
 int DetailGeometry::matID = 0;
 
 std::vector<LoadedDG> BasicDetailGeometry::loadedDG;
+
+Ogre::InstanceManager* mBillboardsManager;
+Ogre::InstanceManager* mTreesManager;
+String bbName = "billboard.mesh";
+String treeName = "aspenLeafs.mesh";
 
 void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryParams& params)
 {
@@ -28,7 +34,7 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 
 	sg = Global::mSceneMgr->createStaticGeometry("basicDG" + std::to_string(sgCount++));
 	sg->setCastShadows(true);
-	sg->setVisibilityFlags(VisibilityFlag_Normal);
+	sg->setVisibilityFlags(VisibilityFlag_Instanced);
 
 	float staticEntitiesGridSize = info.gridSize;
 	Ogre::Vector3 gridRegion(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize);
@@ -38,6 +44,16 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 	int bgc = 0;
 
 	Ogre::AxisAlignedBox bbox;
+
+	mBillboardsManager = Global::mSceneMgr->createInstanceManager(
+	                         "InstanceMgr", bbName,
+	                         ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, InstanceManager::HWInstancingBasic,
+	                         300, 0);
+
+	mTreesManager = Global::mSceneMgr->createInstanceManager(
+	                    "InstanceMgr2", treeName,
+	                    ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, InstanceManager::HWInstancingBasic,
+	                    300, 0);
 
 	for (float x = xStart; x <= xEnd; x+=xStep)
 		for (float y = yStart; y <= yEnd; y += yStep)
@@ -76,7 +92,9 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 			}
 		}
 
-	sg->build();
+	//sg->build();
+
+	//mCurrentManager->setBatchesAsStaticAndUpdate(true);
 
 	LoadedDG dgInfo;
 	dgInfo.sg = sg;
@@ -118,24 +136,46 @@ void BasicDetailGeometry::init(DetailGeometryParams& param)
 	info = DetailGeometryInfo::get(param.name);
 }
 
+int renderFar = 0;
+
 void BasicDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, Vector3 color)
 {
 	Quaternion randomYaw(Degree(Math::RangeRandom(0, 360)), Vector3(0, 1, 0));
-	String meshName = info.possibleEntities[(int)Math::RangeRandom(0, info.possibleEntities.size() - 0.01f)];
+	//String meshName = info.possibleEntities[(int)Math::RangeRandom(0, info.possibleEntities.size() - 0.01f)];
 	//auto node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(pos, randomYaw*or);
 	//node->setScale(Vector3(scale, scale, scale));
 
-	while (!meshName.empty())
+	/*while (!meshName.empty())
 	{
 		auto name = SUtils::strtok_str(meshName, ';');
 		auto ent = Global::mSceneMgr->createEntity(name);
 		//node->attachObject(ent);
 
 		mats.updateMaterial(ent, color,info);
-		sg->addEntity(ent, pos, randomYaw, Vector3(scale));
+		//sg->addEntity(ent, pos, randomYaw, Vector3(scale));
+		pos.y -= 10;
+		Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(pos, randomYaw)->attachObject(ent);
+		//temps.push_back(ent);
+	}*/
 
-		temps.push_back(ent);
-	}
+	//pos.y -= 10;
+	//Ogre::ProgressiveMesh prog;
+	//prog.
+	//auto ent = Global::mSceneMgr->createEntity("")->getMesh()->lod;
+	InstancedEntity *ent = mBillboardsManager->createInstancedEntity("billboardTest"); //aspenTreeInstanced
+	ent->setOrientation(randomYaw);
+	ent->setPosition(pos);
+
+	ent->setRenderingDistance(renderFar ? 1000 : 2000);
+
+	renderFar = (renderFar + 1) % 3;
+
+	mBillboardsManager->setSetting(InstanceManager::CAST_SHADOWS, false);
+
+	ent = mTreesManager->createInstancedEntity("aspenTreeInstanced"); //aspenTreeInstanced
+	ent->setOrientation(randomYaw);
+	ent->setPosition(pos);
+	ent->setRenderingDistance(300);
 
 	/*OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::mWorld, ent, 0));
 	auto body = new OgreNewt::Body(Global::mWorld, col);

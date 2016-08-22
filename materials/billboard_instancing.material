@@ -1,0 +1,86 @@
+material billboard_instancing/shadow_caster
+{
+	technique
+	{
+		pass
+		{
+			vertex_program_ref PSSM/shadow_caster_billboard_instancing_vs 
+			{
+			}
+			fragment_program_ref PSSM/shadow_caster_ps 
+			{
+				texture_unit diffuseMap
+				{
+					filtering anisotropic
+					max_anisotropy 8
+
+					texture white.bmp
+				}
+			}
+		}
+	}
+}
+
+abstract material billboard_instancing
+{
+	technique
+	{
+		shadow_caster_material billboard_instancing/shadow_caster
+		
+		pass
+		{
+			diffuse		0.3 0.3 0.3
+			specular	0.1 0.1 0.1 0.1 12.5
+			
+			//depth_write off
+			cull_hardware none
+			
+			vertex_program_ref billboardInstancing_vs
+			{
+			}
+
+			fragment_program_ref billboardInstancing_ps
+			{
+			}
+
+			texture_unit Diffuse
+			{
+				filtering anisotropic
+				max_anisotropy 8
+			}
+
+			 texture_unit shadow_tex0
+			 {
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			 }
+
+			texture_unit shadow_tex1
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+
+			texture_unit shadow_tex2
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+
+			texture_unit shadow_tex3
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material billboardTest : billboard_instancing
+{
+	set_texture_alias Diffuse bush_a.tga
+}

@@ -202,7 +202,7 @@ void Slide::attach(bool retainDirection, float headArrivalTime)
 
 	unavailableTimer = headArrivalTime;
 
-	Global::camera->shaker.nodHead(20);
+	Global::camera->shaker.nodHead(1);
 	Global::player->pSliding->slidingStarted();
 
 	mTrackerState->setEnabled(true);
@@ -229,7 +229,7 @@ void Slide::release(bool returnControl, bool manualJump)
 		else
 			Global::player->body->setVelocity(10 * Global::camera->getFacingDirection() + Vector3(0, 10, 0));
 
-		Global::camera->shaker.nodHead(3);
+		Global::camera->shaker.nodHead(1);
 		//Global::camera->shaker.startShaking(0.8f, 1.0f, 0.5f, 1, 1, 0.4f, 0.25f, 1, true);
 
 		enablePlayerControl = true;
