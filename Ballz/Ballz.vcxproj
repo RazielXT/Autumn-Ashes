@@ -126,6 +126,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="JumpBox.cpp" />
+    <ClCompile Include="model\MovingAnimation.cpp" />
     <ClCompile Include="ogre\OgreAbsoluteLodStrategy.cpp" />
     <ClCompile Include="ogre\OgreProgressiveMeshGenerator.cpp" />
     <ClCompile Include="src\Application.cpp" />
@@ -331,6 +332,9 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\WorldMaterials.h" />
     <ClInclude Include="include\Slide.h" />
     <ClInclude Include="include\ZipLineSlide.h" />
+    <ClInclude Include="model\MovingAnimation.h" />
+    <ClInclude Include="model\PlayerAnimation.h" />
+    <ClInclude Include="model\PlayerModel.h" />
     <ClInclude Include="ogre\OgreAbsoluteLodStrategy.h" />
     <ClInclude Include="ogre\OgreProgressiveMeshGenerator.h" />
     <ClInclude Include="resource.h" />
