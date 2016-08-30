@@ -170,7 +170,7 @@ void BasicDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, V
 
 	renderFar = (renderFar + 1) % 3;
 
-	mBillboardsManager->setSetting(InstanceManager::CAST_SHADOWS, false);
+	mTreesManager->setSetting(InstanceManager::CAST_SHADOWS, false);
 
 	ent = mTreesManager->createInstancedEntity("aspenTreeInstanced"); //aspenTreeInstanced
 	ent->setOrientation(randomYaw);

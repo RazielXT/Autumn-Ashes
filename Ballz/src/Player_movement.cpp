@@ -92,12 +92,12 @@ void Player::jump()
 				vel += 6*gNormal;
 			}
 			else
-				vel += Vector3(0, 9, 0);
+				vel += Vector3(0, 12, 0);
 
 			body->setVelocity(vel);
 			jumpCounter = 1;
 		}
-		else if (!onGround && jumpCounter != 0)
+		else if (jumpCounter != 0)
 		{
 			if (!flying)
 			{
@@ -119,6 +119,8 @@ void Player::manageFall()
 {
 	auto fallVelocity = bodyVelocityL * 3;
 	pParkour->hitGround();
+	jumpCounter = 0;
+	flying = false;
 
 	if (fallVelocity > 50)
 	{
@@ -143,14 +145,14 @@ void Player::manageFall()
 	}
 	else
 	{
+		if (fallVelocity < 30)
+			return;
+
 		if(sprintTimer < 0.3f)
 			pParkour->afterFall(false);
 
 		slowingDown = std::max(1.0f, fallVelocity / 20.0f);
 	}
-
-	jumpCounter = 0;
-	flying = false;
 
 	pCamera->manageFall(fallVelocity);
 
@@ -196,23 +198,24 @@ void Player::updateMovement()
 	else if (onGround)
 	{
 		forceDirection = pCamera->getOrientation()*movedDir;
-		forceDirection.normalise();
 		forceDirection.y = 0;
+		forceDirection.normalise();
 
-		Vector3 lookDirection = pCamera->getFacingDirection();
-		lookDirection.y = 0;
-		Vector3 vel = body->getVelocity();
-		vel.y = 0;
+		//if (gNormal.y > 0.6f)
+		//forceDirection += (1 - gNormal.y)*forceDirection * 2;
 
-		if (gNormal.y > 0.8f)
-			forceDirection += (1 - gNormal.y)*forceDirection * 2;
-
-		Real dirAngleDiff = lookDirection.angleBetween(vel).valueDegrees();
-
-		if (dirAngleDiff > 25 && forw_key && !back_key && !right_key && !left_key)
+		if (gNormal.y > 0.6f && forw_key && !back_key && !right_key && !left_key)
 		{
-			forceDirection *= movespeed*dirAngleDiff / 25;
-			forceDirection += -vel*5;
+			auto vel = body->getVelocity();
+			float yVel = vel.y;
+			vel.y = 0;
+
+			auto forcedVec = forceDirection*forceDirection.dotProduct(vel);
+			forcedVec.y = yVel;
+
+			body->setVelocity(forcedVec);
+			forceDirection *= movespeed;
+			//forceDirection += -vel * 5;
 		}
 		else
 		{
@@ -228,11 +231,14 @@ void Player::updateMovement()
 			forceDirection *= movespeed*ebd*slowingDown;
 		}
 
-		if (gNormal.y > 0.7f)
+		if(forceDirection.dotProduct(gNormal)>=0)
+			forceDirection += -gNormal.y*gNormal;
+
+		if (gNormal.y > 0.55f)
 		{
 			Vector3 antiSlide = -gNormal;
 			antiSlide.y *= -1;
-			forceDirection += antiSlide * 20 * (1 - gNormal.y);
+			forceDirection += antiSlide * 40 * (1 - gNormal.y);
 		}
 		else
 		{
@@ -341,7 +347,7 @@ void Player::updateGroundStats()
 	}
 	else
 	{
-		body->setLinearDamping(flying ? 0.5f : 0.0f);
+		body->setLinearDamping(flying ? 0.5f : 0.20f);
 
 		if (onGround)
 		{

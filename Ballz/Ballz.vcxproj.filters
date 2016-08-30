@@ -60,9 +60,6 @@
     <Filter Include="Files\Core\SceneEdit\Edits">
       <UniqueIdentifier>{fd2f772b-1602-4e68-b0ba-27c84f2a7c67}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Files\Core\Progress">
-      <UniqueIdentifier>{9d72eda4-65a9-409b-bf57-c8d1ad02272a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Files\Core\Base">
       <UniqueIdentifier>{a7231673-5de4-46f7-a722-ba11cb79d047}</UniqueIdentifier>
     </Filter>
@@ -365,10 +362,10 @@
     <ClCompile Include="ogre\OgreAbsoluteLodStrategy.cpp">
       <Filter>Files\Core\Ogre</Filter>
     </ClCompile>
-    <ClCompile Include="src\Progress.cpp">
-      <Filter>Files\Core\Progress</Filter>
-    </ClCompile>
     <ClCompile Include="model\MovingAnimation.cpp">
+      <Filter>Files\Player\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="model\PlayerModel.cpp">
       <Filter>Files\Player\Model</Filter>
     </ClCompile>
   </ItemGroup>
@@ -714,9 +711,6 @@
     </ClInclude>
     <ClInclude Include="ogre\OgreAbsoluteLodStrategy.h">
       <Filter>Files\Core\Ogre</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Progress.h">
-      <Filter>Files\Core\Progress</Filter>
     </ClInclude>
     <ClInclude Include="model\PlayerModel.h">
       <Filter>Files\Player\Model</Filter>

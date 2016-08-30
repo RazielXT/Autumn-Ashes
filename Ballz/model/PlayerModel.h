@@ -2,8 +2,11 @@
 
 #include "MovingAnimation.h"
 #include "OgreQuaternion.h"
+#include "AnimationBlender.h"
 
-enum AnimEvent
+class Player;
+
+enum class AnimEvent
 {
 	Jump,
 	Float,
@@ -17,7 +20,7 @@ class PlayerModel
 {
 public:
 
-	PlayerModel();
+	PlayerModel(Player* player, Ogre::SceneNode* node);
 	~PlayerModel();
 
 	void notifyEvent(AnimEvent evt);
@@ -30,5 +33,10 @@ public:
 
 private:
 
+	AnimationBlender animation;
 	MovingAnimation moving;
+
+	Player* p;
+	Ogre::Entity* model;
+	Ogre::SceneNode* modelNode;
 };

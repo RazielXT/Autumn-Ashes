@@ -10,6 +10,7 @@
 #include "PlayerSliding.h"
 #include "SceneCubeMap.h"
 #include "GameUi.h"
+#include "..\model\PlayerModel.h"
 
 using namespace Ogre;
 
@@ -79,6 +80,7 @@ Player::~Player ()
 	delete pGrabbing;
 	delete pParkour;
 	delete pSliding;
+	delete pModel;
 	delete pCamera;
 	delete autoTarget;
 	delete pHanging;
@@ -108,10 +110,10 @@ void Player::initBody()
 	SceneNode* node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CenterNode");
 	node->attachObject(ent);
 	node->setScale(0.5, 0.5, 0.5);
-	ent->setCastShadows(true);
-	ent->setVisible(true);
-	ent->setMaterialName("redConcrete");
-	ent->setVisibilityFlags(1);
+	//ent->setCastShadows(true);
+	ent->setVisible(false);
+	//ent->setMaterialName("redConcrete");
+	//ent->setVisibilityFlags(1);
 	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World, ent, 10));
 	body = new OgreNewt::Body(m_World, col);
 
@@ -135,6 +137,7 @@ void Player::initBody()
 	body->setCustomForceAndTorqueCallback<Player>(&Player::move_callback, this);
 
 	pCamera = new PlayerCamera(this, node);
+	pModel = new PlayerModel(this, node);
 
 	ent = mSceneMgr->createEntity("pl_base", "cone_p2.mesh");
 	col_p = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World, ent, 10));
@@ -384,6 +387,7 @@ void Player::update(Real time)
 {
 	tslf = time*Global::timestep;
 	pCamera->update();
+	pModel->update(time);
 
 	pPostProcess->update(tslf);
 

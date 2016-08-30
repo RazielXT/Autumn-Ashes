@@ -12,6 +12,7 @@
 #include "PlayerSliding.h"
 #include "PlayerHanging.h"
 #include "CameraShaker.h"
+#include "PlayerModel.h"
 
 class GameUi;
 
@@ -28,6 +29,7 @@ class Player
 	friend class PlayerFlash;
 	friend class PlayerCamera;
 	friend class PlayerHanging;
+	friend class PlayerModel;
 
 public:
 
@@ -87,6 +89,7 @@ public:
 	PlayerAbilities* pAbilities;
 	PlayerSliding* pSliding;
 	PlayerCamera* pCamera;
+	PlayerModel* pModel;
 	PlayerAutoTarget* autoTarget;
 	PlayerHanging* pHanging;
 	PlayerAudio pAudio;
