@@ -125,6 +125,8 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="EditorCamera.cpp" />
+    <ClCompile Include="EditorControl.cpp" />
     <ClCompile Include="JumpBox.cpp" />
     <ClCompile Include="model\MovingAnimation.cpp" />
     <ClCompile Include="model\PlayerModel.cpp" />
@@ -229,6 +231,10 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="src\ZipLineSlide.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BinaryHelper.h" />
+    <ClInclude Include="EditableItem.h" />
+    <ClInclude Include="EditorCamera.h" />
+    <ClInclude Include="EditorControl.h" />
     <ClInclude Include="include\AnimatedTrack.h" />
     <ClInclude Include="include\AnimationBlender.h" />
     <ClInclude Include="include\Application.h" />

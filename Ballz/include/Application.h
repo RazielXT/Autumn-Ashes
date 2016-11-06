@@ -13,6 +13,7 @@ public:
 
 private:
 
+	size_t windowHnd;
 	Ogre::Root* mRoot = nullptr;
 	Ogre::RenderWindow* mWindow = nullptr;
 	OIS::Keyboard* mKeyboard = nullptr;
@@ -33,6 +34,10 @@ private:
 	void initializeResourceGroups();
 
 	void setupScene();
+
+	static LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	static LONG mOldWindowProc;
+	static UINT dbgMsg;
 
 	void setupInputSystem();
 

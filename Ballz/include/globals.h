@@ -12,7 +12,7 @@ class CameraShaker;
 #define MAX_DEBUG_LINES 15
 #define DEBUG_VARIABLES_COUNT 7
 
-enum GameState { GAME, PAUSE, MENU, CONSOLE, UNDEFINED };
+enum GameState { GAME, PAUSE, MENU, UNDEFINED };
 
 enum VisibilityFlag
 {

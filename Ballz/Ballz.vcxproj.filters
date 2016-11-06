@@ -69,6 +69,9 @@
     <Filter Include="Files\Player\Model">
       <UniqueIdentifier>{4fe95b3e-be4a-4400-bf2f-3bb101584ef6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\Editor">
+      <UniqueIdentifier>{a1039639-830d-4c18-844f-69f342634748}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CrowPath.cpp">
@@ -367,6 +370,10 @@
     </ClCompile>
     <ClCompile Include="model\PlayerModel.cpp">
       <Filter>Files\Player\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCamera.cpp" />
+    <ClCompile Include="EditorControl.cpp">
+      <Filter>Files\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -720,6 +727,18 @@
     </ClInclude>
     <ClInclude Include="model\PlayerAnimation.h">
       <Filter>Files\Player\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryHelper.h">
+      <Filter>Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorControl.h">
+      <Filter>Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="EditableItem.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCamera.h">
+      <Filter>Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

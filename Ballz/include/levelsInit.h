@@ -42,6 +42,29 @@ void createTestLevel()
 	new CrowWatch();
 }
 
+class AnimationLoop : public EventTask
+{
+public:
+
+	AnimationLoop(Ogre::Entity* e, std::string anim)
+	{
+		state = e->getAnimationState(anim);
+		state->setLoop(true);
+		state->setEnabled(true);
+	}
+
+	//~Lvl2Update ();
+	bool update(Ogre::Real tslf)
+	{
+		state->addTime(tslf);
+
+		return true;
+	}
+
+private:
+	Ogre::AnimationState* state;
+};
+
 void createTestLevel2()
 {
 	PostProcessMgr* ppMgr = Global::mPPMgr;
@@ -79,6 +102,13 @@ void createTestLevel2()
 	gen.generateLodLevels(lod);
 
 	new CrowWatch();
+
+	auto e = GUtils::MakeEntity("death knight_B.mesh", Ogre::Vector3(0, 50, 100), Ogre::Vector3(1,1,1));
+	Global::mEventsMgr->addTask(new AnimationLoop(e, "attack_idle"));
+
+	e = GUtils::MakeEntity("zard.mesh", Ogre::Vector3(50, 80, 100), Ogre::Vector3(20, 20, 20));
+	e->getParentSceneNode()->pitch(Ogre::Degree(-90));
+	Global::mEventsMgr->addTask(new AnimationLoop(e, "walk"));
 }
 
 void createLevelTuto()

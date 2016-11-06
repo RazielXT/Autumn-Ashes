@@ -35,7 +35,7 @@ PlayerCamera::PlayerCamera(Player* p, Ogre::SceneNode* base)
 
 	auto tnode = camnode->createChildSceneNode("tNod");
 	tnode->attachObject(camera);
-	tnode->setPosition(Vector3(0, 5, 20));
+	//tnode->setPosition(Vector3(0, 5, 20));
 
 	rolling.setTargetNodes(camnode, headnode);
 

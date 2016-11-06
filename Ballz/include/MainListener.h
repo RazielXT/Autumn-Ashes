@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "OgreGpuCommandBufferFlush.h"
 #include "NewtonListener.h"
+#include "..\EditorControl.h"
 
 class EventsManager;
 class GeometryManager;
@@ -14,7 +15,7 @@ class MainListener : public Ogre::FrameListener, public OIS::MouseListener, publ
 public:
 
 	~MainListener();
-	MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, Ogre::SceneManager * sceneMgr, OgreNewt::World* nWorld, Ogre::Root *mRoot, Ogre::RenderWindow* mWin);
+	MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, Ogre::SceneManager * sceneMgr, OgreNewt::World* nWorld, Ogre::Root *mRoot, Ogre::RenderWindow* mWin, size_t windowHnd);
 
 	bool frameStarted(const Ogre::FrameEvent& evt);
 
@@ -25,6 +26,8 @@ public:
 	virtual bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 
 private:
+
+	EditorControl editor;
 
 	OIS::Keyboard *mKeyboard;
 	OIS::Mouse *mMouse;
@@ -39,4 +42,5 @@ private:
 	PostProcessMgr* postProcMgr;
 	GameStateManager* gameMgr;
 	NewtonListener nListener;
+	size_t hwnd;
 };

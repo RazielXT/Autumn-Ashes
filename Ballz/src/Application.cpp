@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "MainListener.h"
 #include "PSSMCamera.h"
+#include "GUtils.h"
 
 using namespace Ogre;
 
@@ -105,7 +106,6 @@ void Application::initializeResourceGroups()
 
 void Application::setupInputSystem()
 {
-	size_t windowHnd = 0;
 	std::ostringstream windowHndStr;
 	OIS::ParamList pl;
 	RenderWindow *win = mWindow;
@@ -113,6 +113,8 @@ void Application::setupInputSystem()
 	win->getCustomAttribute("WINDOW", &windowHnd);
 	windowHndStr << windowHnd;
 	pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
+	//pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND")));
+	//pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
 	mInputManager = OIS::InputManager::createInputSystem(pl);
 
 	try
@@ -128,12 +130,18 @@ void Application::setupInputSystem()
 
 void Application::createFrameListener()
 {
-	mListener = new MainListener(mKeyboard, mMouse, mSceneMgr, mWorld, mRoot, mWindow);
+	mListener = new MainListener(mKeyboard, mMouse, mSceneMgr, mWorld, mRoot, mWindow, windowHnd);
 	mRoot->addFrameListener(mListener);
 }
 
 void Application::startRenderLoop()
 {
+	mOldWindowProc = GetWindowLongPtr((HWND)windowHnd, GWLP_WNDPROC);
+	dbgMsg = RegisterWindowMessage("aaDbg");
+
+	SetWindowLongPtr((HWND)windowHnd, GWLP_WNDPROC, (LONG_PTR)windowProc);
+	//ShowCursor(FALSE);
+
 	mRoot->startRendering();
 }
 
@@ -162,7 +170,6 @@ struct shadowListener : public Ogre::SceneManager::Listener
 	void preFindVisibleObjects(Ogre::SceneManager*, Ogre::SceneManager::IlluminationRenderStage, Ogre::Viewport*) {}
 	void postFindVisibleObjects(Ogre::SceneManager*, Ogre::SceneManager::IlluminationRenderStage, Ogre::Viewport*) {}
 } shadowCameraUpdater;
-
 
 void Application::setupScene()
 {
@@ -238,4 +245,20 @@ void Application::setupScene()
 	shadowListener* u=new  shadowListener();
 	mSceneMgr->addListener(u);
 	*/
+}
+
+LONG Application::mOldWindowProc = NULL;
+UINT Application::dbgMsg = 0;
+
+LRESULT CALLBACK Application::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	// Handle your messages
+	if (uMsg == dbgMsg)
+	{
+		GUtils::DebugPrint("Debugger signal.");
+		ShowCursor(TRUE);
+	}
+
+	// After that call the old window proc
+	return CallWindowProc((WNDPROC)mOldWindowProc, hWnd, uMsg, wParam, lParam);
 }
