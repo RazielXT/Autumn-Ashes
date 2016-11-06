@@ -7,12 +7,13 @@ class EditorControl
 public:
 
 	EditorControl(OIS::Mouse* mMouse);
+	~EditorControl();
 
 	bool connected = false;
-	bool started = false;
+	bool active = false;
 	bool editMode = false;
 
-	void startEditor();
+	void setActive(bool active);
 
 	void setVievMode();
 	void setEditMode();

@@ -92,7 +92,7 @@ bool MainListener::frameStarted(const FrameEvent& evt)
 
 	if (gameMgr->gameState == GAME)
 	{
-		if(!editor.started)
+		if(!editor.active)
 			Global::player->update(tslf);
 		nListener.frameStarted(tslf);
 	}
@@ -104,14 +104,14 @@ bool MainListener::keyPressed(const OIS::KeyEvent &arg)
 {
 	Global::mEventsMgr->listenersKeyPressed(arg);
 
-	if (gameMgr->gameState == GAME && !editor.started)
+	if (gameMgr->gameState == GAME && !editor.active)
 		Global::player->pressedKey(arg);
 
 	switch (arg.key)
 	{
 
 	case OIS::KC_K:
-		editor.startEditor();
+		editor.setActive(!editor.active);
 		break;
 
 	case OIS::KC_ESCAPE:
@@ -119,7 +119,11 @@ bool MainListener::keyPressed(const OIS::KeyEvent &arg)
 		gameMgr->escapePressed();
 
 		if (gameMgr->gameState == MENU)
+		{
 			continueExecution = false;
+			if (editor.active)
+				SetActiveWindow(NULL);
+		}
 
 		break;
 	}
@@ -134,17 +138,17 @@ bool MainListener::keyReleased(const OIS::KeyEvent &arg)
 {
 	Global::mEventsMgr->listenersKeyReleased(arg);
 
-	if (gameMgr->gameState == GAME && !editor.started)
+	if (gameMgr->gameState == GAME && !editor.active)
 		Global::player->releasedKey(arg);
 
 	return true;
 }
 
+static int x = 0;
+static int y = 0;
+
 bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 {
-	static int x = 0;
-	static int y = 0;
-
 	POINT point;
 	GetCursorPos(&point);
 	ScreenToClient((HWND)hwnd, &point);
@@ -160,7 +164,7 @@ bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 
 	Global::mEventsMgr->listenersMouseMoved(e);
 
-	if (gameMgr->gameState == GAME && !editor.started)
+	if (gameMgr->gameState == GAME && !editor.active)
 		Global::player->movedMouse(e);
 	else if (gameMgr->gameState == PAUSE || gameMgr->gameState == MENU)
 		gameMgr->insideMenuMoved(x, y);
@@ -170,10 +174,18 @@ bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 
 bool MainListener::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
-	if (editor.started)
+	if (editor.active)
 	{
 		if (id == OIS::MB_Right)
 			editor.editMode ? editor.setVievMode() : editor.setEditMode();
+		if (id == OIS::MB_Left && editor.editMode)
+		{
+			auto cam = Global::player->pCamera->camera;
+			auto mouseray = cam->getCameraToViewportRay(x / (float)mWindow->getWidth(), y / (float)mWindow->getHeight());
+			GUtils::RayInfo rayInfo;
+			if (GUtils::getRayInfo(cam->getDerivedPosition(), cam->getDerivedPosition() + mouseray.getDirection() * 100000, rayInfo))
+				GUtils::MakeEntity("aspenLeafs.mesh", rayInfo.pos);
+		}
 	}
 	else if (gameMgr->gameState == GAME)
 		Global::player->pressedMouse(arg, id);
@@ -185,7 +197,7 @@ bool MainListener::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 
 bool MainListener::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
-	if (gameMgr->gameState == GAME && !editor.started)
+	if (gameMgr->gameState == GAME && !editor.active)
 		Global::player->releasedMouse(arg, id);
 
 	return true;

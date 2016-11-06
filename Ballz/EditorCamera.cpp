@@ -18,13 +18,14 @@ void EditorCamera::enable()
 		camNode->attachObject(Global::player->pCamera->detachCamera());
 	}
 
-	front = back = left = right = space = false;
+	front = back = left = right = shift = space = false;
 }
 
 void EditorCamera::disable()
 {
 	Global::player->pCamera->attachCamera();
 	unregisterInputListening();
+	Global::player->setPosition(camNode->getPosition());
 	Global::mSceneMgr->destroySceneNode(camNode);
 	camNode = nullptr;
 }
