@@ -23,8 +23,15 @@ void EditorCamera::enable()
 
 void EditorCamera::disable()
 {
-	Global::player->pCamera->attachCamera();
 	unregisterInputListening();
+	front = back = left = right = shift = space = strafe = false;
+}
+
+void EditorCamera::returnToPlayer()
+{
+	disable();
+
+	Global::player->pCamera->attachCamera();
 	Global::player->setPosition(camNode->getPosition());
 	Global::mSceneMgr->destroySceneNode(camNode);
 	camNode = nullptr;
@@ -89,8 +96,8 @@ void EditorCamera::movedMouse(const OIS::MouseEvent &evt)
 {
 	if (strafe)
 	{
-		int speed = shift ? 400 : 50;
-		Ogre::Vector3 move(-evt.state.X.rel, -evt.state.Y.rel, 0);
+		float speed = shift ? 2 : 0.5f;
+		Ogre::Vector3 move(evt.state.X.rel, -evt.state.Y.rel, 0);
 		move = camNode->getOrientation()*move;
 		move *= speed;
 

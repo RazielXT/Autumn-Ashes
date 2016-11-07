@@ -12,10 +12,9 @@ public:
 
 	void enable();
 	void disable();
+	void returnToPlayer();
 
 	void setStrafeMode(bool enable);
-
-protected:
 
 	virtual void pressedKey(const OIS::KeyEvent &arg);
 	virtual void releasedKey(const OIS::KeyEvent &arg);

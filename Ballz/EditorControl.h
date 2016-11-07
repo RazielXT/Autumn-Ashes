@@ -25,6 +25,8 @@ public:
 
 	void sendMsg(std::vector<char>& data);
 
+	virtual void movedMouse(const OIS::MouseEvent &e) override;
+
 	EditorCamera cam;
 	OIS::Mouse* mMouse;
 };

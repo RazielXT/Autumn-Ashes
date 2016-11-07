@@ -111,7 +111,11 @@ void EventsManager::update(Ogre::Real time)
 
 void EventsManager::addInputListener(InputListener* l)
 {
-	keyListeners.push_back(l);
+	auto d = std::find(keyListeners.begin(), keyListeners.end(), l);
+	if (d == keyListeners.end())
+		keyListeners.push_back(l);
+	else
+		printf("");
 }
 
 void EventsManager::removeInputListener(InputListener* l)

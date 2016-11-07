@@ -12,16 +12,21 @@ EditorControl::~EditorControl()
 
 void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
-	if(active)
-	if (id == OIS::MB_Right)
-		setVievMode();
+	if (active)
+	{
+		if (id == OIS::MB_Right || id == OIS::MB_Middle)
+			setVievMode();
+
+		if (id == OIS::MB_Middle)
+			cam.mousePressed(arg, id);
+	}
 }
 
 void EditorControl::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
 	if (active)
-	if (id == OIS::MB_Right)
-		setEditMode();
+		if (id == OIS::MB_Right || id == OIS::MB_Middle)
+			setEditMode();
 }
 
 void EditorControl::setActive(bool active)
@@ -33,32 +38,39 @@ void EditorControl::setActive(bool active)
 
 	if (active)
 	{
-		setVievMode();
+		cam.enable();
+		setEditMode();
 		registerInputListening();
 	}
 	else
 	{
-		cam.disable();
+		cam.returnToPlayer();
 		unregisterInputListening();
 	}
 }
 
 void EditorControl::setVievMode()
 {
-	cam.enable();
+	if (!editMode)
+		return;
 
-	((OIS::Win32Mouse*)mMouse)->setForegroundMode(false);
 	int i = ShowCursor(FALSE);
+	((OIS::Win32Mouse*)mMouse)->setForegroundMode(false);
 	editMode = false;
+
+	cam.enable();
 }
 
 void EditorControl::setEditMode()
 {
-	cam.unregisterInputListening();
+	if (editMode)
+		return;
 
-	((OIS::Win32Mouse*)mMouse)->setForegroundMode(true);
 	while (ShowCursor(TRUE));
+	((OIS::Win32Mouse*)mMouse)->setForegroundMode(true);
 	editMode = true;
+
+	cam.disable();
 }
 
 bool EditorControl::connectEditorUi()
@@ -69,5 +81,9 @@ bool EditorControl::connectEditorUi()
 void EditorControl::sendMsg(std::vector<char>& data)
 {
 
+}
+
+void EditorControl::movedMouse(const OIS::MouseEvent &e)
+{
 }
 
