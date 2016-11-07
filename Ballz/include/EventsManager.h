@@ -43,6 +43,10 @@ public:
 	void listenersKeyReleased(const OIS::KeyEvent &arg);
 
 	void listenersMouseMoved(const OIS::MouseEvent &e);
+
+	void listenersMousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
+
+	void listenersMouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 };
 
 #endif

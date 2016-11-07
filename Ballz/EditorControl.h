@@ -2,12 +2,15 @@
 #include <vector>
 #include "EditorCamera.h"
 
-class EditorControl
+class EditorControl : public InputListener
 {
 public:
 
 	EditorControl(OIS::Mouse* mMouse);
 	~EditorControl();
+
+	virtual void mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
+	virtual void mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 
 	bool connected = false;
 	bool active = false;

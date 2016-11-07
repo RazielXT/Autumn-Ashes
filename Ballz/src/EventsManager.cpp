@@ -153,3 +153,25 @@ void EventsManager::listenersMouseMoved(const OIS::MouseEvent &e)
 			l->movedMouse(e);
 	}
 }
+
+void EventsManager::listenersMousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+{
+	auto state = Global::gameMgr->gameState;
+
+	for (auto l : keyListeners)
+	{
+		if (l->executionState == state || l->executionState == UNDEFINED)
+			l->mousePressed(arg, id);
+	}
+}
+
+void EventsManager::listenersMouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+{
+	auto state = Global::gameMgr->gameState;
+
+	for (auto l : keyListeners)
+	{
+		if (l->executionState == state || l->executionState == UNDEFINED)
+			l->mouseReleased(arg, id);
+	}
+}

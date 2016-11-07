@@ -13,6 +13,8 @@ public:
 	virtual void pressedKey(const OIS::KeyEvent &arg) {};
 	virtual void releasedKey(const OIS::KeyEvent &arg) {};
 	virtual void movedMouse(const OIS::MouseEvent &e) {};
+	virtual void mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {};
+	virtual void mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {};
 
 	inline void registerInputListening()
 	{

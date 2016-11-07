@@ -162,7 +162,7 @@ bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 
 	OIS::MouseEvent e(nullptr, editor.editMode ? state : evt.state);
 
-	Global::mEventsMgr->listenersMouseMoved(e);
+	mEventMgr->listenersMouseMoved(e);
 
 	if (gameMgr->gameState == GAME && !editor.active)
 		Global::player->movedMouse(e);
@@ -174,10 +174,10 @@ bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 
 bool MainListener::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
+	mEventMgr->listenersMousePressed(arg, id);
+
 	if (editor.active)
 	{
-		if (id == OIS::MB_Right)
-			editor.editMode ? editor.setVievMode() : editor.setEditMode();
 		if (id == OIS::MB_Left && editor.editMode)
 		{
 			auto cam = Global::player->pCamera->camera;
@@ -186,8 +186,11 @@ bool MainListener::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 			if (GUtils::getRayInfo(cam->getDerivedPosition(), cam->getDerivedPosition() + mouseray.getDirection() * 100000, rayInfo))
 				GUtils::MakeEntity("aspenLeafs.mesh", rayInfo.pos);
 		}
+
+		return true;
 	}
-	else if (gameMgr->gameState == GAME)
+
+	if (gameMgr->gameState == GAME)
 		Global::player->pressedMouse(arg, id);
 	else if (gameMgr->gameState == PAUSE || gameMgr->gameState == MENU)
 		continueExecution = gameMgr->insideMenuPressed();
@@ -197,6 +200,11 @@ bool MainListener::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 
 bool MainListener::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
+	mEventMgr->listenersMouseReleased(arg, id);
+
+	if (editor.active)
+		return true;
+
 	if (gameMgr->gameState == GAME && !editor.active)
 		Global::player->releasedMouse(arg, id);
 

@@ -10,6 +10,20 @@ EditorControl::~EditorControl()
 {
 }
 
+void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+{
+	if(active)
+	if (id == OIS::MB_Right)
+		setVievMode();
+}
+
+void EditorControl::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+{
+	if (active)
+	if (id == OIS::MB_Right)
+		setEditMode();
+}
+
 void EditorControl::setActive(bool active)
 {
 	if (this->active == active)
@@ -18,10 +32,14 @@ void EditorControl::setActive(bool active)
 	this->active = active;
 
 	if (active)
+	{
 		setVievMode();
+		registerInputListening();
+	}
 	else
 	{
 		cam.disable();
+		unregisterInputListening();
 	}
 }
 

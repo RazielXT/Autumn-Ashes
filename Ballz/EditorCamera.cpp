@@ -18,7 +18,7 @@ void EditorCamera::enable()
 		camNode->attachObject(Global::player->pCamera->detachCamera());
 	}
 
-	front = back = left = right = shift = space = false;
+	front = back = left = right = shift = space = strafe = false;
 }
 
 void EditorCamera::disable()
@@ -28,6 +28,11 @@ void EditorCamera::disable()
 	Global::player->setPosition(camNode->getPosition());
 	Global::mSceneMgr->destroySceneNode(camNode);
 	camNode = nullptr;
+}
+
+void EditorCamera::setStrafeMode(bool enable)
+{
+	strafe = enable;
 }
 
 void EditorCamera::pressedKey(const OIS::KeyEvent &arg)
@@ -82,8 +87,32 @@ void EditorCamera::releasedKey(const OIS::KeyEvent &arg)
 
 void EditorCamera::movedMouse(const OIS::MouseEvent &evt)
 {
-	camNode->yaw(Ogre::Degree(-evt.state.X.rel * 0.15f), Ogre::Node::TS_WORLD);
-	camNode->pitch(Ogre::Degree(-evt.state.Y.rel * 0.15f), Ogre::Node::TS_LOCAL);
+	if (strafe)
+	{
+		int speed = shift ? 400 : 50;
+		Ogre::Vector3 move(-evt.state.X.rel, -evt.state.Y.rel, 0);
+		move = camNode->getOrientation()*move;
+		move *= speed;
+
+		camNode->setPosition(camNode->getPosition() + move);
+	}
+	else
+	{
+		camNode->yaw(Ogre::Degree(-evt.state.X.rel * 0.15f), Ogre::Node::TS_WORLD);
+		camNode->pitch(Ogre::Degree(-evt.state.Y.rel * 0.15f), Ogre::Node::TS_LOCAL);
+	}
+}
+
+void EditorCamera::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+{
+	if (id == OIS::MB_Middle)
+		strafe = true;
+}
+
+void EditorCamera::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+{
+	if (id == OIS::MB_Middle)
+		strafe = false;
 }
 
 bool EditorCamera::update(float tslf)
@@ -104,7 +133,8 @@ bool EditorCamera::update(float tslf)
 	direction.normalise();
 	direction *= speed * tslf;
 
-	camNode->setPosition(camNode->getPosition() + direction);
+	if(!strafe)
+		camNode->setPosition(camNode->getPosition() + direction);
 
 	return true;
 }
