@@ -44,6 +44,7 @@ void EditorControl::setActive(bool active)
 	}
 	else
 	{
+		setVievMode();
 		cam.returnToPlayer();
 		unregisterInputListening();
 	}
@@ -54,7 +55,7 @@ void EditorControl::setVievMode()
 	if (!editMode)
 		return;
 
-	int i = ShowCursor(FALSE);
+	while (ShowCursor(FALSE));
 	((OIS::Win32Mouse*)mMouse)->setForegroundMode(false);
 	editMode = false;
 

@@ -121,8 +121,8 @@ bool MainListener::keyPressed(const OIS::KeyEvent &arg)
 		if (gameMgr->gameState == MENU)
 		{
 			continueExecution = false;
-			if (editor.active)
-				SetActiveWindow(NULL);
+			editor.setActive(false);
+			SetActiveWindow(NULL);
 		}
 
 		break;
