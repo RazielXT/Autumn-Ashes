@@ -127,11 +127,13 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
   <ItemGroup>
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EditorControl.cpp" />
+    <ClCompile Include="EditorUiHandler.cpp" />
     <ClCompile Include="JumpBox.cpp" />
     <ClCompile Include="model\MovingAnimation.cpp" />
     <ClCompile Include="model\PlayerModel.cpp" />
     <ClCompile Include="ogre\OgreAbsoluteLodStrategy.cpp" />
     <ClCompile Include="ogre\OgreProgressiveMeshGenerator.cpp" />
+    <ClCompile Include="SceneInteraction.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\DetailGeometryMaterial.cpp" />
     <ClCompile Include="src\FloatsMap.cpp" />
@@ -234,7 +236,10 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="BinaryHelper.h" />
     <ClInclude Include="EditableItem.h" />
     <ClInclude Include="EditorCamera.h" />
+    <ClInclude Include="EditorComm.h" />
+    <ClInclude Include="EditorCommLib.h" />
     <ClInclude Include="EditorControl.h" />
+    <ClInclude Include="EditorUiHandler.h" />
     <ClInclude Include="include\AnimatedTrack.h" />
     <ClInclude Include="include\AnimationBlender.h" />
     <ClInclude Include="include\Application.h" />
@@ -352,6 +357,8 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\Tasks.h" />
     <ClInclude Include="include\TestTask.h" />
     <ClInclude Include="include\TriggerInfo.h" />
+    <ClInclude Include="SceneInteraction.h" />
+    <ClInclude Include="ObjectSelectionEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AutumnAshes.rc" />

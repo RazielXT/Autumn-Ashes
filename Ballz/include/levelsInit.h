@@ -103,6 +103,8 @@ void createTestLevel2()
 
 	new CrowWatch();
 
+	GUtils::TargetHeight(GUtils::MakeEntity("sluagh.mesh", Ogre::Vector3(80, 50, 100), Ogre::Vector3(1, 1, 1)*100),10);
+
 	auto e = GUtils::MakeEntity("death knight_B.mesh", Ogre::Vector3(0, 50, 100), Ogre::Vector3(1,1,1));
 	Global::mEventsMgr->addTask(new AnimationLoop(e, "attack_idle"));
 

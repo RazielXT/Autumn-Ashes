@@ -375,6 +375,12 @@
     <ClCompile Include="EditorControl.cpp">
       <Filter>Files\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="SceneInteraction.cpp">
+      <Filter>Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorUiHandler.cpp">
+      <Filter>Files\Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -739,6 +745,21 @@
     </ClInclude>
     <ClInclude Include="EditorCamera.h">
       <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneInteraction.h">
+      <Filter>Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorUiHandler.h">
+      <Filter>Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorComm.h">
+      <Filter>Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCommLib.h">
+      <Filter>Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectSelectionEditor.h">
+      <Filter>Files\Editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

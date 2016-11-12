@@ -11,6 +11,19 @@ namespace GUtils
 extern std::vector<std::string> debug;
 extern void DebugPrint(const std::string line, bool logFile = false);
 
+inline Ogre::Entity* TargetHeight(Ogre::Entity* entity, float target)
+{
+	auto node = entity->getParentSceneNode();
+	auto cscale = node->getScale();
+	auto current = entity->getBoundingBox().getSize().y*cscale.y;
+
+	auto w = target / current;
+
+	node->setScale(cscale*w);
+
+	return entity;
+}
+
 inline Ogre::Entity* MakeEntity(const std::string name, Ogre::Vector3 pos = Ogre::Vector3::ZERO, Ogre::Vector3 scale = Ogre::Vector3::UNIT_SCALE)
 {
 	auto ent = Global::mSceneMgr->createEntity(name);

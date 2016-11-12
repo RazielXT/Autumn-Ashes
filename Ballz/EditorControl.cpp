@@ -29,6 +29,16 @@ void EditorControl::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID
 			setEditMode();
 }
 
+bool EditorControl::update(float tslf)
+{
+	if (active)
+	{
+		auto msg = uiHandler.readUiMessage();
+	}
+
+	return active;
+}
+
 void EditorControl::setActive(bool active)
 {
 	if (this->active == active)
@@ -38,6 +48,9 @@ void EditorControl::setActive(bool active)
 
 	if (active)
 	{
+		if(uiHandler.ensureUi())
+			Global::mEventsMgr->addCachedTask(this);
+
 		cam.enable();
 		setEditMode();
 		registerInputListening();

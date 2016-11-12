@@ -1,8 +1,9 @@
 #pragma once
 #include <vector>
 #include "EditorCamera.h"
+#include "EditorUiHandler.h"
 
-class EditorControl : public InputListener
+class EditorControl : public InputListener, EventTask
 {
 public:
 
@@ -11,6 +12,8 @@ public:
 
 	virtual void mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 	virtual void mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
+
+	virtual bool update(float tslf);
 
 	bool connected = false;
 	bool active = false;
@@ -29,4 +32,6 @@ public:
 
 	EditorCamera cam;
 	OIS::Mouse* mMouse;
+
+	EditorUiHandler uiHandler;
 };
