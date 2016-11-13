@@ -8,20 +8,47 @@ using namespace System::Windows::Forms;
 
 
 [STAThread]
-void FormsMain()
+void FormsMain(HWND hwnd)
 {
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 
 	CppWinForm1::EditorForm form;
 
-	Application::Run(%form);
+	if(!hwnd)
+		Application::Run(%form);
+	else
+	{
+		System::Windows::Forms::NativeWindow^ nativeWindow;
 
-	/*
-	System::IntPtr myWindowHandle = System::IntPtr(hwnd);
-	System::Windows::Forms::IWin32Window ^w = System::Windows::Forms::Control::FromHandle(myWindowHandle);
-	form.Show(w);	
-	*/
+		try
+		{
+			System::IntPtr handle = System::IntPtr(hwnd);
+			nativeWindow = gcnew System::Windows::Forms::NativeWindow();
+			nativeWindow->AssignHandle(handle);
+		}
+		catch (const std::exception&)
+		{
+			MessageBox::Show("Init failure");
+			return;
+		}
+
+
+		//System::IntPtr myWindowHandle = System::IntPtr(hwnd);
+		//System::Windows::Forms::IWin32Window ^w = System::Windows::Forms::Control::FromHandle(myWindowHandle);
+		try
+		{
+			form.Show(nativeWindow);
+			Application::Run(%form);
+		}
+		catch (const std::exception&)
+		{
+			MessageBox::Show("Show failure");
+			return;
+		}
+
+		//MessageBox::Show("No failure");
+	}		
 }
 
 void FormsUpdate(UiMessage* msg)
@@ -45,10 +72,12 @@ void SendMsg(UiMessageId, void*)
 
 #else
 
+#pragma managed(push, off)
+
 typedef void(*MSGFUNC)(UiMessage*);
 extern "C"
 {
-	__declspec(dllexport) void __cdecl StartUi(void);
+	__declspec(dllexport) void __cdecl StartUi(HWND);
 
 	__declspec(dllexport) void __cdecl SendMsg(UiMessage*);
 
@@ -67,9 +96,9 @@ __declspec(dllexport) void __cdecl SendMsg(UiMessage* msg)
 	FormsUpdate(msg);
 }
 
-__declspec(dllexport) void __cdecl StartUi(void)
+__declspec(dllexport) void __cdecl StartUi(HWND hwnd)
 {
-	FormsMain();
+	FormsMain(hwnd);
 }
 
 int __stdcall Main(HINSTANCE h, ULONG ulReason, PVOID pvReserved) {
@@ -93,6 +122,3 @@ void SendMsg(UiMessageId id, void* data)
 }
 
 #endif // NO_LIB
-#pragma managed(push, off)
-
-

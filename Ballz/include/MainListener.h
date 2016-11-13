@@ -42,5 +42,4 @@ private:
 	PostProcessMgr* postProcMgr;
 	GameStateManager* gameMgr;
 	NewtonListener nListener;
-	size_t hwnd;
 };

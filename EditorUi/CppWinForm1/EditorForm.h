@@ -391,7 +391,7 @@ namespace CppWinForm1 {
 			this->Name = L"EditorForm";
 			this->Text = L"Editor";
 			this->toolsGroupBox->ResumeLayout(false);
-			this->parselectGroupBox->ResumeLayout(false);
+			this->selectGroupBox->ResumeLayout(false);
 			this->listGroupBox->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();

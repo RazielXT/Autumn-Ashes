@@ -30,6 +30,8 @@ MainListener::~MainListener()
 	delete postProcMgr;
 }
 
+size_t hwnd;
+
 MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneManager * sceneMgr, OgreNewt::World* nWorld, Ogre::Root *mRoot, Ogre::RenderWindow* mWin, size_t windowHnd) : editor(mouse)
 {
 	/*

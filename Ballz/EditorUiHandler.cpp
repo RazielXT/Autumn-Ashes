@@ -20,12 +20,14 @@ void onEnd()
 	uiStarted = false;
 }
 
+extern size_t hwnd;
+
 bool EditorUiHandler::ensureUi()
 {
 	if (uiStarted)
 		return false;
 
-	if (lib.init(&sender, handleMsg, onEnd))
+	if (lib.init(&sender, handleMsg, onEnd, (HWND)hwnd))
 	{
 		uiStarted = true;
 		return true;
