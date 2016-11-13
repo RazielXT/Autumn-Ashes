@@ -9,11 +9,12 @@ enum class UiMessageId
 
 	//from UI
 	GetWorldItems,	//GetWorldItemsData
-	SelectWorldItem,	 //WorldItem
-	SetSelect,
-	SetMove,
-	SetRotate,
-	SetScale,
+	AddItemMode,	 //WorldItem
+	SelectMode,
+	MoveMode,
+	RotateMode,
+	ScaleMode,
+	EntityInfoChanged,	 //EntityInfoChange
 };
 
 struct UiMessage
@@ -31,14 +32,6 @@ struct Vector3
 	float y;
 	float z;
 };
-
-struct Quaternion
-{
-	float x;
-	float y;
-	float z;
-	float w;
-};
 }
 #endif
 
@@ -48,7 +41,6 @@ struct EntityInfo
 	std::wstring name;
 	Ogre::Vector3 pos;
 	Ogre::Vector3 scale;
-	Ogre::Quaternion rotation;
 };
 
 struct WorldItem
@@ -60,4 +52,12 @@ struct WorldItem
 struct GetWorldItemsData
 {
 	std::vector<WorldItem> items;
+};
+
+struct EntityInfoChange
+{
+	enum class EntityChange { Name, Pos, Scale };
+
+	EntityChange change;
+	void* data;
 };

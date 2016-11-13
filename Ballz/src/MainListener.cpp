@@ -146,8 +146,8 @@ bool MainListener::keyReleased(const OIS::KeyEvent &arg)
 	return true;
 }
 
-static int x = 0;
-static int y = 0;
+int mouseX = 0;
+int mouseY = 0;
 
 bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 {
@@ -156,11 +156,11 @@ bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 	ScreenToClient((HWND)hwnd, &point);
 
 	OIS::MouseState state;
-	state.X.rel = point.x - x;
-	state.Y.rel = point.y - y;
+	state.X.rel = point.x - mouseX;
+	state.Y.rel = point.y - mouseY;
 
-	state.X.abs = x = point.x;
-	state.Y.abs = y = point.y;
+	state.X.abs = mouseX = point.x;
+	state.Y.abs = mouseY = point.y;
 
 	OIS::MouseEvent e(nullptr, editor.editMode ? state : evt.state);
 
@@ -169,7 +169,7 @@ bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 	if (gameMgr->gameState == GAME && !editor.active)
 		Global::player->movedMouse(e);
 	else if (gameMgr->gameState == PAUSE || gameMgr->gameState == MENU)
-		gameMgr->insideMenuMoved(x, y);
+		gameMgr->insideMenuMoved(mouseX, mouseY);
 
 	return true;
 }
@@ -177,20 +177,6 @@ bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 bool MainListener::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
 	mEventMgr->listenersMousePressed(arg, id);
-
-	if (editor.active)
-	{
-		if (id == OIS::MB_Left && editor.editMode)
-		{
-			auto cam = Global::player->pCamera->camera;
-			auto mouseray = cam->getCameraToViewportRay(x / (float)mWindow->getWidth(), y / (float)mWindow->getHeight());
-			GUtils::RayInfo rayInfo;
-			if (GUtils::getRayInfo(cam->getDerivedPosition(), cam->getDerivedPosition() + mouseray.getDirection() * 100000, rayInfo))
-				GUtils::MakeEntity("aspenLeafs.mesh", rayInfo.pos);
-		}
-
-		return true;
-	}
 
 	if (gameMgr->gameState == GAME)
 		Global::player->pressedMouse(arg, id);

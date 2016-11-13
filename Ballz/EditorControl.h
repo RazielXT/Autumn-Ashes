@@ -34,4 +34,8 @@ public:
 	OIS::Mouse* mMouse;
 
 	EditorUiHandler uiHandler;
+
+	enum class EditorMode { None, AddItem, Select, Move, Rotate, Scale } mode = EditorMode::None;
+
+	void displayEntityInfo(Ogre::Entity* ent);
 };

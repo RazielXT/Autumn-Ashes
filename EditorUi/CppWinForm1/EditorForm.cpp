@@ -53,8 +53,8 @@ void FormsMain(HWND hwnd)
 
 void FormsUpdate(UiMessage* msg)
 {
-	//if (msg->id == UiMessageId::SetMove)
-	//	EditorUi::EditorForm::instance->setStr((std::string*)msg->data);
+	if (msg->id == UiMessageId::ShowEntityInfo)
+		CppWinForm1::EditorForm::instance->showItemInfo((EntityInfo*)msg->data);
 }
 
 #ifdef NO_LIB

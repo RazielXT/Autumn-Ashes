@@ -72,9 +72,12 @@ namespace CppWinForm1 {
 
 
 	private: System::Windows::Forms::GroupBox^  listGroupBox;
-	private: System::Windows::Forms::TreeView^  treeView1;
+	private: System::Windows::Forms::TreeView^  objectsTree;
 
-	private: System::Windows::Forms::GroupBox^  editGroupBox;
+	private: System::Windows::Forms::GroupBox^  entityGroupBox;
+
+
+
 	private: System::Windows::Forms::GroupBox^  addGroupBox;
 	private: System::Windows::Forms::RadioButton^  selectObjButton;
 	private: System::Windows::Forms::RadioButton^  rotateObjButton;
@@ -99,6 +102,30 @@ namespace CppWinForm1 {
 
 
 	private: System::Windows::Forms::GroupBox^  sceneGroupBox;
+	private: System::Windows::Forms::Label^  label1;
+
+
+
+
+	private: System::Windows::Forms::Label^  label3;
+	private: System::Windows::Forms::NumericUpDown^  entScaleZ;
+
+	private: System::Windows::Forms::NumericUpDown^  entScaleY;
+
+	private: System::Windows::Forms::NumericUpDown^  entScaleX;
+
+	private: System::Windows::Forms::Label^  label2;
+	private: System::Windows::Forms::NumericUpDown^  entPosZ;
+
+	private: System::Windows::Forms::NumericUpDown^  entPosY;
+
+	private: System::Windows::Forms::NumericUpDown^  entPosX;
+	private: System::Windows::Forms::TextBox^  entNameBox;
+private: System::Windows::Forms::Label^  label4;
+private: System::Windows::Forms::ComboBox^  comboBox1;
+
+
+
 
 
 
@@ -129,13 +156,33 @@ namespace CppWinForm1 {
 			this->moveObjButton = (gcnew System::Windows::Forms::RadioButton());
 			this->selectObjButton = (gcnew System::Windows::Forms::RadioButton());
 			this->listGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->treeView1 = (gcnew System::Windows::Forms::TreeView());
-			this->editGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->objectsTree = (gcnew System::Windows::Forms::TreeView());
+			this->entityGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->addGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->sceneGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->entNameBox = (gcnew System::Windows::Forms::TextBox());
+			this->entPosX = (gcnew System::Windows::Forms::NumericUpDown());
+			this->entPosY = (gcnew System::Windows::Forms::NumericUpDown());
+			this->entPosZ = (gcnew System::Windows::Forms::NumericUpDown());
+			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->label3 = (gcnew System::Windows::Forms::Label());
+			this->entScaleZ = (gcnew System::Windows::Forms::NumericUpDown());
+			this->entScaleY = (gcnew System::Windows::Forms::NumericUpDown());
+			this->entScaleX = (gcnew System::Windows::Forms::NumericUpDown());
+			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
+			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->toolsGroupBox->SuspendLayout();
 			this->selectGroupBox->SuspendLayout();
 			this->listGroupBox->SuspendLayout();
+			this->entityGroupBox->SuspendLayout();
+			this->addGroupBox->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entPosX))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entPosY))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entPosZ))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entScaleZ))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entScaleY))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entScaleX))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// toolsGroupBox
@@ -309,7 +356,7 @@ namespace CppWinForm1 {
 			// 
 			// listGroupBox
 			// 
-			this->listGroupBox->Controls->Add(this->treeView1);
+			this->listGroupBox->Controls->Add(this->objectsTree);
 			this->listGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
 			this->listGroupBox->Location = System::Drawing::Point(0, 211);
 			this->listGroupBox->Margin = System::Windows::Forms::Padding(4);
@@ -321,32 +368,45 @@ namespace CppWinForm1 {
 			this->listGroupBox->Text = L"List";
 			this->listGroupBox->Visible = false;
 			// 
-			// treeView1
+			// objectsTree
 			// 
-			this->treeView1->BackColor = System::Drawing::Color::Silver;
-			this->treeView1->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->treeView1->Location = System::Drawing::Point(4, 19);
-			this->treeView1->Margin = System::Windows::Forms::Padding(4);
-			this->treeView1->Name = L"treeView1";
-			this->treeView1->Size = System::Drawing::Size(475, 100);
-			this->treeView1->TabIndex = 1;
+			this->objectsTree->BackColor = System::Drawing::Color::Silver;
+			this->objectsTree->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->objectsTree->Location = System::Drawing::Point(4, 19);
+			this->objectsTree->Margin = System::Windows::Forms::Padding(4);
+			this->objectsTree->Name = L"objectsTree";
+			this->objectsTree->Size = System::Drawing::Size(475, 100);
+			this->objectsTree->TabIndex = 1;
 			// 
-			// editGroupBox
+			// entityGroupBox
 			// 
-			this->editGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->editGroupBox->Location = System::Drawing::Point(0, 580);
-			this->editGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
-			this->editGroupBox->MinimumSize = System::Drawing::Size(0, 20);
-			this->editGroupBox->Name = L"editGroupBox";
-			this->editGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
-			this->editGroupBox->Size = System::Drawing::Size(483, 123);
-			this->editGroupBox->TabIndex = 13;
-			this->editGroupBox->TabStop = false;
-			this->editGroupBox->Text = L"Edit";
-			this->editGroupBox->Visible = false;
+			this->entityGroupBox->AutoSize = true;
+			this->entityGroupBox->Controls->Add(this->label3);
+			this->entityGroupBox->Controls->Add(this->entScaleZ);
+			this->entityGroupBox->Controls->Add(this->entScaleY);
+			this->entityGroupBox->Controls->Add(this->entScaleX);
+			this->entityGroupBox->Controls->Add(this->label2);
+			this->entityGroupBox->Controls->Add(this->entPosZ);
+			this->entityGroupBox->Controls->Add(this->entPosY);
+			this->entityGroupBox->Controls->Add(this->entPosX);
+			this->entityGroupBox->Controls->Add(this->entNameBox);
+			this->entityGroupBox->Controls->Add(this->label1);
+			this->entityGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
+			this->entityGroupBox->Location = System::Drawing::Point(0, 580);
+			this->entityGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->entityGroupBox->MinimumSize = System::Drawing::Size(0, 20);
+			this->entityGroupBox->Name = L"entityGroupBox";
+			this->entityGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->entityGroupBox->Size = System::Drawing::Size(483, 119);
+			this->entityGroupBox->TabIndex = 13;
+			this->entityGroupBox->TabStop = false;
+			this->entityGroupBox->Text = L"Entity";
+			this->entityGroupBox->Visible = false;
 			// 
 			// addGroupBox
 			// 
+			this->addGroupBox->Controls->Add(this->label4);
+			this->addGroupBox->Controls->Add(this->comboBox1);
 			this->addGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
 			this->addGroupBox->Location = System::Drawing::Point(0, 334);
 			this->addGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
@@ -373,6 +433,118 @@ namespace CppWinForm1 {
 			this->sceneGroupBox->Text = L"Scene";
 			this->sceneGroupBox->Visible = false;
 			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(82, 21);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(45, 17);
+			this->label1->TabIndex = 0;
+			this->label1->Text = L"Name";
+			// 
+			// entNameBox
+			// 
+			this->entNameBox->Location = System::Drawing::Point(177, 21);
+			this->entNameBox->Name = L"entNameBox";
+			this->entNameBox->Size = System::Drawing::Size(222, 22);
+			this->entNameBox->TabIndex = 1;
+			// 
+			// entPosX
+			// 
+			this->entPosX->Location = System::Drawing::Point(177, 49);
+			this->entPosX->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
+			this->entPosX->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, System::Int32::MinValue });
+			this->entPosX->Name = L"entPosX";
+			this->entPosX->Size = System::Drawing::Size(70, 22);
+			this->entPosX->TabIndex = 2;
+			// 
+			// entPosY
+			// 
+			this->entPosY->Location = System::Drawing::Point(253, 49);
+			this->entPosY->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
+			this->entPosY->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, System::Int32::MinValue });
+			this->entPosY->Name = L"entPosY";
+			this->entPosY->Size = System::Drawing::Size(70, 22);
+			this->entPosY->TabIndex = 3;
+			// 
+			// entPosZ
+			// 
+			this->entPosZ->Location = System::Drawing::Point(329, 49);
+			this->entPosZ->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
+			this->entPosZ->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, System::Int32::MinValue });
+			this->entPosZ->Name = L"entPosZ";
+			this->entPosZ->Size = System::Drawing::Size(70, 22);
+			this->entPosZ->TabIndex = 4;
+			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(69, 51);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(58, 17);
+			this->label2->TabIndex = 5;
+			this->label2->Text = L"Position";
+			this->label2->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			// 
+			// label3
+			// 
+			this->label3->AutoSize = true;
+			this->label3->Location = System::Drawing::Point(82, 79);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(43, 17);
+			this->label3->TabIndex = 9;
+			this->label3->Text = L"Scale";
+			this->label3->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			// 
+			// entScaleZ
+			// 
+			this->entScaleZ->Location = System::Drawing::Point(329, 77);
+			this->entScaleZ->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1000, 0, 0, 0 });
+			this->entScaleZ->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
+			this->entScaleZ->Name = L"entScaleZ";
+			this->entScaleZ->Size = System::Drawing::Size(70, 22);
+			this->entScaleZ->TabIndex = 8;
+			this->entScaleZ->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
+			// 
+			// entScaleY
+			// 
+			this->entScaleY->Location = System::Drawing::Point(253, 77);
+			this->entScaleY->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1000, 0, 0, 0 });
+			this->entScaleY->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
+			this->entScaleY->Name = L"entScaleY";
+			this->entScaleY->Size = System::Drawing::Size(70, 22);
+			this->entScaleY->TabIndex = 7;
+			this->entScaleY->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
+			// 
+			// entScaleX
+			// 
+			this->entScaleX->Location = System::Drawing::Point(177, 77);
+			this->entScaleX->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1000, 0, 0, 0 });
+			this->entScaleX->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
+			this->entScaleX->Name = L"entScaleX";
+			this->entScaleX->Size = System::Drawing::Size(70, 22);
+			this->entScaleX->TabIndex = 6;
+			this->entScaleX->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
+			// 
+			// comboBox1
+			// 
+			this->comboBox1->FormattingEnabled = true;
+			this->comboBox1->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
+			this->comboBox1->Location = System::Drawing::Point(177, 21);
+			this->comboBox1->Name = L"comboBox1";
+			this->comboBox1->Size = System::Drawing::Size(222, 24);
+			this->comboBox1->TabIndex = 0;
+			this->comboBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::comboBox1_SelectedIndexChanged);
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Location = System::Drawing::Point(42, 24);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(85, 17);
+			this->label4->TabIndex = 1;
+			this->label4->Text = L"Object Type";
+			// 
 			// EditorForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
@@ -381,7 +553,7 @@ namespace CppWinForm1 {
 			this->AutoSize = true;
 			this->BackColor = System::Drawing::SystemColors::ControlDark;
 			this->ClientSize = System::Drawing::Size(483, 780);
-			this->Controls->Add(this->editGroupBox);
+			this->Controls->Add(this->entityGroupBox);
 			this->Controls->Add(this->sceneGroupBox);
 			this->Controls->Add(this->addGroupBox);
 			this->Controls->Add(this->listGroupBox);
@@ -393,6 +565,16 @@ namespace CppWinForm1 {
 			this->toolsGroupBox->ResumeLayout(false);
 			this->selectGroupBox->ResumeLayout(false);
 			this->listGroupBox->ResumeLayout(false);
+			this->entityGroupBox->ResumeLayout(false);
+			this->entityGroupBox->PerformLayout();
+			this->addGroupBox->ResumeLayout(false);
+			this->addGroupBox->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entPosX))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entPosY))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entPosZ))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entScaleZ))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entScaleY))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entScaleX))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -411,55 +593,6 @@ private: System::Void numericUpDown1_ValueChanged(System::Object^  sender, Syste
 	//::MessageBox(0, std::to_wstring(System::Decimal::ToSingle(numeric->Value)).data(), ppchar, MB_OK);
 }
 
-
-
-
-private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
-	if (editGroupBox->Visible)
-	{
-		for (int i = 0; i < 10; i++)
-		{
-			labels[i] = nullptr;
-			numerics[i] = nullptr;
-		}
-
-		editGroupBox->Controls->Clear();
-		editGroupBox->Hide();
-	}
-	else
-	{
-		
-		//labels->Clear();
-
-		for (int i = 0; i < 10; i++)
-		{
-			System::Windows::Forms::Label^ label = (gcnew System::Windows::Forms::Label());
-			label->AutoSize = true;
-			label->Location = System::Drawing::Point(39, 21 + i * 22);
-			label->Name = L"label1";
-			label->Size = System::Drawing::Size(46, 17);
-			label->TabIndex = 9;
-			label->Text = L"label1";
-
-			System::Windows::Forms::NumericUpDown^ numeric = (gcnew System::Windows::Forms::NumericUpDown());
-			numeric->DecimalPlaces = 2;
-			numeric->Location = System::Drawing::Point(185, 21 + i * 22);
-			numeric->Name = System::String::Format(L"numericUpDown{0}", i);
-			numeric->Size = System::Drawing::Size(120, 22);
-			numeric->TabIndex = 8;
-			numeric->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
-			numeric->ValueChanged += gcnew System::EventHandler(this, &EditorForm::numericUpDown1_ValueChanged);
-
-			this->editGroupBox->Controls->Add(label);
-			labels[i] = label;
-
-			this->editGroupBox->Controls->Add(numeric);
-			numerics[i] = numeric;
-		}
-
-		this->editGroupBox->Show();
-	}		
-}
 private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
 
 	/*pin_ptr<const wchar_t> ppchar = PtrToStringChars(button3->Text);
@@ -478,7 +611,6 @@ private: void hideGroups()
 {
 	listGroupBox->Hide();
 	addGroupBox->Hide();
-	editGroupBox->Hide();
 	selectGroupBox->Hide();
 	sceneGroupBox->Hide();
 }
@@ -494,14 +626,40 @@ private: System::Void selectToolButton_CheckedChanged(System::Object^  sender, S
 private: System::Void addToolButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 	hideGroups();
 	addGroupBox->Show();
+
+	SendMsg(UiMessageId::AddItemMode, nullptr);
 }
 private: System::Void sceneToolButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 	hideGroups();
 	sceneGroupBox->Show();
 }
 private: System::Void selectObjButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-	editGroupBox->BringToFront();
-	editGroupBox->Show();
+
+//	if(((System::Windows::Forms::RadioButton^)sender)->i
+	entityGroupBox->BringToFront();
+	entityGroupBox->Show();
+
+	SendMsg(UiMessageId::SelectMode, nullptr);
+}
+
+public: System::Void showItemInfo(EntityInfo* info)
+{
+	entityGroupBox->BringToFront();
+	entityGroupBox->Show();
+
+	entNameBox->Text = gcnew System::String(info->name.data());
+
+	entPosX->Value = System::Decimal(info->pos.x);
+	entPosY->Value = System::Decimal(info->pos.y);
+	entPosZ->Value = System::Decimal(info->pos.z);
+
+	entScaleX->Value = System::Decimal(info->scale.x);
+	entScaleY->Value = System::Decimal(info->scale.y);
+	entScaleZ->Value = System::Decimal(info->scale.z);
+
+}
+
+private: System::Void comboBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 }
 };
 }
