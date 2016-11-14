@@ -2,6 +2,8 @@
 #include <vector>
 #include "EditorCamera.h"
 #include "EditorUiHandler.h"
+#include "ObjectSelection.h"
+#include "SceneOptions.h"
 
 class EditorControl : public InputListener, EventTask
 {
@@ -26,8 +28,6 @@ public:
 
 	bool connectEditorUi();
 
-	void sendMsg(std::vector<char>& data);
-
 	virtual void movedMouse(const OIS::MouseEvent &e) override;
 
 	EditorCamera cam;
@@ -41,4 +41,5 @@ public:
 	void getWorldItemsInfo(GetWorldItemsData& data);
 
 	ObjectSelection selector;
+	SceneOptions scene;
 };

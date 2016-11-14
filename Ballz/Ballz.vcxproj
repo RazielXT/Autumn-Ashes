@@ -134,6 +134,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClCompile Include="ObjectSelection.cpp" />
     <ClCompile Include="ogre\OgreAbsoluteLodStrategy.cpp" />
     <ClCompile Include="ogre\OgreProgressiveMeshGenerator.cpp" />
+    <ClCompile Include="SceneOptions.cpp" />
     <ClCompile Include="SceneInteraction.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\DetailGeometryMaterial.cpp" />
@@ -358,6 +359,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     <ClInclude Include="include\Tasks.h" />
     <ClInclude Include="include\TestTask.h" />
     <ClInclude Include="include\TriggerInfo.h" />
+    <ClInclude Include="SceneOptions.h" />
     <ClInclude Include="SceneInteraction.h" />
     <ClInclude Include="ObjectSelection.h" />
   </ItemGroup>

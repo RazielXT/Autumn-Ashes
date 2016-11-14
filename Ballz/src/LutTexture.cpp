@@ -8,6 +8,11 @@ LutTexture::LutTexture()
 	getAvailableTextures();
 }
 
+std::string LutTexture::getCurrentTexture()
+{
+	return loadedName;
+}
+
 std::vector<std::string> LutTexture::getAvailableTextures()
 {
 	if (textures.empty())

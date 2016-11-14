@@ -10,12 +10,14 @@ enum class UiMessageId
 
 	//from UI
 	GetWorldItems,	//GetWorldItemsData
-	AddItemMode,	 //WorldItem
+	GetSceneSettings,	//GetSceneSettingsData
+	AddItemMode,	 //AddItemModeInfo
 	SelectMode,
 	MoveMode,
 	RotateMode,
 	ScaleMode,
 	EntityInfoChanged,	 //EntityInfoChange
+	SceneSettingsChanged,	 //SceneSettingsChange
 };
 
 struct UiMessage
@@ -34,8 +36,23 @@ struct Vector3
 	float z;
 };
 }
+#else
+std::string wtos(void* str)
+{
+	std::wstring* wstr = (std::wstring*)str;
+	return std::string(wstr->begin(), wstr->end());
+}
+std::wstring stow(std::string& str)
+{
+	return std::wstring(str.begin(), str.end());
+}
 #endif
 
+struct AddItemModeInfo
+{
+	std::string itemType;
+	std::string prefix;
+};
 
 struct EntityInfo
 {
@@ -63,5 +80,20 @@ struct GetWorldItemsData
 struct EntityInfoChange
 {
 	enum class EntityChange { Pos, Scale } change;
+	void* data;
+};
+
+struct GetSceneSettingsData
+{
+	std::vector<std::wstring> skyboxOptions;
+	int currentSkyboxId;
+
+	std::vector<std::wstring> lutOptions;
+	int currentLutId;
+};
+
+struct SceneSettingsChange
+{
+	enum class SceneChange { Skybox, Lut } change;
 	void* data;
 };

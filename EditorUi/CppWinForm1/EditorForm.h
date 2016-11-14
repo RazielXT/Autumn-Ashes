@@ -4,6 +4,9 @@
 #include <vcclr.h>
 #include <functional>
 #include "..\..\Ballz\EditorComm.h"
+#include <msclr\marshal_cppstd.h>
+
+using namespace msclr::interop;
 
 extern void SendMsg(UiMessageId id, void* data);
 
@@ -124,7 +127,8 @@ namespace CppWinForm1 {
 	private: System::Windows::Forms::NumericUpDown^  entPosX;
 
 private: System::Windows::Forms::Label^  label4;
-private: System::Windows::Forms::ComboBox^  addItemComboBox;
+private: System::Windows::Forms::ComboBox^  addItemTypeComboBox;
+
 private: System::Windows::Forms::CheckBox^  sceneCheckBox;
 
 private: System::Windows::Forms::CheckBox^  addItemCheckBox;
@@ -133,6 +137,17 @@ private: System::Windows::Forms::CheckBox^  selectCheckBox;
 
 private: System::Windows::Forms::CheckBox^  listCheckBox;
 private: System::Windows::Forms::Label^  entNameLabel;
+private: System::Windows::Forms::ComboBox^  lutComboBox;
+
+private: System::Windows::Forms::ComboBox^  skyboxComboBox;
+
+private: System::Windows::Forms::Label^  label6;
+private: System::Windows::Forms::Label^  label5;
+private: System::Windows::Forms::TextBox^  addItemPrefixTextBox;
+
+
+
+private: System::Windows::Forms::Label^  label7;
 
 
 
@@ -183,8 +198,14 @@ private: System::Windows::Forms::Label^  entNameLabel;
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->addGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->label4 = (gcnew System::Windows::Forms::Label());
-			this->addItemComboBox = (gcnew System::Windows::Forms::ComboBox());
+			this->addItemTypeComboBox = (gcnew System::Windows::Forms::ComboBox());
 			this->sceneGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->label5 = (gcnew System::Windows::Forms::Label());
+			this->label6 = (gcnew System::Windows::Forms::Label());
+			this->skyboxComboBox = (gcnew System::Windows::Forms::ComboBox());
+			this->lutComboBox = (gcnew System::Windows::Forms::ComboBox());
+			this->label7 = (gcnew System::Windows::Forms::Label());
+			this->addItemPrefixTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->toolsGroupBox->SuspendLayout();
 			this->selectGroupBox->SuspendLayout();
 			this->listGroupBox->SuspendLayout();
@@ -196,6 +217,7 @@ private: System::Windows::Forms::Label^  entNameLabel;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entPosY))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entPosX))->BeginInit();
 			this->addGroupBox->SuspendLayout();
+			this->sceneGroupBox->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// toolsGroupBox
@@ -403,7 +425,7 @@ private: System::Windows::Forms::Label^  entNameLabel;
 			this->entityGroupBox->Controls->Add(this->entPosX);
 			this->entityGroupBox->Controls->Add(this->label1);
 			this->entityGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->entityGroupBox->Location = System::Drawing::Point(0, 474);
+			this->entityGroupBox->Location = System::Drawing::Point(0, 447);
 			this->entityGroupBox->Margin = System::Windows::Forms::Padding(2);
 			this->entityGroupBox->MinimumSize = System::Drawing::Size(0, 16);
 			this->entityGroupBox->Name = L"entityGroupBox";
@@ -526,15 +548,18 @@ private: System::Windows::Forms::Label^  entNameLabel;
 			// 
 			// addGroupBox
 			// 
+			this->addGroupBox->AutoSize = true;
+			this->addGroupBox->Controls->Add(this->addItemPrefixTextBox);
+			this->addGroupBox->Controls->Add(this->label7);
 			this->addGroupBox->Controls->Add(this->label4);
-			this->addGroupBox->Controls->Add(this->addItemComboBox);
+			this->addGroupBox->Controls->Add(this->addItemTypeComboBox);
 			this->addGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
 			this->addGroupBox->Location = System::Drawing::Point(0, 274);
 			this->addGroupBox->Margin = System::Windows::Forms::Padding(2);
 			this->addGroupBox->MinimumSize = System::Drawing::Size(0, 16);
 			this->addGroupBox->Name = L"addGroupBox";
 			this->addGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->addGroupBox->Size = System::Drawing::Size(362, 100);
+			this->addGroupBox->Size = System::Drawing::Size(362, 86);
 			this->addGroupBox->TabIndex = 14;
 			this->addGroupBox->TabStop = false;
 			this->addGroupBox->Text = L"Add";
@@ -543,37 +568,102 @@ private: System::Windows::Forms::Label^  entNameLabel;
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(32, 20);
+			this->label4->Location = System::Drawing::Point(20, 20);
 			this->label4->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(65, 13);
 			this->label4->TabIndex = 1;
 			this->label4->Text = L"Object Type";
 			// 
-			// addItemComboBox
+			// addItemTypeComboBox
 			// 
-			this->addItemComboBox->FormattingEnabled = true;
-			this->addItemComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
-			this->addItemComboBox->Location = System::Drawing::Point(133, 17);
-			this->addItemComboBox->Margin = System::Windows::Forms::Padding(2);
-			this->addItemComboBox->Name = L"addItemComboBox";
-			this->addItemComboBox->Size = System::Drawing::Size(168, 21);
-			this->addItemComboBox->TabIndex = 0;
-			this->addItemComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::addItemComboBox_SelectedIndexChanged);
+			this->addItemTypeComboBox->FormattingEnabled = true;
+			this->addItemTypeComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
+			this->addItemTypeComboBox->Location = System::Drawing::Point(112, 17);
+			this->addItemTypeComboBox->Margin = System::Windows::Forms::Padding(2);
+			this->addItemTypeComboBox->Name = L"addItemTypeComboBox";
+			this->addItemTypeComboBox->Size = System::Drawing::Size(174, 21);
+			this->addItemTypeComboBox->TabIndex = 0;
+			this->addItemTypeComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::addItemComboBox_SelectedIndexChanged);
 			// 
 			// sceneGroupBox
 			// 
+			this->sceneGroupBox->AutoSize = true;
+			this->sceneGroupBox->Controls->Add(this->lutComboBox);
+			this->sceneGroupBox->Controls->Add(this->skyboxComboBox);
+			this->sceneGroupBox->Controls->Add(this->label6);
+			this->sceneGroupBox->Controls->Add(this->label5);
 			this->sceneGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->sceneGroupBox->Location = System::Drawing::Point(0, 374);
+			this->sceneGroupBox->Location = System::Drawing::Point(0, 360);
 			this->sceneGroupBox->Margin = System::Windows::Forms::Padding(2);
 			this->sceneGroupBox->MinimumSize = System::Drawing::Size(0, 16);
 			this->sceneGroupBox->Name = L"sceneGroupBox";
 			this->sceneGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->sceneGroupBox->Size = System::Drawing::Size(362, 100);
+			this->sceneGroupBox->Size = System::Drawing::Size(362, 87);
 			this->sceneGroupBox->TabIndex = 15;
 			this->sceneGroupBox->TabStop = false;
 			this->sceneGroupBox->Text = L"Scene";
 			this->sceneGroupBox->Visible = false;
+			// 
+			// label5
+			// 
+			this->label5->AutoSize = true;
+			this->label5->Location = System::Drawing::Point(43, 25);
+			this->label5->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label5->Name = L"label5";
+			this->label5->Size = System::Drawing::Size(42, 13);
+			this->label5->TabIndex = 1;
+			this->label5->Text = L"Skybox";
+			// 
+			// label6
+			// 
+			this->label6->AutoSize = true;
+			this->label6->Location = System::Drawing::Point(56, 57);
+			this->label6->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label6->Name = L"label6";
+			this->label6->Size = System::Drawing::Size(28, 13);
+			this->label6->TabIndex = 2;
+			this->label6->Text = L"LUT";
+			// 
+			// skyboxComboBox
+			// 
+			this->skyboxComboBox->FormattingEnabled = true;
+			this->skyboxComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
+			this->skyboxComboBox->Location = System::Drawing::Point(112, 22);
+			this->skyboxComboBox->Margin = System::Windows::Forms::Padding(2);
+			this->skyboxComboBox->Name = L"skyboxComboBox";
+			this->skyboxComboBox->Size = System::Drawing::Size(174, 21);
+			this->skyboxComboBox->TabIndex = 2;
+			this->skyboxComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::skyboxComboBox_SelectedIndexChanged);
+			// 
+			// lutComboBox
+			// 
+			this->lutComboBox->FormattingEnabled = true;
+			this->lutComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
+			this->lutComboBox->Location = System::Drawing::Point(112, 49);
+			this->lutComboBox->Margin = System::Windows::Forms::Padding(2);
+			this->lutComboBox->Name = L"lutComboBox";
+			this->lutComboBox->Size = System::Drawing::Size(174, 21);
+			this->lutComboBox->TabIndex = 3;
+			this->lutComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::lutComboBox_SelectedIndexChanged);
+			// 
+			// label7
+			// 
+			this->label7->AutoSize = true;
+			this->label7->Location = System::Drawing::Point(52, 51);
+			this->label7->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label7->Name = L"label7";
+			this->label7->Size = System::Drawing::Size(33, 13);
+			this->label7->TabIndex = 2;
+			this->label7->Text = L"Prefix";
+			this->label7->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			// 
+			// addItemPrefixTextBox
+			// 
+			this->addItemPrefixTextBox->Location = System::Drawing::Point(112, 48);
+			this->addItemPrefixTextBox->Name = L"addItemPrefixTextBox";
+			this->addItemPrefixTextBox->Size = System::Drawing::Size(174, 20);
+			this->addItemPrefixTextBox->TabIndex = 3;
 			// 
 			// EditorForm
 			// 
@@ -605,6 +695,8 @@ private: System::Windows::Forms::Label^  entNameLabel;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->entPosX))->EndInit();
 			this->addGroupBox->ResumeLayout(false);
 			this->addGroupBox->PerformLayout();
+			this->sceneGroupBox->ResumeLayout(false);
+			this->sceneGroupBox->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -618,8 +710,6 @@ private: System::Void listCheckBox_CheckedChanged(System::Object^  sender, Syste
 		listGroupBox->Hide();
 		return;
 	}
-
-	listGroupBox->Show();
 
 	GetWorldItemsData data;
 	SendMsg(UiMessageId::GetWorldItems, &data);
@@ -635,6 +725,8 @@ private: System::Void listCheckBox_CheckedChanged(System::Object^  sender, Syste
 			sceneListTree->Nodes[id]->Nodes->Add(gcnew TreeNode(gcnew System::String(item.name.data())));
 		}
 	}
+
+	listGroupBox->Show();
 }
 private: System::Void selectCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 
@@ -654,6 +746,23 @@ private: System::Void sceneCheckBox_CheckedChanged(System::Object^  sender, Syst
 		return;
 	}
 
+	GetSceneSettingsData data;
+	SendMsg(UiMessageId::GetSceneSettings, &data);
+
+	skyboxComboBox->Items->Clear();
+	for (auto skybox : data.skyboxOptions)
+	{
+		skyboxComboBox->Items->Add(gcnew System::String(skybox.data()));
+	}
+	skyboxComboBox->SelectedIndex = data.currentSkyboxId;
+
+	lutComboBox->Items->Clear();
+	for (auto lut : data.lutOptions)
+	{
+		lutComboBox->Items->Add(gcnew System::String(lut.data()));
+	}
+	lutComboBox->SelectedIndex = data.currentLutId;
+
 	sceneGroupBox->Show();
 }
 private: System::Void addItemCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -665,6 +774,10 @@ private: System::Void addItemCheckBox_CheckedChanged(System::Object^  sender, Sy
 	}
 
 	addGroupBox->Show();
+
+	AddItemModeInfo info;
+	info.itemType = marshal_as<std::string>(addItemTypeComboBox->Text);
+	info.prefix = marshal_as<std::string>(addItemPrefixTextBox->Text);
 
 	SendMsg(UiMessageId::AddItemMode, nullptr);
 }
@@ -714,5 +827,9 @@ public: System::Void showItemInfo(EntityInfo* info)
 
 }
 
+private: System::Void skyboxComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+}
+private: System::Void lutComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+}
 };
 }

@@ -8,6 +8,8 @@ public:
 
 	LutTexture();
 
+	std::string getCurrentTexture();
+
 	std::vector<std::string> getAvailableTextures();
 
 	Ogre::TexturePtr loadTexture(std::string name);

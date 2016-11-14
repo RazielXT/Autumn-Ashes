@@ -114,7 +114,13 @@ bool EditorControl::update(float tslf)
 				getWorldItemsInfo(*(GetWorldItemsData*)msg.data);
 				break;
 			case UiMessageId::EntityInfoChanged:
-				selector.editEntity(EntityInfoChange* change);
+				selector.editEntity((EntityInfoChange*) msg.data);
+				break;
+			case UiMessageId::GetSceneSettings:
+				scene.getCurrentSceneInfo((GetSceneSettingsData*)msg.data);
+				break;
+			case UiMessageId::SceneSettingsChanged:
+				scene.editScene((SceneSettingsChange*)msg.data);
 				break;
 			default:
 				break;
@@ -173,11 +179,6 @@ void EditorControl::setEditMode()
 }
 
 bool EditorControl::connectEditorUi()
-{
-
-}
-
-void EditorControl::sendMsg(std::vector<char>& data)
 {
 
 }

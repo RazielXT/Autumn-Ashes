@@ -384,6 +384,9 @@
     <ClCompile Include="ObjectSelection.cpp">
       <Filter>Files\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="SceneOptions.cpp">
+      <Filter>Files\Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -762,6 +765,9 @@
       <Filter>Files\Editor</Filter>
     </ClInclude>
     <ClInclude Include="ObjectSelection.h">
+      <Filter>Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneOptions.h">
       <Filter>Files\Editor</Filter>
     </ClInclude>
   </ItemGroup>

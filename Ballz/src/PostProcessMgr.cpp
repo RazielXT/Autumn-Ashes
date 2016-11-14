@@ -120,6 +120,11 @@ std::vector<std::string> PostProcessMgr::getColorGradingPresets()
 	return lut.getAvailableTextures();
 }
 
+std::string PostProcessMgr::getCurrentGradingPreset()
+{
+	return lut.getCurrentTexture();
+}
+
 void PostProcessMgr::setColorGradingPreset(std::string name)
 {
 	lut.loadTexture(name);

@@ -25,6 +25,7 @@ public:
 	PostProcessVariables vars;
 	Ogre::Camera* camera;
 
+	std::string getCurrentGradingPreset();
 	std::vector<std::string> getColorGradingPresets();
 	void setColorGradingPreset(std::string name);
 
