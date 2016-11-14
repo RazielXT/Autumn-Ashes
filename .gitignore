@@ -5,6 +5,7 @@
 *.sdf
 *.cfg
 *.cachefile
+*.cache
 Ballz/Ballz.vcproj.Marek-PC.Marek.user
 Ballz/Ballz.vcxproj.marekt.nvuser
 Ballz/Ogre.log
