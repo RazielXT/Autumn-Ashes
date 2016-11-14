@@ -18,11 +18,32 @@ void EditorControl::displayEntityInfo(Ogre::Entity* ent)
 	UiMessage msg;
 	msg.id = UiMessageId::ShowEntityInfo;
 	EntityInfo info;
-	info.name = std::wstring(ent->getName().begin(), ent->getName().end());
-	info.pos = ent->getParentSceneNode()->getPosition();
-	info.scale = ent->getParentSceneNode()->getScale();
+
+	if (ent)
+	{
+		info.name = std::wstring(ent->getName().begin(), ent->getName().end());
+		info.pos = ent->getParentSceneNode()->getPosition();
+		info.scale = ent->getParentSceneNode()->getScale();
+	}
+
 	msg.data = &info;
 	uiHandler.sendMsg(&msg);
+}
+
+void EditorControl::getWorldItemsInfo(GetWorldItemsData& data)
+{
+	auto it = Global::mSceneMgr->getMovableObjectIterator("Entity");
+
+	WorldItemsGroup entityGroup;
+	entityGroup.name = L"Entity";
+	while (it.hasMoreElements())
+	{
+		Ogre::Entity* e = static_cast<Ogre::Entity*>(it.getNext());
+		std::wstring name(e->getName().cbegin(), e->getName().cend());
+		entityGroup.items.push_back({ name });
+	}
+
+	data.groups.push_back(entityGroup);
 }
 
 void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
@@ -39,17 +60,14 @@ void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID 
 		{
 			if (mode == EditorMode::Select)
 			{
-				auto ent = ObjectSelection::pickEntity();
+				auto ent = selector.pickEntity();
 
-				if (ent)
-				{
-					displayEntityInfo(ent);
-				}
+				displayEntityInfo(ent);
 			}
 			else if (mode == EditorMode::AddItem)
 			{
 				auto cam = Global::camera->camera;
-				auto mouseray = ObjectSelection::getMouseRay();
+				auto mouseray = selector.getMouseRay();
 				GUtils::RayInfo rayInfo;
 				if (GUtils::getRayInfo(cam->getDerivedPosition(), cam->getDerivedPosition() + mouseray.getDirection() * 100000, rayInfo))
 				{
@@ -91,6 +109,12 @@ bool EditorControl::update(float tslf)
 				break;
 			case UiMessageId::AddItemMode:
 				mode = EditorMode::AddItem;
+				break;
+			case UiMessageId::GetWorldItems:
+				getWorldItemsInfo(*(GetWorldItemsData*)msg.data);
+				break;
+			case UiMessageId::EntityInfoChanged:
+				selector.editEntity(EntityInfoChange* change);
 				break;
 			default:
 				break;

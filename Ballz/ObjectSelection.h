@@ -1,9 +1,17 @@
 #pragma once
 #include "stdafx.h"
 
-namespace ObjectSelection
-{
-Ogre::Ray getMouseRay();
+struct EntityInfoChange;
 
-Ogre::Entity* pickEntity();
+class ObjectSelection
+{
+public:
+
+	Ogre::Entity* pickEntity();
+
+	void editEntity(EntityInfoChange* change);
+
+	Ogre::Ray getMouseRay();
+
+	Ogre::Entity* pickedEntity = nullptr;
 };

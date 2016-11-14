@@ -38,4 +38,7 @@ public:
 	enum class EditorMode { None, AddItem, Select, Move, Rotate, Scale } mode = EditorMode::None;
 
 	void displayEntityInfo(Ogre::Entity* ent);
+	void getWorldItemsInfo(GetWorldItemsData& data);
+
+	ObjectSelection selector;
 };

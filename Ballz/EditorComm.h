@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <map>
 
 enum class UiMessageId
 {
@@ -46,18 +47,21 @@ struct EntityInfo
 struct WorldItem
 {
 	std::wstring name;
-	std::wstring type;
+};
+
+struct WorldItemsGroup
+{
+	std::wstring name;
+	std::vector<WorldItem> items;
 };
 
 struct GetWorldItemsData
 {
-	std::vector<WorldItem> items;
+	std::vector<WorldItemsGroup> groups;
 };
 
 struct EntityInfoChange
 {
-	enum class EntityChange { Name, Pos, Scale };
-
-	EntityChange change;
+	enum class EntityChange { Pos, Scale } change;
 	void* data;
 };
