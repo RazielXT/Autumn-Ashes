@@ -10,7 +10,8 @@ void handleMsg(UiMessage* msg)
 	std::unique_lock<std::mutex> lk(msgMutex);
 	storedMsg = msg;
 
-	cv.wait(lk, [] {return storedMsg == nullptr; });
+	if (!cv.wait_for(lk, std::chrono::seconds(1), [] {return storedMsg == nullptr; }))
+		storedMsg = nullptr;
 }
 
 bool uiStarted = false;

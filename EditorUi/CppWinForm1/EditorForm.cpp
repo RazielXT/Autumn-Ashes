@@ -57,7 +57,7 @@ void FormsUpdate(UiMessage* msg)
 		CppWinForm1::EditorForm::instance->showItemInfo((EntityInfo*)msg->data);
 }
 
-#ifndef NO_LIB
+#ifdef NO_LIB
 
 int Main()
 {

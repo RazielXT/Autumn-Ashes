@@ -58,9 +58,11 @@ void EditorControl::getWorldItemsInfo(GetWorldItemsData& data)
 	data.groups.push_back(entityGroup);
 }
 
+extern size_t hwnd;
+
 void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
-	if (active)
+	if (active && (GetForegroundWindow() == (HWND)hwnd))
 	{
 		if (id == OIS::MB_Right || id == OIS::MB_Middle)
 			setVievMode();

@@ -53,6 +53,7 @@ MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneMana
 
 	mSceneMgr = sceneMgr;
 	mWindow = mWin;
+
 	mWorld = nWorld;
 	mWorld->setSolverModel(3);
 	mCamera = mSceneMgr->getCamera("Camera");
@@ -113,6 +114,7 @@ bool MainListener::keyPressed(const OIS::KeyEvent &arg)
 	{
 
 	case OIS::KC_K:
+		mWindow->setDeactivateOnFocusChange(false);
 		editor.setActive(!editor.active);
 		break;
 
@@ -123,8 +125,6 @@ bool MainListener::keyPressed(const OIS::KeyEvent &arg)
 		if (gameMgr->gameState == MENU)
 		{
 			continueExecution = false;
-			editor.setActive(false);
-			SetActiveWindow(NULL);
 		}
 
 		break;

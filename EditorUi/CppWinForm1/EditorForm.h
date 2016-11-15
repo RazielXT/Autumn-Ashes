@@ -808,6 +808,8 @@ private: System::Void rotateObjButton_CheckedChanged(System::Object^  sender, Sy
 private: System::Void addItemComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 }
 
+private: bool reportEntityChange = true;
+
 public: System::Void showItemInfo(EntityInfo* info)
 {
 	if (info->name.empty())
@@ -822,6 +824,8 @@ public: System::Void showItemInfo(EntityInfo* info)
 
 	entNameLabel->Text = gcnew System::String(info->name.data());
 
+	reportEntityChange = false;
+
 	entPosX->Value = System::Decimal(info->pos.x);
 	entPosY->Value = System::Decimal(info->pos.y);
 	entPosZ->Value = System::Decimal(info->pos.z);
@@ -830,6 +834,7 @@ public: System::Void showItemInfo(EntityInfo* info)
 	entScaleY->Value = System::Decimal(info->scale.y);
 	entScaleZ->Value = System::Decimal(info->scale.z);
 
+	reportEntityChange = true;
 }
 
 private: System::Void skyboxComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -839,6 +844,9 @@ private: System::Void lutComboBox_SelectedIndexChanged(System::Object^  sender, 
 
 private: void entPosChanged()
 {
+	if (!reportEntityChange)
+		return;
+
 	Ogre::Vector3 v3 = {System::Decimal::ToSingle(entPosX->Value), System::Decimal::ToSingle(entPosY->Value) , System::Decimal::ToSingle(entPosZ->Value) };
 
 	EntityInfoChange change;
@@ -859,6 +867,9 @@ private: System::Void entPosZ_ValueChanged(System::Object^  sender, System::Even
 
 private: void entScaleChanged()
 {
+	if (!reportEntityChange)
+		return;
+
 	Ogre::Vector3 v3 = { System::Decimal::ToSingle(entScaleX->Value), System::Decimal::ToSingle(entScaleY->Value) , System::Decimal::ToSingle(entScaleZ->Value) };
 
 	EntityInfoChange change;

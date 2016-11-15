@@ -23,13 +23,14 @@ void ObjectSelection::editEntity(EntityInfoChange* change)
 {
 	if (pickedEntity)
 	{
+		Ogre::Vector3* vec = (Ogre::Vector3*)change->data;
 		switch (change->change)
 		{
 		case EntityInfoChange::EntityChange::Pos:
-			pickedEntity->getParentSceneNode()->setPosition(*(Ogre::Vector3*)change->data);
+			pickedEntity->getParentSceneNode()->setPosition(Ogre::Vector3(5,0,0));
 			break;
 		case EntityInfoChange::EntityChange::Scale:
-			pickedEntity->getParentSceneNode()->setScale(*(Ogre::Vector3*)change->data);
+			pickedEntity->getParentSceneNode()->setScale(*vec);
 			break;
 		default:
 			break;
