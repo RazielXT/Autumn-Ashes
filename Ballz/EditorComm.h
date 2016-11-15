@@ -37,15 +37,8 @@ struct Vector3
 };
 }
 #else
-std::string wtos(void* str)
-{
-	std::wstring* wstr = (std::wstring*)str;
-	return std::string(wstr->begin(), wstr->end());
-}
-std::wstring stow(std::string& str)
-{
-	return std::wstring(str.begin(), str.end());
-}
+extern std::string wtos(void* str);
+extern std::wstring stow(std::string& str);
 #endif
 
 struct AddItemModeInfo

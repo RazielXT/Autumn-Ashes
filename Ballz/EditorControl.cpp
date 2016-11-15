@@ -5,6 +5,18 @@
 #include "GUtils.h"
 #include "PlayerCamera.h"
 
+
+std::string wtos(void* str)
+{
+	std::wstring* wstr = (std::wstring*)str;
+	return std::string(wstr->begin(), wstr->end());
+}
+
+std::wstring stow(std::string& str)
+{
+	return std::wstring(str.begin(), str.end());
+}
+
 EditorControl::EditorControl(OIS::Mouse* mouse) : mMouse(mouse)
 {
 }
