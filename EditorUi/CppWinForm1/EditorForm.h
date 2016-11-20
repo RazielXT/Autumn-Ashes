@@ -10,6 +10,12 @@ using namespace msclr::interop;
 
 extern void SendMsg(UiMessageId id, void* data);
 
+template<typename T>
+void CpySendMsg(UiMessageId id, T data)
+{
+	SendMsg(id, &data);
+}
+
 namespace CppWinForm1 {
 
 	using namespace System;
@@ -137,7 +143,7 @@ private: System::Windows::Forms::CheckBox^  addItemCheckBox;
 private: System::Windows::Forms::CheckBox^  selectCheckBox;
 
 private: System::Windows::Forms::CheckBox^  listCheckBox;
-private: System::Windows::Forms::Label^  selectionNameLabel;
+
 
 private: System::Windows::Forms::ComboBox^  lutComboBox;
 
@@ -152,6 +158,7 @@ private: System::Windows::Forms::TextBox^  addItemPrefixTextBox;
 private: System::Windows::Forms::Label^  label7;
 private: System::Windows::Forms::CheckBox^  utilsCheckBox;
 private: System::Windows::Forms::ListBox^  selectionListBox;
+private: System::Windows::Forms::Button^  selectionNameButton;
 
 
 
@@ -192,8 +199,8 @@ private: System::Windows::Forms::ListBox^  selectionListBox;
 			this->listGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->sceneListTree = (gcnew System::Windows::Forms::TreeView());
 			this->selectionGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->selectionNameButton = (gcnew System::Windows::Forms::Button());
 			this->selectionListBox = (gcnew System::Windows::Forms::ListBox());
-			this->selectionNameLabel = (gcnew System::Windows::Forms::Label());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->entScaleZ = (gcnew System::Windows::Forms::NumericUpDown());
 			this->entScaleY = (gcnew System::Windows::Forms::NumericUpDown());
@@ -443,12 +450,13 @@ private: System::Windows::Forms::ListBox^  selectionListBox;
 			this->sceneListTree->Name = L"sceneListTree";
 			this->sceneListTree->Size = System::Drawing::Size(475, 100);
 			this->sceneListTree->TabIndex = 1;
+			this->sceneListTree->AfterSelect += gcnew System::Windows::Forms::TreeViewEventHandler(this, &EditorForm::sceneListTree_AfterSelect);
 			// 
 			// selectionGroupBox
 			// 
 			this->selectionGroupBox->AutoSize = true;
+			this->selectionGroupBox->Controls->Add(this->selectionNameButton);
 			this->selectionGroupBox->Controls->Add(this->selectionListBox);
-			this->selectionGroupBox->Controls->Add(this->selectionNameLabel);
 			this->selectionGroupBox->Controls->Add(this->label3);
 			this->selectionGroupBox->Controls->Add(this->entScaleZ);
 			this->selectionGroupBox->Controls->Add(this->entScaleY);
@@ -470,6 +478,21 @@ private: System::Windows::Forms::ListBox^  selectionListBox;
 			this->selectionGroupBox->Text = L"Selection";
 			this->selectionGroupBox->Visible = false;
 			// 
+			// selectionNameButton
+			// 
+			this->selectionNameButton->AutoSize = true;
+			this->selectionNameButton->FlatAppearance->BorderSize = 0;
+			this->selectionNameButton->FlatAppearance->MouseDownBackColor = System::Drawing::Color::Gray;
+			this->selectionNameButton->FlatAppearance->MouseOverBackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
+				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
+			this->selectionNameButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->selectionNameButton->Location = System::Drawing::Point(147, 18);
+			this->selectionNameButton->Name = L"selectionNameButton";
+			this->selectionNameButton->Size = System::Drawing::Size(75, 23);
+			this->selectionNameButton->TabIndex = 12;
+			this->selectionNameButton->UseVisualStyleBackColor = true;
+			this->selectionNameButton->Click += gcnew System::EventHandler(this, &EditorForm::selectionNameButton_Click);
+			// 
 			// selectionListBox
 			// 
 			this->selectionListBox->FormattingEnabled = true;
@@ -478,16 +501,7 @@ private: System::Windows::Forms::ListBox^  selectionListBox;
 			this->selectionListBox->Name = L"selectionListBox";
 			this->selectionListBox->Size = System::Drawing::Size(232, 52);
 			this->selectionListBox->TabIndex = 11;
-			// 
-			// selectionNameLabel
-			// 
-			this->selectionNameLabel->AutoSize = true;
-			this->selectionNameLabel->Location = System::Drawing::Point(145, 21);
-			this->selectionNameLabel->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
-			this->selectionNameLabel->Name = L"selectionNameLabel";
-			this->selectionNameLabel->Size = System::Drawing::Size(43, 17);
-			this->selectionNameLabel->TabIndex = 10;
-			this->selectionNameLabel->Text = L"name";
+			this->selectionListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::selectionListBox_SelectedIndexChanged);
 			// 
 			// label3
 			// 
@@ -834,18 +848,33 @@ private: System::Void addItemCheckBox_CheckedChanged(System::Object^  sender, Sy
 
 private: System::Void selectObjButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 
-	if(selectionNameLabel->Text != "")
+	if (!selectObjButton->Checked)
+		return;
+
+	if(selectionNameButton->Text != "")
 		selectionGroupBox->Show();
 
 	SendMsg(UiMessageId::SelectMode, nullptr);
 }
 private: System::Void moveObjButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+
+	if (!moveObjButton->Checked)
+		return;
+
 	SendMsg(UiMessageId::MoveMode, nullptr);
 }
 private: System::Void scaleObjButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+
+	if (!scaleObjButton->Checked)
+		return;
+
 	SendMsg(UiMessageId::ScaleMode, nullptr);
 }
 private: System::Void rotateObjButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+
+	if (!rotateObjButton->Checked)
+		return;
+
 	SendMsg(UiMessageId::RotateMode, nullptr);
 }
 
@@ -856,11 +885,11 @@ private: bool reportEntityChange = true;
 
 public: System::Void hideItemInfo()
 {
-	selectionNameLabel->Text = "";
+	selectionNameButton->Text = "";
 	selectionGroupBox->Hide();
 }
 		 
-public: System::Void showItemInfo(EntityInfo* info)
+public: System::Void showItemInfo(SelectionInfo* info)
 {
 	selectionGroupBox->BringToFront();
 	selectionGroupBox->Show();
@@ -878,7 +907,7 @@ public: System::Void showItemInfo(EntityInfo* info)
 	else
 		selectionListBox->Hide();
 
-	selectionNameLabel->Text = gcnew System::String(info->name.data());
+	selectionNameButton->Text = gcnew System::String(info->name.data());
 
 	reportEntityChange = false;
 
@@ -905,11 +934,11 @@ private: void entPosChanged()
 
 	Ogre::Vector3 v3 = {System::Decimal::ToSingle(entPosX->Value), System::Decimal::ToSingle(entPosY->Value) , System::Decimal::ToSingle(entPosZ->Value) };
 
-	EntityInfoChange change;
-	change.change = EntityInfoChange::EntityChange::Pos;
+	SelectionInfoChange change;
+	change.change = SelectionInfoChange::SelectionChange::Pos;
 	change.data = &v3;
 
-	SendMsg(UiMessageId::EntityInfoChanged, &change);
+	SendMsg(UiMessageId::SelectionInfoChanged, &change);
 }
 private: System::Void entPosX_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 	entPosChanged();
@@ -928,11 +957,11 @@ private: void entScaleChanged()
 
 	Ogre::Vector3 v3 = { System::Decimal::ToSingle(entScaleX->Value), System::Decimal::ToSingle(entScaleY->Value) , System::Decimal::ToSingle(entScaleZ->Value) };
 
-	EntityInfoChange change;
-	change.change = EntityInfoChange::EntityChange::Scale;
+	SelectionInfoChange change;
+	change.change = SelectionInfoChange::SelectionChange::Scale;
 	change.data = &v3;
 
-	SendMsg(UiMessageId::EntityInfoChanged, &change);
+	SendMsg(UiMessageId::SelectionInfoChanged, &change);
 }
 private: System::Void entScaleX_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 	entScaleChanged();
@@ -942,6 +971,48 @@ private: System::Void entScaleY_ValueChanged(System::Object^  sender, System::Ev
 }
 private: System::Void entScaleZ_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 	entScaleChanged();
+}
+private: System::Void selectionNameLabel_Click(System::Object^  sender, System::EventArgs^  e) {
+}
+
+private: System::Void selectionListBoxMsg()
+{
+	SelectWorldItemData change;
+	change.item.name = marshal_as<std::wstring>(selectionListBox->SelectedItem->ToString());
+
+	SendMsg(UiMessageId::SelectWorldItem, &change);
+}
+private: System::Void selectionListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	
+	System::Threading::Thread^ newThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &EditorForm::selectionListBoxMsg));
+	newThread->Start();
+}
+
+private: System::Void sceneListTreeMsg()
+{
+	System::Windows::Forms::TreeNode^ node = sceneListTree->SelectedNode;
+
+	SelectWorldItemData change;
+	change.groupName = marshal_as<std::string>(node->Parent->Text);
+	change.item.name = marshal_as<std::wstring>(node->Text);
+
+	SendMsg(UiMessageId::SelectWorldItem, &change);
+}
+private: System::Void sceneListTree_AfterSelect(System::Object^  sender, System::Windows::Forms::TreeViewEventArgs^  e) {
+	if (!e->Node->IsSelected || e->Node->Level == 0)
+		return;
+
+	System::Threading::Thread^ newThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &EditorForm::sceneListTreeMsg));
+	newThread->Start();
+}
+
+	private: System::Void lookAtMsg()
+	{
+		SendMsg(UiMessageId::LookAtSelection, nullptr);
+	}
+private: System::Void selectionNameButton_Click(System::Object^  sender, System::EventArgs^  e) {
+	System::Threading::Thread^ newThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &EditorForm::lookAtMsg));
+	newThread->Start();
 }
 };
 }

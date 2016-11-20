@@ -141,11 +141,26 @@ void EditorEntity::deselect()
 	selected.clear();
 }
 
+bool EditorEntity::filter(std::string& name)
+{
+	std::vector<Ogre::Entity*> oldSelected = selected;
+
+	deselect();
+
+	for (auto& e : oldSelected)
+	{
+		if(e->getName() == name)
+			add(e);
+	}
+
+	return !selected.empty();
+}
+
 void EditorEntity::sendUiInfoMessage(EditorUiHandler* handler)
 {
 	UiMessage msg;
-	msg.id = UiMessageId::ShowEntityInfo;
-	EntityInfo info;
+	msg.id = UiMessageId::ShowSelectionInfo;
+	SelectionInfo info;
 
 	if (selected.size() == 1)
 	{

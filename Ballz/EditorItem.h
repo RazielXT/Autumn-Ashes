@@ -18,6 +18,7 @@ struct EditorItem
 	virtual void deselect() = 0;
 	virtual void duplicate() = 0;
 	virtual void remove() = 0;
+	virtual bool filter(std::string& name) = 0;
 
 	virtual void sendUiInfoMessage(EditorUiHandler*) = 0;
 };

@@ -5,7 +5,7 @@
 #include "EditorItem.h"
 #include "EditorEntity.h"
 
-struct EntityInfoChange;
+struct SelectionInfoChange;
 class EditorControl;
 
 class ObjectSelection
@@ -24,7 +24,9 @@ public:
 
 	Ogre::Entity* pickMouseRayItem();
 
-	void uiEditEntity(EntityInfoChange* change);
+	void lootAtSelection();
+
+	void uiEditSelection(SelectionInfoChange* change);
 
 	void uiSelectItem(SelectWorldItemData& data);
 	void removeSelection();

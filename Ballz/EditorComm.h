@@ -7,7 +7,7 @@ enum class UiMessageId
 {
 	//to UI
 	HideSelectionInfo,
-	ShowEntityInfo,	 //EntityInfo
+	ShowSelectionInfo,	 //SelectionInfo
 
 	//from UI
 	GetWorldItems,	//GetWorldItemsData
@@ -18,8 +18,9 @@ enum class UiMessageId
 	MoveMode,
 	RotateMode,
 	ScaleMode,
-	EntityInfoChanged,	 //EntityInfoChange
+	SelectionInfoChanged,	 //SelectionInfoChange
 	SceneSettingsChanged,	 //SceneSettingsChange
+	LookAtSelection
 };
 
 struct UiMessage
@@ -39,6 +40,7 @@ struct Vector3
 };
 }
 #else
+extern std::string wtos(std::wstring& str);
 extern std::string wtos(void* str);
 extern std::wstring stow(std::string& str);
 #endif
@@ -49,7 +51,7 @@ struct AddItemModeInfo
 	std::string prefix;
 };
 
-struct EntityInfo
+struct SelectionInfo
 {
 	std::wstring name;
 	std::vector<std::wstring> names;
@@ -75,13 +77,13 @@ struct GetWorldItemsData
 
 struct SelectWorldItemData
 {
-	std::wstring groupName;
+	std::string groupName;
 	WorldItem item;
 };
 
-struct EntityInfoChange
+struct SelectionInfoChange
 {
-	enum class EntityChange { Pos, Scale } change;
+	enum class SelectionChange { Pos, Scale } change;
 	void* data;
 };
 

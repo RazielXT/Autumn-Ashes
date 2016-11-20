@@ -6,11 +6,19 @@
 
 void ObjectSelection::uiSelectItem(SelectWorldItemData& data)
 {
-	if(data.groupName == L"Entity")
+	if(data.groupName == "Entity")
 		if (Global::mSceneMgr->hasEntity(std::string(data.item.name.begin(), data.item.name.end())))
 		{
 			setSelectedEntity(Global::mSceneMgr->getEntity(std::string(data.item.name.begin(), data.item.name.end())));
 		}
+
+	if (data.groupName.empty() && selected)
+	{
+		if(!selected->filter(wtos(data.item.name)))
+			setSelectedEntity(nullptr);
+		else
+			updateUiSelectedInfo();
+	}
 }
 
 void ObjectSelection::removeSelection()
@@ -67,17 +75,25 @@ Ogre::Entity* ObjectSelection::pickMouseRayItem()
 	return ent;
 }
 
-void ObjectSelection::uiEditEntity(EntityInfoChange* change)
+void ObjectSelection::lootAtSelection()
+{
+	if (selected)
+	{
+		Global::camera->camera->getParentSceneNode()->lookAt(selected->getPosition(), Ogre::Node::TS_WORLD);
+	}
+}
+
+void ObjectSelection::uiEditSelection(SelectionInfoChange* change)
 {
 	if (selected)
 	{
 		Ogre::Vector3* vec = (Ogre::Vector3*)change->data;
 		switch (change->change)
 		{
-		case EntityInfoChange::EntityChange::Pos:
+		case SelectionInfoChange::SelectionChange::Pos:
 			selected->setPosition(*vec);
 			break;
-		case EntityInfoChange::EntityChange::Scale:
+		case SelectionInfoChange::SelectionChange::Scale:
 			selected->setScale(*vec);
 			break;
 		default:

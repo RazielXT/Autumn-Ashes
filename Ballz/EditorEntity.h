@@ -16,6 +16,7 @@ struct EditorEntity : public EditorItem
 	virtual void add(Ogre::Entity* ent);
 	virtual void select(Ogre::Entity* ent);
 	virtual void deselect();
+	virtual bool filter(std::string& name);
 
 	std::vector<Ogre::Entity*> selected;
 

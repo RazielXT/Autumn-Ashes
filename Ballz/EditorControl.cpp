@@ -13,6 +13,11 @@ std::string wtos(void* str)
 	return std::string(wstr->begin(), wstr->end());
 }
 
+std::string wtos(std::wstring& wstr)
+{
+	return std::string(wstr.begin(), wstr.end());
+}
+
 std::wstring stow(std::string& str)
 {
 	return std::wstring(str.begin(), str.end());
@@ -147,14 +152,17 @@ bool EditorControl::update(float tslf)
 			case UiMessageId::SelectWorldItem:
 				selector.uiSelectItem(*(SelectWorldItemData*)msg.data);
 				break;
-			case UiMessageId::EntityInfoChanged:
-				selector.uiEditEntity((EntityInfoChange*) msg.data);
+			case UiMessageId::SelectionInfoChanged:
+				selector.uiEditSelection((SelectionInfoChange*) msg.data);
 				break;
 			case UiMessageId::GetSceneSettings:
 				scene.getCurrentSceneInfo((GetSceneSettingsData*)msg.data);
 				break;
 			case UiMessageId::SceneSettingsChanged:
 				scene.editScene((SceneSettingsChange*)msg.data);
+				break;
+			case UiMessageId::LookAtSelection:
+				selector.lootAtSelection();
 				break;
 			default:
 				break;

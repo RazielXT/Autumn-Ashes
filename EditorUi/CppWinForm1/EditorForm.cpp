@@ -56,8 +56,8 @@ void FormsUpdate(UiMessage* msg)
 {
 	if (msg->id == UiMessageId::HideSelectionInfo)
 		CppWinForm1::EditorForm::instance->hideItemInfo();
-	if (msg->id == UiMessageId::ShowEntityInfo)
-		CppWinForm1::EditorForm::instance->showItemInfo((EntityInfo*)msg->data);
+	if (msg->id == UiMessageId::ShowSelectionInfo)
+		CppWinForm1::EditorForm::instance->showItemInfo((SelectionInfo*)msg->data);
 }
 
 #ifdef NO_LIB
