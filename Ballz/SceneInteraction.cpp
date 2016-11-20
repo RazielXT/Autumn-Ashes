@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GUtils.h"
+#include "PlayerCamera.h"
 
 static Ogre::String   mExePath;
 static unsigned int   mVertexBufferSize = 0;
@@ -131,8 +132,65 @@ void GetMeshData(const Ogre::MeshPtr mesh, size_t &vertex_count, size_t &index_c
 	index_count = index_offset;
 }
 
+extern int mouseX;
+extern int mouseY;
+
 namespace SceneInteraction
 {
+
+Ogre::Ray getMouseRay()
+{
+	auto cam = Global::camera->camera;
+	return cam->getCameraToViewportRay(mouseX / (float)Global::mWindow->getWidth(), mouseY / (float)Global::mWindow->getHeight());
+}
+
+bool TestEntityRay(Ogre::Ray& ray, Ogre::Entity* pentity, Ogre::Vector3& hitpoint, float* closest_distance, bool bothSides)
+{
+	float closest_distance_temp = 100000;
+	if (!closest_distance)
+		closest_distance = &closest_distance_temp;
+
+	// mesh data to retrieve
+	size_t vertex_count;
+	size_t index_count;
+
+	// get the mesh information
+	GetMeshData(pentity->getMesh(), vertex_count, index_count,
+	            pentity->getParentNode()->_getDerivedPosition(),
+	            pentity->getParentNode()->_getDerivedOrientation(),
+	            pentity->getParentNode()->_getDerivedScale());
+
+	// test for hitting individual triangles on the mesh
+	bool new_closest_found = false;
+	for (int i = 0; i < static_cast<int>(index_count); i += 3)
+	{
+		// check for a hit against this triangle
+		std::pair<bool, Ogre::Real> hit = Ogre::Math::intersects(ray, mVertexBuffer[mIndexBuffer[i]],
+		                                  mVertexBuffer[mIndexBuffer[i + 1]], mVertexBuffer[mIndexBuffer[i + 2]], true, bothSides);
+
+		// if it was a hit check if its the closest
+		if (hit.first)
+		{
+			if ((*closest_distance < 0.0f) || (hit.second < *closest_distance))
+			{
+				// this is the closest so far, save it off
+				*closest_distance = hit.second;
+				new_closest_found = true;
+			}
+		}
+	}
+
+	// if we found a new closest raycast for this object, update the
+	// closest_result before moving on to the next object.
+	if (new_closest_found)
+	{
+		hitpoint = ray.getPoint(*closest_distance);
+		return true;
+	}
+
+	return false;
+}
+
 Ogre::Entity* PickEntity(Ogre::Ray &ray, Ogre::Vector3* hitpoint, Ogre::Entity* excludeobject, Ogre::Real max_distance)
 {
 	Ogre::Entity* result = nullptr;
@@ -180,46 +238,8 @@ Ogre::Entity* PickEntity(Ogre::Ray &ray, Ogre::Vector3* hitpoint, Ogre::Entity* 
 			if (pentity->getName() == "SkyXMeshEnt")
 				continue;
 
-			// mesh data to retrieve
-			size_t vertex_count;
-			size_t index_count;
-
-			// get the mesh information
-			GetMeshData(pentity->getMesh(), vertex_count, index_count,
-			            pentity->getParentNode()->_getDerivedPosition(),
-			            pentity->getParentNode()->_getDerivedOrientation(),
-			            pentity->getParentNode()->_getDerivedScale());
-
-			// test for hitting individual triangles on the mesh
-			bool new_closest_found = false;
-			for (int i = 0; i < static_cast<int>(index_count); i += 3)
-			{
-				/*assert(mIndexBuffer[i] < vertex_count);
-				assert(mIndexBuffer[i + 1] < vertex_count);
-				assert(mIndexBuffer[i + 2] < vertex_count);*/
-				// check for a hit against this triangle
-				std::pair<bool, Ogre::Real> hit = Ogre::Math::intersects(ray, mVertexBuffer[mIndexBuffer[i]],
-				                                  mVertexBuffer[mIndexBuffer[i + 1]], mVertexBuffer[mIndexBuffer[i + 2]], true, false);
-
-				// if it was a hit check if its the closest
-				if (hit.first)
-				{
-					if ((closest_distance < 0.0f) || (hit.second < closest_distance))
-					{
-						// this is the closest so far, save it off
-						closest_distance = hit.second;
-						new_closest_found = true;
-					}
-				}
-			}
-
-			// if we found a new closest raycast for this object, update the
-			// closest_result before moving on to the next object.
-			if (new_closest_found)
-			{
-				closest_result = ray.getPoint(closest_distance);
+			if (TestEntityRay(ray, pentity, closest_result, &closest_distance, false))
 				result = pentity;
-			}
 		}
 	}
 

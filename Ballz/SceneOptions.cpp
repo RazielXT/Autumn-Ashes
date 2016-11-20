@@ -25,4 +25,3 @@ void SceneOptions::editScene(SceneSettingsChange* change)
 	if (change->change == SceneSettingsChange::SceneChange::Skybox)
 		Global::mSceneMgr->setSkyBox(true, wtos(change->data));
 }
-

@@ -4,6 +4,7 @@
 #include "ObjectSelection.h"
 #include "GUtils.h"
 #include "PlayerCamera.h"
+#include "SceneInteraction.h"
 
 
 std::string wtos(void* str)
@@ -25,21 +26,16 @@ EditorControl::~EditorControl()
 {
 }
 
-void EditorControl::displayEntityInfo(Ogre::Entity* ent)
+void EditorControl::displayItemInfo(EditorItem* item)
 {
-	UiMessage msg;
-	msg.id = UiMessageId::ShowEntityInfo;
-	EntityInfo info;
-
-	if (ent)
+	if (item)
 	{
-		info.name = std::wstring(ent->getName().begin(), ent->getName().end());
-		info.pos = ent->getParentSceneNode()->getPosition();
-		info.scale = ent->getParentSceneNode()->getScale();
+		item->sendUiInfoMessage(&uiHandler);
 	}
-
-	msg.data = &info;
-	uiHandler.sendMsg(&msg);
+	else
+	{
+		uiHandler.sendMsg(UiMessage{ UiMessageId::HideSelectionInfo });
+	}
 }
 
 void EditorControl::getWorldItemsInfo(GetWorldItemsData& data)
@@ -58,11 +54,30 @@ void EditorControl::getWorldItemsInfo(GetWorldItemsData& data)
 	data.groups.push_back(entityGroup);
 }
 
+void EditorControl::pressedKey(const OIS::KeyEvent &arg)
+{
+	if (arg.key == OIS::KC_LCONTROL)
+		selector.addMode = true;
+
+	if (arg.key == OIS::KC_DELETE)
+	{
+		selector.removeSelection();
+	}
+}
+
+void EditorControl::releasedKey(const OIS::KeyEvent &arg)
+{
+	if (arg.key == OIS::KC_LCONTROL)
+		selector.addMode = false;
+}
+
 extern size_t hwnd;
+extern int mouseX;
+extern int mouseY;
 
 void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
-	if (active && (GetForegroundWindow() == (HWND)hwnd))
+	if (active && (GetForegroundWindow() == (HWND)hwnd) && mouseX > 0 && mouseY > 0)
 	{
 		if (id == OIS::MB_Right || id == OIS::MB_Middle)
 			setVievMode();
@@ -74,19 +89,17 @@ void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID 
 		{
 			if (mode == EditorMode::Select)
 			{
-				auto ent = selector.pickEntity();
-
-				displayEntityInfo(ent);
+				selector.pickMouseRayItem();
 			}
 			else if (mode == EditorMode::AddItem)
 			{
 				auto cam = Global::camera->camera;
-				auto mouseray = selector.getMouseRay();
+				auto mouseray = SceneInteraction::getMouseRay();
 				GUtils::RayInfo rayInfo;
 				if (GUtils::getRayInfo(cam->getDerivedPosition(), cam->getDerivedPosition() + mouseray.getDirection() * 100000, rayInfo))
 				{
 					auto e = GUtils::MakeEntity("aspenLeafs.mesh", rayInfo.pos);
-					displayEntityInfo(e);
+					selector.setSelectedEntity(e);
 				}
 			}
 		}
@@ -111,15 +124,19 @@ bool EditorControl::update(float tslf)
 			{
 			case UiMessageId::SelectMode:
 				mode = EditorMode::Select;
+				selector.setMode(SelectionMode::Select);
 				break;
 			case UiMessageId::MoveMode:
-				mode = EditorMode::Move;
+				mode = EditorMode::SelectEdit;
+				selector.setMode(SelectionMode::Move);
 				break;
 			case UiMessageId::ScaleMode:
-				mode = EditorMode::Scale;
+				mode = EditorMode::SelectEdit;
+				selector.setMode(SelectionMode::Scale);
 				break;
 			case UiMessageId::RotateMode:
-				mode = EditorMode::Rotate;
+				mode = EditorMode::SelectEdit;
+				selector.setMode(SelectionMode::Rotate);
 				break;
 			case UiMessageId::AddItemMode:
 				mode = EditorMode::AddItem;
@@ -127,8 +144,11 @@ bool EditorControl::update(float tslf)
 			case UiMessageId::GetWorldItems:
 				getWorldItemsInfo(*(GetWorldItemsData*)msg.data);
 				break;
+			case UiMessageId::SelectWorldItem:
+				selector.uiSelectItem(*(SelectWorldItemData*)msg.data);
+				break;
 			case UiMessageId::EntityInfoChanged:
-				selector.editEntity((EntityInfoChange*) msg.data);
+				selector.uiEditEntity((EntityInfoChange*) msg.data);
 				break;
 			case UiMessageId::GetSceneSettings:
 				scene.getCurrentSceneInfo((GetSceneSettingsData*)msg.data);
@@ -141,7 +161,9 @@ bool EditorControl::update(float tslf)
 			}
 	}
 
-	return active;
+	selector.gizmo.update();
+
+	return uiHandler.isActiveUi();
 }
 
 void EditorControl::setActive(bool active)
@@ -153,8 +175,11 @@ void EditorControl::setActive(bool active)
 
 	if (active)
 	{
-		if(uiHandler.ensureUi())
+		if (uiHandler.ensureUi())
+		{
 			Global::mEventsMgr->addCachedTask(this);
+			selector.init(this);
+		}
 
 		cam.enable();
 		setEditMode();

@@ -2,35 +2,83 @@
 #include "ObjectSelection.h"
 #include "SceneInteraction.h"
 #include "Player.h"
-#include "EditorComm.h"
+#include "EditorControl.h"
 
-extern int mouseX;
-extern int mouseY;
-
-Ogre::Ray ObjectSelection::getMouseRay()
+void ObjectSelection::uiSelectItem(SelectWorldItemData& data)
 {
-	auto cam = Global::camera->camera;
-	return cam->getCameraToViewportRay(mouseX / (float)Global::mWindow->getWidth(), mouseY / (float)Global::mWindow->getHeight());
+	if(data.groupName == L"Entity")
+		if (Global::mSceneMgr->hasEntity(std::string(data.item.name.begin(), data.item.name.end())))
+		{
+			setSelectedEntity(Global::mSceneMgr->getEntity(std::string(data.item.name.begin(), data.item.name.end())));
+		}
 }
 
-Ogre::Entity* ObjectSelection::pickEntity()
+void ObjectSelection::removeSelection()
 {
-	pickedEntity = SceneInteraction::PickEntity(getMouseRay());
-	return pickedEntity;
+	if (selected)
+	{
+		selected->remove();
+		setSelectedEntity(nullptr);
+	}
 }
 
-void ObjectSelection::editEntity(EntityInfoChange* change)
+void ObjectSelection::init(EditorControl* p)
 {
-	if (pickedEntity)
+	parent = p;
+	gizmo.init(this);
+	addMode = false;
+}
+
+void ObjectSelection::setMode(SelectionMode mode)
+{
+	if (mode == SelectionMode::Select)
+		addMode = false;
+
+	gizmo.setMode(mode);
+}
+
+void ObjectSelection::setSelectedEntity(Ogre::Entity* ent, bool forceDeselect)
+{
+	if (selected && (forceDeselect || selected != &selectedEntities))
+		selected->deselect();
+
+	if (ent)
+	{
+		selected = &selectedEntities;
+		selectedEntities.add(ent);
+	}
+	else
+		selected = nullptr;
+
+	gizmo.setRoot(selected);
+	updateUiSelectedInfo();
+}
+
+void ObjectSelection::updateUiSelectedInfo()
+{
+	parent->displayItemInfo(selected);
+}
+
+Ogre::Entity* ObjectSelection::pickMouseRayItem()
+{
+	auto ent = SceneInteraction::PickEntity(SceneInteraction::getMouseRay());
+	setSelectedEntity(ent, !addMode);
+
+	return ent;
+}
+
+void ObjectSelection::uiEditEntity(EntityInfoChange* change)
+{
+	if (selected)
 	{
 		Ogre::Vector3* vec = (Ogre::Vector3*)change->data;
 		switch (change->change)
 		{
 		case EntityInfoChange::EntityChange::Pos:
-			pickedEntity->getParentSceneNode()->setPosition(Ogre::Vector3(5,0,0));
+			selected->setPosition(*vec);
 			break;
 		case EntityInfoChange::EntityChange::Scale:
-			pickedEntity->getParentSceneNode()->setScale(*vec);
+			selected->setScale(*vec);
 			break;
 		default:
 			break;

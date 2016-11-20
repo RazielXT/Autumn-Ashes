@@ -1,17 +1,38 @@
 #pragma once
 #include "stdafx.h"
+#include "SelectionGizmo.h"
+#include "EditorComm.h"
+#include "EditorItem.h"
+#include "EditorEntity.h"
 
 struct EntityInfoChange;
+class EditorControl;
 
 class ObjectSelection
 {
 public:
 
-	Ogre::Entity* pickEntity();
+	EditorControl* parent;
 
-	void editEntity(EntityInfoChange* change);
+	void init(EditorControl* parent);
 
-	Ogre::Ray getMouseRay();
+	void setMode(SelectionMode mode);
 
-	Ogre::Entity* pickedEntity = nullptr;
+	void setSelectedEntity(Ogre::Entity* ent, bool forceDeselect = true);
+
+	void updateUiSelectedInfo();
+
+	Ogre::Entity* pickMouseRayItem();
+
+	void uiEditEntity(EntityInfoChange* change);
+
+	void uiSelectItem(SelectWorldItemData& data);
+	void removeSelection();
+	EditorItem* selected = nullptr;
+
+	EditorEntity selectedEntities;
+
+	SelectionGizmo gizmo;
+
+	bool addMode = false;
 };

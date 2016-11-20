@@ -39,6 +39,7 @@ void FormsMain(HWND hwnd)
 		try
 		{
 			form.Show(nativeWindow);
+			//form.SetDesktopLocation(0, 0);
 			Application::Run(%form);
 		}
 		catch (const std::exception&)
@@ -53,6 +54,8 @@ void FormsMain(HWND hwnd)
 
 void FormsUpdate(UiMessage* msg)
 {
+	if (msg->id == UiMessageId::HideSelectionInfo)
+		CppWinForm1::EditorForm::instance->hideItemInfo();
 	if (msg->id == UiMessageId::ShowEntityInfo)
 		CppWinForm1::EditorForm::instance->showItemInfo((EntityInfo*)msg->data);
 }

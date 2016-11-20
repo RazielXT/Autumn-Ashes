@@ -5,6 +5,8 @@
 #include "ObjectSelection.h"
 #include "SceneOptions.h"
 
+struct EditorItem;
+
 class EditorControl : public InputListener, EventTask
 {
 public:
@@ -14,6 +16,7 @@ public:
 
 	virtual void mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 	virtual void mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
+	virtual void movedMouse(const OIS::MouseEvent &e) override;
 
 	virtual bool update(float tslf);
 
@@ -28,17 +31,19 @@ public:
 
 	bool connectEditorUi();
 
-	virtual void movedMouse(const OIS::MouseEvent &e) override;
-
 	EditorCamera cam;
 	OIS::Mouse* mMouse;
 
 	EditorUiHandler uiHandler;
 
-	enum class EditorMode { None, AddItem, Select, Move, Rotate, Scale } mode = EditorMode::None;
+	enum class EditorMode { None, AddItem, Select, SelectEdit } mode = EditorMode::None;
 
-	void displayEntityInfo(Ogre::Entity* ent);
+	void displayItemInfo(EditorItem* item);
 	void getWorldItemsInfo(GetWorldItemsData& data);
+
+	virtual void pressedKey(const OIS::KeyEvent &arg) override;
+
+	virtual void releasedKey(const OIS::KeyEvent &arg) override;
 
 	ObjectSelection selector;
 	SceneOptions scene;

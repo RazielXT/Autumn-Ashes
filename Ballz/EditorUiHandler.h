@@ -8,9 +8,11 @@ struct EditorUiHandler
 {
 	bool ensureUi();
 
-	void sendMsg(UiMessage* msg);
+	void sendMsg(UiMessage& msg);
 
 	AppUiMessage readUiMessage();
+
+	bool isActiveUi();
 
 protected:
 

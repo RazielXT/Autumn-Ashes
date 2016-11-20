@@ -6,10 +6,12 @@
 enum class UiMessageId
 {
 	//to UI
+	HideSelectionInfo,
 	ShowEntityInfo,	 //EntityInfo
 
 	//from UI
 	GetWorldItems,	//GetWorldItemsData
+	SelectWorldItem,	//SelectWorldItemData
 	GetSceneSettings,	//GetSceneSettingsData
 	AddItemMode,	 //AddItemModeInfo
 	SelectMode,
@@ -50,6 +52,7 @@ struct AddItemModeInfo
 struct EntityInfo
 {
 	std::wstring name;
+	std::vector<std::wstring> names;
 	Ogre::Vector3 pos;
 	Ogre::Vector3 scale;
 };
@@ -68,6 +71,12 @@ struct WorldItemsGroup
 struct GetWorldItemsData
 {
 	std::vector<WorldItemsGroup> groups;
+};
+
+struct SelectWorldItemData
+{
+	std::wstring groupName;
+	WorldItem item;
 };
 
 struct EntityInfoChange

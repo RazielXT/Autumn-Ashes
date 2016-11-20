@@ -72,6 +72,9 @@
     <Filter Include="Files\Editor">
       <UniqueIdentifier>{a1039639-830d-4c18-844f-69f342634748}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\Editor\Items">
+      <UniqueIdentifier>{b664013e-8539-407c-bf90-463dcfc7ccdf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CrowPath.cpp">
@@ -386,6 +389,12 @@
     </ClCompile>
     <ClCompile Include="SceneOptions.cpp">
       <Filter>Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectionGizmo.cpp">
+      <Filter>Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorEntity.cpp">
+      <Filter>Files\Editor\Items</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -769,6 +778,15 @@
     </ClInclude>
     <ClInclude Include="SceneOptions.h">
       <Filter>Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectionGizmo.h">
+      <Filter>Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorItem.h">
+      <Filter>Files\Editor\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorEntity.h">
+      <Filter>Files\Editor\Items</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

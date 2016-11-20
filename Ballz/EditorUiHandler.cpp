@@ -37,9 +37,9 @@ bool EditorUiHandler::ensureUi()
 	return false;
 }
 
-void EditorUiHandler::sendMsg(UiMessage* msg)
+void EditorUiHandler::sendMsg(UiMessage& msg)
 {
-	sender(msg);
+	sender(&msg);
 }
 
 AppUiMessage EditorUiHandler::readUiMessage()
@@ -47,6 +47,11 @@ AppUiMessage EditorUiHandler::readUiMessage()
 	std::unique_lock<std::mutex> lk(msgMutex);
 
 	return AppUiMessage(storedMsg);
+}
+
+bool EditorUiHandler::isActiveUi()
+{
+	return uiStarted;
 }
 
 AppUiMessage::AppUiMessage(UiMessage* msg)
