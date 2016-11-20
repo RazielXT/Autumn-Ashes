@@ -26,6 +26,8 @@ EditorUi/DummyClient/Debug/
 EditorUi/CppWinForm1/Debug/
 EditorUi/CppWinForm1/DebugStandalone/
 EditorUi/CppWinForm1/Release/
+EditorUi/CppWinForm1/ReleaseApp/
+EditorUi/ReleaseApp/
 EditorUi/CppWinForm1/x64/
 *.log
 *.tlog
