@@ -18,7 +18,7 @@ TopSlide::TopSlide(SceneNode* node, const std::string& zipName, const std::strin
 
 TopSlide::TopSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, bool walkable, float speed) : Slide(zipName, looped, walkable, speed)
 {
-	tracker = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	tracker = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();
 	base = tracker->createChildSceneNode();
 	head = base->createChildSceneNode();
 

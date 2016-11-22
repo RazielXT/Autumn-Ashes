@@ -16,12 +16,12 @@ using namespace Ogre;
 
 void createMenuLevel()
 {
-	PostProcessMgr* postProcMgr = Global::mPPMgr;
+	PostProcessMgr* postProcMgr = Global::ppMgr;
 	postProcMgr->vars.radialHorizBlurVignette.z = 1.0;
 	postProcMgr->setGodraySunPositionFar(Vector3(300, 300, 400) * Vector3(400, -300, -400));
 
-	Camera* mCamera=Global::mSceneMgr->getCamera("Camera");
-	SceneNode* camRotator=Global::mSceneMgr->getRootSceneNode()->createChildSceneNode("camRotator");
+	Camera* mCamera=Global::sceneMgr->getCamera("Camera");
+	SceneNode* camRotator=Global::sceneMgr->getRootSceneNode()->createChildSceneNode("camRotator");
 	camRotator->attachObject(mCamera);
 	camRotator->setPosition(Vector3(0,15,0));
 	mCamera->setPosition(Vector3(-15,-9,15));
@@ -29,12 +29,12 @@ void createMenuLevel()
 	camRotator->yaw(Ogre::Degree(-65));
 
 	auto lvlUp= new LvlMenuUpdate(camRotator,NULL);
-	Global::mEventsMgr->addTask(lvlUp);
+	Global::eventsMgr->addTask(lvlUp);
 }
 
 void createTestLevel()
 {
-	PostProcessMgr* ppMgr = Global::mPPMgr;
+	PostProcessMgr* ppMgr = Global::ppMgr;
 	ppMgr->vars.radialHorizBlurVignette = 0.0;
 
 	ppMgr->setAutoGodraySunDirection();
@@ -67,7 +67,7 @@ private:
 
 void createTestLevel2()
 {
-	PostProcessMgr* ppMgr = Global::mPPMgr;
+	PostProcessMgr* ppMgr = Global::ppMgr;
 	ppMgr->vars.radialHorizBlurVignette = 0.0;
 
 	ppMgr->setAutoGodraySunDirection();
@@ -76,7 +76,7 @@ void createTestLevel2()
 
 	Ogre::ProgressiveMeshGenerator gen;
 	Ogre::LodConfig lod;
-	lod.mesh = Global::mSceneMgr->getEntity("Plane009")->getMesh();
+	lod.mesh = Global::sceneMgr->getEntity("Plane009")->getMesh();
 	lod.strategy = new Ogre::DistanceLodStrategy();
 
 	Ogre::LodLevel lvl;
@@ -106,11 +106,11 @@ void createTestLevel2()
 	GUtils::TargetHeight(GUtils::MakeEntity("sluagh.mesh", Ogre::Vector3(80, 50, 100), Ogre::Vector3(1, 1, 1)*100),10);
 
 	auto e = GUtils::MakeEntity("death knight_B.mesh", Ogre::Vector3(0, 50, 100), Ogre::Vector3(1,1,1));
-	Global::mEventsMgr->addTask(new AnimationLoop(e, "attack_idle"));
+	Global::eventsMgr->addTask(new AnimationLoop(e, "attack_idle"));
 
 	e = GUtils::MakeEntity("zard.mesh", Ogre::Vector3(50, 80, 100), Ogre::Vector3(20, 20, 20));
 	e->getParentSceneNode()->pitch(Ogre::Degree(-90));
-	Global::mEventsMgr->addTask(new AnimationLoop(e, "walk"));
+	Global::eventsMgr->addTask(new AnimationLoop(e, "walk"));
 }
 
 void createLevelTuto()
@@ -125,7 +125,7 @@ void createLevelTuto()
 
 	//Global::mSceneMgr->setVisibilityMask(1);
 
-	auto ppMgr = Global::mPPMgr;
+	auto ppMgr = Global::ppMgr;
 	ppMgr->vars.ContSatuSharpNoise = 0.0;
 	ppMgr->vars.radialHorizBlurVignette = 0.0;
 	ppMgr->vars.ColouringShift = Ogre::Vector4(0.95, 0.98, 0.83, 0);
@@ -321,7 +321,7 @@ void createLevel1_1()
 {
 	//Rope* rr=new Rope(mSceneMgr,mWorld,Vector3(13,11,6),10,0.5);
 
-	Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
+	Global::sceneMgr->setSkyBox(true, "TCENoonSkyBox");
 
 	//irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(),true , false, true, irrklang::ESM_AUTO_DETECT, true);
 	//music->setMinDistance(20);
@@ -332,7 +332,7 @@ void createLevel1_1()
 
 	//Global::mSceneMgr->setVisibilityMask(1);
 
-	PostProcessMgr* ppMgr = Global::mPPMgr;
+	PostProcessMgr* ppMgr = Global::ppMgr;
 	ppMgr->vars.ContSatuSharpNoise = 0.0;
 	ppMgr->vars.radialHorizBlurVignette = 0.0;
 	ppMgr->vars.ColouringShift = Ogre::Vector4(0.95, 0.89, 1, 0);
@@ -342,7 +342,7 @@ void createLevel1_1()
 
 void createLevel2()
 {
-	Global::mSceneMgr->setSkyBox(true, "TCENoonSkyBox");
+	Global::sceneMgr->setSkyBox(true, "TCENoonSkyBox");
 
 	//irrklang::ISound* music = Global::soundEngine->play2D(AudioLibrary::getPath("anton_wind1.wav").c_str(), true, false, true, irrklang::ESM_AUTO_DETECT, true);
 	//music->setMinDistance(20);
@@ -351,7 +351,7 @@ void createLevel2()
 	//music->setVolume(0.4);
 	//(*Global::globalData)["anton_wind1.wav"] = music;
 
-	PostProcessMgr* ppMgr = Global::mPPMgr;
+	PostProcessMgr* ppMgr = Global::ppMgr;
 	ppMgr->vars.ContSatuSharpNoise = 0.0;
 	ppMgr->vars.radialHorizBlurVignette = 0.0;
 	ppMgr->vars.ColouringShift = Ogre::Vector4(0.95, 0.89, 1, 0);

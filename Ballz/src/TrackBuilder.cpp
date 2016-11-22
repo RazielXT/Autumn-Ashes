@@ -7,7 +7,7 @@ int TrackBuilder::counter = 0;
 
 void TrackBuilder::init(float length)
 {
-	Animation* anim = Global::mSceneMgr->createAnimation("gen" + std::to_string(counter++), length);
+	Animation* anim = Global::sceneMgr->createAnimation("gen" + std::to_string(counter++), length);
 	anim->setInterpolationMode(Animation::IM_SPLINE);
 	anim->setRotationInterpolationMode(Animation::RIM_SPHERICAL);
 

@@ -396,6 +396,9 @@
     <ClCompile Include="EditorEntity.cpp">
       <Filter>Files\Editor\Items</Filter>
     </ClCompile>
+    <ClCompile Include="CameraHelp.cpp">
+      <Filter>Files\Core\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -787,6 +790,9 @@
     </ClInclude>
     <ClInclude Include="EditorEntity.h">
       <Filter>Files\Editor\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraHelp.h">
+      <Filter>Files\Core\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

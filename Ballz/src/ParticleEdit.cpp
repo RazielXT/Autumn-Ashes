@@ -94,12 +94,12 @@ void ParticleEdit::applyChanges(std::map < std::string, ParticleEdit >& changes)
 {
 	for (auto& ps : changes)
 	{
-		if (Global::mSceneMgr->hasParticleSystem(ps.first))
+		if (Global::sceneMgr->hasParticleSystem(ps.first))
 		{
 			if (!particleChildren.getParent(ps.first).empty())
 				continue;
 
-			auto p = Global::mSceneMgr->getParticleSystem(ps.first);
+			auto p = Global::sceneMgr->getParticleSystem(ps.first);
 			auto curMatName = p->getMaterialName();
 
 			std::vector<std::string> particles = { ps.first };
@@ -122,10 +122,10 @@ void ParticleEdit::applyChanges(std::map < std::string, ParticleEdit >& changes)
 
 				for (auto& particle : particles)
 				{
-					if (!Global::mSceneMgr->hasParticleSystem(particle))
+					if (!Global::sceneMgr->hasParticleSystem(particle))
 						continue;
 
-					p = Global::mSceneMgr->getParticleSystem(particle);
+					p = Global::sceneMgr->getParticleSystem(particle);
 					p->setMaterialName(newMat->getName());
 
 					for (auto& var : ps.second.particleParams)
@@ -258,9 +258,9 @@ std::vector<Ogre::ParticleSystem*> ParticleChildren::getChildren(std::string par
 	if (isParent(parent))
 		for (auto ch : children[parent])
 		{
-			if (Global::mSceneMgr->hasParticleSystem(ch))
+			if (Global::sceneMgr->hasParticleSystem(ch))
 			{
-				out.push_back(Global::mSceneMgr->getParticleSystem(ch));
+				out.push_back(Global::sceneMgr->getParticleSystem(ch));
 			}
 		}
 

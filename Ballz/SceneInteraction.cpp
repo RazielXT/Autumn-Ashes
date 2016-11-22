@@ -140,8 +140,8 @@ namespace SceneInteraction
 
 Ogre::Ray getMouseRay()
 {
-	auto cam = Global::camera->camera;
-	return cam->getCameraToViewportRay(mouseX / (float)Global::mWindow->getWidth(), mouseY / (float)Global::mWindow->getHeight());
+	auto cam = Global::camera->cam;
+	return cam->getCameraToViewportRay(mouseX / (float)Global::window->getWidth(), mouseY / (float)Global::window->getHeight());
 }
 
 bool TestEntityRay(Ogre::Ray& ray, Ogre::Entity* pentity, Ogre::Vector3& hitpoint, float* closest_distance, bool bothSides)
@@ -195,7 +195,7 @@ Ogre::Entity* PickEntity(Ogre::Ray &ray, Ogre::Vector3* hitpoint, Ogre::Entity* 
 {
 	Ogre::Entity* result = nullptr;
 
-	Ogre::RaySceneQuery *mRaySceneQuery = Global::mSceneMgr->createRayQuery(Ogre::Ray());
+	Ogre::RaySceneQuery *mRaySceneQuery = Global::sceneMgr->createRayQuery(Ogre::Ray());
 	mRaySceneQuery->setRay(ray);
 	mRaySceneQuery->setQueryMask(-1);
 	mRaySceneQuery->setSortByDistance(true);

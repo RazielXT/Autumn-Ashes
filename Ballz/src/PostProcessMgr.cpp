@@ -51,7 +51,7 @@ void PostProcessMgr::setGodraySunPositionFar(Ogre::Vector3 pos)
 
 void PostProcessMgr::setAutoGodraySunDirection()
 {
-	auto sun = Global::mSceneMgr->getLight("Sun");
+	auto sun = Global::sceneMgr->getLight("Sun");
 	sunPosition = sun->getDerivedDirection();
 	sunPosition.normalise();
 	sunPosition *= 100000;

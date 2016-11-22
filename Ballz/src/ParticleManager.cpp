@@ -19,7 +19,7 @@ Ogre::ParticleSystem* ParticleManager::getClosestParticle()
 	if (!particles.empty())
 	{
 		float closestDist = 0;
-		auto pos = Global::camera->getPosition();
+		auto pos = Global::camera->position;
 
 		for (auto p : particles)
 		{

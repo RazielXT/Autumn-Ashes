@@ -49,7 +49,6 @@ public:
 	void nodHead(float velocity);
 
 	bool ownsCamera;
-	void update();
 	void updateHead();
 
 	float afterFall(float duration, bool doRoll);

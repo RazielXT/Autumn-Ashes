@@ -16,8 +16,7 @@ void PlayerParkour::doWalljump()
 	allowWalljump = false;
 	reattachFixTimer = 0.5f;
 
-	Global::camera->nodHead(30);
-
+	p->pCamera->nodHead(30);
 	p->playWalkSound();
 
 	//GUtils::DebugPrint("walljump");
@@ -61,7 +60,7 @@ bool PlayerParkour::spacePressed()
 
 			allowWalljump = true;
 
-			Global::camera->shaker.startShaking(0.75, 1.0, 0.1, 1, 1, 0.7, 0.15, 0.75, true);
+			p->pCamera->shaker.startShaking(0.75, 1.0, 0.1, 1, 1, 0.7, 0.15, 0.75, true);
 			body->setVelocity(jumpDir);
 
 			p->playWalkSound();
@@ -122,15 +121,15 @@ bool PlayerParkour::tryWallClimb()
 	rDir.normalise();
 	auto rEnd = rDir*1.75f + rStart;
 
-	OgreNewt::BasicRaycast ray(Global::mWorld, rStart, rEnd, false);
+	OgreNewt::BasicRaycast ray(Global::nWorld, rStart, rEnd, false);
 
 	rStart.y += 0.6f;
 	rEnd.y += 0.6f;
-	OgreNewt::BasicRaycast ray2(Global::mWorld, rStart, rEnd, false);
+	OgreNewt::BasicRaycast ray2(Global::nWorld, rStart, rEnd, false);
 
 	rStart.y += 1.0f;
 	rEnd = rDir*2.5f + rStart;
-	OgreNewt::BasicRaycast ray3(Global::mWorld, rStart, rEnd, false);
+	OgreNewt::BasicRaycast ray3(Global::nWorld, rStart, rEnd, false);
 
 	//wallclimb = 3- , 2y, 1?
 	//walljumpclimb = 3-, 2-, 1y
@@ -219,7 +218,7 @@ bool PlayerParkour::afterFall(bool roll)
 
 	if (dirAngleDiff < 45 && vel.length()>0.2f)
 	{*/
-	rolling = Global::camera->afterFall(1.2f, roll);
+	rolling = p->pCamera->afterFall(1.2f, roll);
 	p->pAudio.playClimbSound(p->bodyPosition.x, p->bodyPosition.y, p->bodyPosition.z);
 
 	return true;
@@ -233,7 +232,7 @@ void PlayerParkour::updateRolling(float tslf)
 	body->setMaterialGroupID(p->wmaterials->plMove_mat);
 	p->moving = true;
 
-	auto dirVec = Global::camera->getBaseOrientation()*Vector3(0, 0, -1);
+	auto dirVec = p->pCamera->getBaseOrientation()*Vector3(0, 0, -1);
 	dirVec.y = 0;
 	dirVec.normalise();
 	p->forceDirection += dirVec * 10 * rolling;
@@ -280,8 +279,8 @@ bool PlayerParkour::tryWallrun()
 		Ogre::Vector3 size(0.2, 0.2, 0.2);
 		Ogre::Real mass = 0.3;
 
-		OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::mWorld, size, 0));
-		OgreNewt::Body* hbody = new OgreNewt::Body(Global::mWorld, col);
+		OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::nWorld, size, 0));
+		OgreNewt::Body* hbody = new OgreNewt::Body(Global::nWorld, col);
 
 		Ogre::Vector3 inertia, offset;
 		col->calculateInertialMatrix(inertia, offset);
@@ -310,7 +309,7 @@ bool PlayerParkour::getWallrunInfo(float side, Vector3 frontDir, float testDegre
 
 	auto rEnd = Quaternion(Degree(testDegree * side), Vector3(0, 1, 0))*frontDir*1.75f + rStart;
 
-	OgreNewt::BasicRaycast ray(Global::mWorld, rStart, rEnd, false);
+	OgreNewt::BasicRaycast ray(Global::nWorld, rStart, rEnd, false);
 	OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
 
 	if (info.mBody && info.mBody->getMass() == 0)
@@ -363,7 +362,7 @@ void PlayerParkour::updateWallrunning()
 			wallrunTimer = std::min(wallrunTimer + p->tslf, 1.0f);
 
 			wallrunCurrentDir = Quaternion(Degree(90 * wallrunSide), Vector3(0, 1, 0))* wall_normal;
-			Global::camera->head_turning += p->tslf*-10*wallrunSide;
+			p->pCamera->head_turning += p->tslf*-10*wallrunSide;
 
 			auto dirDiff = p->facingDir.dotProduct(wallrunCurrentDir);
 

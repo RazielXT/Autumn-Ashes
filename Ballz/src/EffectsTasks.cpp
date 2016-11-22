@@ -17,7 +17,7 @@ bool QuickScaryBlink::start()
 		return false;
 
 	doneBlink = false;
-	mgr = (Global::mPPMgr);
+	mgr = (Global::ppMgr);
 
 	std::string soundName;
 	if(id==1)
@@ -96,12 +96,12 @@ SwitchColorSchemeFx::SwitchColorSchemeFx(Ogre::String info)
 bool SwitchColorSchemeFx::start()
 {
 	timer = 0;
-	colorBase.x = Global::mPPMgr->vars.ColouringShift.x;
-	colorBase.y = Global::mPPMgr->vars.ColouringShift.y;
-	colorBase.z = Global::mPPMgr->vars.ColouringShift.z;
+	colorBase.x = Global::ppMgr->vars.ColouringShift.x;
+	colorBase.y = Global::ppMgr->vars.ColouringShift.y;
+	colorBase.z = Global::ppMgr->vars.ColouringShift.z;
 
-	bloomStrBase = Global::mPPMgr->vars.bloomStrDepAddSize.y;
-	fovBase = Global::mPPMgr->camera->getFOVy().valueDegrees();
+	bloomStrBase = Global::ppMgr->vars.bloomStrDepAddSize.y;
+	fovBase = Global::ppMgr->camera->getFOVy().valueDegrees();
 
 	return true;
 }
@@ -116,22 +116,22 @@ bool SwitchColorSchemeFx::update(float tslf)
 	auto fromHalfW = std::max(0.0f, (timer - wHalfPoint) / (1 - wHalfPoint));
 
 	auto shift = colorTarget*fromHalfW + colorBase*(1 - fromHalfW);
-	Global::mPPMgr->vars.ColouringShift.x = shift.x;
-	Global::mPPMgr->vars.ColouringShift.y = shift.y;
-	Global::mPPMgr->vars.ColouringShift.z = shift.z;
+	Global::ppMgr->vars.ColouringShift.x = shift.x;
+	Global::ppMgr->vars.ColouringShift.y = shift.y;
+	Global::ppMgr->vars.ColouringShift.z = shift.z;
 
 	const auto stepMin = 0.15f;
 	Global::timestep = pow(1 - halfTopW*(1-stepMin),1.5f);
 
 	const auto blAdd = 3.0f;
-	Global::mPPMgr->vars.bloomStrDepAddSize.y = bloomStrBase + blAdd*halfTopW;
+	Global::ppMgr->vars.bloomStrDepAddSize.y = bloomStrBase + blAdd*halfTopW;
 
-	Global::mPPMgr->vars.ColouringShift.w = halfTopW;
-	Global::mPPMgr->vars.radialHorizBlurVignette.x = halfTopW;
-	Global::mPPMgr->vars.ContSatuSharpNoise.x = halfTopW;
+	Global::ppMgr->vars.ColouringShift.w = halfTopW;
+	Global::ppMgr->vars.radialHorizBlurVignette.x = halfTopW;
+	Global::ppMgr->vars.ContSatuSharpNoise.x = halfTopW;
 
 	const auto fovAdd = 20.0f;
-	Global::mPPMgr->camera->setFOVy(Ogre::Degree(fovBase + fovAdd*halfTopW));
+	Global::ppMgr->camera->setFOVy(Ogre::Degree(fovBase + fovAdd*halfTopW));
 
 	if (timer == 1)
 		return false;

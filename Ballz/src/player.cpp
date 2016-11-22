@@ -31,8 +31,8 @@ Player::Player(WorldMaterials* wMaterials) : pAudio(this)
 	gNormal=Vector3(0,1,0);
 
 	forceDirection=Vector3::ZERO;
-	mSceneMgr=Global::mSceneMgr;
-	m_World=Global::mWorld;
+	mSceneMgr=Global::sceneMgr;
+	m_World=Global::nWorld;
 
 	right_key=false;
 	left_key=false;
@@ -394,7 +394,8 @@ void Player::hideBody()
 void Player::update(Real time)
 {
 	tslf = time*Global::timestep;
-	pCamera->update();
+	facingDir = Global::camera->direction;
+	camPosition = Global::camera->position;
 	//pModel->update(time);
 
 	pPostProcess->update(tslf);

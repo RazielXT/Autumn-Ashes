@@ -26,8 +26,8 @@ inline Ogre::Entity* TargetHeight(Ogre::Entity* entity, float target)
 
 inline Ogre::Entity* MakeEntity(const std::string name, Ogre::Vector3 pos = Ogre::Vector3::ZERO, Ogre::Vector3 scale = Ogre::Vector3::UNIT_SCALE)
 {
-	auto ent = Global::mSceneMgr->createEntity(name);
-	auto node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
+	auto ent = Global::sceneMgr->createEntity(name);
+	auto node = Global::sceneMgr->getRootSceneNode()->createChildSceneNode(pos);
 	node->attachObject(ent);
 	node->setScale(scale);
 
@@ -43,7 +43,7 @@ inline std::string v2s(Ogre::Vector3& v)
 
 inline bool isPathFree(Vector3 start, Vector3 end)
 {
-	OgreNewt::BasicRaycast ray(Global::mWorld, start, end, false);
+	OgreNewt::BasicRaycast ray(Global::nWorld, start, end, false);
 
 	return (ray.getHitCount() == 0);
 }
@@ -58,7 +58,7 @@ struct RayInfo
 
 inline bool getRayFilteredInfo(Vector3 start, Vector3 end, RayInfo& minfo, OgreNewt::Body* target)
 {
-	FilteredRaycast ray(Global::mWorld, start, end, false, target);
+	FilteredRaycast ray(Global::nWorld, start, end, false, target);
 
 	if(ray.getHitCount()>0)
 	{
@@ -86,7 +86,7 @@ inline bool getRayFilteredInfo(Vector3 start, Vector3 dir, float len, RayInfo& m
 
 inline bool getRayInfo(Vector3 start, Vector3 end, RayInfo& minfo)
 {
-	OgreNewt::BasicRaycast ray(Global::mWorld, start, end, false);
+	OgreNewt::BasicRaycast ray(Global::nWorld, start, end, false);
 
 	if (ray.getHitCount() > 0)
 	{
@@ -114,7 +114,7 @@ inline bool getRayPortInfo(Vector3 start, Vector3 dir, float len, float offset, 
 {
 	float offsetSub = offset / len;
 	Vector3 end = start + dir*len;
-	OgreNewt::BasicRaycast ray(Global::mWorld, start, end, false);
+	OgreNewt::BasicRaycast ray(Global::nWorld, start, end, false);
 
 	if (ray.getHitCount() > 0)
 	{
@@ -139,7 +139,7 @@ inline bool getRayPortInfo(Vector3 start, Vector3 dir, float len, float offset, 
 
 inline bool getVerticalRayPos(Vector3& pos, float yMaxOffset, float yMinOffset)
 {
-	OgreNewt::BasicRaycast ray(Global::mWorld, Vector3(pos.x, pos.y + yMaxOffset, pos.z), Vector3(pos.x, pos.y - yMinOffset, pos.z), false);
+	OgreNewt::BasicRaycast ray(Global::nWorld, Vector3(pos.x, pos.y + yMaxOffset, pos.z), Vector3(pos.x, pos.y - yMinOffset, pos.z), false);
 
 	if (ray.getHitCount() > 0)
 	{

@@ -18,12 +18,12 @@ public:
 
 	inline void registerInputListening()
 	{
-		Global::mEventsMgr->addInputListener(this);
+		Global::eventsMgr->addInputListener(this);
 	}
 
 	inline void unregisterInputListening()
 	{
-		Global::mEventsMgr->removeInputListener(this);
+		Global::eventsMgr->removeInputListener(this);
 	}
 
 	virtual ~InputListener()

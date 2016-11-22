@@ -9,7 +9,7 @@
 
 void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 {
-	auto postProcMgr = Global::mPPMgr;
+	auto postProcMgr = Global::ppMgr;
 	static Ogre::Vector3 debugPos;
 	static float shake[8] = {0};
 	static float shakesign = 0.1f;
@@ -204,18 +204,18 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 
 	case OIS::KC_0:
 	{
-		Global::camera->shaker.startShaking(shake[0], shake[1], shake[2], shake[3], shake[4], shake[5], shake[6], shake[7]);
+		Global::player->pCamera->shaker.startShaking(shake[0], shake[1], shake[2], shake[3], shake[4], shake[5], shake[6], shake[7]);
 	}
 	break;
 
 	case OIS::KC_I:
 	{
-		static auto imgs = Global::mPPMgr->getColorGradingPresets();
+		static auto imgs = Global::ppMgr->getColorGradingPresets();
 		static int id = 0;
 
 		id = (id + 1) % imgs.size();
 
-		Global::mPPMgr->setColorGradingPreset(imgs[id]);
+		Global::ppMgr->setColorGradingPreset(imgs[id]);
 		GUtils::DebugPrint(imgs[id]);
 	}
 	break;
@@ -237,14 +237,14 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 	{
 		auto task = new SwitchColorSchemeFx("0.8,0.95,1.05,2");
 		if (task->start())
-			Global::mEventsMgr->addTask(task);
+			Global::eventsMgr->addTask(task);
 		break;
 	}
 	case OIS::KC_N:
 	{
 		auto task = new SwitchColorSchemeFx("1.0,0.95,0.85,2");
 		if (task->start())
-			Global::mEventsMgr->addTask(task);
+			Global::eventsMgr->addTask(task);
 		break;
 	}
 
@@ -253,7 +253,7 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 		break;
 
 	/*case OIS::KC_1:
-		Global::camera->shaker.startShaking(0.3, 1.5, 0.0, 1, 1, 0.7, 0.55, 0.5, true);
+		Global::player->pCamera->shaker.startShaking(0.3, 1.5, 0.0, 1, 1, 0.7, 0.55, 0.5, true);
 		break;
 
 	case OIS::KC_2:
@@ -349,14 +349,14 @@ void DebugKeys::makecube(bool platform)
 	Ogre::Vector3 size(2, 2, 2);
 	Ogre::Real mass = platform ? 0 : 0.3f;
 
-	Entity* ent = Global::mSceneMgr->createEntity("boxEL.mesh");
-	SceneNode* node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	Entity* ent = Global::sceneMgr->createEntity("boxEL.mesh");
+	SceneNode* node = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();
 	node->attachObject(ent);
 	node->setScale(size);
 	ent->setCastShadows(true);
 	ent->setMaterialName("planksVC");
-	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::mWorld, size, 0));
-	OgreNewt::Body* body = new OgreNewt::Body(Global::mWorld, col);
+	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::nWorld, size, 0));
+	OgreNewt::Body* body = new OgreNewt::Body(Global::nWorld, col);
 
 	Ogre::Vector3 inertia, offset;
 	col->calculateInertialMatrix(inertia, offset);

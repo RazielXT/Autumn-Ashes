@@ -138,7 +138,7 @@ void Player::manageFall()
 
 			//pAudio.playHurtSound(bodyPosition.x, bodyPosition.y, bodyPosition.z);
 
-			Global::camera->shaker.startShaking(1.5, 1.5, 0.5, 1, 1, 0.7, 0.35, 1, true);
+			pCamera->shaker.startShaking(1.5, 1.5, 0.5, 1, 1, 0.7, 0.35, 1, true);
 
 			slowingDown = 0;
 		}

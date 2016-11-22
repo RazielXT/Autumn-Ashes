@@ -133,7 +133,7 @@ void LevelEdit::generateParams()
 	temp.push_back({ "SunColor", level.sunColor, 0.025f });
 	mergeDefaults(temp, envVariables);
 
-	auto& sunOr = Global::mSceneMgr->getLight("Sun")->getParentSceneNode()->getOrientation();
+	auto& sunOr = Global::sceneMgr->getLight("Sun")->getParentSceneNode()->getOrientation();
 	EditVariable var( "SunDir", sunOr.getPitch().valueDegrees(), sunOr.getYaw().valueDegrees());
 	var.step = 5.0f;
 	temp.push_back(var);
@@ -165,7 +165,7 @@ void LevelEdit::applySceneEdit(EditVariable& var)
 	if (var.name == "Ambient")
 	{
 		level.ambientColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2]);
-		Global::mSceneMgr->setAmbientLight(level.ambientColor);
+		Global::sceneMgr->setAmbientLight(level.ambientColor);
 	}
 	if (var.name == "FogColor")
 	{
@@ -182,14 +182,14 @@ void LevelEdit::applySceneEdit(EditVariable& var)
 	}
 	if (var.name == "SunColor")
 	{
-		auto sun = Global::mSceneMgr->getLight("Sun");
+		auto sun = Global::sceneMgr->getLight("Sun");
 
 		level.sunColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2]);
 		sun->setDiffuseColour(level.sunColor);
 	}
 	if (var.name == "SunDir")
 	{
-		auto sunNode = Global::mSceneMgr->getLight("Sun")->getParentSceneNode();
+		auto sunNode = Global::sceneMgr->getLight("Sun")->getParentSceneNode();
 		auto sunOr = sunNode->getOrientation();
 
 		if (var.buffer[0] != yaw)
@@ -208,7 +208,7 @@ void LevelEdit::applySceneEdit(EditVariable& var)
 
 void LevelEdit::applyPostProcessing()
 {
-	PostProcessMgr* postProcMgr = Global::mPPMgr;
+	PostProcessMgr* postProcMgr = Global::ppMgr;
 
 	postProcMgr->vars.ColouringShift = level.ColorShift;
 	postProcMgr->vars.ContSatuSharpNoise = level.ContSatuSharpNoise;
@@ -220,5 +220,5 @@ void LevelEdit::applyPostProcessing()
 
 void LevelEdit::applyFog()
 {
-	Global::mSceneMgr->setFog(Ogre::FOG_LINEAR, level.fogColor, 1, level.fogStartDistance, level.fogEndDistance);
+	Global::sceneMgr->setFog(Ogre::FOG_LINEAR, level.fogColor, 1, level.fogStartDistance, level.fogEndDistance);
 }

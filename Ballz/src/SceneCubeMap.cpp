@@ -19,7 +19,7 @@ SceneCubeMap::~SceneCubeMap()
 	appliedMaterials.clear();
 
 	texture.setNull();
-	Global::mSceneMgr->destroyCamera(mReflectCam);
+	Global::sceneMgr->destroyCamera(mReflectCam);
 	//mat.setNull();
 }
 
@@ -130,9 +130,9 @@ void SceneCubeMap::init(std::string name, int size, float minRenderDistance)
 	this->minRenderDistance = minRenderDistance;
 	cubeMaps[name] = this;
 
-	auto sceneMgr = Global::mSceneMgr;
-	auto camera = Global::camera->camera;
-	auto window = Global::mWindow;
+	auto sceneMgr = Global::sceneMgr;
+	auto camera = Global::camera->cam;
+	auto window = Global::window;
 
 	auto idString = Ogre::StringConverter::toString(id++);
 	mReflectCam = sceneMgr->createCamera("GenCubeCam" + idString);
@@ -146,7 +146,7 @@ void SceneCubeMap::init(std::string name, int size, float minRenderDistance)
 	mReflectCam->setVisibilityFlags(VisibilityFlag_Normal);
 	//mReflectCam->setVisibilityFlags(2);
 
-	mReflectCamNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	mReflectCamNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();
 	mReflectCamNode->attachObject(mReflectCam);
 	//mReflectCamNode->pitch(Degree(-90));
 

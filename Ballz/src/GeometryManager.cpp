@@ -100,7 +100,7 @@ void GeometryManager::bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::Te
 	cam->setPosition(info.pos);
 	cam->setOrientation(Ogre::Quaternion(Ogre::Radian(Ogre::Degree(-90)), Ogre::Vector3(1, 0, 0)));
 
-	auto shSetup = Global::mSceneMgr->getShadowCameraSetup();
+	auto shSetup = Global::sceneMgr->getShadowCameraSetup();
 	PSSMShadowCameraSetup2* pssmSetup = (PSSMShadowCameraSetup2*)shSetup.get();
 
 	Ogre::PSSMShadowCameraSetup2::SplitPointList splitPointList = pssmSetup->getSplitPoints();
@@ -123,7 +123,7 @@ void GeometryManager::bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::Te
 		v->setVisibilityMask(VisibilityFlag_Temp);
 		cam->setVisibilityFlags(VisibilityFlag_Temp);
 
-		ent = Global::mSceneMgr->getEntity(info.groundName);
+		ent = Global::sceneMgr->getEntity(info.groundName);
 		flag = ent->getVisibilityFlags();
 		ent->setVisibilityFlags(VisibilityFlag_Temp);
 	}
@@ -144,7 +144,7 @@ void GeometryManager::bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::Te
 
 void GeometryManager::bakeLights()
 {
-	Ogre::SceneManager::MovableObjectIterator iterator = Global::mSceneMgr->getMovableObjectIterator("Entity");
+	Ogre::SceneManager::MovableObjectIterator iterator = Global::sceneMgr->getMovableObjectIterator("Entity");
 	while (iterator.hasMoreElements())
 	{
 		Ogre::Entity* e = static_cast<Ogre::Entity*>(iterator.getNext());
@@ -153,9 +153,9 @@ void GeometryManager::bakeLights()
 		//e->setVisibilityFlags(e->getVisibilityFlags() & ~VisibilityFlag_Temp);
 	}
 
-	Global::mSceneMgr->setFog(FOG_LINEAR, ColourValue::White, 0, 10000,15000);
+	Global::sceneMgr->setFog(FOG_LINEAR, ColourValue::White, 0, 10000,15000);
 
-	auto lightBakingCam = Global::mSceneMgr->createCamera("lightBaking");
+	auto lightBakingCam = Global::sceneMgr->createCamera("lightBaking");
 	lightBakingCam->setNearClipDistance(1);
 	lightBakingCam->setFarClipDistance(100);
 	//mReflectCam->setAspectRatio(1);
@@ -180,7 +180,7 @@ void GeometryManager::bakeLights()
 
 	texture->unload();
 	lightBakingTodo.clear();
-	Global::mSceneMgr->destroyCamera(lightBakingCam);
+	Global::sceneMgr->destroyCamera(lightBakingCam);
 
 	Global::gameMgr->sceneEdits.getLevelEdit()->applyFog();
 }
@@ -392,7 +392,7 @@ std::vector<OptimizedGroup>& GeometryManager::getOptGroups()
 
 std::vector<OptimizedGroup> GeometryManager::getClosestOptGroup(float radius)
 {
-	auto pos = Global::mSceneMgr->getCamera("Camera")->getDerivedPosition();
+	auto pos = Global::sceneMgr->getCamera("Camera")->getDerivedPosition();
 	std::vector<std::pair<float, OptimizedGroup>> inReach;
 
 	for (auto& g : optimizedGroups)

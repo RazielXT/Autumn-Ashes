@@ -27,7 +27,7 @@ void ManualDetailGeometry::build()
 
 	for (auto e : usedEntities)
 	{
-		Global::mSceneMgr->destroyEntity(e);
+		Global::sceneMgr->destroyEntity(e);
 	}
 
 	usedEntities.clear();
@@ -42,7 +42,7 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
 	if (info.sg == nullptr)
 	{
 		static int msgCount = 0;
-		info.sg = Global::mSceneMgr->createStaticGeometry("manDG" + std::to_string(msgCount++));
+		info.sg = Global::sceneMgr->createStaticGeometry("manDG" + std::to_string(msgCount++));
 		info.sg->setCastShadows(true);
 		info.sg->setVisibilityFlags(VisibilityFlag_Normal);
 
@@ -62,7 +62,7 @@ void ManualDetailGeometry::addObject(Ogre::SceneNode* node, std::string type, bo
 		while (!meshName.empty())
 		{
 			auto mname = SUtils::strtok_str(meshName, ';');
-			auto ent = Global::mSceneMgr->createEntity(mname);
+			auto ent = Global::sceneMgr->createEntity(mname);
 			//node->attachObject(ent);
 
 			materialHelper.updateMaterial(ent, color, dgTypeInfo);
@@ -94,7 +94,7 @@ LoadedDG* ManualDetailGeometry::getClosest()
 
 	LoadedDG* dgOut = nullptr;
 	float closest = 999999;
-	auto pos = Global::camera->getPosition();
+	auto pos = Global::camera->position;
 
 	for (auto& dg : loadedMDG)
 	{

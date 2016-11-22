@@ -66,8 +66,8 @@ CrowFlight::CrowFlight(int num_crows, float randomYaw, float mFlightAvgTime, flo
 	switchAvgTime = mSwitchAvgTime;
 
 	//init paths
-	auto animNode = Global::mSceneMgr->getSceneNode(node->getName() + "Anim");
-	auto anims = Global::mSceneMgr->getAnimations();
+	auto animNode = Global::sceneMgr->getSceneNode(node->getName() + "Anim");
+	auto anims = Global::sceneMgr->getAnimations();
 
 	centerPos = node->_getDerivedPosition();
 

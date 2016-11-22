@@ -2,13 +2,13 @@
 #include "HeadTransition.h"
 #include "MUtils.h"
 #include "CameraShaker.h"
-#include "PlayerCamera.h"
+#include "Player.h"
 
 using namespace Ogre;
 
 void HeadTransition::initializeJump(Ogre::Vector3 target)
 {
-	auto cam = Global::camera->camera;
+	auto cam = Global::camera->cam;
 
 	pos = cam->getDerivedPosition();
 	dir = cam->getDerivedOrientation();
@@ -16,7 +16,7 @@ void HeadTransition::initializeJump(Ogre::Vector3 target)
 
 	if (transitionNode == nullptr)
 	{
-		transitionNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+		transitionNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();
 	}
 
 	transitionNode->attachObject(cam);
@@ -97,7 +97,7 @@ bool HeadTransition::updateJump(float time)
 	//Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage("Jumping: hadd " + Ogre::StringConverter::toString(hAdd) + ", hd " + Ogre::StringConverter::toString(hd), Ogre::LML_NORMAL);
 
 	transitionNode->setPosition(cpos);
-	transitionNode->setOrientation(cdir*Global::camera->shaker.current);
+	transitionNode->setOrientation(cdir*Global::player->pCamera->shaker.current);
 
 	return (timer == dist);
 }
@@ -107,13 +107,13 @@ void HeadTransition::initializeTransition(Ogre::Vector3 target, float transition
 	timer = dist = transitionTime;
 	posTarget = target;
 
-	auto cam = Global::camera->camera;
+	auto cam = Global::camera->cam;
 	pos = cam->getDerivedPosition();
 	dir = cam->getDerivedOrientation();
 
 	if (transitionNode == nullptr)
 	{
-		transitionNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+		transitionNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();
 	}
 
 	cam->detachFromParent();
@@ -142,7 +142,7 @@ void HeadTransition::refreshTransition(Ogre::Quaternion actualOr, Ogre::Vector3 
 	auto w = timer/ dist;
 
 	Quaternion q = Quaternion::nlerp(1 - w, dir, actualOr, true);
-	transitionNode->setOrientation(q*Global::camera->shaker.current);
+	transitionNode->setOrientation(q*Global::player->pCamera->shaker.current);
 
 	Vector3 moveOffset = actualPos - posTarget;
 	Vector3 p = w*pos + (1 - w)*posTarget;

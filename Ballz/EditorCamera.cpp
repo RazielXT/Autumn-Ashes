@@ -13,8 +13,8 @@ void EditorCamera::enable()
 
 	if (!camNode)
 	{
-		Global::mEventsMgr->addCachedTask(this);
-		camNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(Global::player->camPosition, Global::player->pCamera->getOrientation());
+		Global::eventsMgr->addCachedTask(this);
+		camNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode(Global::player->camPosition, Global::player->pCamera->getOrientation());
 		camNode->attachObject(Global::player->pCamera->detachCamera());
 	}
 
@@ -33,7 +33,7 @@ void EditorCamera::returnToPlayer()
 
 	Global::player->pCamera->attachCamera();
 	Global::player->setPosition(camNode->getPosition());
-	Global::mSceneMgr->destroySceneNode(camNode);
+	Global::sceneMgr->destroySceneNode(camNode);
 	camNode = nullptr;
 }
 

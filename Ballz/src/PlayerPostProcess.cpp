@@ -4,8 +4,8 @@
 
 PlayerPostProcess::PlayerPostProcess(Player* player) : p(player)
 {
-	injectPostProcess(&Global::mPPMgr->vars);
-	cam = Global::camera->camera;
+	injectPostProcess(&Global::ppMgr->vars);
+	cam = Global::camera->cam;
 }
 
 void PlayerPostProcess::injectPostProcess(PostProcessVariables* vars)

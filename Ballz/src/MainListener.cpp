@@ -57,18 +57,20 @@ MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneMana
 	mWorld = nWorld;
 	mWorld->setSolverModel(3);
 	mCamera = mSceneMgr->getCamera("Camera");
+	camHelp.cam = mCamera;
 
-	Global::mSceneMgr = mSceneMgr;
-	Global::mWorld = mWorld;
-	Global::mWindow = mWindow;
-	Global::mEventsMgr = mEventMgr;
+	Global::camera = &camHelp;
+	Global::sceneMgr = mSceneMgr;
+	Global::nWorld = mWorld;
+	Global::window = mWindow;
+	Global::eventsMgr = mEventMgr;
 
 	gameMgr = new GameStateManager(mCamera, mRoot->getRenderSystem());
 	Global::gameMgr = gameMgr;
 	Global::gameMgr->geometryMgr = geometryMgr;
 
 	postProcMgr = new PostProcessMgr(mCamera);
-	Global::mPPMgr = postProcMgr;
+	Global::ppMgr = postProcMgr;
 
 	mKeyboard = keyboard;
 	mMouse = mouse;
@@ -92,6 +94,7 @@ bool MainListener::frameStarted(const FrameEvent& evt)
 	mMouse->capture();
 
 	gameMgr->update(tslf);
+	camHelp.update();
 
 	if (gameMgr->gameState == GAME)
 	{
@@ -105,7 +108,7 @@ bool MainListener::frameStarted(const FrameEvent& evt)
 
 bool MainListener::keyPressed(const OIS::KeyEvent &arg)
 {
-	Global::mEventsMgr->listenersKeyPressed(arg);
+	Global::eventsMgr->listenersKeyPressed(arg);
 
 	if (gameMgr->gameState == GAME && !editor.active)
 		Global::player->pressedKey(arg);
@@ -138,7 +141,7 @@ bool MainListener::keyPressed(const OIS::KeyEvent &arg)
 
 bool MainListener::keyReleased(const OIS::KeyEvent &arg)
 {
-	Global::mEventsMgr->listenersKeyReleased(arg);
+	Global::eventsMgr->listenersKeyReleased(arg);
 
 	if (gameMgr->gameState == GAME && !editor.active)
 		Global::player->releasedKey(arg);

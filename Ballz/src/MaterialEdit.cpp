@@ -8,7 +8,7 @@
 MaterialEdit* MaterialEdit::query()
 {
 	GUtils::RayInfo out;
-	if (GUtils::getRayInfo(Global::camera->getPosition(), Global::camera->getFacingDirection(), 1000, out))
+	if (GUtils::getRayInfo(Global::camera->position, Global::camera->direction, 1000, out))
 	{
 		auto node = static_cast<Ogre::SceneNode*>(out.body->getOgreNode());
 
@@ -105,9 +105,9 @@ void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& ch
 {
 	for (auto& ent : changes)
 	{
-		if (Global::mSceneMgr->hasEntity(ent.first))
+		if (Global::sceneMgr->hasEntity(ent.first))
 		{
-			auto e = Global::mSceneMgr->getEntity(ent.first);
+			auto e = Global::sceneMgr->getEntity(ent.first);
 			auto curMat = e->getSubEntity(0)->getMaterial();
 			auto baseMatName = ent.second.originName.substr(0, ent.second.originName.find_first_of('_'));
 

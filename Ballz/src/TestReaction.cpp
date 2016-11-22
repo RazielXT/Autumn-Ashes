@@ -24,7 +24,7 @@ bool TestReaction::start()
 
 bool TestReaction::update(Ogre::Real tslf)
 {
-	auto pos = Global::mSceneMgr->getCamera("Camera")->getDerivedPosition();
+	auto pos = Global::sceneMgr->getCamera("Camera")->getDerivedPosition();
 	pos.y -= 6;
 
 	auto close = volume.isInside(pos);

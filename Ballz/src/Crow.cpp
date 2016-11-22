@@ -8,9 +8,9 @@ using namespace Ogre;
 Crow::Crow(bool onGround)
 {
 	//init entity+node
-	mEntity = Global::mSceneMgr->createEntity("AnimatedCrow.mesh");
+	mEntity = Global::sceneMgr->createEntity("AnimatedCrow.mesh");
 	//mEntity->setMaterialName("crow1");
-	mNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	mNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();
 	mNode->attachObject(mEntity);
 	mNode->setScale(0.4f, 0.4f, 0.4f);
 

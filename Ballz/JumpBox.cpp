@@ -8,7 +8,7 @@ void JumpBox::jumpToBox()
 
 	p->enableControl(false);
 
-	Global::mEventsMgr->addTask(new JumpBoxArrival(this));
+	Global::eventsMgr->addTask(new JumpBoxArrival(this));
 }
 
 JumpBoxArrival::JumpBoxArrival(JumpBox* t) : target(t)
@@ -32,8 +32,8 @@ bool JumpBoxArrival::update(Ogre::Real tslf)
 
 		Global::player->body->setVelocity(jumpDirection);
 
-		Global::camera->attachCameraWithTransition(0.25f);
-		Global::camera->nodHead(50);
+		Global::player->pCamera->attachCameraWithTransition(0.25f);
+		Global::player->pCamera->nodHead(50);
 	}
 
 	return !finished;

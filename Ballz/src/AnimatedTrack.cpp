@@ -29,7 +29,7 @@ inline void fixSpline(Quaternion& rotation, Quaternion previous)
 
 void AnimatedTrack::initTrack(const std::string& initAnimName)
 {
-	Animation* anim = Global::mSceneMgr->getAnimation(initAnimName);
+	Animation* anim = Global::sceneMgr->getAnimation(initAnimName);
 	auto o_track = anim->getNodeTrack(0);
 	float realLength = 0;
 
@@ -46,7 +46,7 @@ void AnimatedTrack::initTrack(const std::string& initAnimName)
 	trackPoints.resize(o_track->getNumKeyFrames());
 
 	animName = "gen_" + initAnimName;
-	Animation* newAnim = Global::mSceneMgr->createAnimation(animName, realLength);
+	Animation* newAnim = Global::sceneMgr->createAnimation(animName, realLength);
 	newAnim->setInterpolationMode(Animation::IM_SPLINE);
 
 	track = newAnim->createNodeTrack(0, tracker);
@@ -129,17 +129,17 @@ void AnimatedTrack::initTrack(const std::vector<Ogre::Vector3>& points)
 
 	Animation* anim;
 
-	if (Global::mSceneMgr->hasAnimation(animName))
+	if (Global::sceneMgr->hasAnimation(animName))
 	{
-		anim = Global::mSceneMgr->getAnimation(animName);
+		anim = Global::sceneMgr->getAnimation(animName);
 		track->removeAllKeyFrames();
 
 		mTrackerState = nullptr;
-		Global::mSceneMgr->destroyAnimationState(animName);
+		Global::sceneMgr->destroyAnimationState(animName);
 	}
 	else
 	{
-		anim = Global::mSceneMgr->createAnimation(animName, timer);
+		anim = Global::sceneMgr->createAnimation(animName, timer);
 		anim->setInterpolationMode(Animation::IM_LINEAR);
 
 		track = anim->createNodeTrack(0, tracker);
@@ -192,19 +192,19 @@ void AnimatedTrack::setCorrectDirection(bool bidirectional, float startOffset)
 
 	if (bidirectional)
 	{
-		auto pdir = Global::camera->getFacingDirection();
+		auto pdir = Global::camera->direction;
 		auto slDir = getDirectionState(startOffset)*Vector3(0, 0, -1);
 
 		if (pdir.dotProduct(slDir) < 0)
 		{
-			Animation* anim = Global::mSceneMgr->getAnimation(animName);
+			Animation* anim = Global::sceneMgr->getAnimation(animName);
 			startOffset = anim->getLength() - startOffset;
 			invertTrack();
 		}
 	}
 
 	if (mTrackerState == nullptr)
-		mTrackerState = Global::mSceneMgr->createAnimationState(animName);
+		mTrackerState = Global::sceneMgr->createAnimationState(animName);
 
 	mTrackerState->setTimePosition(startOffset);
 }

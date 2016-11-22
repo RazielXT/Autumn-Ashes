@@ -45,7 +45,7 @@ void EditorControl::displayItemInfo(EditorItem* item)
 
 void EditorControl::getWorldItemsInfo(GetWorldItemsData& data)
 {
-	auto it = Global::mSceneMgr->getMovableObjectIterator("Entity");
+	auto it = Global::sceneMgr->getMovableObjectIterator("Entity");
 
 	WorldItemsGroup entityGroup;
 	entityGroup.name = L"Entity";
@@ -98,7 +98,7 @@ void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID 
 			}
 			else if (mode == EditorMode::AddItem)
 			{
-				auto cam = Global::camera->camera;
+				auto cam = Global::camera->cam;
 				auto mouseray = SceneInteraction::getMouseRay();
 				GUtils::RayInfo rayInfo;
 				if (GUtils::getRayInfo(cam->getDerivedPosition(), cam->getDerivedPosition() + mouseray.getDirection() * 100000, rayInfo))
@@ -185,7 +185,7 @@ void EditorControl::setActive(bool active)
 	{
 		if (uiHandler.ensureUi())
 		{
-			Global::mEventsMgr->addCachedTask(this);
+			Global::eventsMgr->addCachedTask(this);
 			selector.init(this);
 		}
 

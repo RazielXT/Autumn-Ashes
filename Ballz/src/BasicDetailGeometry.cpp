@@ -32,7 +32,7 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 
 	static int sgCount = 0;
 
-	sg = Global::mSceneMgr->createStaticGeometry("basicDG" + std::to_string(sgCount++));
+	sg = Global::sceneMgr->createStaticGeometry("basicDG" + std::to_string(sgCount++));
 	sg->setCastShadows(true);
 	sg->setVisibilityFlags(VisibilityFlag_Instanced);
 
@@ -45,12 +45,12 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 
 	Ogre::AxisAlignedBox bbox;
 
-	mBillboardsManager = Global::mSceneMgr->createInstanceManager(
+	mBillboardsManager = Global::sceneMgr->createInstanceManager(
 	                         "InstanceMgr", bbName,
 	                         ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, InstanceManager::HWInstancingBasic,
 	                         300, 0);
 
-	mTreesManager = Global::mSceneMgr->createInstanceManager(
+	mTreesManager = Global::sceneMgr->createInstanceManager(
 	                    "InstanceMgr2", treeName,
 	                    ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, InstanceManager::HWInstancingBasic,
 	                    300, 0);
@@ -106,7 +106,7 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 	loadedDG.push_back(dgInfo);
 
 	for (auto e : temps)
-		Global::mSceneMgr->destroyEntity(e);
+		Global::sceneMgr->destroyEntity(e);
 
 	temps.clear();
 }
@@ -123,7 +123,7 @@ void BasicDetailGeometry::clear()
 	}*/
 
 	mats.reset();
-	Global::mSceneMgr->destroyStaticGeometry(sg);
+	Global::sceneMgr->destroyStaticGeometry(sg);
 }
 
 bool BasicDetailGeometry::acceptsWeight(float w) const

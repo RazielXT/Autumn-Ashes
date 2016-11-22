@@ -16,7 +16,7 @@ PlayerCamera::PlayerCamera(Player* p, Ogre::SceneNode* base)
 	fallVelocity = 0;
 	ownsCamera = true;
 
-	camera = Global::mSceneMgr->getCamera("Camera");
+	camera = Global::sceneMgr->getCamera("Camera");
 	camera->setPosition(0, 0, 0);
 	camera->lookAt(Vector3(0, 0, -1));
 
@@ -38,8 +38,6 @@ PlayerCamera::PlayerCamera(Player* p, Ogre::SceneNode* base)
 	//tnode->setPosition(Vector3(0, 5, 20));
 
 	rolling.setTargetNodes(camnode, headnode);
-
-	Global::camera = this;
 }
 
 PlayerCamera::~PlayerCamera()
@@ -168,7 +166,7 @@ void PlayerCamera::attachCamera(bool silent)
 void PlayerCamera::attachCameraWithTransition(float duration)
 {
 	cameraArrival.timer = cameraArrival.duration = duration;
-	cameraArrival.tempNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	cameraArrival.tempNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();
 
 	cameraArrival.pos = camera->getDerivedPosition();
 	cameraArrival.dir = camera->getDerivedOrientation();
@@ -192,7 +190,7 @@ void PlayerCamera::updateCameraArrival()
 		{
 			camera->detachFromParent();
 			camnode->attachObject(camera);
-			Global::mSceneMgr->destroySceneNode(cameraArrival.tempNode);
+			Global::sceneMgr->destroySceneNode(cameraArrival.tempNode);
 			cameraArrival.tempNode = nullptr;
 		}
 		else
@@ -205,12 +203,6 @@ void PlayerCamera::updateCameraArrival()
 			cameraArrival.tempNode->setOrientation(or );
 		}
 	}
-}
-
-void PlayerCamera::update()
-{
-	player->facingDir = camera->getDerivedOrientation()*Ogre::Vector3(0, 0, -1);
-	player->camPosition = camera->getDerivedPosition();
 }
 
 void PlayerCamera::rotateCamera(Ogre::Quaternion or )
@@ -255,10 +247,10 @@ void PlayerCamera::updateHead()
 {
 	float time = player->tslf;
 
-	Global::camera->shaker.update(time);
+	shaker.update(time);
 	rolling.update(time);
 
-	auto sQ = Global::camera->shaker.current;
+	auto sQ = shaker.current;
 	shakeNode->setOrientation(sQ);
 
 	if (fallPitch == 1)

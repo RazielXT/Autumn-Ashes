@@ -94,13 +94,13 @@ BillboardSet* BillboardDetailGeometry::getSet(std::string name)
 	if (mySets.find(name) == mySets.end())
 	{
 		static int billboardSet = 0;
-		auto mySet = Global::mSceneMgr->createBillboardSet("genBBS" + Ogre::StringConverter::toString(++billboardSet));
+		auto mySet = Global::sceneMgr->createBillboardSet("genBBS" + Ogre::StringConverter::toString(++billboardSet));
 		mySet->setMaterialName("billboardTest");
 		mySet->setBillboardType(Ogre::BillboardType::BBT_POINT);
 		//mySet->setCommonDirection(Ogre::Vector3(0, 1, 0));
 		mySet->setDefaultDimensions(sizeY*0.7f, sizeY);
 		mySet->setTextureStacksAndSlices(1, 1);
-		Global::mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(mySet);
+		Global::sceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(mySet);
 
 		mySets[name] = mySet;
 	}

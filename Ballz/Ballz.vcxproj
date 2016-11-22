@@ -125,6 +125,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CameraHelp.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EditorControl.cpp" />
     <ClCompile Include="EditorEntity.cpp" />
@@ -238,6 +239,7 @@ copy "$(SolutionDir)Ballz\bin\release\AutumnAshes.pdb" "D:\OgreSDK\bin\release"<
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinaryHelper.h" />
+    <ClInclude Include="CameraHelp.h" />
     <ClInclude Include="EditableItem.h" />
     <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="EditorComm.h" />

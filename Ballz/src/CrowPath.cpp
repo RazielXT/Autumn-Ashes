@@ -60,7 +60,7 @@ void CrowPathAnimations::clearManuallyFlight()
 	if (mFlightTrack)
 	{
 		auto name = mFlightTrack->getParent()->getName();
-		Global::mSceneMgr->destroyAnimation(name);
+		Global::sceneMgr->destroyAnimation(name);
 
 		mFlightTrack = nullptr;
 		mFlightLenght = -2;
@@ -72,7 +72,7 @@ void CrowPathAnimations::clearTemp()
 	if (mTempTrack)
 	{
 		auto name = mTempTrack->getParent()->getName();
-		Global::mSceneMgr->destroyAnimation(name);
+		Global::sceneMgr->destroyAnimation(name);
 
 		mTempTrack = nullptr;
 		mTempLenght = -2;

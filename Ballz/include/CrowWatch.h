@@ -29,10 +29,10 @@ private:
 CrowWatch::CrowWatch()
 {
 	targetCrow = nullptr;
-	mNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	mNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();
 	registerInputListening();
 
-	Global::mEventsMgr->addTask(this);
+	Global::eventsMgr->addTask(this);
 }
 
 void CrowWatch::activate(bool activate)
@@ -43,13 +43,13 @@ void CrowWatch::activate(bool activate)
 
 		if (targetCrow)
 		{
-			auto cam = Global::camera->detachCamera();
+			auto cam = Global::player->pCamera->detachCamera();
 			mNode->attachObject(cam);
 		}
 	}
 	else if (targetCrow)
 	{
-		Global::camera->attachCamera();
+		Global::player->pCamera->attachCamera();
 		targetCrow = nullptr;
 	}
 }

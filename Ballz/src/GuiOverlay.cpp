@@ -78,7 +78,7 @@ void GuiOverlay::closeOptions()
 
 	gConfig->saveCfg();
 
-	Global::mWindow->setFullscreen(gConfig->fs, gConfig->width, gConfig->height);
+	Global::window->setFullscreen(gConfig->fs, gConfig->width, gConfig->height);
 }
 
 void GuiOverlay::closeLevels()
@@ -228,7 +228,7 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
 	moving=false;
 	atm=0;
 	movingDir=1;
-	mSceneMgr = Global::mSceneMgr;
+	mSceneMgr = Global::sceneMgr;
 	lvlMoving=false;
 
 	mSilverback = new Gorilla::Silverback();
@@ -481,8 +481,8 @@ void GuiOverlay::clearMenu()
 
 void GuiOverlay::mouseMoveUpdate(int x,int y)
 {
-	x = 1680 * (x / (float)Global::mWindow->getWidth());
-	y = 1050 * (y / (float)Global::mWindow->getHeight());
+	x = 1680 * (x / (float)Global::window->getWidth());
+	y = 1050 * (y / (float)Global::window->getHeight());
 
 	mousePointer->position(Math::Clamp<float>(x,0,1680-15),Math::Clamp<float>(y,0,1050-22));
 	Vector2 pos(x, y);// = mousePointer->position();
@@ -974,7 +974,7 @@ void GuiOverlay::updateMainMenu(Ogre::Real time)
 
 void GuiOverlay::updateIngame(Ogre::Real time)
 {
-	setDebugValue(Global::mWindow->getLastFPS(), GUtils::debug);
+	setDebugValue(Global::window->getLastFPS(), GUtils::debug);
 
 	gameLayer->show();
 

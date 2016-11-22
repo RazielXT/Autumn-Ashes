@@ -2,15 +2,15 @@
 
 float Global::timestep = 1;
 AudioLibrary* Global::audioLib = nullptr;
-EventsManager* Global::mEventsMgr = nullptr;
-Ogre::SceneManager* Global::mSceneMgr = nullptr;
-Ogre::RenderWindow* Global::mWindow = nullptr;
-OgreNewt::World* Global::mWorld = nullptr;
+EventsManager* Global::eventsMgr = nullptr;
+Ogre::SceneManager* Global::sceneMgr = nullptr;
+Ogre::RenderWindow* Global::window = nullptr;
+OgreNewt::World* Global::nWorld = nullptr;
 irrklang::ISoundEngine* Global::soundEngine = nullptr;
 Player* Global::player = nullptr;
-PlayerCamera* Global::camera = nullptr;
+CameraHelp* Global::camera = nullptr;
 GameStateManager* Global::gameMgr = nullptr;
-PostProcessMgr* Global::mPPMgr = nullptr;
+PostProcessMgr* Global::ppMgr = nullptr;
 std::map<std::string,void*>* Global::globalData = new std::map<std::string,void*>();
 
 bool continueExecution = true;

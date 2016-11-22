@@ -52,11 +52,11 @@ void GrassDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 	{
 		auto mesh = makeMesh();
 
-		Entity *entity = Global::mSceneMgr->createEntity(mesh->getName());
+		Entity *entity = Global::sceneMgr->createEntity(mesh->getName());
 		entity->setCastShadows(false);
 		entity->setRenderingDistance(maxDistance);
 
-		SceneNode *node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+		SceneNode *node = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();
 		node->attachObject(entity);
 
 		entities.push_back(entity);
@@ -71,8 +71,8 @@ void GrassDetailGeometry::clear()
 		auto node = e->getParentSceneNode();
 		node->detachAllObjects();
 
-		Global::mSceneMgr->destroySceneNode(node);
-		Global::mSceneMgr->destroyEntity(e);
+		Global::sceneMgr->destroySceneNode(node);
+		Global::sceneMgr->destroyEntity(e);
 	}
 }
 

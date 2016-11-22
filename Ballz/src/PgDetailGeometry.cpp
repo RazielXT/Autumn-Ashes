@@ -23,7 +23,7 @@ void PgDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, D
 	parent = gridInfo.parent;
 
 	trees = new Forests::PagedGeometry();
-	trees->setCamera(Global::mSceneMgr->getCamera("Camera"));	//Set the camera so PagedGeometry knows how to calculate LODs
+	trees->setCamera(Global::sceneMgr->getCamera("Camera"));	//Set the camera so PagedGeometry knows how to calculate LODs
 	trees->setPageSize(info.gridSize);	//Set the size of each page of geometry
 	trees->setInfinite();		//Use infinite paging mode
 	//trees->addDetailLevel<Forests::BatchPage>(25, 10, Ogre::Any(1));		//Use batches up to 150 units away, and fade for 30 more units
@@ -95,7 +95,7 @@ void PgDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, Vect
 	Quaternion randomYaw(Degree(Math::RangeRandom(0, 360)), Vector3(0, 1, 0));
 	String meshName = info.possibleEntities[(int)Math::RangeRandom(0, info.possibleEntities.size() - 0.01f)];
 
-	Entity *myTree = Global::mSceneMgr->createEntity(meshName);
+	Entity *myTree = Global::sceneMgr->createEntity(meshName);
 	myTree->setMaterialName("grassMat");
 	//myTree->setCastShadows(false);
 

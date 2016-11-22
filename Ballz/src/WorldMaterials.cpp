@@ -5,7 +5,7 @@
 
 void WorldMaterials::init()
 {
-	auto mWorld = Global::mWorld;
+	auto mWorld = Global::nWorld;
 
 	plNoMove_mat = new OgreNewt::MaterialID(mWorld);
 	plMove_mat = new OgreNewt::MaterialID(mWorld);
@@ -71,7 +71,7 @@ void WorldMaterials::initCollisions(OgreNewt::World* mWorld)
 
 	//TRIGGER ********************************************************
 	//WITH PLAYER
-	TriggerPlayerContactCallback* callback_p = new TriggerPlayerContactCallback(Global::mEventsMgr);
+	TriggerPlayerContactCallback* callback_p = new TriggerPlayerContactCallback(Global::eventsMgr);
 
 	material_pair = new OgreNewt::MaterialPair(mWorld, plMove_mat, trig_mat);
 	material_pair->setDefaultFriction(0.0, 0.0f);
@@ -85,7 +85,7 @@ void WorldMaterials::initCollisions(OgreNewt::World* mWorld)
 	material_pair->setContactCallback(callback_p);
 
 	//WITH OBJECTS
-	TriggerObjectContactCallback* callback = new TriggerObjectContactCallback(Global::mEventsMgr);
+	TriggerObjectContactCallback* callback = new TriggerObjectContactCallback(Global::eventsMgr);
 
 	material_pair = new OgreNewt::MaterialPair(mWorld, trig_mat, actionMaker_mat);
 	material_pair->setContactCallback(callback);

@@ -7,9 +7,9 @@
 void ObjectSelection::uiSelectItem(SelectWorldItemData& data)
 {
 	if(data.groupName == "Entity")
-		if (Global::mSceneMgr->hasEntity(std::string(data.item.name.begin(), data.item.name.end())))
+		if (Global::sceneMgr->hasEntity(std::string(data.item.name.begin(), data.item.name.end())))
 		{
-			setSelectedEntity(Global::mSceneMgr->getEntity(std::string(data.item.name.begin(), data.item.name.end())));
+			setSelectedEntity(Global::sceneMgr->getEntity(std::string(data.item.name.begin(), data.item.name.end())));
 		}
 
 	if (data.groupName.empty() && selected)
@@ -79,7 +79,7 @@ void ObjectSelection::lootAtSelection()
 {
 	if (selected)
 	{
-		Global::camera->camera->getParentSceneNode()->lookAt(selected->getPosition(), Ogre::Node::TS_WORLD);
+		Global::camera->cam->getParentSceneNode()->lookAt(selected->getPosition(), Ogre::Node::TS_WORLD);
 	}
 }
 

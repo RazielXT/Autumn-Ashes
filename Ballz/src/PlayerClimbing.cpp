@@ -16,9 +16,9 @@ PlayerClimbing::PlayerClimbing(Player* player) : p(player), body(player->body)
 	Gbody = nullptr;
 	climbJoint = nullptr;
 
-	camnode = Global::camera->camnode;
-	headnode = Global::camera->headnode;
-	necknode = Global::camera->necknode;
+	camnode = p->pCamera->camnode;
+	headnode = p->pCamera->headnode;
+	necknode = p->pCamera->necknode;
 }
 
 void PlayerClimbing::update(float tslf)
@@ -47,7 +47,7 @@ void PlayerClimbing::startPullup()
 	delete climbJoint;
 
 	OgreNewt::CollisionPtr col = body->getCollision();//OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(GlobalPointer->mWorld,Ogre::Vector3(0.1,0.1,0.1),0));
-	OgreNewt::Body* mHelpBody = new OgreNewt::Body(Global::mWorld, col);
+	OgreNewt::Body* mHelpBody = new OgreNewt::Body(Global::nWorld, col);
 	mHelpBody->setPositionOrientation(p->bodyPosition, Ogre::Quaternion::IDENTITY);
 	mHelpBody->setMassMatrix(0.5, Ogre::Vector3(20, 20, 20));
 	mHelpBody->setCustomForceAndTorqueCallback<Player>(&Player::default_callback, p);
@@ -86,7 +86,7 @@ void PlayerClimbing::release()
 void PlayerClimbing::forcePullup(Vector3 climbNormal, float startOffset)
 {
 	pullupSide = (MUtils::getSideDotProduct(p->facingDir, climbNormal) < 0) ? -1.0f : 1.0f;
-	Global::camera->shaker.startShaking(1.5, 0.5, 0.5, 1, 1, 0.7, 0.25, 0.75, true);
+	p->pCamera->shaker.startShaking(1.5, 0.5, 0.5, 1, 1, 0.7, 0.25, 0.75, true);
 
 	startClimbing(Climb_Pullup);
 
@@ -95,7 +95,7 @@ void PlayerClimbing::forcePullup(Vector3 climbNormal, float startOffset)
 	climb_normal = climbNormal;
 	climb_pullup = 0.05f + startOffset;
 
-	Global::camera->nodHead(50);
+	p->pCamera->nodHead(50);
 }
 
 bool PlayerClimbing::spacePressed()
@@ -437,7 +437,7 @@ void PlayerClimbing::updateClimbingPossibility()
 	predsebou.normalise();
 	predsebou *= 2;
 
-	auto ray = OgreNewt::BasicRaycast(Global::mWorld , pos, pos + predsebou / 1.3f, false);
+	auto ray = OgreNewt::BasicRaycast(Global::nWorld , pos, pos + predsebou / 1.3f, false);
 	auto info = ray.getFirstHit();
 	if (info.mBody)
 	{
@@ -489,7 +489,7 @@ void PlayerClimbing::updateClimbingPossibility()
 void PlayerClimbing::updateClimbingStats()
 {
 	auto pos = necknode->_getDerivedPosition() + Vector3(0, 0.25, 0);
-	auto ray = OgreNewt::BasicRaycast(Global::mWorld, pos, pos + climb_normal*-3, false);
+	auto ray = OgreNewt::BasicRaycast(Global::nWorld, pos, pos + climb_normal*-3, false);
 
 	auto info = ray.getFirstHit();
 	if (info.mBody)
@@ -561,7 +561,7 @@ bool PlayerClimbing::canClimb(Direction direction, bool soundIfTrue, bool needSp
 	//Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage(Ogre::StringConverter::toString(smer),Ogre::LML_NORMAL);
 	//Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage(Ogre::StringConverter::toString(off),Ogre::LML_NORMAL);
 	//Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage(Ogre::StringConverter::toString(climb_normal),Ogre::LML_NORMAL);
-	OgreNewt::BasicRaycast ray(Global::mWorld, targetPos, targetPos + climb_normal*-3, false);
+	OgreNewt::BasicRaycast ray(Global::nWorld, targetPos, targetPos + climb_normal*-3, false);
 	OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
 
 	if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
@@ -590,13 +590,13 @@ bool PlayerClimbing::canClimb(Direction direction, bool soundIfTrue, bool needSp
 		//if current and big offset are ok, move anyway
 
 		targetPos -= off / 3;
-		ray = OgreNewt::BasicRaycast(Global::mWorld, targetPos, targetPos + climb_normal*-3, false);
+		ray = OgreNewt::BasicRaycast(Global::nWorld, targetPos, targetPos + climb_normal*-3, false);
 		info = ray.getFirstHit();
 
 		if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
 		{
 			targetPos += off;
-			ray = OgreNewt::BasicRaycast(Global::mWorld, targetPos, targetPos + climb_normal*-3, false);
+			ray = OgreNewt::BasicRaycast(Global::nWorld, targetPos, targetPos + climb_normal*-3, false);
 			info = ray.getFirstHit();
 
 			if (info.mBody && (info.mBody->getType() == Climb_Pullup || info.mBody->getType() == Climb || info.mBody->getType() == Pullup_old))
@@ -634,16 +634,16 @@ void PlayerClimbing::startClimbing(BodyType type)
 	SceneNode* node;
 	Ogre::String name("BodyChytac");
 
-	ent = Global::mSceneMgr->createEntity(name, "boxEL.mesh");
-	node = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
+	ent = Global::sceneMgr->createEntity(name, "boxEL.mesh");
+	node = Global::sceneMgr->getRootSceneNode()->createChildSceneNode(name);
 	node->attachObject(ent);
 	node->setScale(size);
 	ent->setCastShadows(true);
 	ent->setMaterialName("GreyWood");
 	ent->setVisible(false);
 
-	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::mWorld, size, 0));
-	OgreNewt::Body* hbody = new OgreNewt::Body(Global::mWorld, col);
+	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::nWorld, size, 0));
+	OgreNewt::Body* hbody = new OgreNewt::Body(Global::nWorld, col);
 
 	Ogre::Vector3 inertia, offset;
 	col->calculateInertialMatrix(inertia, offset);
@@ -680,8 +680,8 @@ void PlayerClimbing::stopClimbing()
 	delete climbJoint;
 	climbJoint = nullptr;
 	delete b;
-	Global::mSceneMgr->destroyEntity("BodyChytac");
-	Global::mSceneMgr->destroySceneNode("BodyChytac");
+	Global::sceneMgr->destroyEntity("BodyChytac");
+	Global::sceneMgr->destroySceneNode("BodyChytac");
 	p->climbing = BodyType(0);
 	climb_yaw = 0;
 }
@@ -704,7 +704,7 @@ void PlayerClimbing::updatePullup(float tslf)
 		climbDir *= 3;
 		climbDir.y =  v;
 
-		Global::camera->head_turning += p->tslf*-15*pullupSide;
+		p->pCamera->head_turning += p->tslf*-15*pullupSide;
 
 		if (climb_pullup == 1.0f)
 		{

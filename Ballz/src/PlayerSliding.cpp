@@ -7,12 +7,12 @@ using namespace Ogre;
 
 PlayerSliding::PlayerSliding(Player* p) : player(p)
 {
-	targetBillboardSet = Global::mSceneMgr->createBillboardSet("autoTargetBillSet");
+	targetBillboardSet = Global::sceneMgr->createBillboardSet("autoTargetBillSet");
 	targetBillboardSet->setMaterialName("chimneySmoke");
 	auto targetBillboard = targetBillboardSet->createBillboard(Vector3(0, 0, 0));
 	targetBillboard->setDimensions(5, 5);
 
-	billboardNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	billboardNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();
 	billboardNode->attachObject(targetBillboardSet);
 
 	targetBillboardSet->setVisible(false);

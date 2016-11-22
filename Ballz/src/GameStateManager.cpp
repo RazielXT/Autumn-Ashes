@@ -14,7 +14,7 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : 
 
 	gameConfig.loadCfg();
 
-	myMenu = new GuiOverlay(&gameConfig, cam, Global::mWindow, rs);
+	myMenu = new GuiOverlay(&gameConfig, cam, Global::window, rs);
 
 	wMaterials.init();
 
@@ -116,8 +116,8 @@ void GameStateManager::switchToLevel(int lvl)
 
 	SceneCubeMap::renderAll();
 
-	Global::mPPMgr->setColorGradingPreset(lvlInfo.lut);
-	Global::mPPMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
+	Global::ppMgr->setColorGradingPreset(lvlInfo.lut);
+	Global::ppMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
 }
 
 void GameStateManager::restartLevel()
@@ -153,7 +153,7 @@ bool GameStateManager::insideMenuPressed()
 	}
 	if (i == -1)
 	{
-		Global::mPPMgr->vars.radialHorizBlurVignette.z = 0.0;
+		Global::ppMgr->vars.radialHorizBlurVignette.z = 0.0;
 		gameState = GAME;
 	}
 	if (i == SS_RESTART)
@@ -174,7 +174,7 @@ void GameStateManager::switchState(int target, float time)
 	stateTarget = target;
 	switchStateTimer = time;
 
-	Global::mPPMgr->fadeOut(Vector3(0, 0, 0), time);
+	Global::ppMgr->fadeOut(Vector3(0, 0, 0), time);
 	myMenu->clearMenu();
 }
 
@@ -237,21 +237,21 @@ void GameStateManager::escapePressed()
 	{
 		myMenu->clearMenu();
 		myMenu->setIngameMenu();
-		Global::mPPMgr->vars.radialHorizBlurVignette.z = 2.0;
+		Global::ppMgr->vars.radialHorizBlurVignette.z = 2.0;
 
-		lastNoise = Global::mPPMgr->vars.ContSatuSharpNoise.z;
-		lastCont = Global::mPPMgr->vars.ContSatuSharpNoise.x;
-		Global::mPPMgr->vars.ContSatuSharpNoise.z = 1;
-		Global::mPPMgr->vars.ContSatuSharpNoise.x = 1;
+		lastNoise = Global::ppMgr->vars.ContSatuSharpNoise.z;
+		lastCont = Global::ppMgr->vars.ContSatuSharpNoise.x;
+		Global::ppMgr->vars.ContSatuSharpNoise.z = 1;
+		Global::ppMgr->vars.ContSatuSharpNoise.x = 1;
 
 		gameState = PAUSE;
 	}
 	else if (gameState == PAUSE)
 	{
 		myMenu->clearMenu();
-		Global::mPPMgr->vars.radialHorizBlurVignette.z = 0.0;
-		Global::mPPMgr->vars.ContSatuSharpNoise.z = lastNoise;
-		Global::mPPMgr->vars.ContSatuSharpNoise.x = lastCont;
+		Global::ppMgr->vars.radialHorizBlurVignette.z = 0.0;
+		Global::ppMgr->vars.ContSatuSharpNoise.z = lastNoise;
+		Global::ppMgr->vars.ContSatuSharpNoise.x = lastCont;
 
 		gameState = GAME;
 	}
@@ -261,16 +261,16 @@ void GameStateManager::clearLevel()
 {
 	SceneCubeMap::clearAll();
 	geometryMgr->clear();
-	Global::mWorld->destroyAllBodies();
-	Global::mSceneMgr->clearScene();
-	Global::mEventsMgr->clear();
+	Global::nWorld->destroyAllBodies();
+	Global::sceneMgr->clearScene();
+	Global::eventsMgr->clear();
 	Global::audioLib->reset();
-	Global::mPPMgr->resetValues();
+	Global::ppMgr->resetValues();
 	VolumeDetectionManager::instance.reset();
 	SceneEnergies::reset();
 	Gate::reset();
 	sceneEdits.clear();
 	particleMgr.clear();
 
-	Global::mWorld->setWorldSize(Vector3(-15000, -500, -15000), Vector3(15000, 2000, 15000));
+	Global::nWorld->setWorldSize(Vector3(-15000, -500, -15000), Vector3(15000, 2000, 15000));
 }

@@ -20,12 +20,12 @@ void EventsManager::activatePlayerTrigger(bodyUserData* t)
 		{
 			if ((*it).second.at(j)->start())
 			{
-				Global::mEventsMgr->addCachedTask((*it).second.at(j));
+				Global::eventsMgr->addCachedTask((*it).second.at(j));
 			}
 		}
 
 		if (trigger->cooldown>0)
-			Global::mEventsMgr->cooldownTrigger(t);
+			Global::eventsMgr->cooldownTrigger(t);
 	}
 }
 

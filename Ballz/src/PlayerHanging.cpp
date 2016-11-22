@@ -29,7 +29,7 @@ void PlayerHanging::attachTo(Pole* target)
 
 	auto currentPos = player->camPosition;
 
-	hBody = new OgreNewt::Body(Global::mWorld, Global::player->col_p);
+	hBody = new OgreNewt::Body(Global::nWorld, Global::player->col_p);
 	hBody->setPositionOrientation(currentPos, Ogre::Quaternion::IDENTITY);
 	hBody->setMassMatrix(1, Ogre::Vector3(1, 1, 1));
 	hBody->setLinearDamping(0.2f);

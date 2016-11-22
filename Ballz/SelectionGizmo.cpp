@@ -108,7 +108,7 @@ bool SelectionGizmo::update()
 	if (currentMode != SelectionMode::Select && item)
 	{
 		auto itempos = item->getPosition();
-		auto cam = Global::camera->camera;
+		auto cam = Global::camera->cam;
 		auto dist = cam->getDerivedPosition().distance(itempos);
 
 		Ogre::Vector3 scale(dist / 5.0f, dist / 5.0f, dist / 5.0f);

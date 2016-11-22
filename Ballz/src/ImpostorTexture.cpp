@@ -58,8 +58,8 @@ void ImpostorTexture::render(Ogre::Entity* entity)
 	auto entityCenter = boundingBox.getCenter();
 
 	//Set up camera
-	camNode = Global::mSceneMgr->getSceneNode("ImpostorPage::cameraNode");
-	renderCamera = Global::mSceneMgr->createCamera("ImpostorCam");
+	camNode = Global::sceneMgr->getSceneNode("ImpostorPage::cameraNode");
+	renderCamera = Global::sceneMgr->createCamera("ImpostorCam");
 	camNode->attachObject(renderCamera);
 	renderCamera->setLodBias(1000.0f);
 	renderViewport = renderTarget->addViewport(renderCamera);
@@ -69,7 +69,7 @@ void ImpostorTexture::render(Ogre::Entity* entity)
 	renderViewport->setBackgroundColour(Ogre::ColourValue(1,1,1,0));
 
 	//Set up scene node
-	SceneNode* node = Global::mSceneMgr->getSceneNode("ImpostorPage::renderNode");
+	SceneNode* node = Global::sceneMgr->getSceneNode("ImpostorPage::renderNode");
 
 	Ogre::SceneNode* oldSceneNode = entity->getParentSceneNode();
 	if (oldSceneNode)
@@ -100,18 +100,18 @@ void ImpostorTexture::render(Ogre::Entity* entity)
 	mm->setDefaultTextureFiltering(FO_POINT, FO_LINEAR, FO_NONE);
 
 	//Disable fog
-	FogMode oldFogMode = Global::mSceneMgr->getFogMode();
-	ColourValue oldFogColor = Global::mSceneMgr->getFogColour();
-	Real oldFogDensity = Global::mSceneMgr->getFogDensity();
-	Real oldFogStart = Global::mSceneMgr->getFogStart();
-	Real oldFogEnd = Global::mSceneMgr->getFogEnd();
-	Global::mSceneMgr->setFog(FOG_NONE);
+	FogMode oldFogMode = Global::sceneMgr->getFogMode();
+	ColourValue oldFogColor = Global::sceneMgr->getFogColour();
+	Real oldFogDensity = Global::sceneMgr->getFogDensity();
+	Real oldFogStart = Global::sceneMgr->getFogStart();
+	Real oldFogEnd = Global::sceneMgr->getFogEnd();
+	Global::sceneMgr->setFog(FOG_NONE);
 
 	// Get current status of the queue mode
-	Ogre::SceneManager::SpecialCaseRenderQueueMode OldSpecialCaseRenderQueueMode = Global::mSceneMgr->getSpecialCaseRenderQueueMode();
+	Ogre::SceneManager::SpecialCaseRenderQueueMode OldSpecialCaseRenderQueueMode = Global::sceneMgr->getSpecialCaseRenderQueueMode();
 	//Only render the entity
-	Global::mSceneMgr->setSpecialCaseRenderQueueMode(Ogre::SceneManager::SCRQM_INCLUDE);
-	Global::mSceneMgr->addSpecialCaseRenderQueue(51);
+	Global::sceneMgr->setSpecialCaseRenderQueueMode(Ogre::SceneManager::SCRQM_INCLUDE);
+	Global::sceneMgr->addSpecialCaseRenderQueue(51);
 
 	uint8 oldRenderQueueGroup = entity->getRenderQueueGroup();
 	entity->setRenderQueueGroup(51);
@@ -190,15 +190,15 @@ void ImpostorTexture::render(Ogre::Entity* entity)
 	entity->setRenderQueueGroup(oldRenderQueueGroup);
 	entity->setRenderingDistance(oldMaxDistance);
 
-	Global::mSceneMgr->removeSpecialCaseRenderQueue(51);
+	Global::sceneMgr->removeSpecialCaseRenderQueue(51);
 	// Restore original state
-	Global::mSceneMgr->setSpecialCaseRenderQueueMode(OldSpecialCaseRenderQueueMode);
+	Global::sceneMgr->setSpecialCaseRenderQueueMode(OldSpecialCaseRenderQueueMode);
 
 	//Re-enable mipmapping
 	mm->setDefaultTextureFiltering(oldMinFilter, oldMagFilter, oldMipFilter);
 
 	//Re-enable fog
-	Global::mSceneMgr->setFog(oldFogMode, oldFogColor, oldFogDensity, oldFogStart, oldFogEnd);
+	Global::sceneMgr->setFog(oldFogMode, oldFogColor, oldFogDensity, oldFogStart, oldFogEnd);
 
 	//Delete camera
 	renderTarget->removeViewport(0);

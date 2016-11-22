@@ -47,9 +47,9 @@ void reloadMeshes(std::string directory, std::string meshPrefix)
 			auto name = meshName.substr(0, meshName.find_last_of('.'));
 			name = name.substr(meshPrefix.length());
 
-			if (Global::mSceneMgr->hasEntity(name))
+			if (Global::sceneMgr->hasEntity(name))
 			{
-				auto e = Global::mSceneMgr->getEntity(name);
+				auto e = Global::sceneMgr->getEntity(name);
 
 				Ogre::MaterialPtr mat = e->getSubEntity(0)->getMaterial();
 				e->getMesh()->reload();

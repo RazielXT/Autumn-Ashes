@@ -14,7 +14,7 @@ void PlayerGrab::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threa
 
 	Vector3 targetPos = p->bodyPosition;
 	targetPos.y += 1;
-	targetPos += Global::camera->getFacingDirection()*3;
+	targetPos += Global::camera->direction*3;
 
 	Vector3 targetVector = (targetPos - currentPos) ;
 
@@ -35,13 +35,13 @@ void PlayerGrab::grabbed_callback(OgreNewt::Body* obj, float timeStep, int threa
 	}
 
 	obj->setForce(targetVector * 10);
-	obj->setPositionOrientation(obj->getPosition(), Global::camera->getBaseOrientation());
+	obj->setPositionOrientation(obj->getPosition(), p->pCamera->getBaseOrientation());
 }
 
 void PlayerGrab::tryToGrab()
 {
 	Vector3 pos = p->camPosition;
-	OgreNewt::BasicRaycast ray(Global::mWorld, pos, pos + p->facingDir*4, false);
+	OgreNewt::BasicRaycast ray(Global::nWorld, pos, pos + p->facingDir*4, false);
 	OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
 
 	if (info.mBody)
@@ -71,7 +71,7 @@ void PlayerGrab::tryToGrab()
 			{
 				bodyUserData* a0 = Ogre::any_cast<bodyUserData*>(any);
 				if (a0->enabledTrigger)
-					Global::mEventsMgr->activatePlayerTrigger(a0);
+					Global::eventsMgr->activatePlayerTrigger(a0);
 			}
 		}
 	}
@@ -79,7 +79,7 @@ void PlayerGrab::tryToGrab()
 
 void PlayerGrab::releaseObj()
 {
-	Gbody->setMaterialGroupID(Global::mWorld->getDefaultMaterialID());
+	Gbody->setMaterialGroupID(Global::nWorld->getDefaultMaterialID());
 	//Gbody->setMassMatrix(Gbody->getMass(),Gbody->getInertia()*20);
 	Gbody->setCustomForceAndTorqueCallback<Player>(&Player::default_callback, p);
 	Gbody->setAngularDamping(gADT);

@@ -14,7 +14,7 @@ void ParkToDreamReaction::setUserData(void* data)
 
 bool ParkToDreamReaction::start()
 {
-	Global::mPPMgr->fadeOut(Ogre::Vector3(1,1,1),1);
+	Global::ppMgr->fadeOut(Ogre::Vector3(1,1,1),1);
 	timer=0;
 
 	return true;
@@ -26,13 +26,13 @@ bool ParkToDreamReaction::update(Ogre::Real tslf)
 
 	if(timer>1.1f)
 	{
-		PostProcessMgr* mgr = Global::mPPMgr;
+		PostProcessMgr* mgr = Global::ppMgr;
 		mgr->vars.ColouringShift.x = 0.55;
 		mgr->vars.ColouringShift.y = 1.0;
 		mgr->vars.ColouringShift.z = 1.7;
 
 		mgr->fadeIn(Ogre::Vector3(1, 1, 1), 2);
-		Global::mSceneMgr->setVisibilityMask(2);
+		Global::sceneMgr->setVisibilityMask(2);
 		return false;
 	}
 
@@ -51,7 +51,7 @@ void NearParkEndReaction::setUserData(void* data)
 bool NearParkEndReaction::start()
 {
 	doneEffect=doneEffect0=false;
-	mgr = Global::mPPMgr;
+	mgr = Global::ppMgr;
 	Global::soundEngine->play2D("../../media/oneHearthbeat.ogg",false , false, false, irrklang::ESM_AUTO_DETECT, false);
 	noiseSound = Global::soundEngine->play2D("../../media/tvnoise.ogg",true , true, true, irrklang::ESM_AUTO_DETECT, false);
 	noiseSound->setVolume(0);
@@ -81,9 +81,9 @@ bool NearParkEndReaction::update(Ogre::Real tslf)
 
 		if(!doneEffect0 && timer>0.25f)
 		{
-			Global::mSceneMgr->setVisibilityMask(4);
+			Global::sceneMgr->setVisibilityMask(4);
 			Global::player->stopMoving();
-			Global::camera->rotateCamera(180,0);
+			Global::player->pCamera->rotateCamera(180,0);
 			doneEffect0=true;
 		}
 
@@ -133,29 +133,29 @@ void ParkEndReaction::setUserData(void* data)
 
 bool ParkEndReaction::start()
 {
-	mgr = Global::mPPMgr;
+	mgr = Global::ppMgr;
 	Global::soundEngine->play2D("../../media/oneHearthbeat.ogg",false , false, false, irrklang::ESM_AUTO_DETECT, false);
 
 	((irrklang::ISound*)Global::globalData->find("tvnoise.ogg")->second)->stop();
 	doneEffect1 = doneEffect2 = doneEffect3 = false;
 	timer=0;
 
-	mAnim1 = Global::mSceneMgr->getEntity("Ruka5")->getAnimationState("prsty");
+	mAnim1 = Global::sceneMgr->getEntity("Ruka5")->getAnimationState("prsty");
 	mAnim1->setLoop(false);
 	mAnim1->setEnabled(true);
 	mAnim1->setTimePosition(0.3);
 
-	mAnim2 = Global::mSceneMgr->getEntity("Ruka2")->getAnimationState("prsty");
+	mAnim2 = Global::sceneMgr->getEntity("Ruka2")->getAnimationState("prsty");
 	mAnim2->setLoop(false);
 	mAnim2->setEnabled(true);
 	mAnim2->setTimePosition(0.35);
 
-	mAnim3 = Global::mSceneMgr->getEntity("Ruka3")->getAnimationState("prsty");
+	mAnim3 = Global::sceneMgr->getEntity("Ruka3")->getAnimationState("prsty");
 	mAnim3->setLoop(false);
 	mAnim3->setEnabled(true);
 	mAnim3->setTimePosition(0.2);
 
-	mAnim4 = Global::mSceneMgr->getEntity("Ruka4")->getAnimationState("prsty");
+	mAnim4 = Global::sceneMgr->getEntity("Ruka4")->getAnimationState("prsty");
 	mAnim4->setLoop(false);
 	mAnim4->setEnabled(true);
 	mAnim4->setTimePosition(0.15);
@@ -195,7 +195,7 @@ bool ParkEndReaction::update(Ogre::Real tslf)
 		{
 			if(!doneEffect2)
 			{
-				Global::mSceneMgr->setVisibilityMask(8);
+				Global::sceneMgr->setVisibilityMask(8);
 				Global::soundEngine->play2D("../../media/blaze_explotion.wav",false , false, false, irrklang::ESM_AUTO_DETECT, false);
 				sound = Global::soundEngine->play2D("../../media/scaryScreak1.wav",false , false, true, irrklang::ESM_AUTO_DETECT, false);
 
@@ -220,7 +220,7 @@ bool ParkEndReaction::update(Ogre::Real tslf)
 			//Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().getByName("TCENoonSkyBoxToDark");
 			Ogre::Vector4 pp = Ogre::Vector4::ZERO;
 			//mat->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->setNamedConstant("dark", pp);
-			Global::mSceneMgr->setAmbientLight(Ogre::ColourValue(1*Global::timestep,1*Global::timestep,1*Global::timestep,0));
+			Global::sceneMgr->setAmbientLight(Ogre::ColourValue(1*Global::timestep,1*Global::timestep,1*Global::timestep,0));
 			if(timer>3.0f)
 			{
 				mAnim1->addTime(tslf*Global::timestep);
@@ -230,7 +230,7 @@ bool ParkEndReaction::update(Ogre::Real tslf)
 
 				if(!doneEffect3)
 				{
-					Global::mSceneMgr->setVisibilityMask(16);
+					Global::sceneMgr->setVisibilityMask(16);
 					doneEffect3=true;
 				}
 			}
@@ -268,11 +268,11 @@ bool OutOfCave::start()
 	delete it->second;
 	bodies->erase(it);
 	it = bodies->find("ORock1");
-	it->second->setMaterialGroupID(Global::mWorld->getDefaultMaterialID());
+	it->second->setMaterialGroupID(Global::nWorld->getDefaultMaterialID());
 
-	Global::mSceneMgr->getSceneNode("FCave")->detachAllObjects();
-	Global::mSceneMgr->getSceneNode("Plane01")->detachAllObjects();
-	Global::mSceneMgr->getSceneNode("Plane02")->detachAllObjects();
+	Global::sceneMgr->getSceneNode("FCave")->detachAllObjects();
+	Global::sceneMgr->getSceneNode("Plane01")->detachAllObjects();
+	Global::sceneMgr->getSceneNode("Plane02")->detachAllObjects();
 
 	return false;
 }

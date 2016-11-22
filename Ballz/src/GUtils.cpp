@@ -23,10 +23,10 @@ void DebugPrint(const std::string line, bool logFile)
 
 OgreNewt::Body* createConvexBody(Entity* ent, float mass, float linearDamping, float angularDamping)
 {
-	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::mWorld, ent, 0));
+	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::nWorld, ent, 0));
 	auto node = ent->getParentNode();
 
-	auto body = new OgreNewt::Body(Global::mWorld, col);
+	auto body = new OgreNewt::Body(Global::nWorld, col);
 
 	Ogre::Vector3 inertia, offset;
 	col->calculateInertialMatrix(inertia, offset);

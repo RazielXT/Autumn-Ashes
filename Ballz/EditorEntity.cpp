@@ -84,7 +84,7 @@ std::string getCloneName(std::string oldName)
 	else
 		oldName += "_c";
 
-	while (Global::mSceneMgr->hasEntity(oldName + std::to_string(counter++)));
+	while (Global::sceneMgr->hasEntity(oldName + std::to_string(counter++)));
 
 	return oldName + std::to_string(counter-1);
 }
@@ -98,7 +98,7 @@ void EditorEntity::duplicate()
 	for (auto& e : oldSelected)
 	{
 		auto ent = e->clone(getCloneName(e->getName()));
-		auto newRoot = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(e->getParentSceneNode()->getPosition(), e->getParentSceneNode()->getOrientation());
+		auto newRoot = Global::sceneMgr->getRootSceneNode()->createChildSceneNode(e->getParentSceneNode()->getPosition(), e->getParentSceneNode()->getOrientation());
 		newRoot->setScale(e->getParentSceneNode()->getScale());
 		newRoot->attachObject(ent);
 
@@ -112,8 +112,8 @@ void EditorEntity::remove()
 	{
 		auto n = e->getParentSceneNode();
 		e->detachFromParent();
-		Global::mSceneMgr->destroyEntity(e);
-		Global::mSceneMgr->destroySceneNode(n);
+		Global::sceneMgr->destroyEntity(e);
+		Global::sceneMgr->destroySceneNode(n);
 	}
 
 	selected.clear();

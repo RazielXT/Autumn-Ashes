@@ -207,7 +207,7 @@ void optimizeEntities()
 
 			if (!sg)
 			{
-				sg = Global::mSceneMgr->createStaticGeometry("sgOpt" + std::to_string(sgCount++));
+				sg = Global::sceneMgr->createStaticGeometry("sgOpt" + std::to_string(sgCount++));
 				sg->setRegionDimensions(Ogre::Vector3(staticEntitiesGridSize, staticEntitiesGridSize, staticEntitiesGridSize));
 				sg->setOrigin(Ogre::Vector3(0, 0, 0));
 				sg->setCastShadows(true);
@@ -584,7 +584,7 @@ void loadCrowFlight(const XMLElement* rootElement, Entity* ent, SceneNode* node)
 	CrowsManager::get()->addCrowFlight(crows, randomYaw, flightTime, switchTime, node, mID);
 
 	node->detachAllObjects();
-	Global::mSceneMgr->destroyEntity(ent);
+	Global::sceneMgr->destroyEntity(ent);
 }
 
 void loadCrowLanding(const XMLElement* rootElement, Entity* ent, SceneNode* node)
@@ -599,8 +599,8 @@ void loadCrowLanding(const XMLElement* rootElement, Entity* ent, SceneNode* node
 	CrowsManager::get()->addCrowLanding(crows, maxCrows, groundTime, walking, node, mID);
 
 	node->detachAllObjects();
-	Global::mSceneMgr->destroyEntity(ent);
-	Global::mSceneMgr->destroySceneNode(node);
+	Global::sceneMgr->destroyEntity(ent);
+	Global::sceneMgr->destroySceneNode(node);
 }
 
 void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
@@ -609,7 +609,7 @@ void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
 	int rGroup = getElementIntValue(rootElement, "RenderQroup", RenderQueue_SoftParticles);
 
 	std::string name = "PS_" + ent->getName();
-	Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem(name, ps_name);
+	Ogre::ParticleSystem* ps = Global::sceneMgr->createParticleSystem(name, ps_name);
 	ps->setRenderQueueGroup(rGroup);
 
 	ps->setVisibilityFlags(rGroup >= RenderQueue_SoftParticles ? VisibilityFlag_SoftParticles : VisibilityFlag_Normal);
@@ -669,7 +669,7 @@ void loadParticle(const XMLElement* rootElement, Entity* ent, SceneNode* node)
 		Global::gameMgr->particleMgr.addParticle(ps);
 
 	node->detachAllObjects();
-	Global::mSceneMgr->destroyEntity(ent);
+	Global::sceneMgr->destroyEntity(ent);
 
 	node->attachObject(ps);
 }
@@ -933,8 +933,8 @@ void loadDetailGeometryMask(const XMLElement* rootElement, Entity* ent)
 	auto node = ent->getParentSceneNode();
 
 	node->detachObject(ent);
-	Global::mSceneMgr->destroyEntity(ent);
-	Global::mSceneMgr->destroySceneNode(node);
+	Global::sceneMgr->destroyEntity(ent);
+	Global::sceneMgr->destroySceneNode(node);
 }
 
 void loadDetailGeometry(const XMLElement* rootElement, Entity* ent)
@@ -948,10 +948,10 @@ void loadDetailGeometry(const XMLElement* rootElement, Entity* ent)
 	Global::gameMgr->geometryMgr->addDetailGeometryEntity(id, node, type, keepMesh, color);
 
 	node->detachObject(ent);
-	Global::mSceneMgr->destroySceneNode(node);
+	Global::sceneMgr->destroySceneNode(node);
 
 	if (!keepMesh)
-		Global::mSceneMgr->destroyEntity(ent);
+		Global::sceneMgr->destroyEntity(ent);
 }
 
 void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre::SceneManager *mSceneMgr)
@@ -1013,7 +1013,7 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
 	TerrainHeightQueryData* offsets = new TerrainHeightQueryData();
 	offsets->offset_maxY = ent->getBoundingBox().getMaximum().y + node->getPosition().y;
 	offsets->offset_minY = ent->getBoundingBox().getMinimum().y + node->getPosition().y;
-	offsets->world = Global::mWorld;
+	offsets->world = Global::nWorld;
 
 	Forests::GrassLoader *grassLoader = new Forests::GrassLoader(grass);
 
@@ -1121,7 +1121,7 @@ void loadReflection(const XMLElement* element, Ogre::Entity* ent, SceneNode* nod
 
 	ReflectionTask* refl = new ReflectionTask();
 	refl->init(ent, mask);
-	Global::mEventsMgr->addTask(refl);
+	Global::eventsMgr->addTask(refl);
 }
 
 void loadInstance(const XMLElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
@@ -1212,8 +1212,8 @@ void loadEnergy(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
 	energy->hover(pos);
 
 	node->detachAllObjects();
-	Global::mSceneMgr->destroyEntity(ent);
-	Global::mSceneMgr->destroySceneNode(node);
+	Global::sceneMgr->destroyEntity(ent);
+	Global::sceneMgr->destroySceneNode(node);
 }
 
 void loadSpawn(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
@@ -1229,12 +1229,12 @@ void loadSpawn(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
 		Global::player->setPosition(pos);
 
 		Quaternion q = node->_getDerivedOrientation();
-		Global::camera->rotateCamera(Ogre::Degree(q.getYaw()).valueDegrees(), -Ogre::Degree(q.getPitch()).valueDegrees());
+		Global::player->pCamera->rotateCamera(Ogre::Degree(q.getYaw()).valueDegrees(), -Ogre::Degree(q.getPitch()).valueDegrees());
 	}
 
 	node->detachAllObjects();
-	Global::mSceneMgr->destroyEntity(ent);
-	Global::mSceneMgr->destroySceneNode(node);
+	Global::sceneMgr->destroyEntity(ent);
+	Global::sceneMgr->destroySceneNode(node);
 }
 
 void loadGate(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
@@ -1282,8 +1282,8 @@ void loadSceneCubeMap(const XMLElement* element, Ogre::Entity* ent, SceneNode* n
 	cube->materialWPOffset = offsetW;
 
 	node->detachAllObjects();
-	Global::mSceneMgr->destroyEntity(ent);
-	Global::mSceneMgr->destroySceneNode(node);
+	Global::sceneMgr->destroyEntity(ent);
+	Global::sceneMgr->destroySceneNode(node);
 }
 
 void loadWaterCurrent(const XMLElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
@@ -1552,8 +1552,8 @@ OgreNewt::Body* loadPhysics(const XMLElement* rootElement, Entity* ent, SceneNod
 			else
 			{
 				info.node->detachAllObjects();
-				Global::mSceneMgr->destroySceneNode(info.node);
-				Global::mSceneMgr->destroyEntity(info.ent);
+				Global::sceneMgr->destroySceneNode(info.node);
+				Global::sceneMgr->destroyEntity(info.ent);
 			}
 		}
 
@@ -1709,7 +1709,7 @@ void loadBridge(const XMLElement* element, SceneNode* node, Ogre::SceneManager *
 	Ogre::LogManager::getSingleton().getLog("Loading.log")->logMessage("Making BM", LML_NORMAL);
 	int matType = Ogre::StringConverter::parseInt(element->GetText());
 
-	static BridgeMaker bm(mSceneMgr, Global::mWorld);
+	static BridgeMaker bm(mSceneMgr, Global::nWorld);
 
 	if (mat.empty())
 		bm.makeBridge(pos, target, scale, loose, matType, visibilityFlag);
@@ -2413,9 +2413,9 @@ void loadNode(const XMLElement* nodeElement)
 	Ogre::String name;
 	name = nodeElement->Attribute("name");
 
-	Ogre::SceneManager *mSceneMgr = Global::mSceneMgr;
-	OgreNewt::World* mWorld = Global::mWorld;
-	EventsManager* mEventMgr = Global::mEventsMgr;
+	Ogre::SceneManager *mSceneMgr = Global::sceneMgr;
+	OgreNewt::World* mWorld = Global::nWorld;
+	EventsManager* mEventMgr = Global::eventsMgr;
 	WorldMaterials* wMaterials = &Global::gameMgr->wMaterials;
 
 	node = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
@@ -2685,7 +2685,7 @@ void loadSceneSettings(const XMLElement* sceneElement)
 		}
 	}
 
-	Global::mSceneMgr->setSkyBox(true, skybox);
+	Global::sceneMgr->setSkyBox(true, skybox);
 }
 
 bool isInPreloadPass(std::string type)

@@ -4,14 +4,14 @@
 
 void SceneOptions::getCurrentSceneInfo(GetSceneSettingsData* data)
 {
-	auto luts = Global::mPPMgr->getColorGradingPresets();
+	auto luts = Global::ppMgr->getColorGradingPresets();
 
 	for (auto& lut : luts)
 		data->lutOptions.push_back(std::wstring(lut.begin(), lut.end()));
 
 	data->currentLutId = 0;
 	for (size_t i = 0; i < luts.size(); i++)
-		if (luts[i] == Global::mPPMgr->getCurrentGradingPreset())
+		if (luts[i] == Global::ppMgr->getCurrentGradingPreset())
 			data->currentLutId = (int) i;
 
 	data->skyboxOptions.push_back(L"TCENoonSkyBox");
@@ -21,7 +21,7 @@ void SceneOptions::getCurrentSceneInfo(GetSceneSettingsData* data)
 void SceneOptions::editScene(SceneSettingsChange* change)
 {
 	if(change->change == SceneSettingsChange::SceneChange::Lut)
-		Global::mPPMgr->setColorGradingPreset(*(std::string*)change->data);
+		Global::ppMgr->setColorGradingPreset(*(std::string*)change->data);
 	if (change->change == SceneSettingsChange::SceneChange::Skybox)
-		Global::mSceneMgr->setSkyBox(true, *(std::string*)change->data);
+		Global::sceneMgr->setSkyBox(true, *(std::string*)change->data);
 }

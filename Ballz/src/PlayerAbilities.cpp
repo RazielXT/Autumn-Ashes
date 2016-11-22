@@ -76,7 +76,7 @@ bool PlayerFlash::portForward()
 
 		portingTimer = 0;
 
-		Global::camera->detachCamera(cameraPortNode);
+		p->pCamera->detachCamera(cameraPortNode);
 
 		portStartPos = cameraPortNode->getPosition();
 		portTargetPos = target->position;
@@ -96,8 +96,8 @@ void PlayerFlash::update(float tslf)
 
 		if (portingTimer >= portTime)
 		{
-			Global::mPPMgr->vars.radialHorizBlurVignette.x = 0;
-			Global::camera->attachCamera(true);
+			Global::ppMgr->vars.radialHorizBlurVignette.x = 0;
+			p->pCamera->attachCamera(true);
 			p->bodyPosition = portTargetPos;
 			p->body->setPositionOrientation(portTargetPos, Ogre::Quaternion::IDENTITY);
 			p->body->setVelocity(p->facingDir * 10);
@@ -105,7 +105,7 @@ void PlayerFlash::update(float tslf)
 		}
 		else
 		{
-			Global::mPPMgr->vars.radialHorizBlurVignette.x = 1;
+			Global::ppMgr->vars.radialHorizBlurVignette.x = 1;
 			cameraPortNode->setPosition(MUtils::lerp(portStartPos, portTargetPos, portingTimer / portTime));
 		}
 	}
@@ -115,5 +115,5 @@ PlayerFlash::PlayerFlash(Player* player, PlayerEnergies* energies)
 {
 	p = player;
 	pEnergies = energies;
-	cameraPortNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	cameraPortNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();
 }

@@ -63,7 +63,7 @@ void Energy::startUsage(float chargeTime, UsageState state, bool autoupdate)
 	usage.state = state;
 
 	if (autoupdate)
-		Global::mEventsMgr->addTask(new EnergyRecharge(this));
+		Global::eventsMgr->addTask(new EnergyRecharge(this));
 }
 
 void Energy::stopUsage()

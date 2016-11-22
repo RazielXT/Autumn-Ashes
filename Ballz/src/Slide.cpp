@@ -72,7 +72,7 @@ void Slide::startJumpToSlide()
 	jumpingToSlide = true;
 
 	float shakeW = std::min(1.0f, headArrival.dist*0.8f);
-	Global::camera->shaker.startShaking(shakeW*0.8f, shakeW*1.0f, 0.5f, 1, 1, 0.4f, 0.25f, 1, true);
+	Global::player->pCamera->shaker.startShaking(shakeW*0.8f, shakeW*1.0f, 0.5f, 1, 1, 0.4f, 0.25f, 1, true);
 }
 
 void Slide::updateJumpToSlide(float time)
@@ -99,7 +99,7 @@ bool Slide::start(Vector3& pos, bool withJump)
 		return false;
 
 	if (mTrackerState == nullptr)
-		mTrackerState = Global::mSceneMgr->createAnimationState(animName);
+		mTrackerState = Global::sceneMgr->createAnimationState(animName);
 
 	if (startFromPosition(pos))
 	{
@@ -181,7 +181,7 @@ void Slide::attach(bool retainDirection, float headArrivalTime)
 	resetHead();
 
 	{
-		Ogre::Camera* cam = Global::camera->camera;
+		Ogre::Camera* cam = Global::camera->cam;
 
 		auto state = getCurrentState();
 		auto pDir = cam->getDerivedOrientation();
@@ -202,7 +202,7 @@ void Slide::attach(bool retainDirection, float headArrivalTime)
 
 	unavailableTimer = headArrivalTime;
 
-	Global::camera->shaker.nodHead(1);
+	Global::player->pCamera->shaker.nodHead(1);
 	Global::player->pSliding->slidingStarted();
 
 	mTrackerState->setEnabled(true);
@@ -220,16 +220,16 @@ void Slide::release(bool returnControl, bool manualJump)
 		//GUtils::DebugPrint(Ogre::StringConverter::toString(head->_getDerivedPosition()));
 		Global::player->body->setPositionOrientation(head->_getDerivedPosition(), Ogre::Quaternion::IDENTITY);
 		//Global::camera->attachCamera();
-		Global::camera->attachCameraWithTransition(0.2f);
+		Global::player->pCamera->attachCameraWithTransition(0.2f);
 
 		float releaseSpeed = pow(std::max(1.0f, currentSpeed * 0.5f), 0.75f);
 
 		if (!manualJump)
 			Global::player->body->setVelocity(getDirectionState()*Vector3(0, 0, -1 * releaseSpeed) + Vector3(0, 3, 0));
 		else
-			Global::player->body->setVelocity(10 * Global::camera->getFacingDirection() + Vector3(0, 10, 0));
+			Global::player->body->setVelocity(10 * Global::camera->direction + Vector3(0, 10, 0));
 
-		Global::camera->shaker.nodHead(1);
+		Global::player->pCamera->shaker.nodHead(1);
 		//Global::camera->shaker.startShaking(0.8f, 1.0f, 0.5f, 1, 1, 0.4f, 0.25f, 1, true);
 
 		enablePlayerControl = true;
@@ -247,11 +247,11 @@ void Slide::updateHeadArrival(float time)
 
 	Quaternion qpitch = Quaternion(Degree(headState.pitch), Vector3(0, 1, 0));
 	Quaternion qyaw = Quaternion(Degree(headState.yaw), Vector3(1, 0, 0));
-	Quaternion qCam = qpitch*qyaw*Global::camera->shaker.current;
+	Quaternion qCam = qpitch*qyaw*Global::player->pCamera->shaker.current;
 
 	if (finished)
 	{
-		Ogre::Camera* cam = Global::camera->camera;
+		Ogre::Camera* cam = Global::camera->cam;
 		head->attachObject(cam);
 		head->setOrientation(qCam);
 	}
@@ -288,7 +288,7 @@ void Slide::updateSlidingCamera(float time)
 		Quaternion qpitch = Quaternion(Degree(headState.pitch), Vector3(0, 1, 0));
 		Quaternion qyaw = Quaternion(Degree(headState.yaw), Vector3(1, 0, 0));
 
-		head->setOrientation(qpitch*qyaw*Global::camera->shaker.current);
+		head->setOrientation(qpitch*qyaw*Global::player->pCamera->shaker.current);
 	}
 }
 

@@ -12,7 +12,7 @@ ReflectionTask::ReflectionTask()
 ReflectionTask::~ReflectionTask()
 {
 	texture.setNull();
-	Global::mSceneMgr->destroyCamera(mReflectCam);
+	Global::sceneMgr->destroyCamera(mReflectCam);
 	//mat.setNull();
 }
 
@@ -24,9 +24,9 @@ void ReflectionTask::init(Ogre::Entity* water, int visibilityFlag)
 
 bool ReflectionTask::start()
 {
-	auto sceneMgr = Global::mSceneMgr;
+	auto sceneMgr = Global::sceneMgr;
 	auto camera = sceneMgr->getCamera("Camera");
-	auto window = Global::mWindow;
+	auto window = Global::window;
 
 	auto idString = Ogre::StringConverter::toString(id++);
 
@@ -97,7 +97,7 @@ bool ReflectionTask::start()
 
 bool ReflectionTask::update(Ogre::Real tslf)
 {
-	auto camera = Global::mSceneMgr->getCamera("Camera");
+	auto camera = Global::sceneMgr->getCamera("Camera");
 	mReflectCam->setPosition(camera->getDerivedPosition());
 
 	auto or = camera->getDerivedOrientation();

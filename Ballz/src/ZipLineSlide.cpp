@@ -4,7 +4,7 @@
 
 ZipLineSlide::ZipLineSlide(const std::vector<Ogre::Vector3>& points, const std::string& zipName, bool looped, bool is_walkable, float speed) : Slide(zipName, looped, is_walkable, speed)
 {
-	tracker = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	tracker = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();
 	base = tracker->createChildSceneNode();
 	head = base->createChildSceneNode();
 

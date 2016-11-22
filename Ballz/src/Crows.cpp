@@ -11,7 +11,7 @@ CrowsManager* CrowsManager::get()
 	if (!ptr)
 	{
 		ptr = new CrowsManager();
-		Global::mEventsMgr->addTask(ptr);
+		Global::eventsMgr->addTask(ptr);
 	}
 
 	return ptr;

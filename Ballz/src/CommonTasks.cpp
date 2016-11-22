@@ -83,9 +83,9 @@ void GiveTargetMark::setUserData(void* data)
 bool GiveTargetMark::start()
 {
 
-	Ogre::ParticleSystem* ps = Global::mSceneMgr->createParticleSystem("Mark"+Ogre::StringConverter::toString(markUniqInt++), "markTest");
+	Ogre::ParticleSystem* ps = Global::sceneMgr->createParticleSystem("Mark"+Ogre::StringConverter::toString(markUniqInt++), "markTest");
 	ps->setEmitting(false);
-	ps->setVisibilityFlags(Global::mSceneMgr->getSceneNode(mBody->getOgreNode()->getName())->getAttachedObject(0)->getVisibilityFlags());
+	ps->setVisibilityFlags(Global::sceneMgr->getSceneNode(mBody->getOgreNode()->getName())->getAttachedObject(0)->getVisibilityFlags());
 	((Ogre::SceneNode*)mBody->getOgreNode())->attachObject(ps);
 
 	bodyUserData* bUD=Ogre::any_cast<bodyUserData*>(mBody->getUserData());
@@ -387,7 +387,7 @@ void MakeSmoke::setUserData(void* data)
 {
 	uData = data;
 
-	ps = Global::mSceneMgr->createParticleSystem("SmokeParticle"+Ogre::StringConverter::toString(markUniqInt++), mat);
+	ps = Global::sceneMgr->createParticleSystem("SmokeParticle"+Ogre::StringConverter::toString(markUniqInt++), mat);
 	ps->setEmitting(false);
 	ps->getEmitter(0)->setEmissionRate(emission);
 
@@ -400,7 +400,7 @@ void MakeSmoke::setUserData(void* data)
 	}
 	else
 	{
-		sn = Global::mSceneMgr->getSceneNode(((OgreNewt::Body*) data)->getOgreNode()->getName());
+		sn = Global::sceneMgr->getSceneNode(((OgreNewt::Body*) data)->getOgreNode()->getName());
 		ps->setVisibilityFlags(sn->getAttachedObject(0)->getVisibilityFlags());
 	}
 
@@ -589,12 +589,12 @@ void ChangeEntityTask::setUserData(void* data)
 
 bool ChangeEntityTask::start()
 {
-	Ogre::SceneNode* n = Global::mSceneMgr->getSceneNode(mBody->getOgreNode()->getName());
+	Ogre::SceneNode* n = Global::sceneMgr->getSceneNode(mBody->getOgreNode()->getName());
 	Ogre::Entity* oldEnt = (Ogre::Entity*) n->getAttachedObject(0);
 	n->detachAllObjects();
-	Ogre::Entity* newEnt = Global::mSceneMgr->createEntity(entityName+".mesh");
+	Ogre::Entity* newEnt = Global::sceneMgr->createEntity(entityName+".mesh");
 	newEnt->setVisibilityFlags(oldEnt->getVisibilityFlags());
-	Global::mSceneMgr->destroyEntity(oldEnt);
+	Global::sceneMgr->destroyEntity(oldEnt);
 
 	n->attachObject(newEnt);
 
@@ -798,10 +798,10 @@ void StartNodeAnimation::setUserData(void* data)
 {
 	node = ((Ogre::Entity*) data)->getParentSceneNode();
 
-	mAnimState = Global::mSceneMgr->createAnimationState(animName);
+	mAnimState = Global::sceneMgr->createAnimationState(animName);
 	mAnimState->setLoop(loop);
 
-	animNode = Global::mSceneMgr->getSceneNode(node->getName()+"Anim");
+	animNode = Global::sceneMgr->getSceneNode(node->getName()+"Anim");
 }
 
 bool StartNodeAnimation::start()
@@ -870,13 +870,13 @@ Continual2StepPhysicalNodeAnimation::Continual2StepPhysicalNodeAnimation(Ogre::S
 void Continual2StepPhysicalNodeAnimation::setUserData(void* data)
 {
 	mBody = (OgreNewt::Body*) data;
-	node = Global::mSceneMgr->getSceneNode(mBody->getOgreNode()->getName()+"Anim");
+	node = Global::sceneMgr->getSceneNode(mBody->getOgreNode()->getName()+"Anim");
 	mBody->setPositionOrientation(node->_getDerivedPosition(),node->_getDerivedOrientation());
 
 	if(master)
 	{
-		OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::mWorld,Ogre::Vector3(0.1,0.1,0.1),0));
-		mHelpBody = new OgreNewt::Body( Global::mWorld, col );
+		OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::nWorld,Ogre::Vector3(0.1,0.1,0.1),0));
+		mHelpBody = new OgreNewt::Body( Global::nWorld, col );
 		mHelpBody->setPositionOrientation( mBody->getPosition(), Ogre::Quaternion::IDENTITY );
 		Ogre::Vector3 inertia, offset;
 		col->calculateInertialMatrix(inertia, offset);
@@ -928,9 +928,9 @@ bool Continual2StepPhysicalNodeAnimation::start()
 	if(backwards)
 	{
 		if(secondStage)
-			mAnimState = Global::mSceneMgr->createAnimationState(anim2);
+			mAnimState = Global::sceneMgr->createAnimationState(anim2);
 		else
-			mAnimState = Global::mSceneMgr->createAnimationState(anim1);
+			mAnimState = Global::sceneMgr->createAnimationState(anim1);
 
 		mAnimState->setLoop(false);
 		backTimer = mAnimState->getLength();
@@ -940,9 +940,9 @@ bool Continual2StepPhysicalNodeAnimation::start()
 	else
 	{
 		if(secondStage)
-			mAnimState = Global::mSceneMgr->createAnimationState(anim2);
+			mAnimState = Global::sceneMgr->createAnimationState(anim2);
 		else
-			mAnimState = Global::mSceneMgr->createAnimationState(anim1);
+			mAnimState = Global::sceneMgr->createAnimationState(anim1);
 
 		mAnimState->setLoop(false);
 		mAnimState->setEnabled(true);
@@ -971,9 +971,9 @@ bool Continual2StepPhysicalNodeAnimation::update(float tslf)
 				running = false;
 
 				if(secondStage)
-					Global::mSceneMgr->destroyAnimationState(anim2);
+					Global::sceneMgr->destroyAnimationState(anim2);
 				else
-					Global::mSceneMgr->destroyAnimationState(anim1);
+					Global::sceneMgr->destroyAnimationState(anim1);
 			}
 		}
 		else
@@ -985,9 +985,9 @@ bool Continual2StepPhysicalNodeAnimation::update(float tslf)
 				running = false;
 
 				if(secondStage)
-					Global::mSceneMgr->destroyAnimationState(anim2);
+					Global::sceneMgr->destroyAnimationState(anim2);
 				else
-					Global::mSceneMgr->destroyAnimationState(anim1);
+					Global::sceneMgr->destroyAnimationState(anim1);
 			}
 		}
 
@@ -1036,7 +1036,7 @@ bool StartPhysicalNodeAnimation::start()
 	if(running)
 		return false;
 
-	node = Global::mSceneMgr->getSceneNode(mBody->getOgreNode()->getName()+"Anim");
+	node = Global::sceneMgr->getSceneNode(mBody->getOgreNode()->getName()+"Anim");
 	mBody->setPositionOrientation(node->_getDerivedPosition(),node->_getDerivedOrientation());
 
 	if(!direct && !mBody->getMass())
@@ -1044,8 +1044,8 @@ bool StartPhysicalNodeAnimation::start()
 
 	if(!direct)
 	{
-		OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::mWorld,Ogre::Vector3(0.1,0.1,0.1),0));
-		mHelpBody = new OgreNewt::Body( Global::mWorld, col );
+		OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::nWorld,Ogre::Vector3(0.1,0.1,0.1),0));
+		mHelpBody = new OgreNewt::Body( Global::nWorld, col );
 		mHelpBody->setPositionOrientation( mBody->getPosition(), Ogre::Quaternion::IDENTITY );
 		Ogre::Vector3 inertia, offset;
 		col->calculateInertialMatrix(inertia, offset);
@@ -1082,7 +1082,7 @@ bool StartPhysicalNodeAnimation::update(float tslf)
 	if(firstTime)
 	{
 		firstTime = false;
-		mAnimState = Global::mSceneMgr->createAnimationState(animName);
+		mAnimState = Global::sceneMgr->createAnimationState(animName);
 		mAnimState->setEnabled(true);
 		mBody->setCustomForceAndTorqueCallback<StartPhysicalNodeAnimation>(&StartPhysicalNodeAnimation::move_callback, this);
 		mAnimState->setLoop(loop);
@@ -1157,7 +1157,7 @@ void ChangeMat::setUserData(void* data)
 	else
 	{
 		mBody = (OgreNewt::Body*) data;
-		ent = (Ogre::Entity*) Global::mSceneMgr->getSceneNode(((OgreNewt::Body*) data)->getOgreNode()->getName())->getAttachedObject(0);
+		ent = (Ogre::Entity*) Global::sceneMgr->getSceneNode(((OgreNewt::Body*) data)->getOgreNode()->getName())->getAttachedObject(0);
 	}
 }
 
@@ -1204,14 +1204,14 @@ bool ShakeCamera::start()
 	Player* p = Global::player;
 
 	if(!maxDistance)
-		Global::camera->startCameraShake(steps,power,impulse);
+		p->pCamera->startCameraShake(steps,power,impulse);
 	else
 	{
 		float mod = Ogre::Math::Clamp((p->body->getPosition()-mBody->getPosition()).length()/maxDistance,0.0f,1.0f);
 		steps*=mod;
 		power*=mod;
 		impulse*=mod;
-		Global::camera->startCameraShake(steps,power,impulse);
+		p->pCamera->startCameraShake(steps,power,impulse);
 	}
 
 	return false;
@@ -1271,7 +1271,7 @@ MakeParticle::MakeParticle(Ogre::String particleInfo)
 	char* temp = strtok_s(const_cast<char *> (parseText),"/",&token);
 	Ogre::String particleName = Ogre::String(temp);
 
-	ps = Global::mSceneMgr->createParticleSystem("LoadedParticle"+Ogre::StringConverter::toString(markUniqInt++), particleName);
+	ps = Global::sceneMgr->createParticleSystem("LoadedParticle"+Ogre::StringConverter::toString(markUniqInt++), particleName);
 	ps->setEmitting(false);
 
 	temp = strtok_s(NULL,"/",&token);
@@ -1307,7 +1307,7 @@ void MakeParticle::setUserData(void* data)
 	}
 	else
 	{
-		sn = Global::mSceneMgr->getSceneNode(((OgreNewt::Body*) data)->getOgreNode()->getName());
+		sn = Global::sceneMgr->getSceneNode(((OgreNewt::Body*) data)->getOgreNode()->getName());
 		ps->setVisibilityFlags(sn->getAttachedObject(0)->getVisibilityFlags());
 	}
 
@@ -1388,9 +1388,9 @@ void WalkingAnim::setUserData(void* data)
 {
 	Ogre::SceneNode* node = ((Ogre::Entity*) data)->getParentSceneNode();
 	node->detachAllObjects();
-	Global::mSceneMgr->destroyEntity((Ogre::Entity*) data);
-	animNode = Global::mSceneMgr->getSceneNode(node->getName()+"Anim");
-	Global::mSceneMgr->destroySceneNode(node);
+	Global::sceneMgr->destroyEntity((Ogre::Entity*) data);
+	animNode = Global::sceneMgr->getSceneNode(node->getName()+"Anim");
+	Global::sceneMgr->destroySceneNode(node);
 	animNode = animNode->createChildSceneNode();
 }
 
@@ -1398,13 +1398,13 @@ bool WalkingAnim::start()
 {
 	registerInputListening();
 
-	Ogre::Camera* cam = Global::mSceneMgr->getCamera("Camera");
+	Ogre::Camera* cam = Global::sceneMgr->getCamera("Camera");
 	walkSinTimer = 0;
 	timer = 0;
 	finisher = 0;
 	firstFrame = true;
 	Global::player->enableControl(false);
-	mAnimState = Global::mSceneMgr->createAnimationState(animName);
+	mAnimState = Global::sceneMgr->createAnimationState(animName);
 	mAnimState->setEnabled(true);
 	mAnimState->setLoop(false);
 
@@ -1419,7 +1419,7 @@ bool WalkingAnim::start()
 	{
 		setTransformationParams(cam->getParentSceneNode()->_getDerivedOrientation(),animNode->_getDerivedOrientation(),cam->getParentSceneNode()->_getDerivedPosition(),animNode->_getDerivedPosition());
 		cam->detachFromParent();
-		startAnimNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode(currentPos,currentOr);
+		startAnimNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode(currentPos,currentOr);
 		startAnimNode->attachObject(cam);
 	}
 
@@ -1461,9 +1461,9 @@ bool WalkingAnim::update(float tslf)
 
 		if(timer>targetTime)
 		{
-			Global::mSceneMgr->getCamera("Camera")->detachFromParent();
-			Global::mSceneMgr->destroySceneNode(startAnimNode);
-			animNode->attachObject(Global::mSceneMgr->getCamera("Camera"));
+			Global::sceneMgr->getCamera("Camera")->detachFromParent();
+			Global::sceneMgr->destroySceneNode(startAnimNode);
+			animNode->attachObject(Global::sceneMgr->getCamera("Camera"));
 			lastPos = animNode->_getDerivedPosition();
 			lastPos.y = 0;
 			walkToStartPos = false;
@@ -1506,7 +1506,7 @@ bool WalkingAnim::update(float tslf)
 
 			Global::player->body->setPositionOrientation(animNode->_getDerivedPosition()-Ogre::Vector3(0,2,0),Ogre::Quaternion::IDENTITY);
 			Global::player->enableControl(true);
-			Global::camera->attachCamera();
+			Global::player->pCamera->attachCamera();
 
 			return false;
 		}
@@ -1573,7 +1573,7 @@ bool PushObject::start()
 {
 	if(dirFromPlayer)
 	{
-		direction = Global::camera->getFacingDirection();
+		direction = Global::camera->direction;
 		direction.normalise();
 	}
 
@@ -1637,7 +1637,7 @@ bool VisibilityMask::start()
 	if(timer!=0)
 		return false;
 
-	oldMask = Global::mSceneMgr->getVisibilityMask();
+	oldMask = Global::sceneMgr->getVisibilityMask();
 
 	if(type == 0)
 	{
@@ -1648,7 +1648,7 @@ bool VisibilityMask::start()
 		newMask |= oldMask & BITS_0_TO_19;
 	}
 
-	Global::mSceneMgr->setVisibilityMask(newMask);
+	Global::sceneMgr->setVisibilityMask(newMask);
 
 	if(!duration)
 		return false;
@@ -1665,7 +1665,7 @@ bool VisibilityMask::update(float tslf)
 	if(timer<=0)
 	{
 		timer = 0;
-		Global::mSceneMgr->setVisibilityMask(oldMask);
+		Global::sceneMgr->setVisibilityMask(oldMask);
 		return false;
 	}
 

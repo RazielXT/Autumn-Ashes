@@ -27,6 +27,6 @@ bool VolumeDetectionManager::update(Ogre::Real tslf)
 
 void VolumeDetectionManager::reset()
 {
-	Global::mEventsMgr->addCachedTask(this);
+	Global::eventsMgr->addCachedTask(this);
 	registeredVolumes.clear();
 }

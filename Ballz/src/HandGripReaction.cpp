@@ -23,7 +23,7 @@ void HandGripReaction::setUserData(void* data)
 {
 	mEntity = (Ogre::Entity*) data;
 
-	OgreNewt::World* mWorld = Global::mWorld;
+	OgreNewt::World* mWorld = Global::nWorld;
 	node = mEntity->getParentSceneNode();
 
 	node->setScale(0.02,0.02,0.02);
@@ -138,7 +138,7 @@ bool HandGripReaction::update(Ogre::Real tslf)
 			EventTask* evt = *info->tasks.begin()->second.begin();
 
 			evt->start();
-			Global::mEventsMgr->addCachedTask(evt);
+			Global::eventsMgr->addCachedTask(evt);
 		}
 	}
 
@@ -166,10 +166,10 @@ void HandGripReaction::reaction()
 		if(Global::timestep<1)
 			music->getSoundEffectControl()->enableWavesReverbSoundEffect(0,-10*Global::timestep,2600,0.5);
 
-		Global::camera->startCameraShake(10,3,0.4);
+		Global::player->pCamera->startCameraShake(10,3,0.4);
 	}
 
-	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::mWorld, mEntity,0));
+	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::nWorld, mEntity,0));
 	body->setCollision(col);
 
 }

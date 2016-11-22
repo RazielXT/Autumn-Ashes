@@ -13,7 +13,7 @@ LoadNextPart::LoadNextPart(Ogre::String target)
 
 bool LoadNextPart::start()
 {
-	Global::mPPMgr->fadeIn(Ogre::Vector3(0,0,0), 1);
+	Global::ppMgr->fadeIn(Ogre::Vector3(0,0,0), 1);
 	Global::player->stopMoving();
 	Global::player->enableControl(false);
 	timer = 0;
@@ -28,14 +28,14 @@ bool LoadNextPart::update(Ogre::Real tslf)
 	if (loadNext)
 	{
 		auto pos = Global::player->body->getPosition();
-		auto or = Global::mSceneMgr->getCamera("Camera")->getOrientation();
+		auto or = Global::sceneMgr->getCamera("Camera")->getOrientation();
 
 		Global::gameMgr->switchState(SS_MAINMENU);
 
 		if (Global::player)
 		{
 			Global::player->body->setPositionOrientation(pos, Global::player->body->getOrientation());
-			Global::mSceneMgr->getCamera("Camera")->setOrientation(or);
+			Global::sceneMgr->getCamera("Camera")->setOrientation(or);
 		}
 
 		return false;

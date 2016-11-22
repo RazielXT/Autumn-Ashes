@@ -8,6 +8,7 @@ class GeometryManager;
 class PostProcessMgr;
 class AudioLibrary;
 class CameraShaker;
+struct CameraHelp;
 
 #define MAX_DEBUG_LINES 15
 #define DEBUG_VARIABLES_COUNT 7
@@ -36,16 +37,16 @@ enum RenderQueueID
 
 namespace Global
 {
-extern Ogre::SceneManager* mSceneMgr;
-extern OgreNewt::World* mWorld;
+extern Ogre::SceneManager* sceneMgr;
+extern OgreNewt::World* nWorld;
 extern irrklang::ISoundEngine* soundEngine;
-extern Ogre::RenderWindow* mWindow;
+extern Ogre::RenderWindow* window;
 
-extern EventsManager* mEventsMgr;
+extern EventsManager* eventsMgr;
 extern GameStateManager* gameMgr;
-extern PostProcessMgr* mPPMgr;
+extern PostProcessMgr* ppMgr;
 
-extern PlayerCamera* camera;
+extern CameraHelp* camera;
 extern Player* player;
 extern float timestep;
 extern AudioLibrary* audioLib;

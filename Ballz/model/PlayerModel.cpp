@@ -7,7 +7,7 @@ PlayerModel::PlayerModel(Player* player, Ogre::SceneNode* node)
 {
 	p = player;
 
-	model = Global::mSceneMgr->createEntity("mario.mesh");
+	model = Global::sceneMgr->createEntity("mario.mesh");
 	model->setMaterialName("redConcrete");
 	model->setCastShadows(true);
 

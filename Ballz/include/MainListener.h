@@ -29,6 +29,7 @@ private:
 
 	EditorControl editor;
 
+	CameraHelp camHelp;
 	OIS::Keyboard *mKeyboard;
 	OIS::Mouse *mMouse;
 	Ogre::SceneManager * mSceneMgr;
