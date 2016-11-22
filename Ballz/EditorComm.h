@@ -90,10 +90,10 @@ struct SelectionInfoChange
 struct GetSceneSettingsData
 {
 	std::vector<std::wstring> skyboxOptions;
-	int currentSkyboxId;
+	int currentSkyboxId = 0;
 
 	std::vector<std::wstring> lutOptions;
-	int currentLutId;
+	int currentLutId = 0;
 };
 
 struct SceneSettingsChange

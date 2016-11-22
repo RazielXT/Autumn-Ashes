@@ -21,7 +21,7 @@ void SceneOptions::getCurrentSceneInfo(GetSceneSettingsData* data)
 void SceneOptions::editScene(SceneSettingsChange* change)
 {
 	if(change->change == SceneSettingsChange::SceneChange::Lut)
-		Global::mPPMgr->setColorGradingPreset(wtos(change->data));
+		Global::mPPMgr->setColorGradingPreset(*(std::string*)change->data);
 	if (change->change == SceneSettingsChange::SceneChange::Skybox)
-		Global::mSceneMgr->setSkyBox(true, wtos(change->data));
+		Global::mSceneMgr->setSkyBox(true, *(std::string*)change->data);
 }

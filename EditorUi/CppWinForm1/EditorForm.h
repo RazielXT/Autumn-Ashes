@@ -762,6 +762,104 @@ private: System::Windows::Forms::Button^  selectionNameButton;
 		}
 #pragma endregion
 
+private: ref class AsyncParam
+{
+public: UiMessageId id;
+public: System::String^ subtype;
+};
+private: System::Void SendAsyncMsgThread(System::Object^ data)
+{
+	AsyncParam^ param = (AsyncParam^)data;
+
+	switch (param->id)
+	{
+	case UiMessageId::GetWorldItems:
+		break;
+	case UiMessageId::SelectWorldItem:
+	{
+		SelectWorldItemData change;
+
+		if (param->subtype == "Tree")
+		{
+			System::Windows::Forms::TreeNode^ node = sceneListTree->SelectedNode;
+			change.groupName = marshal_as<std::string>(node->Parent->Text);
+			change.item.name = marshal_as<std::wstring>(node->Text);
+		}
+		else
+			change.item.name = marshal_as<std::wstring>(selectionListBox->SelectedItem->ToString());
+
+		SendMsg(UiMessageId::SelectWorldItem, &change);
+		break;
+	}
+	case UiMessageId::GetSceneSettings:
+		break;
+	case UiMessageId::AddItemMode:
+	{
+		SendMsg(UiMessageId::AddItemMode, nullptr);
+		break;
+	}		
+	case UiMessageId::SelectionInfoChanged:
+	{
+		SelectionInfoChange change;
+		Ogre::Vector3 scale = { System::Decimal::ToSingle(entScaleX->Value), System::Decimal::ToSingle(entScaleY->Value) , System::Decimal::ToSingle(entScaleZ->Value) };
+		Ogre::Vector3 pos = { System::Decimal::ToSingle(entPosX->Value), System::Decimal::ToSingle(entPosY->Value) , System::Decimal::ToSingle(entPosZ->Value) };
+
+		if (param->subtype == "Scale")
+		{
+			change.change = SelectionInfoChange::SelectionChange::Scale;
+			change.data = &scale;
+		}
+		if (param->subtype == "Pos")
+		{
+			change.change = SelectionInfoChange::SelectionChange::Pos;
+			change.data = &pos;
+		}
+
+		SendMsg(UiMessageId::SelectionInfoChanged, &change);
+		break;
+	}		
+	case UiMessageId::SceneSettingsChanged:
+	{
+		SceneSettingsChange change;
+		std::string name;
+
+		if (param->subtype == "Sky")
+		{
+			change.change = SceneSettingsChange::SceneChange::Skybox;
+			name = marshal_as<std::string>(skyboxComboBox->SelectedText);
+			change.data = &name;
+		}	
+		if (param->subtype == "Lut")
+		{
+			change.change = SceneSettingsChange::SceneChange::Lut;
+			name = marshal_as<std::string>(lutComboBox->SelectedText);
+			change.data = &name;
+		}
+
+		SendMsg(UiMessageId::SceneSettingsChanged, &change);
+		break;
+	}		
+	default:
+		SendMsg(param->id, nullptr);
+		break;
+	}
+}
+private: System::Void SendAsyncMsg(UiMessageId id, const char* subtype)
+{
+	System::Threading::Thread^ newThread = gcnew System::Threading::Thread(gcnew System::Threading::ParameterizedThreadStart(this, &EditorForm::SendAsyncMsgThread));
+	auto param = gcnew AsyncParam();
+	param->id = id;
+	param->subtype = gcnew System::String(subtype);
+
+	newThread->Start(param);
+}
+private: System::Void SendAsyncMsg(UiMessageId id)
+{
+	SendAsyncMsg(id, "");
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 private: System::Void listCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 
 	if (!((System::Windows::Forms::CheckBox^)sender)->Checked)
@@ -800,7 +898,6 @@ private: System::Void selectCheckBox_CheckedChanged(System::Object^  sender, Sys
 
 		selectGroupBox->Show();
 	}
-	
 }
 private: System::Void sceneCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 
@@ -814,18 +911,24 @@ private: System::Void sceneCheckBox_CheckedChanged(System::Object^  sender, Syst
 	SendMsg(UiMessageId::GetSceneSettings, &data);
 
 	skyboxComboBox->Items->Clear();
-	for (auto skybox : data.skyboxOptions)
+	if (!data.skyboxOptions.empty())
 	{
-		skyboxComboBox->Items->Add(gcnew System::String(skybox.data()));
+		for (auto skybox : data.skyboxOptions)
+		{
+			skyboxComboBox->Items->Add(gcnew System::String(skybox.data()));
+		}
+		skyboxComboBox->SelectedIndex = data.currentSkyboxId;
 	}
-	skyboxComboBox->SelectedIndex = data.currentSkyboxId;
 
 	lutComboBox->Items->Clear();
-	for (auto lut : data.lutOptions)
+	if (!data.lutOptions.empty())
 	{
-		lutComboBox->Items->Add(gcnew System::String(lut.data()));
+		for (auto lut : data.lutOptions)
+		{
+			lutComboBox->Items->Add(gcnew System::String(lut.data()));
+		}
+		lutComboBox->SelectedIndex = data.currentLutId;
 	}
-	lutComboBox->SelectedIndex = data.currentLutId;
 
 	sceneGroupBox->Show();
 }
@@ -843,7 +946,7 @@ private: System::Void addItemCheckBox_CheckedChanged(System::Object^  sender, Sy
 	info.itemType = marshal_as<std::string>(addItemTypeComboBox->Text);
 	info.prefix = marshal_as<std::string>(addItemPrefixTextBox->Text);
 
-	SendMsg(UiMessageId::AddItemMode, nullptr);
+	SendAsyncMsg(UiMessageId::AddItemMode);
 }
 
 private: System::Void selectObjButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -854,28 +957,28 @@ private: System::Void selectObjButton_CheckedChanged(System::Object^  sender, Sy
 	if(selectionNameButton->Text != "")
 		selectionGroupBox->Show();
 
-	SendMsg(UiMessageId::SelectMode, nullptr);
+	SendAsyncMsg(UiMessageId::SelectMode);
 }
 private: System::Void moveObjButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 
 	if (!moveObjButton->Checked)
 		return;
 
-	SendMsg(UiMessageId::MoveMode, nullptr);
+	SendAsyncMsg(UiMessageId::MoveMode);
 }
 private: System::Void scaleObjButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 
 	if (!scaleObjButton->Checked)
 		return;
 
-	SendMsg(UiMessageId::ScaleMode, nullptr);
+	SendAsyncMsg(UiMessageId::ScaleMode);
 }
 private: System::Void rotateObjButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 
 	if (!rotateObjButton->Checked)
 		return;
 
-	SendMsg(UiMessageId::RotateMode, nullptr);
+	SendAsyncMsg(UiMessageId::RotateMode);
 }
 
 private: System::Void addItemComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -923,8 +1026,10 @@ public: System::Void showItemInfo(SelectionInfo* info)
 }
 
 private: System::Void skyboxComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	SendAsyncMsg(UiMessageId::SceneSettingsChanged, "Sky");
 }
 private: System::Void lutComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	SendAsyncMsg(UiMessageId::SceneSettingsChanged, "Lut");
 }
 
 private: void entPosChanged()
@@ -932,13 +1037,7 @@ private: void entPosChanged()
 	if (!reportEntityChange)
 		return;
 
-	Ogre::Vector3 v3 = {System::Decimal::ToSingle(entPosX->Value), System::Decimal::ToSingle(entPosY->Value) , System::Decimal::ToSingle(entPosZ->Value) };
-
-	SelectionInfoChange change;
-	change.change = SelectionInfoChange::SelectionChange::Pos;
-	change.data = &v3;
-
-	SendMsg(UiMessageId::SelectionInfoChanged, &change);
+	SendAsyncMsg(UiMessageId::SelectionInfoChanged, "Pos");
 }
 private: System::Void entPosX_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 	entPosChanged();
@@ -955,13 +1054,7 @@ private: void entScaleChanged()
 	if (!reportEntityChange)
 		return;
 
-	Ogre::Vector3 v3 = { System::Decimal::ToSingle(entScaleX->Value), System::Decimal::ToSingle(entScaleY->Value) , System::Decimal::ToSingle(entScaleZ->Value) };
-
-	SelectionInfoChange change;
-	change.change = SelectionInfoChange::SelectionChange::Scale;
-	change.data = &v3;
-
-	SendMsg(UiMessageId::SelectionInfoChanged, &change);
+	SendAsyncMsg(UiMessageId::SelectionInfoChanged, "Scale");
 }
 private: System::Void entScaleX_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 	entScaleChanged();
@@ -972,47 +1065,20 @@ private: System::Void entScaleY_ValueChanged(System::Object^  sender, System::Ev
 private: System::Void entScaleZ_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 	entScaleChanged();
 }
-private: System::Void selectionNameLabel_Click(System::Object^  sender, System::EventArgs^  e) {
+
+private: System::Void selectionListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {	
+	SendAsyncMsg(UiMessageId::SelectWorldItem, "List");
 }
 
-private: System::Void selectionListBoxMsg()
-{
-	SelectWorldItemData change;
-	change.item.name = marshal_as<std::wstring>(selectionListBox->SelectedItem->ToString());
-
-	SendMsg(UiMessageId::SelectWorldItem, &change);
-}
-private: System::Void selectionListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-	
-	System::Threading::Thread^ newThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &EditorForm::selectionListBoxMsg));
-	newThread->Start();
-}
-
-private: System::Void sceneListTreeMsg()
-{
-	System::Windows::Forms::TreeNode^ node = sceneListTree->SelectedNode;
-
-	SelectWorldItemData change;
-	change.groupName = marshal_as<std::string>(node->Parent->Text);
-	change.item.name = marshal_as<std::wstring>(node->Text);
-
-	SendMsg(UiMessageId::SelectWorldItem, &change);
-}
-private: System::Void sceneListTree_AfterSelect(System::Object^  sender, System::Windows::Forms::TreeViewEventArgs^  e) {
+private: System::Void sceneListTree_AfterSelect(System::Object^  sender, System::Windows::Forms::TreeViewEventArgs^  e) {	
 	if (!e->Node->IsSelected || e->Node->Level == 0)
 		return;
 
-	System::Threading::Thread^ newThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &EditorForm::sceneListTreeMsg));
-	newThread->Start();
+	SendAsyncMsg(UiMessageId::SelectWorldItem, "Tree");
 }
 
-	private: System::Void lookAtMsg()
-	{
-		SendMsg(UiMessageId::LookAtSelection, nullptr);
-	}
 private: System::Void selectionNameButton_Click(System::Object^  sender, System::EventArgs^  e) {
-	System::Threading::Thread^ newThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &EditorForm::lookAtMsg));
-	newThread->Start();
+	SendAsyncMsg(UiMessageId::LookAtSelection);
 }
 };
 }
