@@ -26,7 +26,7 @@
 #include "GuiOverlay.h"
 #include "WorldMaterials.h"
 #include "AudioLibrary.h"
-#include "CameraHelp.h"
+#include "..\CameraHelp.h"
 
 // any other header can be included, as usual
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32

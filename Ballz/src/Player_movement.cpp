@@ -342,7 +342,7 @@ void Player::updateGroundStats()
 			manageFall();
 
 		onGround = true;
-		surfaceSliding = groundBody->getType() == Slidable;
+		surfaceSliding = groundBody->getType() == Slidable || wantSurfaceSlide;
 		body->setLinearDamping(surfaceSliding ? 0.2f : 4);
 	}
 	else

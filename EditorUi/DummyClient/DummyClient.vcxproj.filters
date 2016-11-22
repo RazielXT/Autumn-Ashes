@@ -20,10 +20,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Comm.h">
+    <ClInclude Include="..\..\Ballz\EditorComm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CommLib.h">
+    <ClInclude Include="..\..\Ballz\EditorCommLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

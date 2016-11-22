@@ -69,8 +69,18 @@ int Main()
 	return 0;
 }
 
-void SendMsg(UiMessageId, void*)
+void SendMsg(UiMessageId id, void* vdata)
 {
+	if (id == UiMessageId::GetSceneSettings)
+	{
+		GetSceneSettingsData* data = (GetSceneSettingsData*)vdata;
+
+		data->lutOptions.push_back(std::wstring(L"cool"));
+		data->currentLutId = 0;
+
+		data->skyboxOptions.push_back(L"TCENoonSkyBox");
+		data->currentSkyboxId = 0;
+	}
 }
 
 #else

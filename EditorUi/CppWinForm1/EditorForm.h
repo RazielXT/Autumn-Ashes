@@ -34,12 +34,6 @@ namespace CppWinForm1 {
 
 		static EditorForm^ instance;	
 
-		void UserControl1_Paint(System::Object^ sender, PaintEventArgs^ e)
-		{
-			auto box = (System::Windows::Forms::GroupBox^) sender;
-			ControlPaint::DrawBorder(e->Graphics, box->ClientRectangle, Color::Black, ButtonBorderStyle::Solid);
-		}
-
 		EditorForm(void)
 		{
 			InitializeComponent();
@@ -767,9 +761,9 @@ private: ref class AsyncParam
 public: UiMessageId id;
 public: System::String^ subtype;
 };
-private: System::Void SendAsyncMsgThread(System::Object^ data)
+private: System::Void SendAsyncMsgThread(System::Object^ input)
 {
-	AsyncParam^ param = (AsyncParam^)data;
+	AsyncParam^ param = (AsyncParam^)input;
 
 	switch (param->id)
 	{
@@ -791,8 +785,6 @@ private: System::Void SendAsyncMsgThread(System::Object^ data)
 		SendMsg(UiMessageId::SelectWorldItem, &change);
 		break;
 	}
-	case UiMessageId::GetSceneSettings:
-		break;
 	case UiMessageId::AddItemMode:
 	{
 		SendMsg(UiMessageId::AddItemMode, nullptr);
@@ -907,8 +899,11 @@ private: System::Void sceneCheckBox_CheckedChanged(System::Object^  sender, Syst
 		return;
 	}
 
+
 	GetSceneSettingsData data;
 	SendMsg(UiMessageId::GetSceneSettings, &data);
+
+	reportChange = false;
 
 	skyboxComboBox->Items->Clear();
 	if (!data.skyboxOptions.empty())
@@ -930,7 +925,10 @@ private: System::Void sceneCheckBox_CheckedChanged(System::Object^  sender, Syst
 		lutComboBox->SelectedIndex = data.currentLutId;
 	}
 
+	reportChange = true;
+
 	sceneGroupBox->Show();
+	//SendAsyncMsg(UiMessageId::GetSceneSettings);
 }
 private: System::Void addItemCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 
@@ -984,7 +982,7 @@ private: System::Void rotateObjButton_CheckedChanged(System::Object^  sender, Sy
 private: System::Void addItemComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 }
 
-private: bool reportEntityChange = true;
+private: bool reportChange = true;
 
 public: System::Void hideItemInfo()
 {
@@ -1012,7 +1010,7 @@ public: System::Void showItemInfo(SelectionInfo* info)
 
 	selectionNameButton->Text = gcnew System::String(info->name.data());
 
-	reportEntityChange = false;
+	reportChange = false;
 
 	entPosX->Value = System::Decimal(info->pos.x);
 	entPosY->Value = System::Decimal(info->pos.y);
@@ -1022,19 +1020,25 @@ public: System::Void showItemInfo(SelectionInfo* info)
 	entScaleY->Value = System::Decimal(info->scale.y);
 	entScaleZ->Value = System::Decimal(info->scale.z);
 
-	reportEntityChange = true;
+	reportChange = true;
 }
 
 private: System::Void skyboxComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (!reportChange)
+		return;
+
 	SendAsyncMsg(UiMessageId::SceneSettingsChanged, "Sky");
 }
 private: System::Void lutComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (!reportChange)
+		return;
+
 	SendAsyncMsg(UiMessageId::SceneSettingsChanged, "Lut");
 }
 
 private: void entPosChanged()
 {
-	if (!reportEntityChange)
+	if (!reportChange)
 		return;
 
 	SendAsyncMsg(UiMessageId::SelectionInfoChanged, "Pos");
@@ -1051,7 +1055,7 @@ private: System::Void entPosZ_ValueChanged(System::Object^  sender, System::Even
 
 private: void entScaleChanged()
 {
-	if (!reportEntityChange)
+	if (!reportChange)
 		return;
 
 	SendAsyncMsg(UiMessageId::SelectionInfoChanged, "Scale");

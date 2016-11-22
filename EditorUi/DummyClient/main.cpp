@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <future>
 #include <string>
-#include "CommLib.h"
+#include "EditorCommLib.h"
 
 void uiMsgCallback(UiMessage* msg)
 {
@@ -17,6 +17,17 @@ void uiMsgCallback(UiMessage* msg)
 			wprintf(L"Received name %s\n", s.data());
 		}	
 	}
+
+	if (msg->id == UiMessageId::SelectWorldItem)
+	{
+		GetSceneSettingsData* data = (GetSceneSettingsData*)msg->data;
+
+		data->lutOptions.push_back(std::wstring(L"cool"));
+		data->currentLutId = 0;
+
+		data->skyboxOptions.push_back(L"TCENoonSkyBox");
+		data->currentSkyboxId = 0;
+	}
 }
 
 void uiEnd()
@@ -29,7 +40,7 @@ int main()
 	CommLib lib;
 
 	UI_MSG_FUNC sender;
-	lib.init(&sender, uiMsgCallback, uiEnd);
+	lib.init(&sender, uiMsgCallback, uiEnd, 0);
 
 	lib.h.join();
 

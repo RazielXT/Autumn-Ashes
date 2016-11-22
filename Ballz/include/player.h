@@ -136,7 +136,7 @@ private:
 	float sprintTimer = 0;
 
 	//extern state
-	bool hanging, grabbedObj, wallrunning, sliding, transformed, surfaceSliding;
+	bool hanging, grabbedObj, wallrunning, sliding, transformed, surfaceSliding, wantSurfaceSlide;
 	BodyType climbing;
 
 	float bodySpeedAccum, startMoveBoost, movespeed, sprintmeter;

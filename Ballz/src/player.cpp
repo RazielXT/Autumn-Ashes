@@ -256,6 +256,7 @@ void Player::pressedKey(const OIS::KeyEvent &arg)
 	case OIS::KC_LSHIFT:
 		sprinting = true;
 		sprintTimer = 0;
+		wantSurfaceSlide = true;
 		break;
 
 	case OIS::KC_C:
@@ -315,6 +316,7 @@ void Player::releasedKey(const OIS::KeyEvent &arg)
 		break;
 	case OIS::KC_LSHIFT:
 		sprinting = false;
+		wantSurfaceSlide = false;
 		break;
 	}
 }
