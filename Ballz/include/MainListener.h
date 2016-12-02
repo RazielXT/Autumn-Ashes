@@ -15,7 +15,7 @@ class MainListener : public Ogre::FrameListener, public OIS::MouseListener, publ
 public:
 
 	~MainListener();
-	MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, Ogre::SceneManager * sceneMgr, OgreNewt::World* nWorld, Ogre::Root *mRoot, Ogre::RenderWindow* mWin, size_t windowHnd);
+	MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, Ogre::SceneManager * sceneMgr, OgreNewt::World* nWorld, Ogre::Root *mRoot, Ogre::RenderWindow* mWin, size_t windowHnd, EditorUiHandler& editorHandler);
 
 	bool frameStarted(const Ogre::FrameEvent& evt);
 
@@ -28,7 +28,6 @@ public:
 private:
 
 	EditorControl editor;
-
 	CameraHelp camHelp;
 	OIS::Keyboard *mKeyboard;
 	OIS::Mouse *mMouse;

@@ -275,7 +275,7 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 	case OIS::KC_NUMPADENTER:
 		if (Global::gameMgr->gameState == MENU)
 		{
-			Global::gameMgr->switchToLevel(5);
+			Global::gameMgr->switchToLevel(2);
 		}
 		else
 			continueExecution = false;

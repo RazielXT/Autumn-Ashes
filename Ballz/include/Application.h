@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "..\EditorUiHandler.h"
 
 class MainListener;
 
@@ -22,6 +23,7 @@ private:
 	MainListener* mListener = nullptr;
 	Ogre::SceneManager* mSceneMgr = nullptr;
 	OgreNewt::World* mWorld = nullptr;
+	EditorUiHandler editorHandler;
 
 	void createRoot();
 

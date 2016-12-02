@@ -6,4 +6,10 @@
     <LocalDebuggerCommand>D:\OgreSDK\bin\release\AutumnAshes.exe</LocalDebuggerCommand>
     <LocalDebuggerAttach>false</LocalDebuggerAttach>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Editor|Win32'">
+    <LocalDebuggerWorkingDirectory>D:\OgreSDK\bin\release</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand>D:\OgreSDK\bin\release\AutumnAshesEditor.exe</LocalDebuggerCommand>
+    <LocalDebuggerAttach>false</LocalDebuggerAttach>
+  </PropertyGroup>
 </Project>

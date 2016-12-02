@@ -17,6 +17,7 @@ void Application::go()
 	setupInputSystem();
 	createFrameListener();
 	startRenderLoop();
+
 }
 
 Application::~Application()
@@ -82,20 +83,27 @@ void Application::createRenderWindow()
 {
 	mRoot->initialise(false);
 
-	{
-		Ogre::String lWindowTitle = "Ballz";
+	Ogre::String lWindowTitle = "Ballz";
 
-		GameConfig cfg;
-		cfg.loadCfg();
+	GameConfig cfg;
+	cfg.loadCfg();
 
-		Ogre::NameValuePairList lParams;
-		// we use our own FXAA
-		lParams["FSAA"] = "0";
-		lParams["vsync"] = "false";
-		lParams["useNVPerfHUD"] = "false";
+	Ogre::NameValuePairList lParams;
+	// we use our own FXAA
+	lParams["FSAA"] = "0";
+	lParams["vsync"] = "false";
+	lParams["useNVPerfHUD"] = "false";
 
-		mWindow = mRoot->createRenderWindow(lWindowTitle, cfg.width, cfg.height, cfg.fs, &lParams);
-	}
+#if !defined(EDITOR)
+	mWindow = mRoot->createRenderWindow(lWindowTitle, cfg.width, cfg.height, cfg.fs, &lParams);
+#else
+
+	editorHandler.ensureUi();
+	lParams["externalWindowHandle"] = Ogre::StringConverter::toString((size_t)editorHandler.outputWindowHwnd);
+
+	mWindow = mRoot->createRenderWindow(lWindowTitle, cfg.width, cfg.height, false, &lParams);
+	//mWindow->setDeactivateOnFocusChange(false);
+#endif
 }
 
 void Application::initializeResourceGroups()
@@ -108,10 +116,15 @@ void Application::setupInputSystem()
 {
 	std::ostringstream windowHndStr;
 	OIS::ParamList pl;
-	RenderWindow *win = mWindow;
 
-	win->getCustomAttribute("WINDOW", &windowHnd);
+	mWindow->getCustomAttribute("WINDOW", &windowHnd);
+
+#ifdef EDITOR
+	windowHndStr << (size_t)editorHandler.topWindowHwnd;
+#else
 	windowHndStr << windowHnd;
+#endif
+
 	pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
 	//pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND")));
 	//pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
@@ -130,16 +143,16 @@ void Application::setupInputSystem()
 
 void Application::createFrameListener()
 {
-	mListener = new MainListener(mKeyboard, mMouse, mSceneMgr, mWorld, mRoot, mWindow, windowHnd);
+	mListener = new MainListener(mKeyboard, mMouse, mSceneMgr, mWorld, mRoot, mWindow, windowHnd, editorHandler);
 	mRoot->addFrameListener(mListener);
 }
 
 void Application::startRenderLoop()
 {
-	mOldWindowProc = GetWindowLongPtr((HWND)windowHnd, GWLP_WNDPROC);
+	/*mOldWindowProc = GetWindowLongPtr((HWND)windowHnd, GWLP_WNDPROC);
 	dbgMsg = RegisterWindowMessage("aaDbg");
 
-	SetWindowLongPtr((HWND)windowHnd, GWLP_WNDPROC, (LONG_PTR)windowProc);
+	SetWindowLongPtr((HWND)windowHnd, GWLP_WNDPROC, (LONG_PTR)windowProc);*/
 	//ShowCursor(FALSE);
 
 	mRoot->startRendering();

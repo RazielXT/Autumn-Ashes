@@ -7,6 +7,7 @@
 #include "GUtils.h"
 #include "Energy.h"
 #include "Gate.h"
+#include "..\EditorControl.h"
 
 GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : audioLib(cam)
 {
@@ -115,6 +116,8 @@ void GameStateManager::switchToLevel(int lvl)
 	lvlInfo.init();
 
 	SceneCubeMap::renderAll();
+
+	Global::editor->afterLoadInit();
 
 	Global::ppMgr->setColorGradingPreset(lvlInfo.lut);
 	Global::ppMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);

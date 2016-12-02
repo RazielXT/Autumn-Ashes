@@ -12,6 +12,7 @@ CameraHelp* Global::camera = nullptr;
 GameStateManager* Global::gameMgr = nullptr;
 PostProcessMgr* Global::ppMgr = nullptr;
 std::map<std::string,void*>* Global::globalData = new std::map<std::string,void*>();
+EditorControl* Global::editor = nullptr;
 
 bool continueExecution = true;
 

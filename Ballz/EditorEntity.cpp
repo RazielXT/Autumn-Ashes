@@ -28,9 +28,30 @@ Ogre::Vector3 EditorEntity::getPosition()
 		pos += e->getParentSceneNode()->getPosition();
 	}
 
-	pos /= selected.size();
+	pos /= (float)selected.size();
 
 	return pos;
+}
+
+std::vector<Ogre::Vector3> EditorEntity::getIndividualPositions()
+{
+	std::vector<Ogre::Vector3> out;
+
+	for (auto& e : selected)
+	{
+		out.push_back(e->getParentSceneNode()->getPosition());
+	}
+
+	return out;
+}
+
+void EditorEntity::setIndividualPositions(std::vector<Ogre::Vector3>& in)
+{
+	if(selected.size() == in.size())
+		for (size_t i = 0; i < selected.size(); i++)
+		{
+			selected[i]->getParentSceneNode()->setPosition(in[i]);
+		}
 }
 
 void EditorEntity::move(Ogre::Vector3& move)
@@ -69,7 +90,7 @@ std::string getCloneName(std::string oldName)
 	bool needAppend = (endId == std::string::npos);
 
 	if(!needAppend)
-		for (int i = endId + 1; i < oldName.length(); i++)
+		for (size_t i = endId + 1; i < oldName.length(); i++)
 		{
 			if (!isdigit(oldName[i]))
 				needAppend = true;

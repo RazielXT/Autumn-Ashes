@@ -7,6 +7,9 @@ struct EditorEntity : public EditorItem
 	virtual void setScale(Ogre::Vector3&);
 	virtual Ogre::Vector3 getPosition();
 
+	virtual std::vector<Ogre::Vector3> getIndividualPositions();
+	virtual void setIndividualPositions(std::vector<Ogre::Vector3>&);
+
 	virtual void move(Ogre::Vector3& move);
 	virtual void rotate(Ogre::Vector3& axis, Ogre::Radian& angle);
 	virtual void addScale(Ogre::Vector3& scale);

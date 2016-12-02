@@ -19,6 +19,8 @@
 
 using namespace Ogre;
 
+extern EditorUiHandler& editor;
+
 MainListener::~MainListener()
 {
 	delete mEventMgr;
@@ -32,7 +34,7 @@ MainListener::~MainListener()
 
 size_t hwnd;
 
-MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneManager * sceneMgr, OgreNewt::World* nWorld, Ogre::Root *mRoot, Ogre::RenderWindow* mWin, size_t windowHnd) : editor(mouse)
+MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneManager * sceneMgr, OgreNewt::World* nWorld, Ogre::Root *mRoot, Ogre::RenderWindow* mWin, size_t windowHnd, EditorUiHandler& editorHandler) : editor(editorHandler, mouse)
 {
 	/*
 	W->setMinimumFrameRate(30);
@@ -71,6 +73,7 @@ MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneMana
 
 	postProcMgr = new PostProcessMgr(mCamera);
 	Global::ppMgr = postProcMgr;
+	Global::editor = &editor;
 
 	mKeyboard = keyboard;
 	mMouse = mouse;
@@ -79,7 +82,12 @@ MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneMana
 	if (mKeyboard)
 		mKeyboard->setEventCallback(this);
 
+#ifdef EDITOR
+	Global::gameMgr->switchToLevel(5);
+#else
 	gameMgr->switchToMainMenu();
+#endif // EDITOR
+
 }
 
 bool MainListener::frameStarted(const FrameEvent& evt)
@@ -100,6 +108,7 @@ bool MainListener::frameStarted(const FrameEvent& evt)
 	{
 		if(!editor.active)
 			Global::player->update(tslf);
+
 		nListener.frameStarted(tslf);
 	}
 
@@ -117,10 +126,10 @@ bool MainListener::keyPressed(const OIS::KeyEvent &arg)
 	{
 
 	case OIS::KC_K:
-		mWindow->setDeactivateOnFocusChange(false);
-		editor.setActive(!editor.active);
+	{
+		editor.toggleActivePlay();
 		break;
-
+	}
 	case OIS::KC_ESCAPE:
 	{
 		gameMgr->escapePressed();
@@ -158,6 +167,8 @@ bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 	GetCursorPos(&point);
 	ScreenToClient((HWND)hwnd, &point);
 
+	GUtils::DebugPrint(std::to_string(point.x) + " " + std::to_string(point.y));
+
 	OIS::MouseState state;
 	state.X.rel = point.x - mouseX;
 	state.Y.rel = point.y - mouseY;
@@ -165,12 +176,12 @@ bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 	state.X.abs = mouseX = point.x;
 	state.Y.abs = mouseY = point.y;
 
-	OIS::MouseEvent e(nullptr, editor.editMode ? state : evt.state);
+	OIS::MouseEvent e(nullptr, editor.active ? state : evt.state);
 
-	mEventMgr->listenersMouseMoved(e);
+	mEventMgr->listenersMouseMoved(evt);
 
 	if (gameMgr->gameState == GAME && !editor.active)
-		Global::player->movedMouse(e);
+		Global::player->movedMouse(evt);
 	else if (gameMgr->gameState == PAUSE || gameMgr->gameState == MENU)
 		gameMgr->insideMenuMoved(mouseX, mouseY);
 

@@ -2742,6 +2742,10 @@ void loadScene(std::string filename)
 	XMLDocument document;
 	document.LoadFile(filename.c_str());
 	auto mainElement = document.RootElement();
+
+	if (!mainElement)
+		return;
+
 	auto nodesElement = mainElement->FirstChildElement("nodes");
 	auto sceneElement = mainElement->FirstChildElement("userData");
 

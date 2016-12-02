@@ -3,6 +3,7 @@
 #include "SceneInteraction.h"
 #include "Player.h"
 #include "EditorControl.h"
+#include "GUtils.h"
 
 void ObjectSelection::uiSelectItem(SelectWorldItemData& data)
 {
@@ -80,6 +81,22 @@ void ObjectSelection::lootAtSelection()
 	if (selected)
 	{
 		Global::camera->cam->getParentSceneNode()->lookAt(selected->getPosition(), Ogre::Node::TS_WORLD);
+	}
+}
+
+void ObjectSelection::rayPlaceSelection(float offset)
+{
+	if (selected)
+	{
+		auto pos = selected->getIndividualPositions();
+
+		for (auto& p : pos)
+		{
+			if(GUtils::getVerticalRayPos(p, 5, 100))
+				p.y += offset;
+		}
+
+		selected->setIndividualPositions(pos);
 	}
 }
 

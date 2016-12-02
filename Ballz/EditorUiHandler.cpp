@@ -15,20 +15,20 @@ void handleMsg(UiMessage* msg)
 }
 
 bool uiStarted = false;
+extern bool continueExecution;
 
 void onEnd()
 {
 	uiStarted = false;
+	continueExecution = false;
 }
-
-extern size_t hwnd;
 
 bool EditorUiHandler::ensureUi()
 {
 	if (uiStarted)
 		return false;
 
-	if (lib.init(&sender, handleMsg, onEnd, (HWND)hwnd))
+	if (lib.init(&sender, handleMsg, onEnd, &outputWindowHwnd, &topWindowHwnd))
 	{
 		uiStarted = true;
 		return true;

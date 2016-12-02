@@ -14,6 +14,9 @@ struct EditorUiHandler
 
 	bool isActiveUi();
 
+	HWND outputWindowHwnd;
+	HWND topWindowHwnd;
+
 protected:
 
 	CommLib lib;

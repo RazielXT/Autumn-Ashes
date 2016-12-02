@@ -9,6 +9,7 @@ class PostProcessMgr;
 class AudioLibrary;
 class CameraShaker;
 struct CameraHelp;
+class EditorControl;
 
 #define MAX_DEBUG_LINES 15
 #define DEBUG_VARIABLES_COUNT 7
@@ -53,6 +54,7 @@ extern AudioLibrary* audioLib;
 extern CameraShaker* shaker;
 
 extern std::map<std::string, void*>* globalData;
+extern EditorControl* editor;
 };
 
 namespace Path

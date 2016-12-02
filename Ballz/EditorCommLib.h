@@ -5,7 +5,7 @@
 
 typedef void(*UI_MSG_FUNC)(UiMessage*);
 typedef void(*VOID_FUNC)();
-typedef void(*HWND_FUNC)(HWND);
+typedef void(*HWND_FUNC)(HWND*, HWND*);
 typedef void(*UI_MSG_CALLBCK_FUNC)(UI_MSG_FUNC);
 
 struct CommLib
@@ -22,7 +22,7 @@ struct CommLib
 			h.detach();
 	}
 
-	bool init(UI_MSG_FUNC* uiSender, UI_MSG_FUNC appReceiver, VOID_FUNC onEndCallback, HWND hwnd)
+	bool init(UI_MSG_FUNC* uiSender, UI_MSG_FUNC appReceiver, VOID_FUNC onEndCallback, HWND* targetHwnd, HWND* topHwnd)
 	{
 		if (!lib)
 		{
@@ -42,10 +42,10 @@ struct CommLib
 		if (h.joinable())
 			h.detach();
 
-		h = std::thread([=]()
+		h = std::thread([&]()
 		{
 
-			StartUi(hwnd);
+			StartUi(targetHwnd, topHwnd);
 
 			onEndCallback();
 

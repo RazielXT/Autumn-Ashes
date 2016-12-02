@@ -8,6 +8,8 @@ enum class UiMessageId
 	//to UI
 	HideSelectionInfo,
 	ShowSelectionInfo,	 //SelectionInfo
+	ShowMouse,
+	HideMouse,
 
 	//from UI
 	GetWorldItems,	//GetWorldItemsData
@@ -20,7 +22,8 @@ enum class UiMessageId
 	ScaleMode,
 	SelectionInfoChanged,	 //SelectionInfoChange
 	SceneSettingsChanged,	 //SceneSettingsChange
-	LookAtSelection
+	LookAtSelection,
+	PlacementRayUtil		//float
 };
 
 struct UiMessage

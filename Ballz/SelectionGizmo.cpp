@@ -60,9 +60,12 @@ void SelectionGizmo::setMode(SelectionMode mode)
 void SelectionGizmo::deactivate()
 {
 	if (activeWidget)
+	{
 		activeWidget->deinit();
+		unregisterInputListening();
+	}
+
 	activeWidget = nullptr;
-	unregisterInputListening();
 }
 
 void SelectionGizmo::pressedKey(const OIS::KeyEvent &arg)
@@ -132,6 +135,8 @@ bool SelectionGizmo::update()
 		axesPlanes[0]->getParentSceneNode()->setPosition(itempos);
 		axesPlanes[1]->getParentSceneNode()->setPosition(itempos);
 		axesPlanes[2]->getParentSceneNode()->setPosition(itempos);
+
+		GUtils::DebugPrint(Ogre::StringConverter::toString(itempos));
 	}
 
 	return currentMode != SelectionMode::Select;

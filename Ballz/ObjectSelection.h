@@ -26,6 +26,8 @@ public:
 
 	void lootAtSelection();
 
+	void rayPlaceSelection(float offset);
+
 	void uiEditSelection(SelectionInfoChange* change);
 
 	void uiSelectItem(SelectWorldItemData& data);

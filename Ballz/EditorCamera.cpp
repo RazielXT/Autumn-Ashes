@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "EditorCamera.h"
 #include "Player.h"
+#include "GameStateManager.h"
 
 EditorCamera::EditorCamera()
 {
@@ -9,13 +10,26 @@ EditorCamera::EditorCamera()
 
 void EditorCamera::enable()
 {
+	if (Global::gameMgr->getCurrentLvlInfo()->name == "menu")
+		return;
+
 	registerInputListening();
 
 	if (!camNode)
 	{
 		Global::eventsMgr->addCachedTask(this);
-		camNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode(Global::player->camPosition, Global::player->pCamera->getOrientation());
-		camNode->attachObject(Global::player->pCamera->detachCamera());
+
+		if (Global::player)
+		{
+			camNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode(Global::player->camPosition, Global::player->pCamera->getOrientation());
+			camNode->attachObject(Global::player->pCamera->detachCamera());
+		}
+		else
+		{
+			camNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode(Global::camera->cam->getDerivedPosition(), Global::camera->cam->getDerivedOrientation());
+			Global::camera->cam->detachFromParent();
+			camNode->attachObject(Global::camera->cam);
+		}
 	}
 
 	front = back = left = right = shift = space = strafe = false;
@@ -31,8 +45,12 @@ void EditorCamera::returnToPlayer()
 {
 	disable();
 
-	Global::player->pCamera->attachCamera();
-	Global::player->setPosition(camNode->getPosition());
+	if (Global::player)
+	{
+		Global::player->pCamera->attachCamera();
+		Global::player->setPosition(camNode->getPosition());
+	}
+
 	Global::sceneMgr->destroySceneNode(camNode);
 	camNode = nullptr;
 }

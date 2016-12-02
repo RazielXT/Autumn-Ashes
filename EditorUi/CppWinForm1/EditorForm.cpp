@@ -8,17 +8,26 @@ using namespace System::Windows::Forms;
 
 
 [STAThread]
-void FormsMain(HWND hwnd)
+void FormsMain(HWND* hwnd, HWND* parent)
 {
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 
 	CppWinForm1::EditorForm form;
 
-	if(!hwnd)
+	if (hwnd)
+		*hwnd = form.getRenderWindowHandle();
+
+	if (parent)
+		*parent = form.getTopWindowHandle();
+
+	Application::Run(%form);
+
+	/*if(!hwnd)
 		Application::Run(%form);
 	else
 	{
+		
 		System::Windows::Forms::NativeWindow^ nativeWindow;
 
 		try
@@ -33,13 +42,9 @@ void FormsMain(HWND hwnd)
 			return;
 		}
 
-
-		//System::IntPtr myWindowHandle = System::IntPtr(hwnd);
-		//System::Windows::Forms::IWin32Window ^w = System::Windows::Forms::Control::FromHandle(myWindowHandle);
 		try
 		{
 			form.Show(nativeWindow);
-			//form.SetDesktopLocation(0, 0);
 			Application::Run(%form);
 		}
 		catch (const std::exception&)
@@ -47,9 +52,7 @@ void FormsMain(HWND hwnd)
 			MessageBox::Show("Show failure");
 			return;
 		}
-
-		//MessageBox::Show("No failure");
-	}		
+	}	*/	
 }
 
 void FormsUpdate(UiMessage* msg)
@@ -58,13 +61,18 @@ void FormsUpdate(UiMessage* msg)
 		CppWinForm1::EditorForm::instance->hideItemInfo();
 	if (msg->id == UiMessageId::ShowSelectionInfo)
 		CppWinForm1::EditorForm::instance->showItemInfo((SelectionInfo*)msg->data);
+	if (msg->id == UiMessageId::ShowMouse)
+		::Cursor::Show();
+	if (msg->id == UiMessageId::HideMouse)
+		::Cursor::Hide();
 }
 
 #ifdef NO_LIB
 
 int Main()
 {
-	FormsMain(NULL);
+	HWND h;
+	FormsMain(0,0);
 
 	return 0;
 }
@@ -90,7 +98,7 @@ void SendMsg(UiMessageId id, void* vdata)
 typedef void(*MSGFUNC)(UiMessage*);
 extern "C"
 {
-	__declspec(dllexport) void __cdecl StartUi(HWND);
+	__declspec(dllexport) void __cdecl StartUi(HWND*, HWND*);
 
 	__declspec(dllexport) void __cdecl SendMsg(UiMessage*);
 
@@ -109,9 +117,9 @@ __declspec(dllexport) void __cdecl SendMsg(UiMessage* msg)
 	FormsUpdate(msg);
 }
 
-__declspec(dllexport) void __cdecl StartUi(HWND hwnd)
+__declspec(dllexport) void __cdecl StartUi(HWND* hwnd, HWND* parent)
 {
-	FormsMain(hwnd);
+	FormsMain(hwnd, parent);
 }
 
 int __stdcall Main(HINSTANCE h, ULONG ulReason, PVOID pvReserved) {

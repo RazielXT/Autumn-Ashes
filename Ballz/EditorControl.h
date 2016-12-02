@@ -11,7 +11,7 @@ class EditorControl : public InputListener, EventTask
 {
 public:
 
-	EditorControl(OIS::Mouse* mMouse);
+	EditorControl(EditorUiHandler& handler, OIS::Mouse* mMouse);
 	~EditorControl();
 
 	virtual void mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
@@ -24,7 +24,8 @@ public:
 	bool active = false;
 	bool editMode = false;
 
-	void setActive(bool active);
+	void afterLoadInit();
+	void toggleActivePlay();
 
 	void setVievMode();
 	void setEditMode();
@@ -34,7 +35,7 @@ public:
 	EditorCamera cam;
 	OIS::Mouse* mMouse;
 
-	EditorUiHandler uiHandler;
+	EditorUiHandler& uiHandler;
 
 	enum class EditorMode { None, AddItem, Select, SelectEdit } mode = EditorMode::None;
 

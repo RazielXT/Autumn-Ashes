@@ -142,7 +142,7 @@ void EventsManager::listenersKeyPressed(const OIS::KeyEvent &arg)
 
 	for (auto l : keyListeners)
 	{
-		if (l->executionState == state || l->executionState == UNDEFINED)
+		if (l && l->executionState == state || l->executionState == UNDEFINED)
 			l->pressedKey(arg);
 	}
 }

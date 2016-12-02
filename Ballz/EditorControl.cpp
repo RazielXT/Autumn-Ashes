@@ -23,8 +23,15 @@ std::wstring stow(std::string& str)
 	return std::wstring(str.begin(), str.end());
 }
 
-EditorControl::EditorControl(OIS::Mouse* mouse) : mMouse(mouse)
+EditorControl::EditorControl(EditorUiHandler& handler, OIS::Mouse* mouse) : mMouse(mouse), uiHandler(handler)
 {
+#ifdef EDITOR
+	active = true;
+	connected = true;
+
+	mode = EditorMode::Select;
+	selector.setMode(SelectionMode::Select);
+#endif // EDITOR
 }
 
 EditorControl::~EditorControl()
@@ -76,13 +83,12 @@ void EditorControl::releasedKey(const OIS::KeyEvent &arg)
 		selector.addMode = false;
 }
 
-extern size_t hwnd;
 extern int mouseX;
 extern int mouseY;
 
 void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
-	if (active && (GetForegroundWindow() == (HWND)hwnd) && mouseX > 0 && mouseY > 0)
+	if (active && mouseX > 0 && mouseY > 0)
 	{
 		if (id == OIS::MB_Right || id == OIS::MB_Middle)
 			setVievMode();
@@ -155,6 +161,9 @@ bool EditorControl::update(float tslf)
 			case UiMessageId::SelectionInfoChanged:
 				selector.uiEditSelection((SelectionInfoChange*) msg.data);
 				break;
+			case UiMessageId::PlacementRayUtil:
+				selector.rayPlaceSelection(*(float*)msg.data);
+				break;
 			case UiMessageId::GetSceneSettings:
 				scene.getCurrentSceneInfo((GetSceneSettingsData*)msg.data);
 				break;
@@ -174,30 +183,43 @@ bool EditorControl::update(float tslf)
 	return uiHandler.isActiveUi();
 }
 
-void EditorControl::setActive(bool active)
+void EditorControl::afterLoadInit()
 {
-	if (this->active == active)
-		return;
-
-	this->active = active;
-
 	if (active)
 	{
-		if (uiHandler.ensureUi())
-		{
-			Global::eventsMgr->addCachedTask(this);
-			selector.init(this);
-		}
-
+		Global::eventsMgr->addCachedTask(this);
+		selector.init(this);
+		registerInputListening();
 		cam.enable();
 		setEditMode();
-		registerInputListening();
+
+		((OIS::Win32Mouse*)mMouse)->setForegroundMode(true);
 	}
-	else
+}
+
+void EditorControl::toggleActivePlay()
+{
+	if (connected)
 	{
-		setVievMode();
-		cam.returnToPlayer();
-		unregisterInputListening();
+		active = !active;
+
+		if (!active)
+		{
+			cam.returnToPlayer();
+			unregisterInputListening();
+			//((OIS::Win32Mouse*)mMouse)->setForegroundMode(false);
+
+			uiHandler.sendMsg(UiMessage{ UiMessageId::HideMouse });
+		}
+		else
+		{
+			cam.enable();
+			cam.disable();
+			registerInputListening();
+			//((OIS::Win32Mouse*)mMouse)->setForegroundMode(true);
+
+			uiHandler.sendMsg(UiMessage{ UiMessageId::ShowMouse });
+		}
 	}
 }
 
@@ -206,8 +228,8 @@ void EditorControl::setVievMode()
 	if (!editMode)
 		return;
 
-	while (ShowCursor(FALSE));
-	((OIS::Win32Mouse*)mMouse)->setForegroundMode(false);
+	//while (ShowCursor(FALSE) > 0);
+	//((OIS::Win32Mouse*)mMouse)->setForegroundMode(false);
 	editMode = false;
 
 	cam.enable();
@@ -218,10 +240,11 @@ void EditorControl::setEditMode()
 	if (editMode)
 		return;
 
-	while (ShowCursor(TRUE));
-	((OIS::Win32Mouse*)mMouse)->setForegroundMode(true);
+	//while (ShowCursor(TRUE) <= 0);
+	//((OIS::Win32Mouse*)mMouse)->setForegroundMode(true);
 	editMode = true;
 
+	SetFocus(uiHandler.outputWindowHwnd);
 	cam.disable();
 }
 

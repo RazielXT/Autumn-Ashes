@@ -267,6 +267,9 @@ bool OutOfCave::start()
 	auto it = bodies->find("FCave");
 	delete it->second;
 	bodies->erase(it);
+
+	return false;
+
 	it = bodies->find("ORock1");
 	it->second->setMaterialGroupID(Global::nWorld->getDefaultMaterialID());
 

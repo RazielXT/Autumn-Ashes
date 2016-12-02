@@ -1,15 +1,18 @@
 #pragma once
 #include "stdafx.h"
 #include "EditorComm.h"
+#include <vector>
 
 struct EditorUiHandler;
 
 struct EditorItem
 {
-	virtual void setPosition(Ogre::Vector3&) = 0;
 	virtual void setScale(Ogre::Vector3&) = 0;
-
+	virtual void setPosition(Ogre::Vector3&) = 0;
 	virtual Ogre::Vector3 getPosition() = 0;
+
+	virtual std::vector<Ogre::Vector3> getIndividualPositions() = 0;
+	virtual void setIndividualPositions(std::vector<Ogre::Vector3>&) = 0;
 
 	virtual void move(Ogre::Vector3& move) = 0;
 	virtual void rotate(Ogre::Vector3& axis, Ogre::Radian& angle) = 0;

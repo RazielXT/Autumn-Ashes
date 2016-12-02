@@ -758,12 +758,6 @@
     <ClInclude Include="EditorControl.h">
       <Filter>Files\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="EditableItem.h">
-      <Filter>Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EditorCamera.h">
-      <Filter>Files</Filter>
-    </ClInclude>
     <ClInclude Include="SceneInteraction.h">
       <Filter>Files\Editor</Filter>
     </ClInclude>
@@ -793,6 +787,9 @@
     </ClInclude>
     <ClInclude Include="CameraHelp.h">
       <Filter>Files\Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCamera.h">
+      <Filter>Files\Editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

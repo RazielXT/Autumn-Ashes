@@ -174,6 +174,8 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
 	int i=mFoundResolutions.size();
 	std::string currentR=Ogre::StringConverter::toString(gConfig->width)+"x"+Ogre::StringConverter::toString(gConfig->height);
 
+	cButton = cOptionButtonA = nullptr;
+
 	resolutionsLoop= new ListLoop<resolution>();
 	std::string s=mFoundResolutions.at(0);
 
