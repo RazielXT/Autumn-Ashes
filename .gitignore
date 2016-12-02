@@ -24,6 +24,8 @@ EditorUi/x64/
 EditorUi/DummyClient/Debug/
 
 EditorUi/CppWinForm1/Debug/
+EditorUi/CppWinForm1/DebugDummy/
+EditorUi/DebugDummy/
 EditorUi/CppWinForm1/DebugStandalone/
 EditorUi/CppWinForm1/Release/
 EditorUi/CppWinForm1/ReleaseApp/
