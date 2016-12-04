@@ -6,9 +6,15 @@
 #include "Player.h"
 #include "MUtils.h"
 #include "GUtils.h"
+#include "..\EditorControl.h"
 
 void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 {
+#ifdef EDITOR
+	if (Global::editor->active)
+		return;
+#endif
+
 	auto postProcMgr = Global::ppMgr;
 	static Ogre::Vector3 debugPos;
 	static float shake[8] = {0};

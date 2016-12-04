@@ -24,4 +24,9 @@ struct EditorEntity : public EditorItem
 	std::vector<Ogre::Entity*> selected;
 
 	virtual void sendUiInfoMessage(EditorUiHandler* handler);
+
+private:
+
+	void setEntityPosition(Ogre::Entity*,Ogre::Vector3&);
+	void setEntityOrientation(Ogre::Entity* ent, Ogre::Quaternion& q);
 };

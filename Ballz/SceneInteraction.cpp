@@ -220,8 +220,8 @@ Ogre::Entity* PickEntity(Ogre::Ray &ray, Ogre::Vector3* hitpoint, Ogre::Entity* 
 		if ((closest_distance >= 0.0f) && (closest_distance < query_result[qr_idx].distance))
 			break;
 
-		if (query_result[qr_idx].movable != NULL)
-			GUtils::DebugPrint(query_result[qr_idx].movable->getName());
+		//if (query_result[qr_idx].movable != NULL)
+		//	GUtils::DebugPrint(query_result[qr_idx].movable->getName());
 
 		// only check this result if its a hit against an entity
 		if ((query_result[qr_idx].movable != NULL) && (query_result[qr_idx].movable->getMovableType().compare("Entity") == 0))

@@ -167,8 +167,6 @@ bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 	GetCursorPos(&point);
 	ScreenToClient((HWND)hwnd, &point);
 
-	GUtils::DebugPrint(std::to_string(point.x) + " " + std::to_string(point.y));
-
 	OIS::MouseState state;
 	state.X.rel = point.x - mouseX;
 	state.Y.rel = point.y - mouseY;

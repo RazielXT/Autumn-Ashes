@@ -10,6 +10,8 @@ enum class UiMessageId
 	ShowSelectionInfo,	 //SelectionInfo
 	ShowMouse,
 	HideMouse,
+	StartLoading,
+	EndLoading,
 
 	//from UI
 	GetWorldItems,	//GetWorldItemsData

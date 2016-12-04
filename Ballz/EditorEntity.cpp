@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "EditorEntity.h"
 #include "EditorUiHandler.h"
+#include "GUtils.h"
+#include "GameStateManager.h"
 
 
 void EditorEntity::setPosition(Ogre::Vector3& pos)
@@ -21,11 +23,11 @@ void EditorEntity::setScale(Ogre::Vector3& scale)
 
 Ogre::Vector3 EditorEntity::getPosition()
 {
-	Ogre::Vector3 pos;
+	Ogre::Vector3 pos(0,0,0);
 
 	for (auto& e : selected)
 	{
-		pos += e->getParentSceneNode()->getPosition();
+		pos += e->getParentSceneNode()->_getDerivedPosition();
 	}
 
 	pos /= (float)selected.size();
@@ -50,7 +52,7 @@ void EditorEntity::setIndividualPositions(std::vector<Ogre::Vector3>& in)
 	if(selected.size() == in.size())
 		for (size_t i = 0; i < selected.size(); i++)
 		{
-			selected[i]->getParentSceneNode()->setPosition(in[i]);
+			setEntityPosition(selected[i], in[i]);
 		}
 }
 
@@ -58,7 +60,8 @@ void EditorEntity::move(Ogre::Vector3& move)
 {
 	for (auto& e : selected)
 	{
-		e->getParentSceneNode()->translate(move, Ogre::Node::TransformSpace::TS_WORLD);
+		auto ePos = e->getParentSceneNode()->getPosition();
+		setEntityPosition(e, ePos + move);
 	}
 }
 
@@ -66,7 +69,8 @@ void EditorEntity::rotate(Ogre::Vector3& axis, Ogre::Radian& angle)
 {
 	for (auto& e : selected)
 	{
-		e->getParentSceneNode()->rotate(axis, angle, Ogre::Node::TransformSpace::TS_WORLD);
+		Ogre::Quaternion quat(angle, axis);
+		setEntityOrientation(e, quat);
 	}
 }
 
@@ -202,5 +206,30 @@ void EditorEntity::sendUiInfoMessage(EditorUiHandler* handler)
 	msg.data = &info;
 
 	handler->sendMsg(msg);
+}
+
+void EditorEntity::setEntityPosition(Ogre::Entity* ent, Ogre::Vector3& pos)
+{
+	auto b = Global::gameMgr->loadedBodies->find(ent->getName());
+
+	if (b == Global::gameMgr->loadedBodies->end())
+	{
+		ent->getParentSceneNode()->setPosition(pos);
+	}
+	else
+	{
+		b->second->setPositionOrientation(pos, b->second->getOrientation());
+	}
+}
+
+void EditorEntity::setEntityOrientation(Ogre::Entity* ent, Ogre::Quaternion& q)
+{
+	auto b = Global::gameMgr->loadedBodies->find(ent->getName());
+	ent->getParentSceneNode()->rotate(q, Ogre::Node::TransformSpace::TS_WORLD);
+
+	if (b != Global::gameMgr->loadedBodies->end())
+	{
+		b->second->setPositionOrientation(b->second->getPosition(), ent->getParentSceneNode()->getOrientation());
+	}
 }
 

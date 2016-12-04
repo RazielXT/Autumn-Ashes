@@ -67,6 +67,8 @@ namespace CppWinForm1 {
 	private: System::Windows::Forms::GroupBox^  utilsGroupBox;
 	private: System::Windows::Forms::Label^  label9;
 	private: System::Windows::Forms::ComboBox^  utilsComboBox;
+	private: System::Windows::Forms::PictureBox^  levelLoading;
+
 	private: System::Windows::Forms::Panel^  bottomPanel;
 
 
@@ -110,7 +112,7 @@ namespace CppWinForm1 {
 	private: System::Windows::Forms::ComboBox^  addItemTypeComboBox;
 	private: System::Windows::Forms::GroupBox^  listGroupBox;
 	private: System::Windows::Forms::TreeView^  sceneListTree;
-	private: System::Windows::Forms::GroupBox^  selectGroupBox;
+
 	private: System::Windows::Forms::RadioButton^  rotateObjButton;
 	private: System::Windows::Forms::RadioButton^  scaleObjButton;
 	private: System::Windows::Forms::RadioButton^  moveObjButton;
@@ -119,7 +121,7 @@ namespace CppWinForm1 {
 	private: System::Windows::Forms::CheckBox^  utilsCheckBox;
 	private: System::Windows::Forms::CheckBox^  sceneCheckBox;
 	private: System::Windows::Forms::CheckBox^  addItemCheckBox;
-	private: System::Windows::Forms::CheckBox^  selectCheckBox;
+
 	private: System::Windows::Forms::CheckBox^  listCheckBox;
 
 	protected:
@@ -170,20 +172,19 @@ namespace CppWinForm1 {
 			this->addItemTypeComboBox = (gcnew System::Windows::Forms::ComboBox());
 			this->listGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->sceneListTree = (gcnew System::Windows::Forms::TreeView());
-			this->selectGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->rotateObjButton = (gcnew System::Windows::Forms::RadioButton());
-			this->scaleObjButton = (gcnew System::Windows::Forms::RadioButton());
-			this->moveObjButton = (gcnew System::Windows::Forms::RadioButton());
-			this->selectObjButton = (gcnew System::Windows::Forms::RadioButton());
 			this->toolsGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->utilsCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->sceneCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->addItemCheckBox = (gcnew System::Windows::Forms::CheckBox());
-			this->selectCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->listCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->rotateObjButton = (gcnew System::Windows::Forms::RadioButton());
+			this->scaleObjButton = (gcnew System::Windows::Forms::RadioButton());
+			this->moveObjButton = (gcnew System::Windows::Forms::RadioButton());
+			this->selectObjButton = (gcnew System::Windows::Forms::RadioButton());
 			this->topPanel = (gcnew System::Windows::Forms::Panel());
 			this->renderPanel = (gcnew System::Windows::Forms::Panel());
 			this->bottomPanel = (gcnew System::Windows::Forms::Panel());
+			this->levelLoading = (gcnew System::Windows::Forms::PictureBox());
 			this->sidePanel->SuspendLayout();
 			this->placementGroupBox->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->placementOffsetNum))->BeginInit();
@@ -198,8 +199,10 @@ namespace CppWinForm1 {
 			this->sceneGroupBox->SuspendLayout();
 			this->addGroupBox->SuspendLayout();
 			this->listGroupBox->SuspendLayout();
-			this->selectGroupBox->SuspendLayout();
 			this->toolsGroupBox->SuspendLayout();
+			this->topPanel->SuspendLayout();
+			this->renderPanel->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->levelLoading))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// sidePanel
@@ -212,12 +215,11 @@ namespace CppWinForm1 {
 			this->sidePanel->Controls->Add(this->sceneGroupBox);
 			this->sidePanel->Controls->Add(this->addGroupBox);
 			this->sidePanel->Controls->Add(this->listGroupBox);
-			this->sidePanel->Controls->Add(this->selectGroupBox);
 			this->sidePanel->Controls->Add(this->toolsGroupBox);
 			this->sidePanel->Dock = System::Windows::Forms::DockStyle::Left;
 			this->sidePanel->Location = System::Drawing::Point(0, 0);
 			this->sidePanel->Name = L"sidePanel";
-			this->sidePanel->Size = System::Drawing::Size(458, 780);
+			this->sidePanel->Size = System::Drawing::Size(398, 780);
 			this->sidePanel->TabIndex = 16;
 			// 
 			// placementGroupBox
@@ -227,12 +229,12 @@ namespace CppWinForm1 {
 			this->placementGroupBox->Controls->Add(this->placementOffsetNum);
 			this->placementGroupBox->Controls->Add(this->label8);
 			this->placementGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->placementGroupBox->Location = System::Drawing::Point(0, 783);
+			this->placementGroupBox->Location = System::Drawing::Point(0, 653);
 			this->placementGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->placementGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->placementGroupBox->Name = L"placementGroupBox";
 			this->placementGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
-			this->placementGroupBox->Size = System::Drawing::Size(433, 65);
+			this->placementGroupBox->Size = System::Drawing::Size(394, 62);
 			this->placementGroupBox->TabIndex = 25;
 			this->placementGroupBox->TabStop = false;
 			this->placementGroupBox->Text = L"Placement";
@@ -240,7 +242,7 @@ namespace CppWinForm1 {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(280, 22);
+			this->button1->Location = System::Drawing::Point(234, 19);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(75, 23);
 			this->button1->TabIndex = 4;
@@ -251,7 +253,7 @@ namespace CppWinForm1 {
 			// placementOffsetNum
 			// 
 			this->placementOffsetNum->DecimalPlaces = 2;
-			this->placementOffsetNum->Location = System::Drawing::Point(149, 22);
+			this->placementOffsetNum->Location = System::Drawing::Point(103, 19);
 			this->placementOffsetNum->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->placementOffsetNum->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
 			this->placementOffsetNum->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, System::Int32::MinValue });
@@ -262,7 +264,7 @@ namespace CppWinForm1 {
 			// label8
 			// 
 			this->label8->AutoSize = true;
-			this->label8->Location = System::Drawing::Point(70, 24);
+			this->label8->Location = System::Drawing::Point(41, 21);
 			this->label8->Name = L"label8";
 			this->label8->Size = System::Drawing::Size(46, 17);
 			this->label8->TabIndex = 1;
@@ -274,12 +276,12 @@ namespace CppWinForm1 {
 			this->utilsGroupBox->Controls->Add(this->label9);
 			this->utilsGroupBox->Controls->Add(this->utilsComboBox);
 			this->utilsGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->utilsGroupBox->Location = System::Drawing::Point(0, 719);
+			this->utilsGroupBox->Location = System::Drawing::Point(0, 591);
 			this->utilsGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->utilsGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->utilsGroupBox->Name = L"utilsGroupBox";
 			this->utilsGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
-			this->utilsGroupBox->Size = System::Drawing::Size(433, 64);
+			this->utilsGroupBox->Size = System::Drawing::Size(394, 62);
 			this->utilsGroupBox->TabIndex = 22;
 			this->utilsGroupBox->TabStop = false;
 			this->utilsGroupBox->Text = L"Utilities";
@@ -288,7 +290,7 @@ namespace CppWinForm1 {
 			// label9
 			// 
 			this->label9->AutoSize = true;
-			this->label9->Location = System::Drawing::Point(70, 24);
+			this->label9->Location = System::Drawing::Point(45, 24);
 			this->label9->Name = L"label9";
 			this->label9->Size = System::Drawing::Size(40, 17);
 			this->label9->TabIndex = 1;
@@ -298,7 +300,7 @@ namespace CppWinForm1 {
 			// 
 			this->utilsComboBox->FormattingEnabled = true;
 			this->utilsComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Placement" });
-			this->utilsComboBox->Location = System::Drawing::Point(149, 21);
+			this->utilsComboBox->Location = System::Drawing::Point(101, 19);
 			this->utilsComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->utilsComboBox->Name = L"utilsComboBox";
 			this->utilsComboBox->Size = System::Drawing::Size(231, 24);
@@ -320,12 +322,12 @@ namespace CppWinForm1 {
 			this->selectionGroupBox->Controls->Add(this->entPosX);
 			this->selectionGroupBox->Controls->Add(this->label1);
 			this->selectionGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->selectionGroupBox->Location = System::Drawing::Point(0, 544);
+			this->selectionGroupBox->Location = System::Drawing::Point(0, 414);
 			this->selectionGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->selectionGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->selectionGroupBox->Name = L"selectionGroupBox";
 			this->selectionGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
-			this->selectionGroupBox->Size = System::Drawing::Size(433, 175);
+			this->selectionGroupBox->Size = System::Drawing::Size(394, 177);
 			this->selectionGroupBox->TabIndex = 19;
 			this->selectionGroupBox->TabStop = false;
 			this->selectionGroupBox->Text = L"Selection";
@@ -339,7 +341,7 @@ namespace CppWinForm1 {
 			this->selectionNameButton->FlatAppearance->MouseOverBackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
 				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			this->selectionNameButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->selectionNameButton->Location = System::Drawing::Point(147, 18);
+			this->selectionNameButton->Location = System::Drawing::Point(101, 20);
 			this->selectionNameButton->Name = L"selectionNameButton";
 			this->selectionNameButton->Size = System::Drawing::Size(75, 23);
 			this->selectionNameButton->TabIndex = 12;
@@ -350,7 +352,7 @@ namespace CppWinForm1 {
 			// 
 			this->selectionListBox->FormattingEnabled = true;
 			this->selectionListBox->ItemHeight = 16;
-			this->selectionListBox->Location = System::Drawing::Point(148, 103);
+			this->selectionListBox->Location = System::Drawing::Point(102, 105);
 			this->selectionListBox->Name = L"selectionListBox";
 			this->selectionListBox->Size = System::Drawing::Size(232, 52);
 			this->selectionListBox->TabIndex = 11;
@@ -359,7 +361,7 @@ namespace CppWinForm1 {
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(67, 79);
+			this->label3->Location = System::Drawing::Point(44, 81);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(43, 17);
 			this->label3->TabIndex = 9;
@@ -369,7 +371,7 @@ namespace CppWinForm1 {
 			// entScaleZ
 			// 
 			this->entScaleZ->DecimalPlaces = 2;
-			this->entScaleZ->Location = System::Drawing::Point(341, 76);
+			this->entScaleZ->Location = System::Drawing::Point(295, 78);
 			this->entScaleZ->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entScaleZ->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1000, 0, 0, 0 });
 			this->entScaleZ->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
@@ -382,7 +384,7 @@ namespace CppWinForm1 {
 			// entScaleY
 			// 
 			this->entScaleY->DecimalPlaces = 2;
-			this->entScaleY->Location = System::Drawing::Point(245, 76);
+			this->entScaleY->Location = System::Drawing::Point(199, 78);
 			this->entScaleY->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entScaleY->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1000, 0, 0, 0 });
 			this->entScaleY->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
@@ -395,7 +397,7 @@ namespace CppWinForm1 {
 			// entScaleX
 			// 
 			this->entScaleX->DecimalPlaces = 2;
-			this->entScaleX->Location = System::Drawing::Point(149, 76);
+			this->entScaleX->Location = System::Drawing::Point(103, 78);
 			this->entScaleX->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entScaleX->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1000, 0, 0, 0 });
 			this->entScaleX->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
@@ -408,7 +410,7 @@ namespace CppWinForm1 {
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(53, 50);
+			this->label2->Location = System::Drawing::Point(30, 52);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(58, 17);
 			this->label2->TabIndex = 5;
@@ -418,7 +420,7 @@ namespace CppWinForm1 {
 			// entPosZ
 			// 
 			this->entPosZ->DecimalPlaces = 2;
-			this->entPosZ->Location = System::Drawing::Point(341, 48);
+			this->entPosZ->Location = System::Drawing::Point(295, 50);
 			this->entPosZ->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entPosZ->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
 			this->entPosZ->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, System::Int32::MinValue });
@@ -430,7 +432,7 @@ namespace CppWinForm1 {
 			// entPosY
 			// 
 			this->entPosY->DecimalPlaces = 2;
-			this->entPosY->Location = System::Drawing::Point(245, 48);
+			this->entPosY->Location = System::Drawing::Point(199, 50);
 			this->entPosY->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entPosY->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
 			this->entPosY->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, System::Int32::MinValue });
@@ -442,7 +444,7 @@ namespace CppWinForm1 {
 			// entPosX
 			// 
 			this->entPosX->DecimalPlaces = 2;
-			this->entPosX->Location = System::Drawing::Point(149, 48);
+			this->entPosX->Location = System::Drawing::Point(103, 50);
 			this->entPosX->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entPosX->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
 			this->entPosX->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, System::Int32::MinValue });
@@ -454,7 +456,7 @@ namespace CppWinForm1 {
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(67, 21);
+			this->label1->Location = System::Drawing::Point(44, 23);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(45, 17);
 			this->label1->TabIndex = 0;
@@ -468,12 +470,12 @@ namespace CppWinForm1 {
 			this->sceneGroupBox->Controls->Add(this->label6);
 			this->sceneGroupBox->Controls->Add(this->label5);
 			this->sceneGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->sceneGroupBox->Location = System::Drawing::Point(0, 440);
+			this->sceneGroupBox->Location = System::Drawing::Point(0, 319);
 			this->sceneGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->sceneGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->sceneGroupBox->Name = L"sceneGroupBox";
 			this->sceneGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
-			this->sceneGroupBox->Size = System::Drawing::Size(433, 104);
+			this->sceneGroupBox->Size = System::Drawing::Size(394, 95);
 			this->sceneGroupBox->TabIndex = 21;
 			this->sceneGroupBox->TabStop = false;
 			this->sceneGroupBox->Text = L"Scene";
@@ -483,7 +485,7 @@ namespace CppWinForm1 {
 			// 
 			this->lutComboBox->FormattingEnabled = true;
 			this->lutComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
-			this->lutComboBox->Location = System::Drawing::Point(149, 60);
+			this->lutComboBox->Location = System::Drawing::Point(101, 52);
 			this->lutComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->lutComboBox->Name = L"lutComboBox";
 			this->lutComboBox->Size = System::Drawing::Size(231, 24);
@@ -494,7 +496,7 @@ namespace CppWinForm1 {
 			// 
 			this->skyboxComboBox->FormattingEnabled = true;
 			this->skyboxComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
-			this->skyboxComboBox->Location = System::Drawing::Point(149, 27);
+			this->skyboxComboBox->Location = System::Drawing::Point(101, 19);
 			this->skyboxComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->skyboxComboBox->Name = L"skyboxComboBox";
 			this->skyboxComboBox->Size = System::Drawing::Size(231, 24);
@@ -504,7 +506,7 @@ namespace CppWinForm1 {
 			// label6
 			// 
 			this->label6->AutoSize = true;
-			this->label6->Location = System::Drawing::Point(75, 70);
+			this->label6->Location = System::Drawing::Point(52, 61);
 			this->label6->Name = L"label6";
 			this->label6->Size = System::Drawing::Size(35, 17);
 			this->label6->TabIndex = 2;
@@ -513,7 +515,7 @@ namespace CppWinForm1 {
 			// label5
 			// 
 			this->label5->AutoSize = true;
-			this->label5->Location = System::Drawing::Point(57, 31);
+			this->label5->Location = System::Drawing::Point(34, 22);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(53, 17);
 			this->label5->TabIndex = 1;
@@ -527,12 +529,12 @@ namespace CppWinForm1 {
 			this->addGroupBox->Controls->Add(this->label4);
 			this->addGroupBox->Controls->Add(this->addItemTypeComboBox);
 			this->addGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->addGroupBox->Location = System::Drawing::Point(0, 338);
+			this->addGroupBox->Location = System::Drawing::Point(0, 219);
 			this->addGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->addGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->addGroupBox->Name = L"addGroupBox";
 			this->addGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
-			this->addGroupBox->Size = System::Drawing::Size(433, 102);
+			this->addGroupBox->Size = System::Drawing::Size(394, 100);
 			this->addGroupBox->TabIndex = 20;
 			this->addGroupBox->TabStop = false;
 			this->addGroupBox->Text = L"Add";
@@ -540,7 +542,7 @@ namespace CppWinForm1 {
 			// 
 			// addItemPrefixTextBox
 			// 
-			this->addItemPrefixTextBox->Location = System::Drawing::Point(149, 59);
+			this->addItemPrefixTextBox->Location = System::Drawing::Point(101, 57);
 			this->addItemPrefixTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->addItemPrefixTextBox->Name = L"addItemPrefixTextBox";
 			this->addItemPrefixTextBox->Size = System::Drawing::Size(231, 22);
@@ -549,7 +551,7 @@ namespace CppWinForm1 {
 			// label7
 			// 
 			this->label7->AutoSize = true;
-			this->label7->Location = System::Drawing::Point(69, 63);
+			this->label7->Location = System::Drawing::Point(46, 60);
 			this->label7->Name = L"label7";
 			this->label7->Size = System::Drawing::Size(43, 17);
 			this->label7->TabIndex = 2;
@@ -559,7 +561,7 @@ namespace CppWinForm1 {
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(27, 25);
+			this->label4->Location = System::Drawing::Point(4, 22);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(85, 17);
 			this->label4->TabIndex = 1;
@@ -569,7 +571,7 @@ namespace CppWinForm1 {
 			// 
 			this->addItemTypeComboBox->FormattingEnabled = true;
 			this->addItemTypeComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
-			this->addItemTypeComboBox->Location = System::Drawing::Point(149, 21);
+			this->addItemTypeComboBox->Location = System::Drawing::Point(101, 19);
 			this->addItemTypeComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->addItemTypeComboBox->Name = L"addItemTypeComboBox";
 			this->addItemTypeComboBox->Size = System::Drawing::Size(231, 24);
@@ -579,11 +581,11 @@ namespace CppWinForm1 {
 			// 
 			this->listGroupBox->Controls->Add(this->sceneListTree);
 			this->listGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->listGroupBox->Location = System::Drawing::Point(0, 215);
+			this->listGroupBox->Location = System::Drawing::Point(0, 96);
 			this->listGroupBox->Margin = System::Windows::Forms::Padding(4);
 			this->listGroupBox->Name = L"listGroupBox";
 			this->listGroupBox->Padding = System::Windows::Forms::Padding(4);
-			this->listGroupBox->Size = System::Drawing::Size(433, 123);
+			this->listGroupBox->Size = System::Drawing::Size(394, 123);
 			this->listGroupBox->TabIndex = 18;
 			this->listGroupBox->TabStop = false;
 			this->listGroupBox->Text = L"List";
@@ -596,27 +598,95 @@ namespace CppWinForm1 {
 			this->sceneListTree->Location = System::Drawing::Point(4, 19);
 			this->sceneListTree->Margin = System::Windows::Forms::Padding(4);
 			this->sceneListTree->Name = L"sceneListTree";
-			this->sceneListTree->Size = System::Drawing::Size(425, 100);
+			this->sceneListTree->Size = System::Drawing::Size(386, 100);
 			this->sceneListTree->TabIndex = 1;
 			this->sceneListTree->AfterSelect += gcnew System::Windows::Forms::TreeViewEventHandler(this, &EditorForm::sceneListTree_AfterSelect);
 			// 
-			// selectGroupBox
+			// toolsGroupBox
 			// 
-			this->selectGroupBox->AutoSize = true;
-			this->selectGroupBox->Controls->Add(this->rotateObjButton);
-			this->selectGroupBox->Controls->Add(this->scaleObjButton);
-			this->selectGroupBox->Controls->Add(this->moveObjButton);
-			this->selectGroupBox->Controls->Add(this->selectObjButton);
-			this->selectGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->selectGroupBox->Location = System::Drawing::Point(0, 106);
-			this->selectGroupBox->Margin = System::Windows::Forms::Padding(4);
-			this->selectGroupBox->Name = L"selectGroupBox";
-			this->selectGroupBox->Padding = System::Windows::Forms::Padding(4);
-			this->selectGroupBox->Size = System::Drawing::Size(433, 109);
-			this->selectGroupBox->TabIndex = 17;
-			this->selectGroupBox->TabStop = false;
-			this->selectGroupBox->Text = L"Select";
-			this->selectGroupBox->Visible = false;
+			this->toolsGroupBox->AutoSize = true;
+			this->toolsGroupBox->BackColor = System::Drawing::SystemColors::ControlDark;
+			this->toolsGroupBox->Controls->Add(this->utilsCheckBox);
+			this->toolsGroupBox->Controls->Add(this->sceneCheckBox);
+			this->toolsGroupBox->Controls->Add(this->addItemCheckBox);
+			this->toolsGroupBox->Controls->Add(this->listCheckBox);
+			this->toolsGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
+			this->toolsGroupBox->Location = System::Drawing::Point(0, 0);
+			this->toolsGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->toolsGroupBox->Name = L"toolsGroupBox";
+			this->toolsGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->toolsGroupBox->Size = System::Drawing::Size(394, 96);
+			this->toolsGroupBox->TabIndex = 16;
+			this->toolsGroupBox->TabStop = false;
+			this->toolsGroupBox->Text = L"Tools";
+			// 
+			// utilsCheckBox
+			// 
+			this->utilsCheckBox->Appearance = System::Windows::Forms::Appearance::Button;
+			this->utilsCheckBox->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"utilsCheckBox.BackgroundImage")));
+			this->utilsCheckBox->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
+			this->utilsCheckBox->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
+			this->utilsCheckBox->FlatAppearance->CheckedBackColor = System::Drawing::Color::DodgerBlue;
+			this->utilsCheckBox->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
+			this->utilsCheckBox->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->utilsCheckBox->Location = System::Drawing::Point(279, 21);
+			this->utilsCheckBox->Margin = System::Windows::Forms::Padding(4);
+			this->utilsCheckBox->Name = L"utilsCheckBox";
+			this->utilsCheckBox->Size = System::Drawing::Size(53, 54);
+			this->utilsCheckBox->TabIndex = 32;
+			this->utilsCheckBox->UseVisualStyleBackColor = true;
+			this->utilsCheckBox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::utilsCheckBox_CheckedChanged);
+			// 
+			// sceneCheckBox
+			// 
+			this->sceneCheckBox->Appearance = System::Windows::Forms::Appearance::Button;
+			this->sceneCheckBox->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"sceneCheckBox.BackgroundImage")));
+			this->sceneCheckBox->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
+			this->sceneCheckBox->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
+			this->sceneCheckBox->FlatAppearance->CheckedBackColor = System::Drawing::Color::DodgerBlue;
+			this->sceneCheckBox->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
+			this->sceneCheckBox->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->sceneCheckBox->Location = System::Drawing::Point(138, 21);
+			this->sceneCheckBox->Margin = System::Windows::Forms::Padding(4);
+			this->sceneCheckBox->Name = L"sceneCheckBox";
+			this->sceneCheckBox->Size = System::Drawing::Size(53, 54);
+			this->sceneCheckBox->TabIndex = 31;
+			this->sceneCheckBox->UseVisualStyleBackColor = true;
+			this->sceneCheckBox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::sceneCheckBox_CheckedChanged);
+			// 
+			// addItemCheckBox
+			// 
+			this->addItemCheckBox->Appearance = System::Windows::Forms::Appearance::Button;
+			this->addItemCheckBox->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"addItemCheckBox.BackgroundImage")));
+			this->addItemCheckBox->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
+			this->addItemCheckBox->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
+			this->addItemCheckBox->FlatAppearance->CheckedBackColor = System::Drawing::Color::DodgerBlue;
+			this->addItemCheckBox->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
+			this->addItemCheckBox->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->addItemCheckBox->Location = System::Drawing::Point(209, 21);
+			this->addItemCheckBox->Margin = System::Windows::Forms::Padding(4);
+			this->addItemCheckBox->Name = L"addItemCheckBox";
+			this->addItemCheckBox->Size = System::Drawing::Size(53, 54);
+			this->addItemCheckBox->TabIndex = 30;
+			this->addItemCheckBox->UseVisualStyleBackColor = true;
+			this->addItemCheckBox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::addItemCheckBox_CheckedChanged);
+			// 
+			// listCheckBox
+			// 
+			this->listCheckBox->Appearance = System::Windows::Forms::Appearance::Button;
+			this->listCheckBox->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"listCheckBox.BackgroundImage")));
+			this->listCheckBox->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
+			this->listCheckBox->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
+			this->listCheckBox->FlatAppearance->CheckedBackColor = System::Drawing::Color::DodgerBlue;
+			this->listCheckBox->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
+			this->listCheckBox->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->listCheckBox->Location = System::Drawing::Point(66, 21);
+			this->listCheckBox->Margin = System::Windows::Forms::Padding(4);
+			this->listCheckBox->Name = L"listCheckBox";
+			this->listCheckBox->Size = System::Drawing::Size(53, 54);
+			this->listCheckBox->TabIndex = 28;
+			this->listCheckBox->UseVisualStyleBackColor = true;
+			this->listCheckBox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::listCheckBox_CheckedChanged);
 			// 
 			// rotateObjButton
 			// 
@@ -627,7 +697,7 @@ namespace CppWinForm1 {
 			this->rotateObjButton->FlatAppearance->CheckedBackColor = System::Drawing::Color::Khaki;
 			this->rotateObjButton->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
 			this->rotateObjButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->rotateObjButton->Location = System::Drawing::Point(311, 34);
+			this->rotateObjButton->Location = System::Drawing::Point(547, 23);
 			this->rotateObjButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->rotateObjButton->Name = L"rotateObjButton";
 			this->rotateObjButton->Size = System::Drawing::Size(53, 54);
@@ -645,7 +715,7 @@ namespace CppWinForm1 {
 			this->scaleObjButton->FlatAppearance->CheckedBackColor = System::Drawing::Color::Khaki;
 			this->scaleObjButton->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
 			this->scaleObjButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->scaleObjButton->Location = System::Drawing::Point(240, 34);
+			this->scaleObjButton->Location = System::Drawing::Point(476, 23);
 			this->scaleObjButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->scaleObjButton->Name = L"scaleObjButton";
 			this->scaleObjButton->Size = System::Drawing::Size(53, 54);
@@ -663,7 +733,7 @@ namespace CppWinForm1 {
 			this->moveObjButton->FlatAppearance->CheckedBackColor = System::Drawing::Color::Khaki;
 			this->moveObjButton->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
 			this->moveObjButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->moveObjButton->Location = System::Drawing::Point(169, 34);
+			this->moveObjButton->Location = System::Drawing::Point(405, 23);
 			this->moveObjButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->moveObjButton->Name = L"moveObjButton";
 			this->moveObjButton->Size = System::Drawing::Size(53, 54);
@@ -681,7 +751,7 @@ namespace CppWinForm1 {
 			this->selectObjButton->FlatAppearance->CheckedBackColor = System::Drawing::Color::Khaki;
 			this->selectObjButton->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
 			this->selectObjButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->selectObjButton->Location = System::Drawing::Point(101, 34);
+			this->selectObjButton->Location = System::Drawing::Point(337, 23);
 			this->selectObjButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->selectObjButton->Name = L"selectObjButton";
 			this->selectObjButton->Size = System::Drawing::Size(53, 54);
@@ -690,134 +760,50 @@ namespace CppWinForm1 {
 			this->selectObjButton->UseVisualStyleBackColor = true;
 			this->selectObjButton->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::selectObjButton_CheckedChanged);
 			// 
-			// toolsGroupBox
-			// 
-			this->toolsGroupBox->AutoSize = true;
-			this->toolsGroupBox->BackColor = System::Drawing::SystemColors::ControlDark;
-			this->toolsGroupBox->Controls->Add(this->utilsCheckBox);
-			this->toolsGroupBox->Controls->Add(this->sceneCheckBox);
-			this->toolsGroupBox->Controls->Add(this->addItemCheckBox);
-			this->toolsGroupBox->Controls->Add(this->selectCheckBox);
-			this->toolsGroupBox->Controls->Add(this->listCheckBox);
-			this->toolsGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->toolsGroupBox->Location = System::Drawing::Point(0, 0);
-			this->toolsGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
-			this->toolsGroupBox->Name = L"toolsGroupBox";
-			this->toolsGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
-			this->toolsGroupBox->Size = System::Drawing::Size(433, 106);
-			this->toolsGroupBox->TabIndex = 16;
-			this->toolsGroupBox->TabStop = false;
-			this->toolsGroupBox->Text = L"Tools";
-			// 
-			// utilsCheckBox
-			// 
-			this->utilsCheckBox->Appearance = System::Windows::Forms::Appearance::Button;
-			this->utilsCheckBox->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"utilsCheckBox.BackgroundImage")));
-			this->utilsCheckBox->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
-			this->utilsCheckBox->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
-			this->utilsCheckBox->FlatAppearance->CheckedBackColor = System::Drawing::Color::DodgerBlue;
-			this->utilsCheckBox->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
-			this->utilsCheckBox->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->utilsCheckBox->Location = System::Drawing::Point(350, 31);
-			this->utilsCheckBox->Margin = System::Windows::Forms::Padding(4);
-			this->utilsCheckBox->Name = L"utilsCheckBox";
-			this->utilsCheckBox->Size = System::Drawing::Size(53, 54);
-			this->utilsCheckBox->TabIndex = 32;
-			this->utilsCheckBox->UseVisualStyleBackColor = true;
-			this->utilsCheckBox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::utilsCheckBox_CheckedChanged);
-			// 
-			// sceneCheckBox
-			// 
-			this->sceneCheckBox->Appearance = System::Windows::Forms::Appearance::Button;
-			this->sceneCheckBox->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"sceneCheckBox.BackgroundImage")));
-			this->sceneCheckBox->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
-			this->sceneCheckBox->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
-			this->sceneCheckBox->FlatAppearance->CheckedBackColor = System::Drawing::Color::DodgerBlue;
-			this->sceneCheckBox->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
-			this->sceneCheckBox->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->sceneCheckBox->Location = System::Drawing::Point(209, 31);
-			this->sceneCheckBox->Margin = System::Windows::Forms::Padding(4);
-			this->sceneCheckBox->Name = L"sceneCheckBox";
-			this->sceneCheckBox->Size = System::Drawing::Size(53, 54);
-			this->sceneCheckBox->TabIndex = 31;
-			this->sceneCheckBox->UseVisualStyleBackColor = true;
-			this->sceneCheckBox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::sceneCheckBox_CheckedChanged);
-			// 
-			// addItemCheckBox
-			// 
-			this->addItemCheckBox->Appearance = System::Windows::Forms::Appearance::Button;
-			this->addItemCheckBox->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"addItemCheckBox.BackgroundImage")));
-			this->addItemCheckBox->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
-			this->addItemCheckBox->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
-			this->addItemCheckBox->FlatAppearance->CheckedBackColor = System::Drawing::Color::DodgerBlue;
-			this->addItemCheckBox->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
-			this->addItemCheckBox->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->addItemCheckBox->Location = System::Drawing::Point(280, 31);
-			this->addItemCheckBox->Margin = System::Windows::Forms::Padding(4);
-			this->addItemCheckBox->Name = L"addItemCheckBox";
-			this->addItemCheckBox->Size = System::Drawing::Size(53, 54);
-			this->addItemCheckBox->TabIndex = 30;
-			this->addItemCheckBox->UseVisualStyleBackColor = true;
-			this->addItemCheckBox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::addItemCheckBox_CheckedChanged);
-			// 
-			// selectCheckBox
-			// 
-			this->selectCheckBox->Appearance = System::Windows::Forms::Appearance::Button;
-			this->selectCheckBox->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"selectCheckBox.BackgroundImage")));
-			this->selectCheckBox->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
-			this->selectCheckBox->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
-			this->selectCheckBox->FlatAppearance->CheckedBackColor = System::Drawing::Color::DodgerBlue;
-			this->selectCheckBox->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
-			this->selectCheckBox->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->selectCheckBox->Location = System::Drawing::Point(138, 31);
-			this->selectCheckBox->Margin = System::Windows::Forms::Padding(4);
-			this->selectCheckBox->Name = L"selectCheckBox";
-			this->selectCheckBox->Size = System::Drawing::Size(53, 54);
-			this->selectCheckBox->TabIndex = 29;
-			this->selectCheckBox->UseVisualStyleBackColor = true;
-			this->selectCheckBox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::selectCheckBox_CheckedChanged);
-			// 
-			// listCheckBox
-			// 
-			this->listCheckBox->Appearance = System::Windows::Forms::Appearance::Button;
-			this->listCheckBox->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"listCheckBox.BackgroundImage")));
-			this->listCheckBox->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
-			this->listCheckBox->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
-			this->listCheckBox->FlatAppearance->CheckedBackColor = System::Drawing::Color::DodgerBlue;
-			this->listCheckBox->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
-			this->listCheckBox->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->listCheckBox->Location = System::Drawing::Point(70, 31);
-			this->listCheckBox->Margin = System::Windows::Forms::Padding(4);
-			this->listCheckBox->Name = L"listCheckBox";
-			this->listCheckBox->Size = System::Drawing::Size(53, 54);
-			this->listCheckBox->TabIndex = 28;
-			this->listCheckBox->UseVisualStyleBackColor = true;
-			this->listCheckBox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::listCheckBox_CheckedChanged);
-			// 
 			// topPanel
 			// 
+			this->topPanel->Controls->Add(this->rotateObjButton);
+			this->topPanel->Controls->Add(this->scaleObjButton);
+			this->topPanel->Controls->Add(this->selectObjButton);
+			this->topPanel->Controls->Add(this->moveObjButton);
 			this->topPanel->Dock = System::Windows::Forms::DockStyle::Top;
-			this->topPanel->Location = System::Drawing::Point(458, 0);
+			this->topPanel->Location = System::Drawing::Point(398, 0);
 			this->topPanel->Name = L"topPanel";
-			this->topPanel->Size = System::Drawing::Size(906, 102);
+			this->topPanel->Size = System::Drawing::Size(966, 87);
 			this->topPanel->TabIndex = 18;
 			// 
 			// renderPanel
 			// 
-			this->renderPanel->BackColor = System::Drawing::SystemColors::Desktop;
+			this->renderPanel->BackColor = System::Drawing::SystemColors::ActiveCaptionText;
+			this->renderPanel->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Center;
+			this->renderPanel->Controls->Add(this->levelLoading);
 			this->renderPanel->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->renderPanel->Location = System::Drawing::Point(458, 102);
+			this->renderPanel->Location = System::Drawing::Point(398, 87);
 			this->renderPanel->Name = L"renderPanel";
-			this->renderPanel->Size = System::Drawing::Size(906, 678);
+			this->renderPanel->Size = System::Drawing::Size(966, 693);
 			this->renderPanel->TabIndex = 19;
 			// 
 			// bottomPanel
 			// 
 			this->bottomPanel->Dock = System::Windows::Forms::DockStyle::Bottom;
-			this->bottomPanel->Location = System::Drawing::Point(458, 680);
+			this->bottomPanel->Location = System::Drawing::Point(398, 699);
 			this->bottomPanel->Name = L"bottomPanel";
-			this->bottomPanel->Size = System::Drawing::Size(906, 100);
+			this->bottomPanel->Size = System::Drawing::Size(966, 81);
 			this->bottomPanel->TabIndex = 20;
+			// 
+			// levelLoading
+			// 
+			this->levelLoading->BackColor = System::Drawing::SystemColors::ActiveCaptionText;
+			this->levelLoading->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Center;
+			this->levelLoading->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->levelLoading->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"levelLoading.Image")));
+			this->levelLoading->InitialImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"levelLoading.InitialImage")));
+			this->levelLoading->Location = System::Drawing::Point(0, 0);
+			this->levelLoading->Name = L"levelLoading";
+			this->levelLoading->Size = System::Drawing::Size(966, 693);
+			this->levelLoading->SizeMode = System::Windows::Forms::PictureBoxSizeMode::CenterImage;
+			this->levelLoading->TabIndex = 0;
+			this->levelLoading->TabStop = false;
 			// 
 			// EditorForm
 			// 
@@ -855,8 +841,10 @@ namespace CppWinForm1 {
 			this->addGroupBox->ResumeLayout(false);
 			this->addGroupBox->PerformLayout();
 			this->listGroupBox->ResumeLayout(false);
-			this->selectGroupBox->ResumeLayout(false);
 			this->toolsGroupBox->ResumeLayout(false);
+			this->topPanel->ResumeLayout(false);
+			this->renderPanel->ResumeLayout(false);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->levelLoading))->EndInit();
 			this->ResumeLayout(false);
 
 		}
@@ -989,22 +977,6 @@ private: System::Void listCheckBox_CheckedChanged(System::Object^  sender, Syste
 
 	listGroupBox->Show();
 }
-private: System::Void selectCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-
-	//System::Windows::Forms::Cursor::Hide();
-
-	if (!((System::Windows::Forms::CheckBox^)sender)->Checked)
-	{
-		selectGroupBox->Hide();
-	}
-	else
-	{
-		if (!selectObjButton->Checked && !moveObjButton->Checked && !scaleObjButton->Checked && !rotateObjButton->Checked)
-			selectObjButton->Checked = true;
-
-		selectGroupBox->Show();
-	}
-}
 private: System::Void sceneCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 
 	if (!((System::Windows::Forms::CheckBox^)sender)->Checked)
@@ -1103,7 +1075,12 @@ public: System::Void hideItemInfo()
 	selectionNameButton->Text = "";
 	selectionGroupBox->Hide();
 }
-		 
+	
+public: System::Void setLoading(bool enabled)
+{
+	levelLoading->Visible = enabled;
+}
+
 public: System::Void showItemInfo(SelectionInfo* info)
 {
 	selectionGroupBox->BringToFront();

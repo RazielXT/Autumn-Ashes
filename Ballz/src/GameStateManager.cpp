@@ -86,6 +86,10 @@ LevelInfo* GameStateManager::getLvlInfo(int id)
 
 void GameStateManager::switchToLevel(int lvl)
 {
+#ifdef EDITOR
+	Global::editor->uiHandler.sendMsg(UiMessage {UiMessageId::StartLoading});
+#endif
+
 	if (lvl == 0)
 		myMenu->setMainMenu();
 	else if (gameState == PAUSE || gameState == MENU)
@@ -115,12 +119,16 @@ void GameStateManager::switchToLevel(int lvl)
 	geometryMgr->postLoad();
 	lvlInfo.init();
 
-	SceneCubeMap::renderAll();
-
 	Global::editor->afterLoadInit();
+
+	SceneCubeMap::renderAll();
 
 	Global::ppMgr->setColorGradingPreset(lvlInfo.lut);
 	Global::ppMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
+
+#ifdef EDITOR
+	Global::editor->uiHandler.sendMsg(UiMessage { UiMessageId::EndLoading });
+#endif
 }
 
 void GameStateManager::restartLevel()

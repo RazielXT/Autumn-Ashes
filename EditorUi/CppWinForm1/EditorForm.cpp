@@ -22,37 +22,6 @@ void FormsMain(HWND* hwnd, HWND* parent)
 		*parent = form.getTopWindowHandle();
 
 	Application::Run(%form);
-
-	/*if(!hwnd)
-		Application::Run(%form);
-	else
-	{
-		
-		System::Windows::Forms::NativeWindow^ nativeWindow;
-
-		try
-		{
-			System::IntPtr handle = System::IntPtr(hwnd);
-			nativeWindow = gcnew System::Windows::Forms::NativeWindow();
-			nativeWindow->AssignHandle(handle);
-		}
-		catch (const std::exception&)
-		{
-			MessageBox::Show("Init failure");
-			return;
-		}
-
-		try
-		{
-			form.Show(nativeWindow);
-			Application::Run(%form);
-		}
-		catch (const std::exception&)
-		{
-			MessageBox::Show("Show failure");
-			return;
-		}
-	}	*/	
 }
 
 void FormsUpdate(UiMessage* msg)
@@ -65,6 +34,10 @@ void FormsUpdate(UiMessage* msg)
 		::Cursor::Show();
 	if (msg->id == UiMessageId::HideMouse)
 		::Cursor::Hide();
+	if (msg->id == UiMessageId::StartLoading)
+		CppWinForm1::EditorForm::instance->setLoading(true);
+	if (msg->id == UiMessageId::EndLoading)
+		CppWinForm1::EditorForm::instance->setLoading(false);
 }
 
 #ifdef NO_LIB
