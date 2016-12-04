@@ -83,12 +83,9 @@ void EditorControl::releasedKey(const OIS::KeyEvent &arg)
 		selector.addMode = false;
 }
 
-extern int mouseX;
-extern int mouseY;
-
 void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
-	if (active && mouseX > 0 && mouseY > 0)
+	if (active)
 	{
 		if (id == OIS::MB_Right || id == OIS::MB_Middle)
 			setVievMode();

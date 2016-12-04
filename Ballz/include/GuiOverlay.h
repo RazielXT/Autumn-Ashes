@@ -101,7 +101,7 @@ private:
 	lvlButton* firstLevelButton, *curLvlButton;
 	Gorilla::Silverback*    mSilverback;
 	Gorilla::Screen*        mScreen, *mScreenLvls, *mScreenIngame;
-	Gorilla::Layer*         mLayer, *gameLayer, *mouseLayer, *mLvlsLayer;
+	Gorilla::Layer*         mLayer, *gameLayer, *mouseLayer, *dbgLayer, *mLvlsLayer;
 	Gorilla::Caption*       fpsCaption;
 	Gorilla::Caption*       debugCaption[MAX_DEBUG_LINES];
 	Gorilla::Rectangle*     mousePointer;

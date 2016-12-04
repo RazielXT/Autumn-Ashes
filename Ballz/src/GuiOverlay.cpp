@@ -247,28 +247,28 @@ GuiOverlay::GuiOverlay(GameConfig* gameConfig, Ogre::Camera* mCam, Ogre::RenderW
 	mLayer = mScreen->createLayer(1);
 	mLvlsLayer = mScreenLvls->createLayer(1);
 	mouseLayer = mScreen->createLayer(2);
+	dbgLayer = mScreen->createLayer(3);
 
 	gameLayer = mScreen->createLayer(0);
 	gameUi = new GameUi(gameLayer);
 
 	mousePointer = mouseLayer->createRectangle(0,0,41,42);
 	mousePointer->background_image("mousepointer");
-	mousePointer->yes_background(1);
 
-	fpsCaption = mouseLayer->createCaption(48, 100, 5, "0");
+	fpsCaption = dbgLayer->createCaption(48, 100, 5, "0");
 	fpsCaption->size(1500,50);
 	fpsCaption->colour(Ogre::ColourValue(0,255,0));
 	fpsCaption->align(Gorilla::TextAlign_Right);
 
 	for (size_t i = 0; i < MAX_DEBUG_LINES; i++)
 	{
-		debugCaption[i] = mouseLayer->createCaption(48, 50, 5 + 20 * (float)i, "");
+		debugCaption[i] = dbgLayer->createCaption(48, 50, 5 + 20 * (float)i, "");
 		debugCaption[i]->size(1500, 50);
 		debugCaption[i]->setScale(0.3f);
 		debugCaption[i]->align(Gorilla::TextAlign_Left);
 	}
 
-	editUi->initUi(mouseLayer);
+	editUi->initUi(dbgLayer);
 }
 
 
@@ -434,9 +434,9 @@ void GuiOverlay::createLevelsMenuButtons()
 
 void GuiOverlay::setMainMenu()
 {
-	mousePointer->yes_background(1);
 	mLayer->show();
 	mLvlsLayer->show();
+	mouseLayer->show();
 	gameLayer->hide();
 
 	createMainMenuButtons();
@@ -449,9 +449,9 @@ void GuiOverlay::setMainMenu()
 
 void GuiOverlay::setIngameMenu()
 {
-	mousePointer->yes_background(1);
 	mLayer->show();
 	mLvlsLayer->show();
+	mouseLayer->show();
 	gameLayer->hide();
 
 	createIngameMenuButtons();
@@ -472,7 +472,7 @@ void GuiOverlay::clearMenu()
 	mLayer->destroyAllCaptions();
 	mLvlsLayer->hide();
 	mLvlsLayer->destroyAllRectangles();
-	mousePointer->no_background();
+	mouseLayer->hide();
 	oMenuButtons.clear();
 	for(auto myIterator = lMenuButtons.begin(); myIterator != lMenuButtons.end(); myIterator++)
 		delete (*myIterator);

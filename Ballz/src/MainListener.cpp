@@ -115,6 +115,9 @@ bool MainListener::frameStarted(const FrameEvent& evt)
 	return continueExecution;
 }
 
+int mouseX = 0;
+int mouseY = 0;
+
 bool MainListener::keyPressed(const OIS::KeyEvent &arg)
 {
 	Global::eventsMgr->listenersKeyPressed(arg);
@@ -158,9 +161,6 @@ bool MainListener::keyReleased(const OIS::KeyEvent &arg)
 	return true;
 }
 
-int mouseX = 0;
-int mouseY = 0;
-
 bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 {
 	POINT point;
@@ -188,6 +188,11 @@ bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 
 bool MainListener::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
+#ifdef EDITOR
+	if (editor.active && (mouseX < 0 || mouseY < 0 || mouseX > mWindow->getWidth() || mouseY > mWindow->getHeight()))
+		return true;
+#endif
+
 	mEventMgr->listenersMousePressed(arg, id);
 
 	if (gameMgr->gameState == GAME)
