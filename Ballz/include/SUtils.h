@@ -42,4 +42,16 @@ inline std::string strtok_str(std::string& txt, char delim)
 	return ret;
 }
 
+inline std::vector<std::string> splitString(std::string txt, char delim)
+{
+	std::vector<std::string> out;
+
+	while (!txt.empty())
+	{
+		out.push_back(strtok_str(txt, delim));
+	}
+
+	return out;
+}
+
 }

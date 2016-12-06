@@ -38,13 +38,14 @@ void FormsUpdate(UiMessage* msg)
 		CppWinForm1::EditorForm::instance->setLoading(true);
 	if (msg->id == UiMessageId::EndLoading)
 		CppWinForm1::EditorForm::instance->setLoading(false);
+	if (msg->id == UiMessageId::SetEditorProperties)
+		CppWinForm1::EditorForm::instance->setProperties((EditorProperties*)msg->data);
 }
 
 #ifdef NO_LIB
 
 int Main()
 {
-	HWND h;
 	FormsMain(0,0);
 
 	return 0;

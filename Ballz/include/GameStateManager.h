@@ -18,9 +18,7 @@ enum StateSwitching
 struct LevelInfo
 {
 	std::string name;
-	std::function<void()> init;
-
-	std::string lut;
+	std::string directory;
 };
 
 class GameStateManager
@@ -34,9 +32,11 @@ public:
 	LevelInfo* getCurrentLvlInfo();
 	std::string getCurrentLvlPath();
 	std::string getCurrentLvlScenePath();
+	std::vector<LevelInfo> getLevels();
 
 	void switchToMainMenu();
 	void switchToLevel(int lvl);
+	void switchToLevel(std::string& lvl);
 
 	void restartLevel();
 	void reloadLevel();
@@ -63,7 +63,7 @@ private:
 
 	void clearLevel();
 
-	std::map<int, LevelInfo> levels;
+	std::vector<LevelInfo> levels;
 
 	void updateStateSwitching(float tslf);
 	int stateTarget=0;

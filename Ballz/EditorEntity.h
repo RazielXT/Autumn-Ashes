@@ -3,6 +3,8 @@
 
 struct EditorEntity : public EditorItem
 {
+	virtual void reset();
+
 	virtual void setPosition(Ogre::Vector3&);
 	virtual void setScale(Ogre::Vector3&);
 	virtual Ogre::Vector3 getPosition();

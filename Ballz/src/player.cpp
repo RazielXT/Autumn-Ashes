@@ -17,6 +17,8 @@ using namespace Ogre;
 
 Player::Player(WorldMaterials* wMaterials) : pAudio(this)
 {
+	camPosition = Ogre::Vector3::ZERO;
+	bodyPosition = Ogre::Vector3::ZERO;
 	gravity = Ogre::Vector3(0, -9.0f, 0);
 	tslf=0;
 	bodySpeedAccum=0;
@@ -81,7 +83,7 @@ Player::~Player ()
 	delete pGrabbing;
 	delete pParkour;
 	delete pSliding;
-	delete pModel;
+	//delete pModel;
 	delete pCamera;
 	delete autoTarget;
 	delete pHanging;
@@ -111,6 +113,7 @@ void Player::initBody()
 	SceneNode* node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CenterNode");
 	node->attachObject(ent);
 	node->setScale(0.5, 0.5, 0.5);
+	node->setPosition(Ogre::Vector3(0, 100, 0));
 	//ent->setCastShadows(true);
 	ent->setVisible(false);
 	//ent->setMaterialName("redConcrete");
@@ -361,6 +364,14 @@ void Player::movedMouse(const OIS::MouseEvent &e)
 		pSliding->movedMouse(e);
 }
 
+
+void Player::setPosition(Ogre::Vector3 pos)
+{
+	bodyPosition = pos;
+	body->setPositionOrientation(pos, body->getOrientation());
+
+	GUtils::DebugPrint("PPos: " + Ogre::StringConverter::toString(pos));
+}
 
 void Player::die()
 {

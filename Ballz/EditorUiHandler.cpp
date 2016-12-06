@@ -67,11 +67,17 @@ AppUiMessage::AppUiMessage(UiMessage* msg)
 
 AppUiMessage::~AppUiMessage()
 {
+	release();
+}
+
+void AppUiMessage::release()
+{
 	if (!empty)
 	{
 		{
 			std::unique_lock<std::mutex> lk(msgMutex);
 			storedMsg = nullptr;
+			empty = true;
 		}
 
 		cv.notify_all();

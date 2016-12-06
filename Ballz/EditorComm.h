@@ -12,6 +12,7 @@ enum class UiMessageId
 	HideMouse,
 	StartLoading,
 	EndLoading,
+	SetEditorProperties,  //EditorProperties
 
 	//from UI
 	GetWorldItems,	//GetWorldItemsData
@@ -25,7 +26,8 @@ enum class UiMessageId
 	SelectionInfoChanged,	 //SelectionInfoChange
 	SceneSettingsChanged,	 //SceneSettingsChange
 	LookAtSelection,
-	PlacementRayUtil		//float
+	PlacementRayUtil,		//float
+	LoadLevel				//string
 };
 
 struct UiMessage
@@ -105,4 +107,9 @@ struct SceneSettingsChange
 {
 	enum class SceneChange { Skybox, Lut } change;
 	void* data;
+};
+
+struct EditorProperties
+{
+	std::vector<std::string> levels;
 };

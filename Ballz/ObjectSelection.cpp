@@ -36,6 +36,13 @@ void ObjectSelection::init(EditorControl* p)
 	parent = p;
 	gizmo.init(this);
 	addMode = false;
+
+	if(selected)
+		selected->reset();
+	selected = nullptr;
+	gizmo.setRoot(nullptr);
+
+	updateUiSelectedInfo();
 }
 
 void ObjectSelection::setMode(SelectionMode mode)

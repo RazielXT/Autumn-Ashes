@@ -74,6 +74,7 @@ namespace CppWinForm1 {
 	private: System::Windows::Forms::ComboBox^  utilsComboBox;
 	private: System::Windows::Forms::PictureBox^  levelLoading;
 	private: System::Windows::Forms::Button^  sceneListButton;
+	private: System::Windows::Forms::ComboBox^  levelsComboBox;
 
 
 	private: System::Windows::Forms::Panel^  bottomPanel;
@@ -186,6 +187,7 @@ namespace CppWinForm1 {
 			this->moveObjButton = (gcnew System::Windows::Forms::RadioButton());
 			this->selectObjButton = (gcnew System::Windows::Forms::RadioButton());
 			this->topPanel = (gcnew System::Windows::Forms::Panel());
+			this->levelsComboBox = (gcnew System::Windows::Forms::ComboBox());
 			this->sceneListButton = (gcnew System::Windows::Forms::Button());
 			this->renderPanel = (gcnew System::Windows::Forms::Panel());
 			this->levelLoading = (gcnew System::Windows::Forms::PictureBox());
@@ -722,6 +724,7 @@ namespace CppWinForm1 {
 			// 
 			// topPanel
 			// 
+			this->topPanel->Controls->Add(this->levelsComboBox);
 			this->topPanel->Controls->Add(this->sceneListButton);
 			this->topPanel->Controls->Add(this->rotateObjButton);
 			this->topPanel->Controls->Add(this->scaleObjButton);
@@ -732,6 +735,15 @@ namespace CppWinForm1 {
 			this->topPanel->Name = L"topPanel";
 			this->topPanel->Size = System::Drawing::Size(966, 87);
 			this->topPanel->TabIndex = 18;
+			// 
+			// levelsComboBox
+			// 
+			this->levelsComboBox->FormattingEnabled = true;
+			this->levelsComboBox->Location = System::Drawing::Point(776, 23);
+			this->levelsComboBox->Name = L"levelsComboBox";
+			this->levelsComboBox->Size = System::Drawing::Size(178, 24);
+			this->levelsComboBox->TabIndex = 25;
+			this->levelsComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::levelsComboBox_SelectedIndexChanged);
 			// 
 			// sceneListButton
 			// 
@@ -772,6 +784,7 @@ namespace CppWinForm1 {
 			this->levelLoading->SizeMode = System::Windows::Forms::PictureBoxSizeMode::CenterImage;
 			this->levelLoading->TabIndex = 0;
 			this->levelLoading->TabStop = false;
+			this->levelLoading->UseWaitCursor = true;
 			// 
 			// bottomPanel
 			// 
@@ -906,6 +919,11 @@ private: System::Void SendAsyncMsgThread(System::Object^ input)
 		SendMsg(UiMessageId::PlacementRayUtil, &offset);
 		break;
 	}
+	case UiMessageId::LoadLevel:
+	{
+		auto lvlName = marshal_as<std::string>(levelsComboBox->SelectedItem->ToString());
+		SendMsg(UiMessageId::LoadLevel, &lvlName);
+	}
 	default:
 		SendMsg(param->id, nullptr);
 		break;
@@ -1029,6 +1047,16 @@ public: System::Void hideItemInfo()
 public: System::Void setLoading(bool enabled)
 {
 	levelLoading->Visible = enabled;
+}
+
+public: System::Void setProperties(EditorProperties* info)
+{
+	levelsComboBox->Items->Clear();
+
+	for (auto& l : info->levels)
+	{
+		levelsComboBox->Items->Add(gcnew System::String(l.data()));
+	}
 }
 
 public: System::Void showItemInfo(SelectionInfo* info)
@@ -1175,6 +1203,12 @@ private: System::Void sceneListButton_Click(System::Object^  sender, System::Eve
 	}
 
 	sceneListForm->Visible = true;
+}
+private: System::Void levelsComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (levelsComboBox->SelectedIndex == -1)
+		return;
+
+	SendAsyncMsg(UiMessageId::LoadLevel);
 }
 };
 }

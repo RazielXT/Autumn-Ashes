@@ -5,6 +5,11 @@
 #include "GameStateManager.h"
 
 
+void EditorEntity::reset()
+{
+	selected.clear();
+}
+
 void EditorEntity::setPosition(Ogre::Vector3& pos)
 {
 	auto translate = getPosition();

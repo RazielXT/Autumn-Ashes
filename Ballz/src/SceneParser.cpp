@@ -1226,6 +1226,7 @@ void loadSpawn(const XMLElement* element, Ogre::Entity* ent, SceneNode* node)
 			GUtils::getVerticalRayPos(pos, 0, 10);
 			pos.y += 2;
 		}
+
 		Global::player->setPosition(pos);
 
 		Quaternion q = node->_getDerivedOrientation();

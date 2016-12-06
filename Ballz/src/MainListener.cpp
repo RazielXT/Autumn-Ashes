@@ -83,7 +83,8 @@ MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneMana
 		mKeyboard->setEventCallback(this);
 
 #ifdef EDITOR
-	Global::gameMgr->switchToLevel(5);
+	editor.initEditorProperties();
+	gameMgr->switchToLevel(3);
 #else
 	gameMgr->switchToMainMenu();
 #endif // EDITOR

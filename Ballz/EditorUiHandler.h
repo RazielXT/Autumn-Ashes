@@ -29,6 +29,8 @@ struct AppUiMessage
 	AppUiMessage(UiMessage* msg);
 	~AppUiMessage();
 
+	void release();
+
 	bool empty;
 
 	UiMessageId id;

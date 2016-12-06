@@ -31,6 +31,7 @@ public:
 	void setEditMode();
 
 	bool connectEditorUi();
+	void initEditorProperties();
 
 	EditorCamera cam;
 	OIS::Mouse* mMouse;

@@ -106,8 +106,6 @@ void PlayerSwimming::enteredWater()
 
 void PlayerSwimming::leftWater()
 {
-	auto lvlInfo = Global::gameMgr->getCurrentLvlInfo();
-
 	Global::ppMgr->vars.ColouringShift = lastPPValues.ColorShift;
 	Global::sceneMgr->setFog(FOG_LINEAR, lastPPValues.fogColor, 1, lastPPValues.fogStart, lastPPValues.fogEnd);
 

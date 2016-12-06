@@ -7,6 +7,8 @@ struct EditorUiHandler;
 
 struct EditorItem
 {
+	virtual void reset() = 0;
+
 	virtual void setScale(Ogre::Vector3&) = 0;
 	virtual void setPosition(Ogre::Vector3&) = 0;
 	virtual Ogre::Vector3 getPosition() = 0;

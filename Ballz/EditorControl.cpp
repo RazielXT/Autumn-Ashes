@@ -5,6 +5,7 @@
 #include "GUtils.h"
 #include "PlayerCamera.h"
 #include "SceneInteraction.h"
+#include "GameStateManager.h"
 
 
 std::string wtos(void* str)
@@ -36,6 +37,18 @@ EditorControl::EditorControl(EditorUiHandler& handler, OIS::Mouse* mouse) : mMou
 
 EditorControl::~EditorControl()
 {
+}
+
+void EditorControl::initEditorProperties()
+{
+	EditorProperties editor;
+	auto levels = Global::gameMgr->getLevels();
+	for (auto l : levels)
+	{
+		editor.levels.push_back(l.name);
+	}
+
+	uiHandler.sendMsg(UiMessage{UiMessageId::SetEditorProperties, &editor});
 }
 
 void EditorControl::displayItemInfo(EditorItem* item)
@@ -127,6 +140,9 @@ bool EditorControl::update(float tslf)
 	{
 		auto msg = uiHandler.readUiMessage();
 
+		if (!msg.empty)
+			GUtils::DebugPrint("UiMsg " + std::to_string((int)msg.id));
+
 		if(!msg.empty)
 			switch (msg.id)
 			{
@@ -170,6 +186,13 @@ bool EditorControl::update(float tslf)
 			case UiMessageId::LookAtSelection:
 				selector.lootAtSelection();
 				break;
+			case UiMessageId::LoadLevel:
+			{
+				auto levelName = *(std::string*)msg.data;
+				msg.release();
+				Global::gameMgr->switchToLevel(levelName);
+				break;
+			}
 			default:
 				break;
 			}
@@ -187,6 +210,7 @@ void EditorControl::afterLoadInit()
 		Global::eventsMgr->addCachedTask(this);
 		selector.init(this);
 		registerInputListening();
+		cam.camNode = nullptr;
 		cam.enable();
 		setEditMode();
 

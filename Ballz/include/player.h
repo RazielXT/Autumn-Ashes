@@ -49,11 +49,7 @@ public:
 	void releasedMouse(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 	void movedMouse(const OIS::MouseEvent &e);
 
-	void setPosition(Ogre::Vector3 pos)
-	{
-		bodyPosition = pos;
-		body->setPositionOrientation(pos,body->getOrientation());
-	}
+	void setPosition(Ogre::Vector3 pos);
 
 	void saveState(PlayerStateInfo& info);
 	void loadState(PlayerStateInfo& info);

@@ -8,6 +8,7 @@
 #include "Energy.h"
 #include "Gate.h"
 #include "..\EditorControl.h"
+#include "SUtils.h"
 
 GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : audioLib(cam)
 {
@@ -20,6 +21,26 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : 
 	wMaterials.init();
 
 	LevelInfo info;
+	info.name = "Menu";
+	info.directory = "menu";
+	levels.push_back(info);
+
+	std::ifstream levelsFile(Path::Levels + std::string("levels.txt"));
+	std::string levelLine;
+	while (std::getline(levelsFile, levelLine))
+	{
+		auto params = SUtils::splitString(levelLine, '\t');
+
+		if(params.size()<2)
+			continue;
+
+		info.name = params[0];
+		info.directory = params[1];
+
+		levels.push_back(info);
+	}
+
+	/*LevelInfo info;
 	info.name = "menu";
 	info.init = createMenuLevel;
 	info.lut = "normal.png";
@@ -44,7 +65,7 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : 
 	info.name = "testLvl2";
 	info.init = createTestLevel2;
 	info.lut = "LUT_Filmic7.png";
-	levels[5] = info;
+	levels[5] = info;*/
 
 	dbg = new DebugKeys();
 	dbg->registerInputListening();
@@ -63,12 +84,21 @@ void GameStateManager::switchToMainMenu()
 
 std::string GameStateManager::getCurrentLvlPath()
 {
-	return Path::Levels + levels[lastLVL].name + "/";
+	return Path::Levels + levels[lastLVL].directory + "/";
 }
 
 std::string GameStateManager::getCurrentLvlScenePath()
 {
-	return getCurrentLvlPath() + levels[lastLVL].name + ".scene";
+	return getCurrentLvlPath() + levels[lastLVL].directory + ".scene";
+}
+
+std::vector<LevelInfo> GameStateManager::getLevels()
+{
+	auto out = levels;
+
+	out.erase(out.begin());
+
+	return out;
 }
 
 LevelInfo* GameStateManager::getCurrentLvlInfo()
@@ -78,7 +108,7 @@ LevelInfo* GameStateManager::getCurrentLvlInfo()
 
 LevelInfo* GameStateManager::getLvlInfo(int id)
 {
-	if (levels.find(id) != levels.end())
+	if (levels.size() > (size_t)id)
 		return &levels[id];
 
 	return nullptr;
@@ -117,18 +147,30 @@ void GameStateManager::switchToLevel(int lvl)
 
 	sceneEdits.loadChanges();
 	geometryMgr->postLoad();
-	lvlInfo.init();
+	//lvlInfo.init();
 
 	Global::editor->afterLoadInit();
 
 	SceneCubeMap::renderAll();
 
-	Global::ppMgr->setColorGradingPreset(lvlInfo.lut);
+	//Global::ppMgr->setColorGradingPreset(lvlInfo.lut);
 	Global::ppMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
 
 #ifdef EDITOR
 	Global::editor->uiHandler.sendMsg(UiMessage { UiMessageId::EndLoading });
 #endif
+}
+
+void GameStateManager::switchToLevel(std::string& lvl)
+{
+	for (size_t i = 0; i < levels.size(); i++)
+	{
+		if (levels[i].name == lvl)
+		{
+			switchToLevel(i);
+			break;
+		}
+	}
 }
 
 void GameStateManager::restartLevel()
