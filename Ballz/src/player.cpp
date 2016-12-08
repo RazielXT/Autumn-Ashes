@@ -43,6 +43,7 @@ Player::Player(WorldMaterials* wMaterials) : pAudio(this)
 	moving=false;
 	onGround = true;
 	sprinting = false;
+	wantSurfaceSlide = false;
 
 	hanging=false;
 	climbing = BodyType(0);

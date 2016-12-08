@@ -2073,12 +2073,14 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 	{
 		ent->setRenderQueueGroup(RenderQueue_Water);
 		ent->setVisibilityFlags(VisibilityFlag_Water);
+		ent->setVisible(false);
 	}
 
 	if (transparentType)
 	{
 		ent->setRenderQueueGroup(RenderQueue_Transparent);
 		ent->setVisibilityFlags(VisibilityFlag_Transparent);
+		ent->setVisible(false);
 	}
 
 	const XMLElement* userdataElement = entityElement->FirstChildElement("userData");

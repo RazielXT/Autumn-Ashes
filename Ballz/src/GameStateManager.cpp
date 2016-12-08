@@ -94,11 +94,7 @@ std::string GameStateManager::getCurrentLvlScenePath()
 
 std::vector<LevelInfo> GameStateManager::getLevels()
 {
-	auto out = levels;
-
-	out.erase(out.begin());
-
-	return out;
+	return levels;
 }
 
 LevelInfo* GameStateManager::getCurrentLvlInfo()
@@ -118,15 +114,17 @@ void GameStateManager::switchToLevel(int lvl)
 {
 #ifdef EDITOR
 	Global::editor->uiHandler.sendMsg(UiMessage {UiMessageId::StartLoading});
-#endif
-
+	gameState = GAME;
+#else
 	if (lvl == 0)
 		myMenu->setMainMenu();
 	else if (gameState == PAUSE || gameState == MENU)
 		myMenu->clearMenu();
 
-	lastLVL = lvl;
 	gameState = lvl == 0 ? MENU : GAME;
+#endif
+
+	lastLVL = lvl;
 
 	if (Global::player)
 	{

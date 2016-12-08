@@ -20,9 +20,9 @@ enum VisibilityFlag
 {
 	VisibilityFlag_Normal = 1,
 	VisibilityFlag_Instanced = 2,
-	VisibilityFlag_Water = 16,
 	VisibilityFlag_Transparent = 4,
 	VisibilityFlag_SoftParticles = 8,
+	VisibilityFlag_Water = 16,
 	VisibilityFlag_NeedCompositor = VisibilityFlag_Water | VisibilityFlag_SoftParticles | VisibilityFlag_Transparent,
 	VisibilityFlag_Temp = 32
 };

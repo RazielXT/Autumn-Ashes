@@ -143,7 +143,7 @@ void SceneCubeMap::init(std::string name, int size, float minRenderDistance)
 	mReflectCam->lookAt(0, 0, -1);
 
 	unsigned int iFlag = VisibilityFlag_NeedCompositor;
-	mReflectCam->setVisibilityFlags(VisibilityFlag_Normal);
+	//mReflectCam->setVisibilityFlags(VisibilityFlag_Normal);
 	//mReflectCam->setVisibilityFlags(2);
 
 	mReflectCamNode = Global::sceneMgr->getRootSceneNode()->createChildSceneNode();

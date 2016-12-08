@@ -95,6 +95,9 @@ void GeometryManager::update()
 
 void GeometryManager::bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::TexturePtr texture)
 {
+	if (!info.layer)
+		return;
+
 	cam->setFarClipDistance(info.distance);
 	cam->setOrthoWindow(info.size.x, info.size.y);
 	cam->setPosition(info.pos);
