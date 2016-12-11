@@ -28,7 +28,9 @@ class GeometryManager
 {
 public:
 
-	void forgetPagedGeometry(Forests::PagedGeometry *g);
+	std::map<std::string, Forests::PagedGeometry *> getPagedGrasses();
+
+	void removePagedGeometry(Forests::PagedGeometry *g);
 	void addPagedGeometry(Forests::PagedGeometry *g);
 	void addPagedGeometry(Forests::PagedGeometry *g, std::string name);
 	void addPagedGeometry(Forests::PagedGeometry *g, std::string name, LightBakeInfo& info);

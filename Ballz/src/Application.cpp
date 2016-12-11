@@ -17,7 +17,6 @@ void Application::go()
 	setupInputSystem();
 	createFrameListener();
 	startRenderLoop();
-
 }
 
 Application::~Application()

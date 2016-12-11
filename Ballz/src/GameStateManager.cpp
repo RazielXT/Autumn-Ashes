@@ -25,47 +25,27 @@ GameStateManager::GameStateManager(Ogre::Camera* cam, Ogre::RenderSystem* rs) : 
 	info.directory = "menu";
 	levels.push_back(info);
 
-	std::ifstream levelsFile(Path::Levels + std::string("levels.txt"));
-	std::string levelLine;
-	while (std::getline(levelsFile, levelLine))
+	ConfigFile cf;
+	cf.load(Path::Levels + std::string("levels.ini"));
+
+	ConfigFile::SectionIterator seci = cf.getSectionIterator();
+	while (seci.hasMoreElements())
 	{
-		auto params = SUtils::splitString(levelLine, '\t');
+		LevelInfo info;
+		info.name = seci.peekNextKey();
+		ConfigFile::SettingsMultiMap *settings = seci.getNext();
 
-		if(params.size()<2)
-			continue;
+		if (!info.name.empty())
+		{
+			for (auto i = settings->begin(); i != settings->end(); ++i)
+			{
+				if (i->first == "folder")
+					info.directory = i->second;
+			}
 
-		info.name = params[0];
-		info.directory = params[1];
-
-		levels.push_back(info);
+			levels.push_back(info);
+		}
 	}
-
-	/*LevelInfo info;
-	info.name = "menu";
-	info.init = createMenuLevel;
-	info.lut = "normal.png";
-	levels[0] = info;
-
-	info.name = "park";
-	info.init = createLevelTuto;
-	levels[1] = info;
-
-	info.name = "caves";
-	info.init = createLevel1_1;
-	levels[2] = info;
-
-	info.name = "valley";
-	info.init = createLevel2;
-	levels[3] = info;
-
-	info.name = "Test1";
-	info.init = createTestLevel;
-	levels[4] = info;
-
-	info.name = "testLvl2";
-	info.init = createTestLevel2;
-	info.lut = "LUT_Filmic7.png";
-	levels[5] = info;*/
 
 	dbg = new DebugKeys();
 	dbg->registerInputListening();

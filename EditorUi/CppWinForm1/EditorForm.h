@@ -810,6 +810,7 @@ namespace CppWinForm1 {
 			this->Name = L"EditorForm";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Editor";
+			this->Closing += gcnew System::ComponentModel::CancelEventHandler(this, &EditorForm::EditorForm_FormClosing);
 			this->sidePanel->ResumeLayout(false);
 			this->sidePanel->PerformLayout();
 			this->placementGroupBox->ResumeLayout(false);
@@ -1209,6 +1210,11 @@ private: System::Void levelsComboBox_SelectedIndexChanged(System::Object^  sende
 		return;
 
 	SendAsyncMsg(UiMessageId::LoadLevel);
+}
+private: System::Void EditorForm_FormClosing(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
+	SendMsg(UiMessageId::CloseEditor, nullptr);
+}
+private: System::Void EditorForm_Load(System::Object^  sender, System::EventArgs^  e) {
 }
 };
 }

@@ -10,7 +10,12 @@
 
 using namespace Ogre;
 
-void GeometryManager::forgetPagedGeometry(Forests::PagedGeometry *g)
+std::map<std::string, Forests::PagedGeometry *> GeometryManager::getPagedGrasses()
+{
+	return namedPagedGeometries;
+}
+
+void GeometryManager::removePagedGeometry(Forests::PagedGeometry *g)
 {
 	auto it = std::find(pagedGeometries.begin(), pagedGeometries.end(), g);
 
@@ -34,7 +39,7 @@ void GeometryManager::addPagedGeometry(Forests::PagedGeometry *g, std::string na
 	if (it != namedPagedGeometries.end())
 	{
 		auto f = it->second;
-		forgetPagedGeometry(f);
+		removePagedGeometry(f);
 		delete f->getPageLoader();
 		delete f;
 	}

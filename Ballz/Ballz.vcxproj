@@ -195,6 +195,7 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EditorControl.cpp" />
     <ClCompile Include="EditorEntity.cpp" />
+    <ClCompile Include="EditorGrass.cpp" />
     <ClCompile Include="EditorUiHandler.cpp" />
     <ClCompile Include="JumpBox.cpp" />
     <ClCompile Include="model\MovingAnimation.cpp" />
@@ -312,6 +313,7 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     <ClInclude Include="EditorCommLib.h" />
     <ClInclude Include="EditorControl.h" />
     <ClInclude Include="EditorEntity.h" />
+    <ClInclude Include="EditorGrass.h" />
     <ClInclude Include="EditorUiHandler.h" />
     <ClInclude Include="SelectionGizmo.h" />
     <ClInclude Include="include\AnimatedTrack.h" />

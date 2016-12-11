@@ -4,18 +4,33 @@
 #include "Player.h"
 #include "EditorControl.h"
 #include "GUtils.h"
+#include "GeometryManager.h"
+#include "GameStateManager.h"
 
 void ObjectSelection::uiSelectItem(SelectWorldItemData& data)
 {
+	auto name = wtos(data.item.name);
+
 	if(data.groupName == "Entity")
-		if (Global::sceneMgr->hasEntity(std::string(data.item.name.begin(), data.item.name.end())))
+		if (Global::sceneMgr->hasEntity(name))
 		{
-			setSelectedEntity(Global::sceneMgr->getEntity(std::string(data.item.name.begin(), data.item.name.end())));
+			setSelectedEntity(Global::sceneMgr->getEntity(name));
 		}
+
+	if (data.groupName == "Grass")
+	{
+		auto grasses = Global::gameMgr->geometryMgr->getPagedGrasses();
+		auto g = grasses.find(name);
+
+		if (g != grasses.end())
+		{
+			setSelectedGrass(GrassInfo{ g->second, name});
+		}
+	}
 
 	if (data.groupName.empty() && selected)
 	{
-		if(!selected->filter(wtos(data.item.name)))
+		if(!selected->filter(name))
 			setSelectedEntity(nullptr);
 		else
 			updateUiSelectedInfo();
@@ -51,6 +66,23 @@ void ObjectSelection::setMode(SelectionMode mode)
 		addMode = false;
 
 	gizmo.setMode(mode);
+}
+
+void ObjectSelection::setSelectedGrass(GrassInfo& grass, bool forceDeselect /*= true*/)
+{
+	if (selected && (forceDeselect || selected != &selectedGrasses))
+		selected->deselect();
+
+	//if (ent)
+	{
+		selected = &selectedGrasses;
+		selectedGrasses.add(grass);
+	}
+	//else
+	//	selected = nullptr;
+
+	gizmo.setRoot(selected);
+	updateUiSelectedInfo();
 }
 
 void ObjectSelection::setSelectedEntity(Ogre::Entity* ent, bool forceDeselect)

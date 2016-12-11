@@ -74,7 +74,7 @@ void PgDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, D
 
 void PgDetailGeometry::clear()
 {
-	parent->forgetPagedGeometry(trees);
+	parent->removePagedGeometry(trees);
 
 	delete trees->getPageLoader();
 	delete trees;

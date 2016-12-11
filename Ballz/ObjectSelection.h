@@ -4,6 +4,7 @@
 #include "EditorComm.h"
 #include "EditorItem.h"
 #include "EditorEntity.h"
+#include "EditorGrass.h"
 
 struct SelectionInfoChange;
 class EditorControl;
@@ -20,6 +21,8 @@ public:
 
 	void setSelectedEntity(Ogre::Entity* ent, bool forceDeselect = true);
 
+	void setSelectedGrass(GrassInfo& grass, bool forceDeselect = true);
+
 	void updateUiSelectedInfo();
 
 	Ogre::Entity* pickMouseRayItem();
@@ -35,6 +38,7 @@ public:
 	EditorItem* selected = nullptr;
 
 	EditorEntity selectedEntities;
+	EditorGrass selectedGrasses;
 
 	SelectionGizmo gizmo;
 

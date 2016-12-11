@@ -75,8 +75,20 @@ void EditorControl::getWorldItemsInfo(GetWorldItemsData& data)
 		std::wstring name(e->getName().cbegin(), e->getName().cend());
 		entityGroup.items.push_back({ name });
 	}
-
 	data.groups.push_back(entityGroup);
+
+	auto grasses = Global::gameMgr->geometryMgr->getPagedGrasses();
+	if (!grasses.empty())
+	{
+		WorldItemsGroup grassGroup;
+		grassGroup.name = L"Grass";
+		for (auto& g : grasses)
+		{
+			std::wstring name(g.first.begin(), g.first.end());
+			grassGroup.items.push_back({ name });
+		}
+		data.groups.push_back(grassGroup);
+	}
 }
 
 void EditorControl::pressedKey(const OIS::KeyEvent &arg)
@@ -193,6 +205,9 @@ bool EditorControl::update(float tslf)
 				Global::gameMgr->switchToLevel(levelName);
 				break;
 			}
+			case UiMessageId::CloseEditor:
+				exit(0);
+				break;
 			default:
 				break;
 			}

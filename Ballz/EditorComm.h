@@ -27,7 +27,8 @@ enum class UiMessageId
 	SceneSettingsChanged,	 //SceneSettingsChange
 	LookAtSelection,
 	PlacementRayUtil,		//float
-	LoadLevel				//string
+	LoadLevel,				//string
+	CloseEditor
 };
 
 struct UiMessage
