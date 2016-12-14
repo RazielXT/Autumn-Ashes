@@ -16,6 +16,11 @@ void SelectionGizmo::init(ObjectSelection* p)
 	axesPlanes[1]->setVisible(false);
 	axesPlanes[2]->setVisible(false);
 
+	axesPlanes[0]->setRenderQueueGroup(RENDER_QUEUE_MAIN + 2);
+	axesPlanes[1]->setRenderQueueGroup(RENDER_QUEUE_MAIN + 2);
+	axesPlanes[2]->setRenderQueueGroup(RENDER_QUEUE_MAIN + 2);
+
+
 	currentMode = SelectionMode::Select;
 	item = nullptr;
 	activeWidget = nullptr;

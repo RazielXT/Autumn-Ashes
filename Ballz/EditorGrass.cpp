@@ -39,19 +39,7 @@ void EditorGrass::setScale(Ogre::Vector3& scale)
 
 Ogre::Vector3 EditorGrass::getPosition()
 {
-	Ogre::Vector3 pos(0, 0, 0);
-
-	for (auto& e : selected)
-	{
-		auto b = e.pg->getBounds();
-		pos += Ogre::Vector3((b.left + b.right) / 2.0f, 0.f, (b.top + b.bottom) / 2.0f);
-	}
-
-	pos /= (float)selected.size();
-
-	pos += moveOffset;
-
-	return pos;
+	return getBounds().getCenter() + moveOffset;
 }
 
 std::vector<Ogre::Vector3> EditorGrass::getIndividualPositions()
@@ -206,6 +194,7 @@ void EditorGrass::add(GrassInfo& grass)
 	{
 		auto e = GUtils::MakeEntity("basicBox.mesh", getPosition());
 		e->setMaterialName("lowYellow");
+		e->setRenderQueueGroup(RENDER_QUEUE_MAIN + 1);
 		boundsNode = e->getParentSceneNode();
 	}
 
