@@ -149,7 +149,7 @@ void main_ps( PIn input ,
 	if(baseColour.a < 0.235) 
 		discard;
 	
-	baseColour.rgb *= half3(1.1,1.05,1.6);
+	baseColour.rgb *= half3(1.0,1.0,1.4);
 	
 	//Blinn-Phong lighting
 	const half3 normal		= normalize( input.n );

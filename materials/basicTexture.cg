@@ -1,0 +1,24 @@
+void basicTexture_vs(uniform float4x4 wmat,
+		in float3 norm: NORMAL,
+		in float4  pos : POSITION,
+		out float4  opos : POSITION,
+		in float2 iUV : TEXCOORD0,
+		out float2 oUV : TEXCOORD0
+		)
+{
+	oUV=iUV;
+	opos=mul(wmat,pos);
+}
+
+
+float4 basicTexture_ps(
+			uniform sampler2D material: register(s0),
+			in float2 uv : TEXCOORD0,
+			uniform float4 color
+			): COLOR0
+{
+	float4 outColor=tex2D(material, uv);
+	outColor *= color;
+	
+	return outColor;
+}

@@ -1,0 +1,75 @@
+vertex_program basicTexture_vs cg
+{
+    source basicTexture.cg
+    profiles vs_3_0
+    entry_point basicTexture_vs
+
+	default_params
+    {
+        param_named_auto wmat worldviewproj_matrix
+    }
+}
+
+fragment_program basicTexture_ps cg
+{
+    source basicTexture.cg
+    profiles ps_3_0
+    entry_point basicTexture_ps
+}
+
+material basicTexture_noDepth
+{
+	set $color "1 1 1 1"
+
+    technique
+    {
+        pass
+        {
+			cull_hardware none
+			scene_blend alpha_blend
+			depth_check off
+			
+            vertex_program_ref basicTexture_vs
+            {
+            }
+
+            fragment_program_ref basicTexture_ps
+            {
+				param_named color float4 $color
+            }
+			
+            texture_unit Texture
+            {
+                texture white.bmp
+            }
+        }
+    }
+}
+
+material basicTexture
+{
+	set $color "1 1 1 1"
+
+    technique
+    {
+        pass
+        {
+			cull_hardware none
+			scene_blend alpha_blend
+			
+            vertex_program_ref basicTexture_vs
+            {
+            }
+
+            fragment_program_ref basicTexture_ps
+            {
+				param_named color float4 $color
+            }
+			
+            texture_unit Texture
+            {
+                texture white.bmp
+            }
+        }
+    }
+}

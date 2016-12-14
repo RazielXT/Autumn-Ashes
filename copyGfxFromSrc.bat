@@ -14,6 +14,11 @@ xCOPY %src_folder%\*.hlsl %tar_folder% /D:12-1-2014
 xCOPY %src_folder%\*.program %tar_folder% /D:12-1-2014
 xCOPY %src_folder%\*.material %tar_folder% /D:12-1-2014
 
+SET src_folder=D:\OgreSDK\media\general
+SET tar_folder=.\general
+
+xCOPY %src_folder%\*.material %tar_folder% /D:12-1-2014
+
 SET src_folder=D:\OgreSDK\media\materials\scripts
 SET tar_folder=.\gfxScripts
 

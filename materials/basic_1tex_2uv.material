@@ -1,0 +1,22 @@
+import basic_1tex from "basic_1tex.material"
+
+material basic_1tex_2uv : basic_1tex
+{
+	technique
+	{
+		pass
+		{
+		}
+
+		pass
+		{
+			vertex_program_ref basic_1tex_2uv_vs
+			{
+			}
+
+			fragment_program_ref basic_1tex_2uv_ps
+			{
+			}
+		}
+	}
+}

@@ -4,6 +4,66 @@ import basic_2tex_vc from "basic_2tex_vc.material"
 import basic_transparent from "basic_transparent.material"
 import basic_transparent_full from "basic_transparent.material"
 
+material 21-Default : basic_1tex 
+{
+	set_texture_alias diffuseMap zard_diff.dds
+	set_texture_alias normalMap Moss0162_10_S_NORM.tga
+	set_texture_alias dispMap Moss0162_10_S_DISP.bmp
+	
+	set $uvScale "1"
+	set $detailScale "5.4"
+	
+	//set $diffuseCol "2 0.5 0.5"
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	set $shininess "16"
+}
+
+material skin00 : basic_1tex 
+{
+	set_texture_alias diffuseMap knight_B_t00_ori.tga
+	set_texture_alias normalMap Moss0162_10_S_NORM.tga
+	set_texture_alias dispMap Moss0162_10_S_DISP.bmp
+	
+	set $uvScale "1"
+	set $detailScale "0.4"
+	
+	//set $diffuseCol "2 0.5 0.5"
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	set $shininess "16"
+}
+
+material skin01 : basic_1tex 
+{
+	set_texture_alias diffuseMap knight_B_t01_ori.tga
+	set_texture_alias normalMap Moss0162_10_S_NORM.tga
+	set_texture_alias dispMap Moss0162_10_S_DISP.bmp
+	
+	set $uvScale "1"
+	set $detailScale "0.4"
+	
+	//set $diffuseCol "2 0.5 0.5"
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	set $shininess "16"
+}
+
+material skin02 : basic_1tex 
+{
+	set_texture_alias diffuseMap knight_B_t02_ori.TGA
+	set_texture_alias normalMap Moss0162_10_S_NORM.tga
+	set_texture_alias dispMap Moss0162_10_S_DISP.bmp
+	
+	set $uvScale "1"
+	set $detailScale "0.4"
+	
+	//set $diffuseCol "2 0.5 0.5"
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	set $shininess "16"
+}
+
 material redFlag : basic_1tex 
 {
 	set_texture_alias diffuseMap Moss0162_10_S.jpg

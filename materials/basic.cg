@@ -9,6 +9,10 @@ struct VIn
 	float3 t : TANGENT;
 	float2 uv : TEXCOORD0;
 	
+	#ifdef USE_2UV
+	float2 uv2 : TEXCOORD1;
+	#endif
+	
 	#ifdef USE_VC
 	float4 c : COLOR;
 	#endif
@@ -27,6 +31,10 @@ struct VOut
 	float4 oLightPosition2 : TEXCOORD7;
 	float4 oLightPosition3 : TEXCOORD8;
 	
+	#ifdef USE_2UV
+	float2 uv2 : TEXCOORD9;
+	#endif
+	
 	#ifdef USE_VC
 	float4 vc : TEXCOORD9;
 	#endif
@@ -43,6 +51,10 @@ struct PIn
 	float4 LightPosition1 : TEXCOORD6;
 	float4 LightPosition2 : TEXCOORD7;
 	float4 LightPosition3 : TEXCOORD8;
+	
+	#ifdef USE_2UV
+	float2 uv2 : TEXCOORD9;
+	#endif
 	
 	#ifdef USE_VC
 	float4 vc : TEXCOORD9;
@@ -68,6 +80,10 @@ VOut main_vs(VIn IN,
 	OUT.vc = IN.c;
 	#endif
 		
+	#ifdef USE_2UV
+	OUT.uv2.xy = IN.uv2.xy;
+	#endif
+	
 	OUT.uv.xy = IN.uv.xy;
 	OUT.uv.zw = OUT.p.zw;
 
@@ -148,11 +164,17 @@ void main_ps(
 	//pm offset
 	float height = tex2D(dispMap, IN.uv.xy * uvScale).x;
 	float3 vVec = float3(IN.t.w, IN.b.w, IN.n.w);
-	float2 texCoordDispOffset = (0.05 * height - 0.025) * normalize(vVec).xy;
+	float2 texCoordDispOffset = 0.01*(0.05 * height - 0.025) * normalize(vVec).xy;
 
 	float2 texCoordBase = IN.uv.xy * uvScale + texCoordDispOffset;	
 	float2 texCoordMax = IN.uv.xy * uvMaxScale + texCoordDispOffset;
 	float2 texCoordDetail = IN.uv.xy * uvDetailScale + texCoordDispOffset;
+	
+	#ifdef USE_2UV
+	float2 normalUv = IN.uv2.xy*2;//IN.uv2.xy * 0.01 + texCoordDispOffset;	
+	#else
+	float2 normalUv = texCoordBase;
+	#endif
 	
 	float3 camDir = IN.wp.xyz - camPos;
 	float dist = length(camDir);
@@ -167,9 +189,9 @@ void main_ps(
 	float2 texCoordSpread = IN.uv.xy * uvSpreadScale + texCoordDispOffset;
 	float spread = getSpreadWeight(height, tex2D(spreadMap, texCoordSpread).g, IN.vc.w, spreadMinMaxW);
 	//detailMinMaxScaleW.z *= 1-spread;
-	float4 normalDetail = getNormals(normalMap, normalMap2, spread, normalDetailMap, texCoordBase, texCoordBase2, texCoordDetail, texCoordMax, detailMinMaxScaleW.zw);
+	float4 normalDetail = getNormals(normalMap, normalMap2, spread, normalDetailMap, normalUv, texCoordBase2, texCoordDetail, texCoordMax, detailMinMaxScaleW.zw);
 	#else	
-	float4 normalDetail = getNormal(normalMap, normalDetailMap, texCoordBase, texCoordDetail, texCoordMax, detailMinMaxScaleW.zw);
+	float4 normalDetail = getNormal(normalMap, normalDetailMap, normalUv, texCoordDetail, texCoordMax, detailMinMaxScaleW.zw);
 	#endif
 	
 	float3 normalTex = normalDetail.rgb;
@@ -194,10 +216,10 @@ void main_ps(
 	ambientColor *=  IN.vc.a * ambientWeight;
 	#elif defined(USE_2TEX)
 	ambientColor *= ambientWeight;
-	
+
 	float3 vcGi = saturate((IN.vc.rgb-vcBase)*1/(1-vcBase));
 	float3 vcDark = saturate((IN.vc.rgb+1-vcBase)*1/(vcBase));
-	ambientColor += saturate(1 - vcGi);
+	//ambientColor += saturate(1 - vcGi);
 	ambientColor *= saturate(1 + vcDark);
 	#else
 	ambientColor *= ambientWeight;

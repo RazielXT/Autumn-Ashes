@@ -1,0 +1,32 @@
+import basicTexture from "basicTexture.material"
+import basicTexture_noDepth from "basicTexture.material"
+
+material scaleRed : basicTexture_noDepth 
+{
+	set_texture_alias Texture scaleGizmo.png
+	set $color "1 0 0 0.5"
+}
+
+material scaleBlue : basicTexture_noDepth 
+{
+	set_texture_alias Texture scaleGizmo.png
+	set $color "0 0 1 0.5"
+}
+
+material scaleGreen : basicTexture_noDepth 
+{
+	set_texture_alias Texture scaleGizmo.png
+	set $color "0 1 0 0.5"
+}
+
+material scaleYellow : basicTexture_noDepth 
+{
+	set_texture_alias Texture scaleGizmo.png
+	set $color "1 1 0 0.5"
+}
+
+material lowYellow : basicTexture 
+{
+	set_texture_alias Texture white.bmp
+	set $color "1 1 0 0.25"
+}
