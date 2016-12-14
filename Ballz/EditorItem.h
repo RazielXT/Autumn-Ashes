@@ -16,6 +16,7 @@ struct EditorItem
 	virtual std::vector<Ogre::Vector3> getIndividualPositions() = 0;
 	virtual void setIndividualPositions(std::vector<Ogre::Vector3>&) = 0;
 
+	virtual void editMouseReleased() {};
 	virtual void move(Ogre::Vector3& move) = 0;
 	virtual void rotate(Ogre::Vector3& axis, Ogre::Radian& angle) = 0;
 	virtual void addScale(Ogre::Vector3& scale) = 0;

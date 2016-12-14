@@ -3,11 +3,18 @@
 #include "EditorUiHandler.h"
 #include "GUtils.h"
 #include "GameStateManager.h"
+#include "GrassHeightFunction.h"
 
+
+EditorGrass::EditorGrass()
+{
+	moveOffset = Ogre::Vector3::ZERO;
+}
 
 void EditorGrass::reset()
 {
 	selected.clear();
+	boundsNode = nullptr;
 }
 
 void EditorGrass::setPosition(Ogre::Vector3& pos)
@@ -15,7 +22,11 @@ void EditorGrass::setPosition(Ogre::Vector3& pos)
 	auto translate = getPosition();
 	translate = pos - translate;
 
-	move(translate);
+	for (auto& e : selected)
+	{
+		auto ePos = e.pg->getSceneNode()->getPosition();
+		setGrassPosition(e, ePos + translate);
+	}
 }
 
 void EditorGrass::setScale(Ogre::Vector3& scale)
@@ -32,10 +43,13 @@ Ogre::Vector3 EditorGrass::getPosition()
 
 	for (auto& e : selected)
 	{
-		pos += e.pg->getSceneNode()->getPosition();
+		auto b = e.pg->getBounds();
+		pos += Ogre::Vector3((b.left + b.right) / 2.0f, 0.f, (b.top + b.bottom) / 2.0f);
 	}
 
 	pos /= (float)selected.size();
+
+	pos += moveOffset;
 
 	return pos;
 }
@@ -61,13 +75,48 @@ void EditorGrass::setIndividualPositions(std::vector<Ogre::Vector3>& in)
 		}
 }
 
+void EditorGrass::editMouseReleased()
+{
+	if (boundsNode)
+		boundsNode->setVisible(false);
+
+	for (auto& g : selected)
+	{
+		auto b = g.pg->getBounds();
+		b.bottom += moveOffset.z;
+		b.top += moveOffset.z;
+		b.right += moveOffset.x;
+		b.left += moveOffset.x;
+
+		g.terrainQuery->offset_maxY += moveOffset.y;
+		g.terrainQuery->offset_minY += moveOffset.y;
+
+		auto lvls = g.pg->getDetailLevels();
+		auto tr = lvls.front()->getTransition();
+		auto len = lvls.front()->getFarRange();
+
+		g.pg->removeDetailLevels();
+		g.pg->setBounds(b);
+
+		g.pg->addDetailLevel<Forests::GrassPage>((float)len, (float)tr);
+		g.pg->reloadGeometry();
+	}
+
+	moveOffset = Ogre::Vector3::ZERO;
+}
+
 void EditorGrass::move(Ogre::Vector3& move)
 {
-	for (auto& e : selected)
+	boundsNode->setVisible(true);
+
+	moveOffset += move;
+	updateNode();
+
+	/*for (auto& e : selected)
 	{
 		auto ePos = e.pg->getSceneNode()->getPosition();
 		setGrassPosition(e, ePos + move);
-	}
+	}*/
 }
 
 void EditorGrass::rotate(Ogre::Vector3& axis, Ogre::Radian& angle)
@@ -152,7 +201,19 @@ void EditorGrass::remove()
 void EditorGrass::add(GrassInfo& grass)
 {
 	selected.push_back(grass);
-	grass.pg->getSceneNode()->showBoundingBox(true);
+
+	if (!boundsNode)
+	{
+		auto e = GUtils::MakeEntity("basicBox.mesh", getPosition());
+		e->setMaterialName("lowYellow");
+		boundsNode = e->getParentSceneNode();
+	}
+
+
+	boundsNode->setVisible(false);
+	updateNode();
+
+	boundsNode->showBoundingBox(true);
 }
 
 void EditorGrass::select(GrassInfo& grass)
@@ -163,11 +224,8 @@ void EditorGrass::select(GrassInfo& grass)
 
 void EditorGrass::deselect()
 {
-	for (auto& e : selected)
-	{
-		e.pg->getSceneNode()->showBoundingBox(false);
-	}
-
+	boundsNode->setVisible(false);
+	boundsNode->showBoundingBox(false);
 	selected.clear();
 }
 
@@ -211,6 +269,29 @@ void EditorGrass::sendUiInfoMessage(EditorUiHandler* handler)
 	msg.data = &info;
 
 	handler->sendMsg(msg);
+}
+
+void EditorGrass::updateNode()
+{
+	auto b = getBounds();
+	boundsNode->setScale(b.getSize());
+	boundsNode->setPosition(b.getCenter() + moveOffset);
+}
+
+Ogre::AxisAlignedBox EditorGrass::getBounds()
+{
+	Ogre::AxisAlignedBox box;
+
+	for (auto& g : selected)
+	{
+		auto b = g.pg->getBounds();
+
+		Ogre::AxisAlignedBox subbox(b.left, g.terrainQuery->offset_minY, b.top, b.right, g.terrainQuery->offset_maxY, b.bottom);
+
+		box = subbox;// .merge(subbox);
+	}
+
+	return box;
 }
 
 void EditorGrass::setGrassPosition(GrassInfo& pg, Ogre::Vector3& pos)

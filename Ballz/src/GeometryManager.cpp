@@ -10,9 +10,9 @@
 
 using namespace Ogre;
 
-std::map<std::string, Forests::PagedGeometry *> GeometryManager::getPagedGrasses()
+std::vector<GrassInfo> GeometryManager::getPagedGrasses()
 {
-	return namedPagedGeometries;
+	return namedGrassGeometries;
 }
 
 void GeometryManager::removePagedGeometry(Forests::PagedGeometry *g)
@@ -54,10 +54,12 @@ void GeometryManager::addPagedGeometry(Forests::PagedGeometry *g)
 	pagedGeometries.push_back(g);
 }
 
-void GeometryManager::addPagedGeometry(Forests::PagedGeometry *g, std::string name, LightBakeInfo& info)
+void GeometryManager::addGrass(GrassInfo& info, LightBakeInfo& bake)
 {
-	addPagedGeometry(g, name);
-	lightBakingTodo.push_back(info);
+	namedGrassGeometries.push_back(info);
+	lightBakingTodo.push_back(bake);
+
+	addPagedGeometry(info.pg);
 }
 
 void GeometryManager::clear()
@@ -69,6 +71,7 @@ void GeometryManager::clear()
 	}
 
 	pagedGeometries.clear();
+	namedGrassGeometries.clear();
 	namedPagedGeometries.clear();
 
 	for (auto g : detailGeometries)

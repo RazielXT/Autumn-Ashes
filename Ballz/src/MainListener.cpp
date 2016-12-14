@@ -190,7 +190,7 @@ bool MainListener::mouseMoved(const OIS::MouseEvent &evt)
 bool MainListener::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
 #ifdef EDITOR
-	if (editor.active && (mouseX < 0 || mouseY < 0 || mouseX > mWindow->getWidth() || mouseY > mWindow->getHeight()))
+	if (editor.active && (mouseX < 0 || mouseY < 0 || mouseX >(int)mWindow->getWidth() || mouseY > (int)mWindow->getHeight()))
 		return true;
 #endif
 

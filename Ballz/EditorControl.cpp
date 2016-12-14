@@ -84,7 +84,7 @@ void EditorControl::getWorldItemsInfo(GetWorldItemsData& data)
 		grassGroup.name = L"Grass";
 		for (auto& g : grasses)
 		{
-			std::wstring name(g.first.begin(), g.first.end());
+			std::wstring name(g.name.begin(), g.name.end());
 			grassGroup.items.push_back({ name });
 		}
 		data.groups.push_back(grassGroup);

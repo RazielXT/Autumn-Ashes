@@ -20,11 +20,10 @@ void ObjectSelection::uiSelectItem(SelectWorldItemData& data)
 	if (data.groupName == "Grass")
 	{
 		auto grasses = Global::gameMgr->geometryMgr->getPagedGrasses();
-		auto g = grasses.find(name);
-
-		if (g != grasses.end())
+		for (auto&g : grasses)
 		{
-			setSelectedGrass(GrassInfo{ g->second, name});
+			if(g.name == name)
+				setSelectedGrass(g);
 		}
 	}
 

@@ -123,9 +123,9 @@ bool SelectionGizmo::update()
 		auto x = (dir.dotProduct(Ogre::Vector3::UNIT_X) < 0);
 		auto y = (dir.dotProduct(Ogre::Vector3::UNIT_Y) > 0);
 
-		rotScale[0] = Ogre::Vector3(1, y ? -1 : 1, z ? -1 : 1);
-		rotScale[1] = Ogre::Vector3(x ? -1 : 1, y ? -1 : 1, 1);
-		rotScale[2] = Ogre::Vector3(x ? -1 : 1, 1, z ? -1 : 1);
+		rotScale[0] = Ogre::Vector3(1.f, y ? -1.f : 1.f, z ? -1.f : 1.f);
+		rotScale[1] = Ogre::Vector3(x ? -1.f : 1.f, y ? -1.f : 1.f, 1.f);
+		rotScale[2] = Ogre::Vector3(x ? -1.f : 1.f, 1.f, z ? -1.f : 1.f);
 
 		//GUtils::DebugPrint(std::to_string(dir.dotProduct(Ogre::Vector3::UNIT_Z)) + " " + std::to_string(dir.dotProduct(Ogre::Vector3::UNIT_X)) + " " + std::to_string(dir.dotProduct(Ogre::Vector3::UNIT_Y)));
 		axesPlanes[0]->getParentSceneNode()->setScale(scale*rotScale[0]);
@@ -136,7 +136,7 @@ bool SelectionGizmo::update()
 		axesPlanes[1]->getParentSceneNode()->setPosition(itempos);
 		axesPlanes[2]->getParentSceneNode()->setPosition(itempos);
 
-		GUtils::DebugPrint(Ogre::StringConverter::toString(itempos));
+		//GUtils::DebugPrint(Ogre::StringConverter::toString(itempos));
 	}
 
 	return currentMode != SelectionMode::Select;
@@ -160,6 +160,9 @@ void SelectionGizmo::GizmoWidget::mouseReleased(OIS::MouseButtonID id, EditorIte
 {
 	if (id != OIS::MB_Left)
 		return;
+
+	if (activeAxis != -1)
+		root->editMouseReleased();
 
 	activeAxis = -1;
 	setDefaultMats();

@@ -24,16 +24,25 @@ struct LightBakeInfo
 	std::string groundName;
 };
 
+struct TerrainHeightQueryData;
+
+struct GrassInfo
+{
+	Forests::PagedGeometry* pg;
+	std::string name;
+	TerrainHeightQueryData* terrainQuery;
+};
+
 class GeometryManager
 {
 public:
 
-	std::map<std::string, Forests::PagedGeometry *> getPagedGrasses();
-
-	void removePagedGeometry(Forests::PagedGeometry *g);
 	void addPagedGeometry(Forests::PagedGeometry *g);
 	void addPagedGeometry(Forests::PagedGeometry *g, std::string name);
-	void addPagedGeometry(Forests::PagedGeometry *g, std::string name, LightBakeInfo& info);
+	void removePagedGeometry(Forests::PagedGeometry *g);
+
+	void addGrass(GrassInfo& info, LightBakeInfo& bake);
+	std::vector<GrassInfo> getPagedGrasses();
 
 	void clear();
 	void update();
@@ -64,6 +73,7 @@ private:
 
 	void generateGeometryMask(Ogre::Entity* maskEnt, MaskGrid& grid, Ogre::Vector2& size);
 
+	std::vector<GrassInfo> namedGrassGeometries;
 	std::map<std::string, Forests::PagedGeometry *> namedPagedGeometries;
 	std::vector<Forests::PagedGeometry *> pagedGeometries;
 };
