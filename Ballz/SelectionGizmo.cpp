@@ -19,7 +19,10 @@ void SelectionGizmo::init(ObjectSelection* p)
 	axesPlanes[0]->setRenderQueueGroup(RENDER_QUEUE_MAIN + 2);
 	axesPlanes[1]->setRenderQueueGroup(RENDER_QUEUE_MAIN + 2);
 	axesPlanes[2]->setRenderQueueGroup(RENDER_QUEUE_MAIN + 2);
-
+	
+	axesPlanes[0]->setVisibilityFlags(VisibilityFlag_Transparent);
+	axesPlanes[1]->setVisibilityFlags(VisibilityFlag_Transparent);
+	axesPlanes[2]->setVisibilityFlags(VisibilityFlag_Transparent);
 
 	currentMode = SelectionMode::Select;
 	item = nullptr;

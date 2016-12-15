@@ -1103,7 +1103,7 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
 		myLog->logMessage("Grass Area ended loading layer number " + Ogre::StringConverter::toString(i), LML_NORMAL);
 	}
 
-	Global::gameMgr->geometryMgr->addGrass(GrassInfo{ grass, node->getName(), offsets }, bakeInfo);
+	Global::gameMgr->geometryMgr->addGrass(GrassInfo{ grass, node->getName(), offsets , bakeInfo});
 
 	node->detachObject(ent);
 	mSceneMgr->destroyEntity(ent);

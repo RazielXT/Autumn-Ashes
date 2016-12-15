@@ -31,6 +31,8 @@ struct GrassInfo
 	Forests::PagedGeometry* pg;
 	std::string name;
 	TerrainHeightQueryData* terrainQuery;
+
+	LightBakeInfo bake;
 };
 
 class GeometryManager
@@ -41,7 +43,7 @@ public:
 	void addPagedGeometry(Forests::PagedGeometry *g, std::string name);
 	void removePagedGeometry(Forests::PagedGeometry *g);
 
-	void addGrass(GrassInfo& info, LightBakeInfo& bake);
+	void addGrass(GrassInfo& info);
 	std::vector<GrassInfo> getPagedGrasses();
 
 	void clear();
@@ -59,6 +61,8 @@ public:
 	void addOptimizedGroup(OptimizedGroup group);
 	std::vector<OptimizedGroup> getClosestOptGroup(float radius);
 	std::vector<OptimizedGroup>& getOptGroups();
+
+	void bakeLight(LightBakeInfo& info);
 
 private:
 

@@ -54,10 +54,10 @@ void GeometryManager::addPagedGeometry(Forests::PagedGeometry *g)
 	pagedGeometries.push_back(g);
 }
 
-void GeometryManager::addGrass(GrassInfo& info, LightBakeInfo& bake)
+void GeometryManager::addGrass(GrassInfo& info)
 {
 	namedGrassGeometries.push_back(info);
-	lightBakingTodo.push_back(bake);
+	lightBakingTodo.push_back(info.bake);
 
 	addPagedGeometry(info.pg);
 }
@@ -153,16 +153,51 @@ void GeometryManager::bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::Te
 		ent->setVisibilityFlags(flag);
 }
 
+void GeometryManager::bakeLight(LightBakeInfo& info)
+{
+	auto fogc = Global::sceneMgr->getFogColour();
+	auto fogs = Global::sceneMgr->getFogStart();
+	auto foge = Global::sceneMgr->getFogEnd();
+	Global::sceneMgr->setFog(FOG_LINEAR, ColourValue::White, 0, 10000, 15000);
+
+	auto lightBakingCam = Global::sceneMgr->createCamera("lightBaking");
+	lightBakingCam->setNearClipDistance(1);
+	lightBakingCam->setFarClipDistance(100);
+	lightBakingCam->setProjectionType(PT_ORTHOGRAPHIC);
+	lightBakingCam->setDirection(0, -1, 0);
+
+	auto texture = TextureManager::getSingleton().createManual("bakeLight",
+	               ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D,
+	               512, 512, 0, PF_R8G8B8A8, TU_RENDERTARGET);
+
+	auto rttTex = texture->getBuffer()->getRenderTarget();
+
+	Viewport *v = rttTex->addViewport(lightBakingCam);
+	v->setClearEveryFrame(true);
+	v->setSkiesEnabled(false);
+	v->setShadowsEnabled(true);
+	v->setBackgroundColour(ColourValue(1, 0, 0, 0));
+	v->setVisibilityMask(VisibilityFlag_Normal);
+
+	bakeLight(info, lightBakingCam, texture);
+
+	texture->unload();
+	lightBakingTodo.clear();
+	Global::sceneMgr->destroyCamera(lightBakingCam);
+
+	Global::sceneMgr->setFog(FOG_LINEAR, fogc, 1, fogs, foge);
+}
+
 void GeometryManager::bakeLights()
 {
-	Ogre::SceneManager::MovableObjectIterator iterator = Global::sceneMgr->getMovableObjectIterator("Entity");
+	/*Ogre::SceneManager::MovableObjectIterator iterator = Global::sceneMgr->getMovableObjectIterator("Entity");
 	while (iterator.hasMoreElements())
 	{
 		Ogre::Entity* e = static_cast<Ogre::Entity*>(iterator.getNext());
 
 		Ogre::LogManager::getSingleton().getLog("RuntimeEvents.log")->logMessage(e->getName() + "\t" + std::to_string(e->getVisibilityFlags()) + "\t" + e->getSubEntity(0)->getMaterialName());
 		//e->setVisibilityFlags(e->getVisibilityFlags() & ~VisibilityFlag_Temp);
-	}
+	}*/
 
 	Global::sceneMgr->setFog(FOG_LINEAR, ColourValue::White, 0, 10000,15000);
 

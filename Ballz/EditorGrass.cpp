@@ -76,18 +76,26 @@ void EditorGrass::editMouseReleased()
 		b.right += moveOffset.x;
 		b.left += moveOffset.x;
 
-		g.terrainQuery->offset_maxY += moveOffset.y;
-		g.terrainQuery->offset_minY += moveOffset.y;
-
 		auto lvls = g.pg->getDetailLevels();
 		auto tr = lvls.front()->getTransition();
 		auto len = lvls.front()->getFarRange();
 
 		g.pg->removeDetailLevels();
 		g.pg->setBounds(b);
-
 		g.pg->addDetailLevel<Forests::GrassPage>((float)len, (float)tr);
+
+		{
+			auto bounds = g.bake.layer->mapBounds;
+			g.bake.layer->setMapBounds(Forests::TBounds(bounds.left + moveOffset.x, bounds.top + moveOffset.z, bounds.right + moveOffset.x, bounds.bottom + moveOffset.z));
+		}
+
+		g.bake.pos += moveOffset;
+		Global::gameMgr->geometryMgr->bakeLight(g.bake);
+
 		g.pg->reloadGeometry();
+
+		g.terrainQuery->offset_maxY += moveOffset.y;
+		g.terrainQuery->offset_minY += moveOffset.y;
 	}
 
 	moveOffset = Ogre::Vector3::ZERO;
@@ -273,7 +281,7 @@ Ogre::AxisAlignedBox EditorGrass::getBounds()
 
 	for (auto& g : selected)
 	{
-		auto b = g.pg->getBounds();
+		auto b = g.bake.layer ? g.bake.layer->mapBounds : g.pg->getBounds();
 
 		Ogre::AxisAlignedBox subbox(b.left, g.terrainQuery->offset_minY, b.top, b.right, g.terrainQuery->offset_maxY, b.bottom);
 
