@@ -102,7 +102,7 @@ void SelectionGizmo::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID
 void SelectionGizmo::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
 	if (activeWidget)
-		activeWidget->mouseReleased(id, item);
+		activeWidget->mouseReleased(id, item, currentMode);
 }
 
 void SelectionGizmo::movedMouse(const OIS::MouseEvent &e)
@@ -164,13 +164,13 @@ void SelectionGizmo::GizmoWidget::mousePressed(OIS::MouseButtonID id, EditorItem
 	activeAxis = aboveAxis;
 }
 
-void SelectionGizmo::GizmoWidget::mouseReleased(OIS::MouseButtonID id, EditorItem* root)
+void SelectionGizmo::GizmoWidget::mouseReleased(OIS::MouseButtonID id, EditorItem* root, SelectionMode mode)
 {
 	if (id != OIS::MB_Left)
 		return;
 
 	if (activeAxis != -1)
-		root->editMouseReleased();
+		root->editMouseReleased(mode);
 
 	activeAxis = -1;
 	setDefaultMats();
@@ -307,7 +307,7 @@ void SelectionGizmo::ScaleGizmoWidget::init(SelectionGizmo* parent)
 
 void SelectionGizmo::ScaleGizmoWidget::movedActiveMouse(int x, int y, EditorItem* root)
 {
-	Ogre::Vector3 scale;
+	Ogre::Vector3 scale(0,0,0);
 
 	if (activeAxis == 0)
 	{

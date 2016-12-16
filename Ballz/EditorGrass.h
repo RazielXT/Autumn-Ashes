@@ -16,7 +16,7 @@ struct EditorGrass : public EditorItem
 	virtual std::vector<Ogre::Vector3> getIndividualPositions();
 	virtual void setIndividualPositions(std::vector<Ogre::Vector3>&);
 
-	virtual void editMouseReleased();
+	virtual void editMouseReleased(SelectionMode mode);
 	virtual void move(Ogre::Vector3& move);
 	virtual void rotate(Ogre::Vector3& axis, Ogre::Radian& angle);
 	virtual void addScale(Ogre::Vector3& scale);
@@ -35,9 +35,12 @@ struct EditorGrass : public EditorItem
 private:
 
 	void updateNode();
-	virtual Ogre::AxisAlignedBox getBounds();
+	virtual Ogre::AxisAlignedBox getVisualBounds();
 
 	Ogre::SceneNode* boundsNode = nullptr;
 	Ogre::Vector3 moveOffset;
 	void setGrassPosition(GrassInfo&, Ogre::Vector3&);
+
+	Ogre::Vector3 scaleOffset;
+	Ogre::Vector3 scaleNodeOrigin;
 };

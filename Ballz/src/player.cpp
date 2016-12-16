@@ -370,8 +370,6 @@ void Player::setPosition(Ogre::Vector3 pos)
 {
 	bodyPosition = pos;
 	body->setPositionOrientation(pos, body->getOrientation());
-
-	GUtils::DebugPrint("PPos: " + Ogre::StringConverter::toString(pos));
 }
 
 void Player::die()
@@ -397,7 +395,6 @@ void Player::die()
 
 	alive=false;
 }
-
 
 void Player::hideBody()
 {

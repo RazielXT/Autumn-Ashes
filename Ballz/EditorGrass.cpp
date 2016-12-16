@@ -39,7 +39,7 @@ void EditorGrass::setScale(Ogre::Vector3& scale)
 
 Ogre::Vector3 EditorGrass::getPosition()
 {
-	return getBounds().getCenter() + moveOffset;
+	return getVisualBounds().getCenter() + moveOffset;
 }
 
 std::vector<Ogre::Vector3> EditorGrass::getIndividualPositions()
@@ -63,11 +63,17 @@ void EditorGrass::setIndividualPositions(std::vector<Ogre::Vector3>& in)
 		}
 }
 
-void EditorGrass::editMouseReleased()
+Forests::TBounds scaleBounds(Forests::TBounds& b, Ogre::Vector3& scale)
+{
+	auto center = Ogre::Vector3(b.bottom - b.top, 0, b.right - b.left);
+}
+
+void EditorGrass::editMouseReleased(SelectionMode mode)
 {
 	if (boundsNode)
 		boundsNode->setVisible(false);
 
+	if(mode == SelectionMode::Move)
 	for (auto& g : selected)
 	{
 		auto b = g.pg->getBounds();
@@ -84,13 +90,14 @@ void EditorGrass::editMouseReleased()
 		g.pg->setBounds(b);
 		g.pg->addDetailLevel<Forests::GrassPage>((float)len, (float)tr);
 
+		if(g.bake.layer)
 		{
 			auto bounds = g.bake.layer->mapBounds;
 			g.bake.layer->setMapBounds(Forests::TBounds(bounds.left + moveOffset.x, bounds.top + moveOffset.z, bounds.right + moveOffset.x, bounds.bottom + moveOffset.z));
-		}
 
-		g.bake.pos += moveOffset;
-		Global::gameMgr->geometryMgr->bakeLight(g.bake);
+			g.bake.pos += moveOffset;
+			Global::gameMgr->geometryMgr->bakeLight(g.bake);
+		}
 
 		g.pg->reloadGeometry();
 
@@ -99,6 +106,33 @@ void EditorGrass::editMouseReleased()
 	}
 
 	moveOffset = Ogre::Vector3::ZERO;
+
+	if (mode == SelectionMode::Scale)
+	for (auto& g : selected)
+	{
+		auto b = g.pg->getBounds();
+		scaleBounds(b, scaleOffset);
+
+		auto lvls = g.pg->getDetailLevels();
+		auto tr = lvls.front()->getTransition();
+		auto len = lvls.front()->getFarRange();
+
+		g.pg->removeDetailLevels();
+		g.pg->setBounds(b);
+		g.pg->addDetailLevel<Forests::GrassPage>((float)len, (float)tr);
+
+		if (g.bake.layer)
+		{
+			auto bounds = g.bake.layer->mapBounds;
+			g.bake.layer->setMapBounds(scaleBounds(bounds, scaleOffset));
+			Global::gameMgr->geometryMgr->bakeLight(g.bake);
+		}
+
+		g.pg->reloadGeometry();
+
+		//g.terrainQuery->offset_maxY += moveOffset.y;
+		//g.terrainQuery->offset_minY += moveOffset.y;
+	}
 }
 
 void EditorGrass::move(Ogre::Vector3& move)
@@ -107,62 +141,19 @@ void EditorGrass::move(Ogre::Vector3& move)
 
 	moveOffset += move;
 	updateNode();
-
-	/*for (auto& e : selected)
-	{
-		auto ePos = e.pg->getSceneNode()->getPosition();
-		setGrassPosition(e, ePos + move);
-	}*/
 }
 
-void EditorGrass::rotate(Ogre::Vector3& axis, Ogre::Radian& angle)
+void EditorGrass::rotate(Ogre::Vector3&, Ogre::Radian&)
 {
-	for (auto& e : selected)
-	{
-		Ogre::Quaternion quat(angle, axis);
-		//setEntityOrientation(e, quat);
-	}
 }
 
 void EditorGrass::addScale(Ogre::Vector3& scale)
 {
-	for (auto& e : selected)
-	{
-		//auto newScale = e->getParentSceneNode()->getScale() + scale;
-		//newScale.makeCeil(Ogre::Vector3(0.01f));
+	boundsNode->setVisible(true);
 
-		//e->getParentSceneNode()->setScale(newScale);
-	}
+	scaleOffset += scale*0.1f;
+	updateNode();
 }
-/*
-std::string getCloneName(std::string oldName)
-{
-	int counter = 1;
-
-	int i = oldName.length();
-	auto endId = oldName.find_last_of("_c");
-	bool needAppend = (endId == std::string::npos);
-
-	if (!needAppend)
-		for (size_t i = endId + 1; i < oldName.length(); i++)
-		{
-			if (!isdigit(oldName[i]))
-				needAppend = true;
-		}
-
-	if (!needAppend)
-	{
-		char* end;
-		counter = (endId + 1) == oldName.length() ? 1 : strtol(oldName.data() + endId + 1, &end, 10) + 1;
-		oldName = oldName.substr(0, endId + 1);
-	}
-	else
-		oldName += "_c";
-
-	while (Global::sceneMgr->hasEntity(oldName + std::to_string(counter++)));
-
-	return oldName + std::to_string(counter - 1);
-}*/
 
 void EditorGrass::duplicate()
 {
@@ -251,7 +242,6 @@ void EditorGrass::sendUiInfoMessage(EditorUiHandler* handler)
 	{
 		info.name = std::wstring(selected[0].name.begin(), selected[0].name.end());
 		info.pos = selected[0].pg->getSceneNode()->getPosition();
-		info.scale = Ogre::Vector3(1,1,1);// selected[0]->getParentSceneNode()->getScale();
 	}
 	else
 	{
@@ -259,10 +249,10 @@ void EditorGrass::sendUiInfoMessage(EditorUiHandler* handler)
 		for (auto& e : selected)
 			info.names.push_back(std::wstring(e.name.begin(), e.name.end()));
 
-		info.pos = getPosition();
-		info.scale = Ogre::Vector3(1, 1, 1); //selected[0]->getParentSceneNode()->getScale();
+		info.pos = getPosition();	
 	}
 
+	info.scale = Ogre::Vector3(1, 1, 1);
 	msg.data = &info;
 
 	handler->sendMsg(msg);
@@ -270,12 +260,12 @@ void EditorGrass::sendUiInfoMessage(EditorUiHandler* handler)
 
 void EditorGrass::updateNode()
 {
-	auto b = getBounds();
-	boundsNode->setScale(b.getSize());
+	auto b = getVisualBounds();
+	boundsNode->setScale(b.getSize()*scaleOffset);
 	boundsNode->setPosition(b.getCenter() + moveOffset);
 }
 
-Ogre::AxisAlignedBox EditorGrass::getBounds()
+Ogre::AxisAlignedBox EditorGrass::getVisualBounds()
 {
 	Ogre::AxisAlignedBox box;
 

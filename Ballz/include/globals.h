@@ -16,6 +16,8 @@ class EditorControl;
 
 enum GameState { GAME, PAUSE, MENU, UNDEFINED };
 
+enum class SelectionMode { Select, Move, Rotate, Scale };
+
 enum VisibilityFlag
 {
 	VisibilityFlag_Normal = 1,

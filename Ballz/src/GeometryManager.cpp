@@ -142,8 +142,6 @@ void GeometryManager::bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::Te
 	auto target = texture->getBuffer()->getRenderTarget();
 	target->update();
 
-	target->writeContentsToFile("baking.jpg");
-
 	info.layer->setColorMap(texture);
 
 	splitPointList[pssmSetup->getSplitCount()] = origSplit;
@@ -181,6 +179,7 @@ void GeometryManager::bakeLight(LightBakeInfo& info)
 
 	bakeLight(info, lightBakingCam, texture);
 
+	texture->getBuffer()->getRenderTarget()->writeContentsToFile("baking.jpg");
 	texture->unload();
 	lightBakingTodo.clear();
 	Global::sceneMgr->destroyCamera(lightBakingCam);
@@ -221,11 +220,11 @@ void GeometryManager::bakeLights()
 	v->setBackgroundColour(ColourValue(1,0,0,0));
 	v->setVisibilityMask(VisibilityFlag_Normal);
 
-	for (auto& info : lightBakingTodo)
-		bakeLight(info, lightBakingCam, texture);
+	for (auto& info : namedGrassGeometries)
+		bakeLight(info.bake, lightBakingCam, texture);
 
+	texture->getBuffer()->getRenderTarget()->writeContentsToFile("baking.jpg");
 	texture->unload();
-	lightBakingTodo.clear();
 	Global::sceneMgr->destroyCamera(lightBakingCam);
 
 	Global::gameMgr->sceneEdits.getLevelEdit()->applyFog();

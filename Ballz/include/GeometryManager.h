@@ -62,13 +62,13 @@ public:
 	std::vector<OptimizedGroup> getClosestOptGroup(float radius);
 	std::vector<OptimizedGroup>& getOptGroups();
 
+	void bakeLights();
 	void bakeLight(LightBakeInfo& info);
 
 private:
 
 	std::vector<LightBakeInfo> lightBakingTodo;
 	void bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::TexturePtr target);
-	void bakeLights();
 
 	std::vector<OptimizedGroup> optimizedGroups;
 

@@ -3,8 +3,6 @@
 #include "stdafx.h"
 #include "EditorItem.h"
 
-enum class SelectionMode { Select, Move, Rotate, Scale };
-
 class ObjectSelection;
 
 class SelectionGizmo : public InputListener
@@ -49,7 +47,7 @@ protected:
 
 		virtual void deinit();
 		virtual void mousePressed(OIS::MouseButtonID id, EditorItem* root);
-		virtual void mouseReleased(OIS::MouseButtonID id, EditorItem* root);
+		virtual void mouseReleased(OIS::MouseButtonID id, EditorItem* root, SelectionMode mode);
 		virtual void movedMouse(int x, int y, EditorItem* root, SelectionGizmo* parent);
 
 		virtual void init(SelectionGizmo* parent) = 0;
