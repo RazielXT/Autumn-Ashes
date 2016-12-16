@@ -9,6 +9,7 @@
 EditorGrass::EditorGrass()
 {
 	moveOffset = Ogre::Vector3::ZERO;
+	scaleOffset = Ogre::Vector3(1, 1, 1);
 }
 
 void EditorGrass::reset()
@@ -63,9 +64,13 @@ void EditorGrass::setIndividualPositions(std::vector<Ogre::Vector3>& in)
 		}
 }
 
-Forests::TBounds scaleBounds(Forests::TBounds& b, Ogre::Vector3& scale)
+Forests::TBounds EditorGrass::scaleBounds(Forests::TBounds& b, Ogre::Vector3& scale)
 {
-	auto center = Ogre::Vector3(b.bottom - b.top, 0, b.right - b.left);
+	auto bounds = Ogre::AxisAlignedBox(b.left, 0, b.top, b.right, 0, b.bottom);
+	auto center = bounds.getCenter();
+	auto size = bounds.getHalfSize()*scale;
+
+	return Forests::TBounds(center.x - size.x, center.z - size.z, center.x + size.x, center.z + size.z);
 }
 
 void EditorGrass::editMouseReleased(SelectionMode mode)
@@ -74,65 +79,70 @@ void EditorGrass::editMouseReleased(SelectionMode mode)
 		boundsNode->setVisible(false);
 
 	if(mode == SelectionMode::Move)
-	for (auto& g : selected)
-	{
-		auto b = g.pg->getBounds();
-		b.bottom += moveOffset.z;
-		b.top += moveOffset.z;
-		b.right += moveOffset.x;
-		b.left += moveOffset.x;
-
-		auto lvls = g.pg->getDetailLevels();
-		auto tr = lvls.front()->getTransition();
-		auto len = lvls.front()->getFarRange();
-
-		g.pg->removeDetailLevels();
-		g.pg->setBounds(b);
-		g.pg->addDetailLevel<Forests::GrassPage>((float)len, (float)tr);
-
-		if(g.bake.layer)
+		for (auto& g : selected)
 		{
-			auto bounds = g.bake.layer->mapBounds;
-			g.bake.layer->setMapBounds(Forests::TBounds(bounds.left + moveOffset.x, bounds.top + moveOffset.z, bounds.right + moveOffset.x, bounds.bottom + moveOffset.z));
+			auto b = g.pg->getBounds();
+			b.bottom += moveOffset.z;
+			b.top += moveOffset.z;
+			b.right += moveOffset.x;
+			b.left += moveOffset.x;
 
-			g.bake.pos += moveOffset;
-			Global::gameMgr->geometryMgr->bakeLight(g.bake);
+			auto lvls = g.pg->getDetailLevels();
+			auto tr = lvls.front()->getTransition();
+			auto len = lvls.front()->getFarRange();
+
+			g.pg->removeDetailLevels();
+			g.pg->setBounds(b);
+			g.pg->addDetailLevel<Forests::GrassPage>((float)len, (float)tr);
+
+			if(g.bake.layer)
+			{
+				auto bounds = g.bake.layer->mapBounds;
+				g.bake.layer->setMapBounds(Forests::TBounds(bounds.left + moveOffset.x, bounds.top + moveOffset.z, bounds.right + moveOffset.x, bounds.bottom + moveOffset.z));
+
+				g.bake.pos += moveOffset;
+				Global::gameMgr->geometryMgr->bakeLight(g.bake);
+			}
+
+			g.pg->reloadGeometry();
+
+			g.terrainQuery->offset_maxY += moveOffset.y;
+			g.terrainQuery->offset_minY += moveOffset.y;
 		}
-
-		g.pg->reloadGeometry();
-
-		g.terrainQuery->offset_maxY += moveOffset.y;
-		g.terrainQuery->offset_minY += moveOffset.y;
-	}
 
 	moveOffset = Ogre::Vector3::ZERO;
 
 	if (mode == SelectionMode::Scale)
-	for (auto& g : selected)
-	{
-		auto b = g.pg->getBounds();
-		scaleBounds(b, scaleOffset);
-
-		auto lvls = g.pg->getDetailLevels();
-		auto tr = lvls.front()->getTransition();
-		auto len = lvls.front()->getFarRange();
-
-		g.pg->removeDetailLevels();
-		g.pg->setBounds(b);
-		g.pg->addDetailLevel<Forests::GrassPage>((float)len, (float)tr);
-
-		if (g.bake.layer)
+		for (auto& g : selected)
 		{
-			auto bounds = g.bake.layer->mapBounds;
-			g.bake.layer->setMapBounds(scaleBounds(bounds, scaleOffset));
-			Global::gameMgr->geometryMgr->bakeLight(g.bake);
+			auto lvls = g.pg->getDetailLevels();
+			auto tr = lvls.front()->getTransition();
+			auto len = lvls.front()->getFarRange();
+
+			g.pg->removeDetailLevels();
+
+			auto b = g.pg->getBounds();
+			auto newBounds = scaleBounds(b, scaleOffset);
+			auto size = std::max({ newBounds.right - newBounds.left, newBounds.bottom - newBounds.top, 25.f });
+			g.pg->setBounds(Forests::TBounds(newBounds.left, newBounds.top, newBounds.left + size, newBounds.top + size));
+			g.pg->addDetailLevel<Forests::GrassPage>((float)len, (float)tr);
+
+			if (g.bake.layer)
+			{
+				auto bounds = scaleBounds(g.bake.layer->mapBounds, scaleOffset);
+				g.bake.layer->setMapBounds(bounds);
+				g.bake.size = Ogre::Vector2(bounds.right - bounds.left, bounds.bottom - bounds.top);
+
+				Global::gameMgr->geometryMgr->bakeLight(g.bake);
+			}
+
+			g.pg->reloadGeometry();
+
+			//g.terrainQuery->offset_maxY += moveOffset.y;
+			//g.terrainQuery->offset_minY += moveOffset.y;
 		}
 
-		g.pg->reloadGeometry();
-
-		//g.terrainQuery->offset_maxY += moveOffset.y;
-		//g.terrainQuery->offset_minY += moveOffset.y;
-	}
+	scaleOffset = Ogre::Vector3(1, 1, 1);
 }
 
 void EditorGrass::move(Ogre::Vector3& move)
@@ -249,7 +259,7 @@ void EditorGrass::sendUiInfoMessage(EditorUiHandler* handler)
 		for (auto& e : selected)
 			info.names.push_back(std::wstring(e.name.begin(), e.name.end()));
 
-		info.pos = getPosition();	
+		info.pos = getPosition();
 	}
 
 	info.scale = Ogre::Vector3(1, 1, 1);

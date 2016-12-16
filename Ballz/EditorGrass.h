@@ -34,6 +34,7 @@ struct EditorGrass : public EditorItem
 
 private:
 
+	Forests::TBounds scaleBounds(Forests::TBounds& b, Ogre::Vector3& scale);
 	void updateNode();
 	virtual Ogre::AxisAlignedBox getVisualBounds();
 
