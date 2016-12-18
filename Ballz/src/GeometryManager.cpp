@@ -221,7 +221,10 @@ void GeometryManager::bakeLights()
 	v->setVisibilityMask(VisibilityFlag_Normal);
 
 	for (auto& info : namedGrassGeometries)
+	{
 		bakeLight(info.bake, lightBakingCam, texture);
+		info.density.apply(info);
+	}
 
 	texture->getBuffer()->getRenderTarget()->writeContentsToFile("baking.jpg");
 	texture->unload();

@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include "DetailGeometry.h"
+#include "..\GrassDensityMap.h"
 
 using VCEditFunc = std::function<void(Ogre::Entity*, float*, float*, Ogre::RGBA*, void* userData)>;
 
@@ -33,6 +34,7 @@ struct GrassInfo
 	TerrainHeightQueryData* terrainQuery;
 
 	LightBakeInfo bake;
+	GrassDensityMap density;
 };
 
 class GeometryManager
