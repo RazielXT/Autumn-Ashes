@@ -1,9 +1,12 @@
 #pragma once
 #include "EditorItem.h"
+#include "PaintedItem.h"
 #include "PagedGeometry.h"
 #include "GeometryManager.h"
 
-struct EditorGrass : public EditorItem
+struct EditorPainter;
+
+struct EditorGrass : public EditorItem, public PaitedItem
 {
 	EditorGrass();
 
@@ -31,6 +34,11 @@ struct EditorGrass : public EditorItem
 	std::vector<GrassInfo> selected;
 
 	virtual void sendUiInfoMessage(EditorUiHandler* handler);
+	virtual void handleSelectionMessage(SelectionInfoChange*);
+
+	virtual void paint(Ogre::Vector3 pos, float w, float size);
+	virtual OgreNewt::Body* getPaintTarget();
+	EditorPainter* painter;
 
 private:
 
@@ -44,4 +52,5 @@ private:
 
 	Ogre::Vector3 scaleOffset;
 	Ogre::Vector3 scaleNodeOrigin;
+
 };

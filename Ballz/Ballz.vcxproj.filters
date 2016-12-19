@@ -405,6 +405,9 @@
     <ClCompile Include="GrassDensityMap.cpp">
       <Filter>Files\Editor\Items</Filter>
     </ClCompile>
+    <ClCompile Include="EditorPainter.cpp">
+      <Filter>Files\Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -801,6 +804,12 @@
       <Filter>Files\Editor\Items</Filter>
     </ClInclude>
     <ClInclude Include="GrassDensityMap.h">
+      <Filter>Files\Editor\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorPainter.h">
+      <Filter>Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="PaintedItem.h">
       <Filter>Files\Editor\Items</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "EditorGrass.h"
 #include "EditorUiHandler.h"
+#include "EditorPainter.h"
 #include "GUtils.h"
 #include "GameStateManager.h"
 #include "GrassHeightFunction.h"
@@ -138,8 +139,9 @@ void EditorGrass::editMouseReleased(SelectionMode mode)
 
 			g.pg->reloadGeometry();
 
-			//g.terrainQuery->offset_maxY += moveOffset.y;
-			//g.terrainQuery->offset_minY += moveOffset.y;
+			auto yCenter = g.terrainQuery->offset_maxY - g.terrainQuery->offset_minY;
+			g.terrainQuery->offset_maxY = yCenter + (g.terrainQuery->offset_maxY - yCenter)*scaleOffset.y;
+			g.terrainQuery->offset_minY = yCenter - (yCenter - g.terrainQuery->offset_minY)*scaleOffset.y;
 		}
 
 	scaleOffset = Ogre::Vector3(1, 1, 1);
@@ -263,9 +265,35 @@ void EditorGrass::sendUiInfoMessage(EditorUiHandler* handler)
 	}
 
 	info.scale = Ogre::Vector3(1, 1, 1);
+	info.subtype == SelectionInfo::Grass;
+
+	GrassSelectionInfo grassInfo;
+	grassInfo.density = selected[0].bake.layer->density;
+	grassInfo.preserveMask = false;
+	info.subtypeData = &grassInfo;
+
 	msg.data = &info;
 
 	handler->sendMsg(msg);
+}
+
+void EditorGrass::handleSelectionMessage(SelectionInfoChange* change)
+{
+	if (change->change == SelectionInfoChange::Id::GrassDensity)
+		selected[0].bake.layer->setDensity(*(float*)change->data);
+	if (change->change == SelectionInfoChange::Id::GrassPaintPreserve)
+	{
+		selected[0].density.preserveOriginal(*(bool*)change->data);
+		selected[0].density.apply(selected[0]);
+	}
+	if (change->change == SelectionInfoChange::Id::GrassPaintSizeChange)
+	{
+		painter->setSize(*(float*)change->data);
+	}
+	if (change->change == SelectionInfoChange::Id::GrassPaintWChange)
+	{
+		painter->setWeight(*(float*)change->data);
+	}
 }
 
 void EditorGrass::updateNode()
@@ -294,4 +322,15 @@ Ogre::AxisAlignedBox EditorGrass::getVisualBounds()
 void EditorGrass::setGrassPosition(GrassInfo& pg, Ogre::Vector3& pos)
 {
 	pg.pg->getSceneNode()->setPosition(pos);
+}
+
+OgreNewt::Body* EditorGrass::getPaintTarget()
+{
+	return selected[0].terrainQuery->bodyTarget;
+}
+
+void EditorGrass::paint(Ogre::Vector3 pos, float w, float size)
+{
+	selected[0].density.paint(pos.x, pos.z, w, size);
+	selected[0].density.apply(selected[0]);
 }

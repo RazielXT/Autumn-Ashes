@@ -26,5 +26,6 @@ struct EditorItem
 	virtual void remove() = 0;
 	virtual bool filter(std::string& name) = 0;
 
+	virtual void handleSelectionMessage(SelectionInfoChange*) = 0;
 	virtual void sendUiInfoMessage(EditorUiHandler*) = 0;
 };

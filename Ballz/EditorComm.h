@@ -65,6 +65,15 @@ struct SelectionInfo
 	std::vector<std::wstring> names;
 	Ogre::Vector3 pos;
 	Ogre::Vector3 scale;
+
+	enum {Entity, Grass} subtype = Entity;
+	void* subtypeData;
+};
+
+struct GrassSelectionInfo
+{
+	float density;
+	bool preserveMask;
 };
 
 struct WorldItem
@@ -91,7 +100,13 @@ struct SelectWorldItemData
 
 struct SelectionInfoChange
 {
-	enum class SelectionChange { Pos, Scale } change;
+	enum class Id 
+	{
+		Pos, Scale, 
+		GrassDensity, GrassPaintAdd, GrassPaintRemove, GrassPaintWChange, GrassPaintSizeChange, GrassPaintFill, GrassPaintPreserve
+	} 
+	change;
+
 	void* data;
 };
 

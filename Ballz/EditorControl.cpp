@@ -24,7 +24,7 @@ std::wstring stow(std::string& str)
 	return std::wstring(str.begin(), str.end());
 }
 
-EditorControl::EditorControl(EditorUiHandler& handler, OIS::Mouse* mouse) : mMouse(mouse), uiHandler(handler)
+EditorControl::EditorControl(EditorUiHandler& handler, OIS::Mouse* mouse) : mMouse(mouse), uiHandler(handler), painter(this)
 {
 #ifdef EDITOR
 	active = true;
@@ -135,6 +135,10 @@ void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID 
 					selector.setSelectedEntity(e);
 				}
 			}
+			else if (mode == EditorMode::Paint)
+			{
+				painter.mousePressed();
+			}
 		}
 	}
 }
@@ -144,6 +148,10 @@ void EditorControl::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID
 	if (active)
 		if (id == OIS::MB_Right || id == OIS::MB_Middle)
 			setEditMode();
+		else if (editMode && id == OIS::MB_Left && mode == EditorMode::Paint)
+		{
+			painter.mouseReleased();
+		}
 }
 
 bool EditorControl::update(float tslf)
@@ -224,6 +232,7 @@ void EditorControl::afterLoadInit()
 	{
 		Global::eventsMgr->addCachedTask(this);
 		selector.init(this);
+		painter.init();
 		registerInputListening();
 		cam.camNode = nullptr;
 		cam.enable();
@@ -284,12 +293,11 @@ void EditorControl::setEditMode()
 	cam.disable();
 }
 
-bool EditorControl::connectEditorUi()
-{
-
-}
-
 void EditorControl::movedMouse(const OIS::MouseEvent &e)
 {
+	if (active && editMode && mode == EditorMode::Paint)
+	{
+		painter.mouseMoved(e);
+	}
 }
 

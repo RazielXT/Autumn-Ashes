@@ -26,6 +26,7 @@ struct EditorEntity : public EditorItem
 	std::vector<Ogre::Entity*> selected;
 
 	virtual void sendUiInfoMessage(EditorUiHandler* handler);
+	virtual void handleSelectionMessage(SelectionInfoChange*) {};
 
 private:
 

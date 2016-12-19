@@ -45,6 +45,11 @@ void ObjectSelection::removeSelection()
 	}
 }
 
+ObjectSelection::ObjectSelection()
+{
+
+}
+
 void ObjectSelection::init(EditorControl* p)
 {
 	parent = p;
@@ -55,6 +60,8 @@ void ObjectSelection::init(EditorControl* p)
 		selected->reset();
 	selected = nullptr;
 	gizmo.setRoot(nullptr);
+
+	selectedGrasses.painter = &parent->painter;
 
 	updateUiSelectedInfo();
 }
@@ -67,18 +74,13 @@ void ObjectSelection::setMode(SelectionMode mode)
 	gizmo.setMode(mode);
 }
 
-void ObjectSelection::setSelectedGrass(GrassInfo& grass, bool forceDeselect /*= true*/)
+void ObjectSelection::setSelectedGrass(GrassInfo& grass, bool forceDeselect)
 {
 	if (selected && (forceDeselect || selected != &selectedGrasses))
 		selected->deselect();
 
-	//if (ent)
-	{
-		selected = &selectedGrasses;
-		selectedGrasses.add(grass);
-	}
-	//else
-	//	selected = nullptr;
+	selected = &selectedGrasses;
+	selectedGrasses.add(grass);
 
 	gizmo.setRoot(selected);
 	updateUiSelectedInfo();
@@ -143,12 +145,16 @@ void ObjectSelection::uiEditSelection(SelectionInfoChange* change)
 	if (selected)
 	{
 		Ogre::Vector3* vec = (Ogre::Vector3*)change->data;
+
 		switch (change->change)
 		{
-		case SelectionInfoChange::SelectionChange::Pos:
+		case SelectionInfoChange::Id::Pos:
 			selected->setPosition(*vec);
 			break;
-		case SelectionInfoChange::SelectionChange::Scale:
+		case SelectionInfoChange::Id::Scale:
+			selected->setScale(*vec);
+			break;
+		case SelectionInfoChange::Id::Scale:
 			selected->setScale(*vec);
 			break;
 		default:

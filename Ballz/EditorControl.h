@@ -2,6 +2,7 @@
 #include <vector>
 #include "EditorCamera.h"
 #include "EditorUiHandler.h"
+#include "EditorPainter.h"
 #include "ObjectSelection.h"
 #include "SceneOptions.h"
 
@@ -16,7 +17,7 @@ public:
 
 	virtual void mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 	virtual void mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
-	virtual void movedMouse(const OIS::MouseEvent &e) override;
+	virtual void movedMouse(const OIS::MouseEvent &e);
 
 	virtual bool update(float tslf);
 
@@ -30,15 +31,12 @@ public:
 	void setVievMode();
 	void setEditMode();
 
-	bool connectEditorUi();
 	void initEditorProperties();
 
-	EditorCamera cam;
 	OIS::Mouse* mMouse;
-
 	EditorUiHandler& uiHandler;
 
-	enum class EditorMode { None, AddItem, Select, SelectEdit } mode = EditorMode::None;
+	enum class EditorMode { None, AddItem, Paint, Select, SelectEdit } mode = EditorMode::None;
 
 	void displayItemInfo(EditorItem* item);
 	void getWorldItemsInfo(GetWorldItemsData& data);
@@ -48,5 +46,7 @@ public:
 	virtual void releasedKey(const OIS::KeyEvent &arg) override;
 
 	ObjectSelection selector;
+	EditorPainter painter;
 	SceneOptions scene;
+	EditorCamera cam;
 };
