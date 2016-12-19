@@ -293,11 +293,11 @@ void EditorControl::setEditMode()
 	cam.disable();
 }
 
-void EditorControl::movedMouse(const OIS::MouseEvent &e)
+void EditorControl::movedMouse(const OIS::MouseEvent&)
 {
 	if (active && editMode && mode == EditorMode::Paint)
 	{
-		painter.mouseMoved(e);
+		painter.mouseMoved();
 	}
 }
 

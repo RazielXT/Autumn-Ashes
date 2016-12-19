@@ -2,12 +2,12 @@
 #include "stdafx.h"
 
 struct PaitedItem;
-struct EditorControl;
+class EditorControl;
 
 struct EditorPainter
 {
 	EditorPainter(EditorControl* p) : parent(p) {}
-	
+
 	void init();
 
 	void setItem(PaitedItem* item);
@@ -18,7 +18,7 @@ struct EditorPainter
 	void mouseReleased();
 
 	void mouseMoved();
-	
+
 	void setSize(float size);
 	void setWeight(float w);
 

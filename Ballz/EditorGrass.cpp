@@ -265,7 +265,7 @@ void EditorGrass::sendUiInfoMessage(EditorUiHandler* handler)
 	}
 
 	info.scale = Ogre::Vector3(1, 1, 1);
-	info.subtype == SelectionInfo::Grass;
+	info.subtype = SelectionInfo::Grass;
 
 	GrassSelectionInfo grassInfo;
 	grassInfo.density = selected[0].bake.layer->density;

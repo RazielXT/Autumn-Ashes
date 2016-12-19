@@ -53,9 +53,9 @@ void GrassDensityMap::apply(GrassInfo& grass)
 {
 	auto buffer = grass.bake.layer->getColorMap()->getPixelBox();
 
-	for (int h = 0; h < buffer.getHeight(); h++)
+	for (size_t h = 0; h < buffer.getHeight(); h++)
 	{
-		for (int w = 0; w < buffer.getWidth(); w++)
+		for (size_t w = 0; w < buffer.getWidth(); w++)
 		{
 			float xRel = buffer.getHeight() / (float)h;
 			float yRel = buffer.getWidth() / (float)w;

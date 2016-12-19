@@ -45,11 +45,6 @@ void ObjectSelection::removeSelection()
 	}
 }
 
-ObjectSelection::ObjectSelection()
-{
-
-}
-
 void ObjectSelection::init(EditorControl* p)
 {
 	parent = p;
@@ -154,10 +149,8 @@ void ObjectSelection::uiEditSelection(SelectionInfoChange* change)
 		case SelectionInfoChange::Id::Scale:
 			selected->setScale(*vec);
 			break;
-		case SelectionInfoChange::Id::Scale:
-			selected->setScale(*vec);
-			break;
 		default:
+			selected->handleSelectionMessage(change);
 			break;
 		}
 	}

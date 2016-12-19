@@ -100,11 +100,11 @@ struct SelectWorldItemData
 
 struct SelectionInfoChange
 {
-	enum class Id 
+	enum class Id
 	{
-		Pos, Scale, 
+		Pos, Scale,
 		GrassDensity, GrassPaintAdd, GrassPaintRemove, GrassPaintWChange, GrassPaintSizeChange, GrassPaintFill, GrassPaintPreserve
-	} 
+	}
 	change;
 
 	void* data;
