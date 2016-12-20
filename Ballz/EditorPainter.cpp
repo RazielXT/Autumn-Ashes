@@ -38,6 +38,11 @@ void EditorPainter::mouseMoved()
 	}
 }
 
+void EditorPainter::setMode(PaintMode m)
+{
+	mode = m;
+}
+
 void EditorPainter::setSize(float s)
 {
 	size = s;
@@ -56,7 +61,7 @@ bool EditorPainter::applyPaint()
 
 	if (GUtils::getRayFilteredInfo(cam->getDerivedPosition(), cam->getDerivedPosition() + mouseray.getDirection() * 100000, rayInfo, item->getPaintTarget()))
 	{
-		item->paint(rayInfo.pos, weight, size);
+		item->paint(rayInfo.pos, mode == Remove ? -weight : weight, size);
 		return true;
 	}
 

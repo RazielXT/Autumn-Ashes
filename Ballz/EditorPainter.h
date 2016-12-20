@@ -19,6 +19,12 @@ struct EditorPainter
 
 	void mouseMoved();
 
+	enum PaintMode
+	{
+		Add, Remove
+	};
+
+	void setMode(PaintMode mode);
 	void setSize(float size);
 	void setWeight(float w);
 
@@ -26,6 +32,7 @@ private:
 
 	float size = 1;
 	float weight = 1;
+	PaintMode mode;
 
 	bool applyPaint();
 	bool painting = false;

@@ -51,6 +51,9 @@ void GrassDensityMap::preserveOriginal(bool enable)
 
 void GrassDensityMap::apply(GrassInfo& grass)
 {
+	if (grid.data == nullptr)
+		return;
+
 	auto buffer = grass.bake.layer->getColorMap()->getPixelBox();
 
 	for (size_t h = 0; h < buffer.getHeight(); h++)
@@ -103,10 +106,11 @@ bool GrassDensityMap::WorldGrid::inside(float x, float y)
 
 void GrassDensityMap::WorldGrid::fill(float value)
 {
-	for (int i = 0; i < rows*cols; i++)
-	{
-		data[i] = value;
-	}
+	if(data)
+		for (int i = 0; i < rows*cols; i++)
+		{
+			data[i] = value;
+		}
 }
 
 void GrassDensityMap::WorldGrid::init(float _minX, float _maxX, float _minY, float _maxY)

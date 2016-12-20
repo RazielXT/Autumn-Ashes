@@ -4,7 +4,6 @@
 #include <future>
 
 typedef void(*UI_MSG_FUNC)(UiMessage*);
-typedef void(*VOID_FUNC)();
 typedef void(*HWND_FUNC)(HWND*, HWND*);
 typedef void(*UI_MSG_CALLBCK_FUNC)(UI_MSG_FUNC);
 
@@ -22,7 +21,7 @@ struct CommLib
 			h.detach();
 	}
 
-	bool init(UI_MSG_FUNC* uiSender, UI_MSG_FUNC appReceiver, VOID_FUNC onEndCallback, HWND* targetHwnd, HWND* topHwnd)
+	bool init(UI_MSG_FUNC* uiSender, UI_MSG_FUNC appReceiver, HWND* targetHwnd, HWND* topHwnd)
 	{
 		if (!lib)
 		{
@@ -47,7 +46,7 @@ struct CommLib
 
 			StartUi(targetHwnd, topHwnd);
 
-			onEndCallback();
+			exit(0);
 
 		});
 

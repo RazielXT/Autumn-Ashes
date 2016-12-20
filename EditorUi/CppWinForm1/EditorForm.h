@@ -1321,6 +1321,7 @@ public: System::Void hideItemInfo()
 {
 	selectionNameButton->Text = "";
 	selectionGroupBox->Hide();
+	grassGroupBox->Hide();
 }
 	
 public: System::Void setLoading(bool enabled)
@@ -1340,8 +1341,7 @@ public: System::Void setProperties(EditorProperties* info)
 
 public: System::Void showItemInfo(SelectionInfo* info)
 {
-	selectionGroupBox->BringToFront();
-	selectionGroupBox->Show();
+	//selectionGroupBox->BringToFront();
 
 	if (!info->names.empty())
 	{
@@ -1359,9 +1359,10 @@ public: System::Void showItemInfo(SelectionInfo* info)
 	selectionNameButton->Text = gcnew System::String(info->name.data());
 
 	reportSelectionChange = false;
-
+	bool showGrassInfo = false;
 	if (info->subtype == SelectionInfo::Grass && info->names.empty())
 	{
+		showGrassInfo = true;
 		grassPaintAdd->Checked = false;
 		grassPaintRemove->Checked = false;
 
@@ -1371,10 +1372,7 @@ public: System::Void showItemInfo(SelectionInfo* info)
 		grassPaingPreserveCheckbox->Checked = subinfo->preserveMask;
 
 		grassGroupBox->BringToFront();
-		grassGroupBox->Show();
 	}
-	else
-		grassGroupBox->Hide();
 
 	entPosX->Value = System::Decimal(info->pos.x);
 	entPosY->Value = System::Decimal(info->pos.y);
@@ -1385,6 +1383,9 @@ public: System::Void showItemInfo(SelectionInfo* info)
 	entScaleZ->Value = System::Decimal(info->scale.z);
 
 	reportSelectionChange = true;
+
+	grassGroupBox->Visible = showGrassInfo;
+	selectionGroupBox->Show();
 }
 
 private: System::Void skyboxComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {

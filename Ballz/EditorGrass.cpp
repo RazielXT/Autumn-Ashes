@@ -280,10 +280,13 @@ void EditorGrass::sendUiInfoMessage(EditorUiHandler* handler)
 void EditorGrass::handleSelectionMessage(SelectionInfoChange* change)
 {
 	if (change->change == SelectionInfoChange::Id::GrassDensity)
+	{
 		selected[0].bake.layer->setDensity(*(float*)change->data);
+		selected[0].pg->reloadGeometry();
+	}
 	if (change->change == SelectionInfoChange::Id::GrassPaintPreserve)
 	{
-		selected[0].density.preserveOriginal(*(bool*)change->data);
+		selected[0].density.preserveOriginal(*((float*)change->data) != 0);
 		selected[0].density.apply(selected[0]);
 	}
 	if (change->change == SelectionInfoChange::Id::GrassPaintSizeChange)
@@ -293,6 +296,24 @@ void EditorGrass::handleSelectionMessage(SelectionInfoChange* change)
 	if (change->change == SelectionInfoChange::Id::GrassPaintWChange)
 	{
 		painter->setWeight(*(float*)change->data);
+	}
+	if (change->change == SelectionInfoChange::Id::GrassPaintFill)
+	{
+		selected[0].density.fill(*(float*)change->data);
+	}
+	if (change->change == SelectionInfoChange::Id::GrassPaintAdd)
+	{
+		painter->setMode(EditorPainter::Add);
+		Ogre::Vector3 v = *(Ogre::Vector3*)change->data;
+		painter->setWeight(v.x);
+		painter->setSize(v.y);
+	}
+	if (change->change == SelectionInfoChange::Id::GrassPaintRemove)
+	{
+		painter->setMode(EditorPainter::Remove);
+		Ogre::Vector3 v = *(Ogre::Vector3*)change->data;
+		painter->setWeight(v.x);
+		painter->setSize(v.y);
 	}
 }
 
