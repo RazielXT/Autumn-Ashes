@@ -52,6 +52,7 @@ extern PostProcessMgr* ppMgr;
 extern CameraHelp* camera;
 extern Player* player;
 extern float timestep;
+extern float tslf;
 extern AudioLibrary* audioLib;
 extern CameraShaker* shaker;
 

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 float Global::timestep = 1;
+float Global::tslf = 0;
 AudioLibrary* Global::audioLib = nullptr;
 EventsManager* Global::eventsMgr = nullptr;
 Ogre::SceneManager* Global::sceneMgr = nullptr;

@@ -5,9 +5,10 @@
 #include "GUtils.h"
 #include "GameStateManager.h"
 #include "GrassHeightFunction.h"
+#include "EditorControl.h"
 
 
-EditorGrass::EditorGrass()
+EditorGrass::EditorGrass(EditorPainter* painter) : PaitedItem(painter)
 {
 	moveOffset = Ogre::Vector3::ZERO;
 	scaleOffset = Ogre::Vector3(1, 1, 1);
@@ -209,11 +210,12 @@ void EditorGrass::add(GrassInfo& grass)
 		boundsNode = e->getParentSceneNode();
 	}
 
-
 	boundsNode->setVisible(false);
 	updateNode();
 
 	boundsNode->showBoundingBox(true);
+
+	painter->setItem(this);
 }
 
 void EditorGrass::select(GrassInfo& grass)
@@ -227,6 +229,7 @@ void EditorGrass::deselect()
 	boundsNode->setVisible(false);
 	boundsNode->showBoundingBox(false);
 	selected.clear();
+	painter->setItem(nullptr);
 }
 
 bool EditorGrass::filter(std::string& name)
@@ -284,37 +287,13 @@ void EditorGrass::handleSelectionMessage(SelectionInfoChange* change)
 		selected[0].bake.layer->setDensity(*(float*)change->data);
 		selected[0].pg->reloadGeometry();
 	}
-	if (change->change == SelectionInfoChange::Id::GrassPaintPreserve)
+	else if (change->change == SelectionInfoChange::Id::GrassPaintPreserve)
 	{
 		selected[0].density.preserveOriginal(*((float*)change->data) != 0);
 		selected[0].density.apply(selected[0]);
 	}
-	if (change->change == SelectionInfoChange::Id::GrassPaintSizeChange)
-	{
-		painter->setSize(*(float*)change->data);
-	}
-	if (change->change == SelectionInfoChange::Id::GrassPaintWChange)
-	{
-		painter->setWeight(*(float*)change->data);
-	}
-	if (change->change == SelectionInfoChange::Id::GrassPaintFill)
-	{
-		selected[0].density.fill(*(float*)change->data);
-	}
-	if (change->change == SelectionInfoChange::Id::GrassPaintAdd)
-	{
-		painter->setMode(EditorPainter::Add);
-		Ogre::Vector3 v = *(Ogre::Vector3*)change->data;
-		painter->setWeight(v.x);
-		painter->setSize(v.y);
-	}
-	if (change->change == SelectionInfoChange::Id::GrassPaintRemove)
-	{
-		painter->setMode(EditorPainter::Remove);
-		Ogre::Vector3 v = *(Ogre::Vector3*)change->data;
-		painter->setWeight(v.x);
-		painter->setSize(v.y);
-	}
+	else
+		painter->handleChangeMessage(change);
 }
 
 void EditorGrass::updateNode()
@@ -345,13 +324,50 @@ void EditorGrass::setGrassPosition(GrassInfo& pg, Ogre::Vector3& pos)
 	pg.pg->getSceneNode()->setPosition(pos);
 }
 
+void EditorGrass::fillPaint(float w)
+{
+	if (selected[0].density.empty())
+	{
+		auto b = selected[0].bake.layer->mapBounds;
+		selected[0].density.resize(b.left, b.right, b.top, b.bottom);
+	}
+
+	selected[0].density.fill(w);
+	selected[0].density.apply(selected[0]);
+}
+
 OgreNewt::Body* EditorGrass::getPaintTarget()
 {
 	return selected[0].terrainQuery->bodyTarget;
 }
 
+float paintReloadTimer = 0;
+const float repaintTimePeriod = 0.25f;
+
 void EditorGrass::paint(Ogre::Vector3 pos, float w, float size)
 {
+	if (selected[0].density.empty())
+	{
+		auto b = selected[0].bake.layer->mapBounds;
+		selected[0].density.resize(b.left, b.right, b.top, b.bottom);
+	}
+
 	selected[0].density.paint(pos.x, pos.z, w, size);
-	selected[0].density.apply(selected[0]);
+
+	paintReloadTimer += Global::tslf;
+	if (paintReloadTimer > repaintTimePeriod)
+	{
+		selected[0].density.apply(selected[0]);
+		paintReloadTimer = 0;
+	}
+}
+
+void EditorGrass::stoppedPainting()
+{
+	paintReloadTimer = 0;
+
+	if (!selected.empty())
+	{
+		selected[0].density.apply(selected[0]);
+	}
 }

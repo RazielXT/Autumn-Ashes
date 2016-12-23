@@ -22,11 +22,11 @@ void GrassDensityMap::paint(float _x, float _y, float w, float size)
 		{
 			float distW = std::max(0.f, 1 - (Ogre::Vector2(x, y).distance(Ogre::Vector2(_x, _y)) / size));
 
-			if (distW>0 && grid.inside(x, y))
-				return;
-
-			auto& f = grid.read(x, y);
-			f = std::min(1.f, f + distW*w);
+			if (distW > 0 && grid.inside(x, y))
+			{
+				auto& f = grid.read(x, y);
+				f = std::min(1.f, f + distW*w);
+			}
 		}
 	}
 }
@@ -60,13 +60,13 @@ void GrassDensityMap::apply(GrassInfo& grass)
 	{
 		for (size_t w = 0; w < buffer.getWidth(); w++)
 		{
-			float xRel = buffer.getHeight() / (float)h;
-			float yRel = buffer.getWidth() / (float)w;
+			float xRel = h / (float)buffer.getHeight();
+			float yRel = w / (float)buffer.getWidth();
 
 			auto c = buffer.getColourAt(h, w, 0);
 
-			float xPos = grass.bake.pos.x + grass.bake.size.x*xRel;
-			float yPos = grass.bake.pos.y + grass.bake.size.y*yRel;
+			float xPos = grass.density.grid.minX + (grass.density.grid.maxX - grass.density.grid.minX)*xRel;
+			float yPos = grass.density.grid.minY + (grass.density.grid.maxY - grass.density.grid.minY)*yRel;
 
 			c.a = (preserve ? c.a : 1.0f) * grid.read(xPos, yPos);
 			//c.a = c.a * (h > 200 || w > 200) ? 1 : 0;
@@ -89,6 +89,11 @@ float GrassDensityMap::get(float x, float y)
 void GrassDensityMap::deinit()
 {
 	delete grid.data;
+}
+
+bool GrassDensityMap::empty()
+{
+	return grid.data == nullptr;
 }
 
 float& GrassDensityMap::WorldGrid::read(float x, float y)

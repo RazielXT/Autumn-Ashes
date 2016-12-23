@@ -13,9 +13,9 @@ class ObjectSelection
 {
 public:
 
-	EditorControl* parent;
+	ObjectSelection(EditorControl* control);
 
-	void init(EditorControl* parent);
+	void init();
 
 	void setMode(SelectionMode mode);
 
@@ -43,4 +43,6 @@ public:
 	SelectionGizmo gizmo;
 
 	bool addMode = false;
+
+	EditorControl* parent;
 };

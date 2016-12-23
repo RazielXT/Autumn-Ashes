@@ -24,13 +24,13 @@ std::wstring stow(std::string& str)
 	return std::wstring(str.begin(), str.end());
 }
 
-EditorControl::EditorControl(EditorUiHandler& handler, OIS::Mouse* mouse) : mMouse(mouse), uiHandler(handler), painter(this)
+EditorControl::EditorControl(EditorUiHandler& handler, OIS::Mouse* mouse) : mMouse(mouse), uiHandler(handler), painter(this), selector(this)
 {
 #ifdef EDITOR
 	active = true;
 	connected = true;
 
-	mode = EditorMode::Select;
+	setMode(EditorMode::Select);
 	selector.setMode(SelectionMode::Select);
 #endif // EDITOR
 }
@@ -108,6 +108,35 @@ void EditorControl::releasedKey(const OIS::KeyEvent &arg)
 		selector.addMode = false;
 }
 
+void EditorControl::setMode(EditorMode m)
+{
+	mode = m;
+
+	if (mode != EditorMode::Paint)
+		painter.setMode(EditorPainter::None);
+}
+
+void EditorControl::setPaintMode(EditorPainter::PaintMode m)
+{
+	if(m == EditorPainter::None)
+		setSelectMode(SelectionMode::Select);
+	else
+	{
+		setMode(EditorMode::Paint);
+		painter.setMode(m);
+	}
+}
+
+void EditorControl::setSelectMode(SelectionMode m)
+{
+	if(m == SelectionMode::Select)
+		setMode(EditorMode::Select);
+	else
+		setMode(EditorMode::SelectEdit);
+
+	selector.setMode(m);
+}
+
 void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
 	if (active)
@@ -167,23 +196,19 @@ bool EditorControl::update(float tslf)
 			switch (msg.id)
 			{
 			case UiMessageId::SelectMode:
-				mode = EditorMode::Select;
-				selector.setMode(SelectionMode::Select);
+				setSelectMode(SelectionMode::Select);
 				break;
 			case UiMessageId::MoveMode:
-				mode = EditorMode::SelectEdit;
-				selector.setMode(SelectionMode::Move);
+				setSelectMode(SelectionMode::Move);
 				break;
 			case UiMessageId::ScaleMode:
-				mode = EditorMode::SelectEdit;
-				selector.setMode(SelectionMode::Scale);
+				setSelectMode(SelectionMode::Scale);
 				break;
 			case UiMessageId::RotateMode:
-				mode = EditorMode::SelectEdit;
-				selector.setMode(SelectionMode::Rotate);
+				setSelectMode(SelectionMode::Rotate);
 				break;
 			case UiMessageId::AddItemMode:
-				mode = EditorMode::AddItem;
+				setMode(EditorMode::AddItem);
 				break;
 			case UiMessageId::GetWorldItems:
 				getWorldItemsInfo(*(GetWorldItemsData*)msg.data);
@@ -231,7 +256,7 @@ void EditorControl::afterLoadInit()
 	if (active)
 	{
 		Global::eventsMgr->addCachedTask(this);
-		selector.init(this);
+		selector.init();
 		painter.init();
 		registerInputListening();
 		cam.camNode = nullptr;

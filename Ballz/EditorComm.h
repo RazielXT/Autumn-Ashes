@@ -103,7 +103,7 @@ struct SelectionInfoChange
 	enum class Id
 	{
 		Pos, Scale,
-		GrassDensity, GrassPaintAdd, GrassPaintRemove, GrassPaintWChange, GrassPaintSizeChange, GrassPaintFill, GrassPaintPreserve
+		GrassDensity, PaintOff, PaintAdd, PaintRemove, PaintWChange, PaintSizeChange, PaintFill, GrassPaintPreserve
 	}
 	change;
 

@@ -3,6 +3,7 @@
 
 struct PaitedItem;
 class EditorControl;
+struct SelectionInfoChange;
 
 struct EditorPainter
 {
@@ -21,20 +22,25 @@ struct EditorPainter
 
 	enum PaintMode
 	{
-		Add, Remove
+		None, Add, Remove
 	};
 
 	void setMode(PaintMode mode);
-	void setSize(float size);
-	void setWeight(float w);
+
+	void handleChangeMessage(SelectionInfoChange* change);
 
 private:
 
+	void setSize(float size);
+	void setWeight(float w);
+
 	float size = 1;
 	float weight = 1;
-	PaintMode mode;
+	PaintMode mode = None;
 
 	bool applyPaint();
+	void applyPaint(Ogre::Vector3 pos);
+	Ogre::Vector3 getPaintPos();
 	bool painting = false;
 
 	EditorControl* parent;

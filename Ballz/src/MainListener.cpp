@@ -93,7 +93,7 @@ MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneMana
 
 bool MainListener::frameStarted(const FrameEvent& evt)
 {
-	float tslf = std::min(0.1f, evt.timeSinceLastFrame);
+	float tslf = Global::tslf = std::min(0.1f, evt.timeSinceLastFrame);
 
 	postProcMgr->update(tslf);
 	geometryMgr->update();

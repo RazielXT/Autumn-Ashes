@@ -17,9 +17,7 @@ struct GrassDensityMap
 	float get(float x, float y);
 	void deinit();
 
-private:
-
-	bool preserve = false;
+	bool empty();
 
 	struct WorldGrid
 	{
@@ -34,5 +32,10 @@ private:
 		int pixelsPerUnit = 2;
 	}
 	grid;
+
+private:
+
+	bool preserve = false;
+
 
 };

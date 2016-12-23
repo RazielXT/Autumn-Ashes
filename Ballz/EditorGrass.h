@@ -8,7 +8,7 @@ struct EditorPainter;
 
 struct EditorGrass : public EditorItem, public PaitedItem
 {
-	EditorGrass();
+	EditorGrass(EditorPainter* painter);
 
 	virtual void reset();
 
@@ -37,8 +37,9 @@ struct EditorGrass : public EditorItem, public PaitedItem
 	virtual void handleSelectionMessage(SelectionInfoChange*);
 
 	virtual void paint(Ogre::Vector3 pos, float w, float size);
+	virtual void stoppedPainting();
 	virtual OgreNewt::Body* getPaintTarget();
-	EditorPainter* painter;
+	virtual void fillPaint(float w);
 
 private:
 
@@ -49,6 +50,8 @@ private:
 	Ogre::SceneNode* boundsNode = nullptr;
 	Ogre::Vector3 moveOffset;
 	void setGrassPosition(GrassInfo&, Ogre::Vector3&);
+
+
 
 	Ogre::Vector3 scaleOffset;
 	Ogre::Vector3 scaleNodeOrigin;

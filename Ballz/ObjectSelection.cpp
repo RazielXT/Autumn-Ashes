@@ -45,9 +45,13 @@ void ObjectSelection::removeSelection()
 	}
 }
 
-void ObjectSelection::init(EditorControl* p)
+ObjectSelection::ObjectSelection(EditorControl* control) : parent(control), selectedGrasses(&control->painter)
 {
-	parent = p;
+
+}
+
+void ObjectSelection::init()
+{
 	gizmo.init(this);
 	addMode = false;
 
@@ -55,8 +59,6 @@ void ObjectSelection::init(EditorControl* p)
 		selected->reset();
 	selected = nullptr;
 	gizmo.setRoot(nullptr);
-
-	selectedGrasses.painter = &parent->painter;
 
 	updateUiSelectedInfo();
 }

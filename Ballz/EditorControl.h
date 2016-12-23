@@ -37,6 +37,9 @@ public:
 	EditorUiHandler& uiHandler;
 
 	enum class EditorMode { None, AddItem, Paint, Select, SelectEdit } mode = EditorMode::None;
+	void setMode(EditorMode mode);
+	void setPaintMode(EditorPainter::PaintMode mode);
+	void setSelectMode(SelectionMode mode);
 
 	void displayItemInfo(EditorItem* item);
 	void getWorldItemsInfo(GetWorldItemsData& data);
