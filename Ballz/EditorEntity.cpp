@@ -208,6 +208,7 @@ void EditorEntity::sendUiInfoMessage(EditorUiHandler* handler)
 		info.scale = selected[0]->getParentSceneNode()->getScale();
 	}
 
+	info.usePaint = false;
 	msg.data = &info;
 
 	handler->sendMsg(msg);

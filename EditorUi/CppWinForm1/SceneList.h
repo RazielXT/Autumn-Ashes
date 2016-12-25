@@ -131,7 +131,7 @@ namespace CppWinForm1 {
 			{
 				System::Windows::Forms::TreeNode^ node = sceneListTree->SelectedNode;
 				change.groupName = marshal_as<std::string>(node->Parent->Text);
-				change.item.name = marshal_as<std::wstring>(node->Text);
+				change.item.name = marshal_as<std::string>(node->Text);
 			}
 
 			SendMsg(UiMessageId::SelectWorldItem, &change);

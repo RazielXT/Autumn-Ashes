@@ -72,8 +72,7 @@ void EditorControl::getWorldItemsInfo(GetWorldItemsData& data)
 	while (it.hasMoreElements())
 	{
 		Ogre::Entity* e = static_cast<Ogre::Entity*>(it.getNext());
-		std::wstring name(e->getName().cbegin(), e->getName().cend());
-		entityGroup.items.push_back({ name });
+		entityGroup.items.push_back({ e->getName() });
 	}
 	data.groups.push_back(entityGroup);
 
@@ -84,8 +83,7 @@ void EditorControl::getWorldItemsInfo(GetWorldItemsData& data)
 		grassGroup.name = L"Grass";
 		for (auto& g : grasses)
 		{
-			std::wstring name(g.name.begin(), g.name.end());
-			grassGroup.items.push_back({ name });
+			grassGroup.items.push_back({ g.name });
 		}
 		data.groups.push_back(grassGroup);
 	}
@@ -114,6 +112,9 @@ void EditorControl::setMode(EditorMode m)
 
 	if (mode != EditorMode::Paint)
 		painter.setMode(EditorPainter::None);
+
+	if(mode != EditorMode::SelectEdit)
+		selector.setMode(SelectionMode::Select);
 }
 
 void EditorControl::setPaintMode(EditorPainter::PaintMode m)
@@ -218,6 +219,7 @@ bool EditorControl::update(float tslf)
 				break;
 			case UiMessageId::SelectionInfoChanged:
 				selector.uiEditSelection((SelectionInfoChange*) msg.data);
+				painter.handleChangeMessage((SelectionInfoChange*)msg.data);
 				break;
 			case UiMessageId::PlacementRayUtil:
 				selector.rayPlaceSelection(*(float*)msg.data);

@@ -104,6 +104,11 @@ void EditorGrass::editMouseReleased(SelectionMode mode)
 
 				g.bake.pos += moveOffset;
 				Global::gameMgr->geometryMgr->bakeLight(g.bake);
+
+				if (g.density.grid.data)
+				{
+					g.density.relocate(g);
+				}
 			}
 
 			g.pg->reloadGeometry();
@@ -136,6 +141,9 @@ void EditorGrass::editMouseReleased(SelectionMode mode)
 				g.bake.size = Ogre::Vector2(bounds.right - bounds.left, bounds.bottom - bounds.top);
 
 				Global::gameMgr->geometryMgr->bakeLight(g.bake);
+
+				if(g.density.grid.data)
+					g.density.resize(g);
 			}
 
 			g.pg->reloadGeometry();
@@ -269,6 +277,7 @@ void EditorGrass::sendUiInfoMessage(EditorUiHandler* handler)
 
 	info.scale = Ogre::Vector3(1, 1, 1);
 	info.subtype = SelectionInfo::Grass;
+	info.usePaint = true;
 
 	GrassSelectionInfo grassInfo;
 	grassInfo.density = selected[0].bake.layer->density;
@@ -292,8 +301,6 @@ void EditorGrass::handleSelectionMessage(SelectionInfoChange* change)
 		selected[0].density.preserveOriginal(*((float*)change->data) != 0);
 		selected[0].density.apply(selected[0]);
 	}
-	else
-		painter->handleChangeMessage(change);
 }
 
 void EditorGrass::updateNode()
@@ -328,8 +335,7 @@ void EditorGrass::fillPaint(float w)
 {
 	if (selected[0].density.empty())
 	{
-		auto b = selected[0].bake.layer->mapBounds;
-		selected[0].density.resize(b.left, b.right, b.top, b.bottom);
+		selected[0].density.resize(selected[0]);
 	}
 
 	selected[0].density.fill(w);
@@ -348,8 +354,7 @@ void EditorGrass::paint(Ogre::Vector3 pos, float w, float size)
 {
 	if (selected[0].density.empty())
 	{
-		auto b = selected[0].bake.layer->mapBounds;
-		selected[0].density.resize(b.left, b.right, b.top, b.bottom);
+		selected[0].density.resize(selected[0]);
 	}
 
 	selected[0].density.paint(pos.x, pos.z, w, size);

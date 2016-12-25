@@ -6,6 +6,7 @@
 #include "..\..\Ballz\EditorComm.h"
 #include <msclr\marshal_cppstd.h>
 #include "SceneList.h"
+#include <vector>
 
 using namespace msclr::interop;
 
@@ -16,6 +17,14 @@ void CpySendMsg(UiMessageId id, T data)
 {
 	SendMsg(id, &data);
 }
+
+struct SelectionHistoryItem
+{
+	std::string name;
+	std::string group;
+};
+
+std::vector<SelectionHistoryItem> selectionHistoryItems;
 
 namespace CppWinForm1 {
 
@@ -38,10 +47,6 @@ namespace CppWinForm1 {
 		EditorForm(void)
 		{
 			InitializeComponent();
-
-			labels = gcnew array<System::Windows::Forms::Label^>(10);
-			numerics = gcnew array<System::Windows::Forms::NumericUpDown^>(10);
-
 			instance = this;
 		}
 
@@ -66,41 +71,33 @@ namespace CppWinForm1 {
 	private: System::Windows::Forms::Panel^  renderPanel;
 	private: System::Windows::Forms::GroupBox^  placementGroupBox;
 	private: System::Windows::Forms::Button^  rayButton;
-
 	private: System::Windows::Forms::NumericUpDown^  placementOffsetNum;
 	private: System::Windows::Forms::Label^  label8;
 	private: System::Windows::Forms::GroupBox^  utilsGroupBox;
 	private: System::Windows::Forms::Label^  label9;
 	private: System::Windows::Forms::ComboBox^  utilsComboBox;
-	private: System::Windows::Forms::PictureBox^  levelLoading;
+
 	private: System::Windows::Forms::Button^  sceneListButton;
 	private: System::Windows::Forms::ComboBox^  levelsComboBox;
-	private: System::Windows::Forms::GroupBox^  grassGroupBox;
-
-	private: System::Windows::Forms::TrackBar^  grassPaintWTrack;
-	private: System::Windows::Forms::NumericUpDown^  grassDensity;
-
-
-
-	private: System::Windows::Forms::Label^  label10;
-	private: System::Windows::Forms::RadioButton^  grassPaintAdd;
-	private: System::Windows::Forms::RadioButton^  grassPaintRemove;
-
-
-
+	private: System::Windows::Forms::GroupBox^  paintGroupBox;
+	private: System::Windows::Forms::TrackBar^  paintWTrack;
+	private: System::Windows::Forms::RadioButton^  paintAdd;
+	private: System::Windows::Forms::RadioButton^  paintRemove;
 	private: System::Windows::Forms::Label^  label12;
 	private: System::Windows::Forms::Label^  label11;
-	private: System::Windows::Forms::TrackBar^  grassPaintSizeTrack;
-	private: System::Windows::Forms::TextBox^  grassPaintSizeText;
-	private: System::Windows::Forms::TextBox^  grassPaintWText;
-	private: System::Windows::Forms::Button^  grassPaintFill;
+	private: System::Windows::Forms::TrackBar^  paintSizeTrack;
+	private: System::Windows::Forms::TextBox^  paintSizeText;
+	private: System::Windows::Forms::TextBox^  paintWText;
+	private: System::Windows::Forms::Button^  paintFill;
+	private: System::Windows::Forms::GroupBox^  grassGroupBox;
+	private: System::Windows::Forms::NumericUpDown^  grassDensity;
+	private: System::Windows::Forms::Label^  label15;
+	private: System::Windows::Forms::PictureBox^  levelLoading;
+	private: System::Windows::Forms::Panel^  bottomPanel;
+	private: System::Windows::Forms::ListBox^  lastSelectedList;
 	private: System::Windows::Forms::CheckBox^  grassPaingPreserveCheckbox;
 
 
-
-
-
-	private: System::Windows::Forms::Panel^  bottomPanel;
 
 
 	protected:
@@ -115,9 +112,6 @@ namespace CppWinForm1 {
 			}
 		}
 
-	private: System::Windows::Forms::Button^  button5;
-	private: array<System::Windows::Forms::Label^>^  labels;
-	private: array<System::Windows::Forms::NumericUpDown^>^  numerics;
 	private: System::Windows::Forms::Panel^  sidePanel;
 	private: System::Windows::Forms::GroupBox^  selectionGroupBox;
 	private: System::Windows::Forms::Button^  selectionNameButton;
@@ -173,17 +167,19 @@ namespace CppWinForm1 {
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(EditorForm::typeid));
 			this->sidePanel = (gcnew System::Windows::Forms::Panel());
 			this->grassGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->grassPaintFill = (gcnew System::Windows::Forms::Button());
-			this->grassPaintSizeText = (gcnew System::Windows::Forms::TextBox());
-			this->grassPaintWText = (gcnew System::Windows::Forms::TextBox());
+			this->grassPaingPreserveCheckbox = (gcnew System::Windows::Forms::CheckBox());
+			this->grassDensity = (gcnew System::Windows::Forms::NumericUpDown());
+			this->label15 = (gcnew System::Windows::Forms::Label());
+			this->paintGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->paintFill = (gcnew System::Windows::Forms::Button());
+			this->paintSizeText = (gcnew System::Windows::Forms::TextBox());
+			this->paintWText = (gcnew System::Windows::Forms::TextBox());
 			this->label12 = (gcnew System::Windows::Forms::Label());
 			this->label11 = (gcnew System::Windows::Forms::Label());
-			this->grassPaintSizeTrack = (gcnew System::Windows::Forms::TrackBar());
-			this->grassPaintAdd = (gcnew System::Windows::Forms::RadioButton());
-			this->grassPaintRemove = (gcnew System::Windows::Forms::RadioButton());
-			this->grassPaintWTrack = (gcnew System::Windows::Forms::TrackBar());
-			this->grassDensity = (gcnew System::Windows::Forms::NumericUpDown());
-			this->label10 = (gcnew System::Windows::Forms::Label());
+			this->paintSizeTrack = (gcnew System::Windows::Forms::TrackBar());
+			this->paintAdd = (gcnew System::Windows::Forms::RadioButton());
+			this->paintRemove = (gcnew System::Windows::Forms::RadioButton());
+			this->paintWTrack = (gcnew System::Windows::Forms::TrackBar());
 			this->placementGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->rayButton = (gcnew System::Windows::Forms::Button());
 			this->placementOffsetNum = (gcnew System::Windows::Forms::NumericUpDown());
@@ -227,12 +223,13 @@ namespace CppWinForm1 {
 			this->renderPanel = (gcnew System::Windows::Forms::Panel());
 			this->levelLoading = (gcnew System::Windows::Forms::PictureBox());
 			this->bottomPanel = (gcnew System::Windows::Forms::Panel());
-			this->grassPaingPreserveCheckbox = (gcnew System::Windows::Forms::CheckBox());
+			this->lastSelectedList = (gcnew System::Windows::Forms::ListBox());
 			this->sidePanel->SuspendLayout();
 			this->grassGroupBox->SuspendLayout();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassPaintSizeTrack))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassPaintWTrack))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassDensity))->BeginInit();
+			this->paintGroupBox->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->paintSizeTrack))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->paintWTrack))->BeginInit();
 			this->placementGroupBox->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->placementOffsetNum))->BeginInit();
 			this->utilsGroupBox->SuspendLayout();
@@ -249,6 +246,7 @@ namespace CppWinForm1 {
 			this->topPanel->SuspendLayout();
 			this->renderPanel->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->levelLoading))->BeginInit();
+			this->bottomPanel->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// sidePanel
@@ -256,6 +254,7 @@ namespace CppWinForm1 {
 			this->sidePanel->AutoScroll = true;
 			this->sidePanel->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
 			this->sidePanel->Controls->Add(this->grassGroupBox);
+			this->sidePanel->Controls->Add(this->paintGroupBox);
 			this->sidePanel->Controls->Add(this->placementGroupBox);
 			this->sidePanel->Controls->Add(this->utilsGroupBox);
 			this->sidePanel->Controls->Add(this->selectionGroupBox);
@@ -264,173 +263,201 @@ namespace CppWinForm1 {
 			this->sidePanel->Controls->Add(this->toolsGroupBox);
 			this->sidePanel->Dock = System::Windows::Forms::DockStyle::Left;
 			this->sidePanel->Location = System::Drawing::Point(0, 0);
-			this->sidePanel->Margin = System::Windows::Forms::Padding(2);
+			this->sidePanel->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->sidePanel->Name = L"sidePanel";
-			this->sidePanel->Size = System::Drawing::Size(300, 634);
+			this->sidePanel->Size = System::Drawing::Size(399, 780);
 			this->sidePanel->TabIndex = 16;
 			// 
 			// grassGroupBox
 			// 
 			this->grassGroupBox->AutoSize = true;
 			this->grassGroupBox->Controls->Add(this->grassPaingPreserveCheckbox);
-			this->grassGroupBox->Controls->Add(this->grassPaintFill);
-			this->grassGroupBox->Controls->Add(this->grassPaintSizeText);
-			this->grassGroupBox->Controls->Add(this->grassPaintWText);
-			this->grassGroupBox->Controls->Add(this->label12);
-			this->grassGroupBox->Controls->Add(this->label11);
-			this->grassGroupBox->Controls->Add(this->grassPaintSizeTrack);
-			this->grassGroupBox->Controls->Add(this->grassPaintAdd);
-			this->grassGroupBox->Controls->Add(this->grassPaintRemove);
-			this->grassGroupBox->Controls->Add(this->grassPaintWTrack);
 			this->grassGroupBox->Controls->Add(this->grassDensity);
-			this->grassGroupBox->Controls->Add(this->label10);
+			this->grassGroupBox->Controls->Add(this->label15);
 			this->grassGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->grassGroupBox->Location = System::Drawing::Point(0, 506);
-			this->grassGroupBox->Margin = System::Windows::Forms::Padding(2);
-			this->grassGroupBox->MinimumSize = System::Drawing::Size(0, 16);
+			this->grassGroupBox->Location = System::Drawing::Point(0, 804);
+			this->grassGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->grassGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->grassGroupBox->Name = L"grassGroupBox";
-			this->grassGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->grassGroupBox->Size = System::Drawing::Size(279, 198);
-			this->grassGroupBox->TabIndex = 26;
+			this->grassGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->grassGroupBox->Size = System::Drawing::Size(374, 103);
+			this->grassGroupBox->TabIndex = 27;
 			this->grassGroupBox->TabStop = false;
 			this->grassGroupBox->Text = L"Grass";
 			this->grassGroupBox->Visible = false;
 			// 
-			// grassPaintFill
+			// grassPaingPreserveCheckbox
 			// 
-			this->grassPaintFill->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"grassPaintFill.BackgroundImage")));
-			this->grassPaintFill->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-			this->grassPaintFill->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
-			this->grassPaintFill->FlatAppearance->MouseDownBackColor = System::Drawing::Color::Khaki;
-			this->grassPaintFill->FlatAppearance->MouseOverBackColor = System::Drawing::SystemColors::ControlDark;
-			this->grassPaintFill->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->grassPaintFill->Location = System::Drawing::Point(177, 51);
-			this->grassPaintFill->Margin = System::Windows::Forms::Padding(2);
-			this->grassPaintFill->Name = L"grassPaintFill";
-			this->grassPaintFill->Size = System::Drawing::Size(40, 44);
-			this->grassPaintFill->TabIndex = 31;
-			this->grassPaintFill->UseVisualStyleBackColor = true;
-			this->grassPaintFill->Click += gcnew System::EventHandler(this, &EditorForm::grassPaintFill_Click);
+			this->grassPaingPreserveCheckbox->AutoSize = true;
+			this->grassPaingPreserveCheckbox->Location = System::Drawing::Point(103, 61);
+			this->grassPaingPreserveCheckbox->Margin = System::Windows::Forms::Padding(4);
+			this->grassPaingPreserveCheckbox->Name = L"grassPaingPreserveCheckbox";
+			this->grassPaingPreserveCheckbox->Size = System::Drawing::Size(159, 21);
+			this->grassPaingPreserveCheckbox->TabIndex = 33;
+			this->grassPaingPreserveCheckbox->Text = L"Preserve paint mask";
+			this->grassPaingPreserveCheckbox->UseVisualStyleBackColor = true;
+			this->grassPaingPreserveCheckbox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::grassPaingPreserveCheckbox_CheckedChanged);
 			// 
-			// grassPaintSizeText
+			// grassDensity
 			// 
-			this->grassPaintSizeText->Location = System::Drawing::Point(76, 134);
-			this->grassPaintSizeText->Name = L"grassPaintSizeText";
-			this->grassPaintSizeText->ReadOnly = true;
-			this->grassPaintSizeText->Size = System::Drawing::Size(41, 20);
-			this->grassPaintSizeText->TabIndex = 30;
-			this->grassPaintSizeText->Text = L"5";
+			this->grassDensity->DecimalPlaces = 2;
+			this->grassDensity->Location = System::Drawing::Point(103, 18);
+			this->grassDensity->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->grassDensity->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 20, 0, 0, 0 });
+			this->grassDensity->Name = L"grassDensity";
+			this->grassDensity->Size = System::Drawing::Size(91, 22);
+			this->grassDensity->TabIndex = 3;
+			this->grassDensity->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
+			this->grassDensity->ValueChanged += gcnew System::EventHandler(this, &EditorForm::grassDensity_ValueChanged);
 			// 
-			// grassPaintWText
+			// label15
 			// 
-			this->grassPaintWText->Location = System::Drawing::Point(77, 109);
-			this->grassPaintWText->Name = L"grassPaintWText";
-			this->grassPaintWText->ReadOnly = true;
-			this->grassPaintWText->Size = System::Drawing::Size(41, 20);
-			this->grassPaintWText->TabIndex = 29;
-			this->grassPaintWText->Text = L"50";
+			this->label15->AutoSize = true;
+			this->label15->Location = System::Drawing::Point(41, 21);
+			this->label15->Name = L"label15";
+			this->label15->Size = System::Drawing::Size(55, 17);
+			this->label15->TabIndex = 1;
+			this->label15->Text = L"Density";
+			// 
+			// paintGroupBox
+			// 
+			this->paintGroupBox->AutoSize = true;
+			this->paintGroupBox->Controls->Add(this->paintFill);
+			this->paintGroupBox->Controls->Add(this->paintSizeText);
+			this->paintGroupBox->Controls->Add(this->paintWText);
+			this->paintGroupBox->Controls->Add(this->label12);
+			this->paintGroupBox->Controls->Add(this->label11);
+			this->paintGroupBox->Controls->Add(this->paintSizeTrack);
+			this->paintGroupBox->Controls->Add(this->paintAdd);
+			this->paintGroupBox->Controls->Add(this->paintRemove);
+			this->paintGroupBox->Controls->Add(this->paintWTrack);
+			this->paintGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
+			this->paintGroupBox->Location = System::Drawing::Point(0, 605);
+			this->paintGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->paintGroupBox->MinimumSize = System::Drawing::Size(0, 20);
+			this->paintGroupBox->Name = L"paintGroupBox";
+			this->paintGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->paintGroupBox->Size = System::Drawing::Size(374, 199);
+			this->paintGroupBox->TabIndex = 26;
+			this->paintGroupBox->TabStop = false;
+			this->paintGroupBox->Text = L"Paint";
+			this->paintGroupBox->Visible = false;
+			// 
+			// paintFill
+			// 
+			this->paintFill->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"paintFill.BackgroundImage")));
+			this->paintFill->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->paintFill->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
+			this->paintFill->FlatAppearance->MouseDownBackColor = System::Drawing::Color::Khaki;
+			this->paintFill->FlatAppearance->MouseOverBackColor = System::Drawing::SystemColors::ControlDark;
+			this->paintFill->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->paintFill->Location = System::Drawing::Point(237, 19);
+			this->paintFill->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->paintFill->Name = L"paintFill";
+			this->paintFill->Size = System::Drawing::Size(53, 54);
+			this->paintFill->TabIndex = 31;
+			this->paintFill->UseVisualStyleBackColor = true;
+			this->paintFill->Click += gcnew System::EventHandler(this, &EditorForm::paintFill_Click);
+			// 
+			// paintSizeText
+			// 
+			this->paintSizeText->Location = System::Drawing::Point(102, 121);
+			this->paintSizeText->Margin = System::Windows::Forms::Padding(4);
+			this->paintSizeText->Name = L"paintSizeText";
+			this->paintSizeText->ReadOnly = true;
+			this->paintSizeText->Size = System::Drawing::Size(53, 22);
+			this->paintSizeText->TabIndex = 30;
+			this->paintSizeText->Text = L"5";
+			// 
+			// paintWText
+			// 
+			this->paintWText->Location = System::Drawing::Point(104, 90);
+			this->paintWText->Margin = System::Windows::Forms::Padding(4);
+			this->paintWText->Name = L"paintWText";
+			this->paintWText->ReadOnly = true;
+			this->paintWText->Size = System::Drawing::Size(53, 22);
+			this->paintWText->TabIndex = 29;
+			this->paintWText->Text = L"50";
 			// 
 			// label12
 			// 
 			this->label12->AutoSize = true;
-			this->label12->Location = System::Drawing::Point(27, 137);
-			this->label12->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label12->Location = System::Drawing::Point(37, 125);
 			this->label12->Name = L"label12";
-			this->label12->Size = System::Drawing::Size(27, 13);
+			this->label12->Size = System::Drawing::Size(35, 17);
 			this->label12->TabIndex = 28;
 			this->label12->Text = L"Size";
 			// 
 			// label11
 			// 
 			this->label11->AutoSize = true;
-			this->label11->Location = System::Drawing::Point(27, 112);
-			this->label11->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label11->Location = System::Drawing::Point(37, 94);
 			this->label11->Name = L"label11";
-			this->label11->Size = System::Drawing::Size(41, 13);
+			this->label11->Size = System::Drawing::Size(52, 17);
 			this->label11->TabIndex = 27;
 			this->label11->Text = L"Weight";
 			// 
-			// grassPaintSizeTrack
+			// paintSizeTrack
 			// 
-			this->grassPaintSizeTrack->LargeChange = 10;
-			this->grassPaintSizeTrack->Location = System::Drawing::Point(137, 135);
-			this->grassPaintSizeTrack->Maximum = 50;
-			this->grassPaintSizeTrack->Minimum = 1;
-			this->grassPaintSizeTrack->Name = L"grassPaintSizeTrack";
-			this->grassPaintSizeTrack->Size = System::Drawing::Size(104, 45);
-			this->grassPaintSizeTrack->TabIndex = 26;
-			this->grassPaintSizeTrack->TickStyle = System::Windows::Forms::TickStyle::None;
-			this->grassPaintSizeTrack->Value = 5;
-			this->grassPaintSizeTrack->Scroll += gcnew System::EventHandler(this, &EditorForm::grassPaintSizeTrack_Scroll);
+			this->paintSizeTrack->LargeChange = 10;
+			this->paintSizeTrack->Location = System::Drawing::Point(184, 122);
+			this->paintSizeTrack->Margin = System::Windows::Forms::Padding(4);
+			this->paintSizeTrack->Maximum = 50;
+			this->paintSizeTrack->Minimum = 1;
+			this->paintSizeTrack->Name = L"paintSizeTrack";
+			this->paintSizeTrack->Size = System::Drawing::Size(139, 56);
+			this->paintSizeTrack->TabIndex = 26;
+			this->paintSizeTrack->TickStyle = System::Windows::Forms::TickStyle::None;
+			this->paintSizeTrack->Value = 5;
+			this->paintSizeTrack->Scroll += gcnew System::EventHandler(this, &EditorForm::paintSizeTrack_Scroll);
 			// 
-			// grassPaintAdd
+			// paintAdd
 			// 
-			this->grassPaintAdd->Appearance = System::Windows::Forms::Appearance::Button;
-			this->grassPaintAdd->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"grassPaintAdd.BackgroundImage")));
-			this->grassPaintAdd->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
-			this->grassPaintAdd->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
-			this->grassPaintAdd->FlatAppearance->CheckedBackColor = System::Drawing::Color::Khaki;
-			this->grassPaintAdd->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
-			this->grassPaintAdd->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->grassPaintAdd->Location = System::Drawing::Point(76, 51);
-			this->grassPaintAdd->Margin = System::Windows::Forms::Padding(2);
-			this->grassPaintAdd->Name = L"grassPaintAdd";
-			this->grassPaintAdd->Size = System::Drawing::Size(40, 44);
-			this->grassPaintAdd->TabIndex = 23;
-			this->grassPaintAdd->TabStop = true;
-			this->grassPaintAdd->UseVisualStyleBackColor = true;
-			this->grassPaintAdd->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::grassPaintAdd_CheckedChanged);
+			this->paintAdd->Appearance = System::Windows::Forms::Appearance::Button;
+			this->paintAdd->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"paintAdd.BackgroundImage")));
+			this->paintAdd->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
+			this->paintAdd->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
+			this->paintAdd->FlatAppearance->CheckedBackColor = System::Drawing::Color::Khaki;
+			this->paintAdd->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
+			this->paintAdd->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->paintAdd->Location = System::Drawing::Point(102, 19);
+			this->paintAdd->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->paintAdd->Name = L"paintAdd";
+			this->paintAdd->Size = System::Drawing::Size(53, 54);
+			this->paintAdd->TabIndex = 23;
+			this->paintAdd->TabStop = true;
+			this->paintAdd->UseVisualStyleBackColor = true;
+			this->paintAdd->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::paintAdd_CheckedChanged);
 			// 
-			// grassPaintRemove
+			// paintRemove
 			// 
-			this->grassPaintRemove->Appearance = System::Windows::Forms::Appearance::Button;
-			this->grassPaintRemove->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"grassPaintRemove.BackgroundImage")));
-			this->grassPaintRemove->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
-			this->grassPaintRemove->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
-			this->grassPaintRemove->FlatAppearance->CheckedBackColor = System::Drawing::Color::Khaki;
-			this->grassPaintRemove->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
-			this->grassPaintRemove->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->grassPaintRemove->Location = System::Drawing::Point(127, 51);
-			this->grassPaintRemove->Margin = System::Windows::Forms::Padding(2);
-			this->grassPaintRemove->Name = L"grassPaintRemove";
-			this->grassPaintRemove->Size = System::Drawing::Size(40, 44);
-			this->grassPaintRemove->TabIndex = 24;
-			this->grassPaintRemove->TabStop = true;
-			this->grassPaintRemove->UseVisualStyleBackColor = true;
-			this->grassPaintRemove->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::grassPaintRemove_CheckedChanged);
+			this->paintRemove->Appearance = System::Windows::Forms::Appearance::Button;
+			this->paintRemove->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"paintRemove.BackgroundImage")));
+			this->paintRemove->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
+			this->paintRemove->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
+			this->paintRemove->FlatAppearance->CheckedBackColor = System::Drawing::Color::Khaki;
+			this->paintRemove->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
+			this->paintRemove->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->paintRemove->Location = System::Drawing::Point(170, 19);
+			this->paintRemove->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->paintRemove->Name = L"paintRemove";
+			this->paintRemove->Size = System::Drawing::Size(53, 54);
+			this->paintRemove->TabIndex = 24;
+			this->paintRemove->TabStop = true;
+			this->paintRemove->UseVisualStyleBackColor = true;
+			this->paintRemove->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::paintRemove_CheckedChanged);
 			// 
-			// grassPaintWTrack
+			// paintWTrack
 			// 
-			this->grassPaintWTrack->Location = System::Drawing::Point(137, 110);
-			this->grassPaintWTrack->Maximum = 100;
-			this->grassPaintWTrack->Name = L"grassPaintWTrack";
-			this->grassPaintWTrack->Size = System::Drawing::Size(104, 45);
-			this->grassPaintWTrack->TabIndex = 6;
-			this->grassPaintWTrack->TickStyle = System::Windows::Forms::TickStyle::None;
-			this->grassPaintWTrack->Value = 50;
-			this->grassPaintWTrack->Scroll += gcnew System::EventHandler(this, &EditorForm::grassPaintWTrack_Scroll);
-			// 
-			// grassDensity
-			// 
-			this->grassDensity->DecimalPlaces = 2;
-			this->grassDensity->Location = System::Drawing::Point(77, 15);
-			this->grassDensity->Margin = System::Windows::Forms::Padding(2);
-			this->grassDensity->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 20, 0, 0, 0 });
-			this->grassDensity->Name = L"grassDensity";
-			this->grassDensity->Size = System::Drawing::Size(68, 20);
-			this->grassDensity->TabIndex = 3;
-			this->grassDensity->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
-			this->grassDensity->ValueChanged += gcnew System::EventHandler(this, &EditorForm::grassDensity_ValueChanged);
-			// 
-			// label10
-			// 
-			this->label10->AutoSize = true;
-			this->label10->Location = System::Drawing::Point(31, 17);
-			this->label10->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
-			this->label10->Name = L"label10";
-			this->label10->Size = System::Drawing::Size(42, 13);
-			this->label10->TabIndex = 1;
-			this->label10->Text = L"Density";
+			this->paintWTrack->Location = System::Drawing::Point(184, 91);
+			this->paintWTrack->Margin = System::Windows::Forms::Padding(4);
+			this->paintWTrack->Maximum = 100;
+			this->paintWTrack->Name = L"paintWTrack";
+			this->paintWTrack->Size = System::Drawing::Size(139, 56);
+			this->paintWTrack->TabIndex = 6;
+			this->paintWTrack->TickStyle = System::Windows::Forms::TickStyle::None;
+			this->paintWTrack->Value = 50;
+			this->paintWTrack->Scroll += gcnew System::EventHandler(this, &EditorForm::paintWTrack_Scroll);
 			// 
 			// placementGroupBox
 			// 
@@ -439,12 +466,12 @@ namespace CppWinForm1 {
 			this->placementGroupBox->Controls->Add(this->placementOffsetNum);
 			this->placementGroupBox->Controls->Add(this->label8);
 			this->placementGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->placementGroupBox->Location = System::Drawing::Point(0, 454);
-			this->placementGroupBox->Margin = System::Windows::Forms::Padding(2);
-			this->placementGroupBox->MinimumSize = System::Drawing::Size(0, 16);
+			this->placementGroupBox->Location = System::Drawing::Point(0, 545);
+			this->placementGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->placementGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->placementGroupBox->Name = L"placementGroupBox";
-			this->placementGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->placementGroupBox->Size = System::Drawing::Size(279, 52);
+			this->placementGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->placementGroupBox->Size = System::Drawing::Size(374, 60);
 			this->placementGroupBox->TabIndex = 25;
 			this->placementGroupBox->TabStop = false;
 			this->placementGroupBox->Text = L"Placement";
@@ -452,10 +479,10 @@ namespace CppWinForm1 {
 			// 
 			// rayButton
 			// 
-			this->rayButton->Location = System::Drawing::Point(176, 15);
-			this->rayButton->Margin = System::Windows::Forms::Padding(2);
+			this->rayButton->Location = System::Drawing::Point(235, 18);
+			this->rayButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->rayButton->Name = L"rayButton";
-			this->rayButton->Size = System::Drawing::Size(56, 19);
+			this->rayButton->Size = System::Drawing::Size(75, 23);
 			this->rayButton->TabIndex = 4;
 			this->rayButton->Text = L"Ray";
 			this->rayButton->UseVisualStyleBackColor = true;
@@ -464,21 +491,20 @@ namespace CppWinForm1 {
 			// placementOffsetNum
 			// 
 			this->placementOffsetNum->DecimalPlaces = 2;
-			this->placementOffsetNum->Location = System::Drawing::Point(77, 15);
-			this->placementOffsetNum->Margin = System::Windows::Forms::Padding(2);
+			this->placementOffsetNum->Location = System::Drawing::Point(103, 18);
+			this->placementOffsetNum->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->placementOffsetNum->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
 			this->placementOffsetNum->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, System::Int32::MinValue });
 			this->placementOffsetNum->Name = L"placementOffsetNum";
-			this->placementOffsetNum->Size = System::Drawing::Size(68, 20);
+			this->placementOffsetNum->Size = System::Drawing::Size(91, 22);
 			this->placementOffsetNum->TabIndex = 3;
 			// 
 			// label8
 			// 
 			this->label8->AutoSize = true;
-			this->label8->Location = System::Drawing::Point(31, 17);
-			this->label8->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label8->Location = System::Drawing::Point(41, 21);
 			this->label8->Name = L"label8";
-			this->label8->Size = System::Drawing::Size(35, 13);
+			this->label8->Size = System::Drawing::Size(46, 17);
 			this->label8->TabIndex = 1;
 			this->label8->Text = L"Offset";
 			// 
@@ -488,12 +514,12 @@ namespace CppWinForm1 {
 			this->utilsGroupBox->Controls->Add(this->label9);
 			this->utilsGroupBox->Controls->Add(this->utilsComboBox);
 			this->utilsGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->utilsGroupBox->Location = System::Drawing::Point(0, 401);
-			this->utilsGroupBox->Margin = System::Windows::Forms::Padding(2);
-			this->utilsGroupBox->MinimumSize = System::Drawing::Size(0, 16);
+			this->utilsGroupBox->Location = System::Drawing::Point(0, 484);
+			this->utilsGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->utilsGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->utilsGroupBox->Name = L"utilsGroupBox";
-			this->utilsGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->utilsGroupBox->Size = System::Drawing::Size(279, 53);
+			this->utilsGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->utilsGroupBox->Size = System::Drawing::Size(374, 61);
 			this->utilsGroupBox->TabIndex = 22;
 			this->utilsGroupBox->TabStop = false;
 			this->utilsGroupBox->Text = L"Utilities";
@@ -502,10 +528,9 @@ namespace CppWinForm1 {
 			// label9
 			// 
 			this->label9->AutoSize = true;
-			this->label9->Location = System::Drawing::Point(34, 20);
-			this->label9->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label9->Location = System::Drawing::Point(45, 25);
 			this->label9->Name = L"label9";
-			this->label9->Size = System::Drawing::Size(31, 13);
+			this->label9->Size = System::Drawing::Size(40, 17);
 			this->label9->TabIndex = 1;
 			this->label9->Text = L"Type";
 			// 
@@ -513,10 +538,10 @@ namespace CppWinForm1 {
 			// 
 			this->utilsComboBox->FormattingEnabled = true;
 			this->utilsComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Placement" });
-			this->utilsComboBox->Location = System::Drawing::Point(76, 15);
-			this->utilsComboBox->Margin = System::Windows::Forms::Padding(2);
+			this->utilsComboBox->Location = System::Drawing::Point(101, 18);
+			this->utilsComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->utilsComboBox->Name = L"utilsComboBox";
-			this->utilsComboBox->Size = System::Drawing::Size(174, 21);
+			this->utilsComboBox->Size = System::Drawing::Size(231, 24);
 			this->utilsComboBox->TabIndex = 0;
 			this->utilsComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::utilsComboBox_SelectedIndexChanged);
 			// 
@@ -535,12 +560,12 @@ namespace CppWinForm1 {
 			this->selectionGroupBox->Controls->Add(this->entPosX);
 			this->selectionGroupBox->Controls->Add(this->label1);
 			this->selectionGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->selectionGroupBox->Location = System::Drawing::Point(0, 243);
-			this->selectionGroupBox->Margin = System::Windows::Forms::Padding(2);
-			this->selectionGroupBox->MinimumSize = System::Drawing::Size(0, 16);
+			this->selectionGroupBox->Location = System::Drawing::Point(0, 292);
+			this->selectionGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->selectionGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->selectionGroupBox->Name = L"selectionGroupBox";
-			this->selectionGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->selectionGroupBox->Size = System::Drawing::Size(279, 158);
+			this->selectionGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->selectionGroupBox->Size = System::Drawing::Size(374, 192);
 			this->selectionGroupBox->TabIndex = 19;
 			this->selectionGroupBox->TabStop = false;
 			this->selectionGroupBox->Text = L"Selection";
@@ -554,31 +579,32 @@ namespace CppWinForm1 {
 			this->selectionNameButton->FlatAppearance->MouseOverBackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
 				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			this->selectionNameButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->selectionNameButton->Location = System::Drawing::Point(76, 16);
-			this->selectionNameButton->Margin = System::Windows::Forms::Padding(2);
+			this->selectionNameButton->Location = System::Drawing::Point(101, 20);
+			this->selectionNameButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->selectionNameButton->Name = L"selectionNameButton";
-			this->selectionNameButton->Size = System::Drawing::Size(56, 19);
+			this->selectionNameButton->Size = System::Drawing::Size(75, 23);
 			this->selectionNameButton->TabIndex = 12;
 			this->selectionNameButton->UseVisualStyleBackColor = true;
 			this->selectionNameButton->Click += gcnew System::EventHandler(this, &EditorForm::selectionNameButton_Click);
 			// 
 			// selectionListBox
 			// 
+			this->selectionListBox->BackColor = System::Drawing::Color::Gainsboro;
 			this->selectionListBox->FormattingEnabled = true;
-			this->selectionListBox->Location = System::Drawing::Point(76, 85);
-			this->selectionListBox->Margin = System::Windows::Forms::Padding(2);
+			this->selectionListBox->ItemHeight = 16;
+			this->selectionListBox->Location = System::Drawing::Point(101, 105);
+			this->selectionListBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->selectionListBox->Name = L"selectionListBox";
-			this->selectionListBox->Size = System::Drawing::Size(175, 56);
+			this->selectionListBox->Size = System::Drawing::Size(232, 68);
 			this->selectionListBox->TabIndex = 11;
 			this->selectionListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::selectionListBox_SelectedIndexChanged);
 			// 
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(33, 66);
-			this->label3->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label3->Location = System::Drawing::Point(44, 81);
 			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(34, 13);
+			this->label3->Size = System::Drawing::Size(43, 17);
 			this->label3->TabIndex = 9;
 			this->label3->Text = L"Scale";
 			this->label3->TextAlign = System::Drawing::ContentAlignment::TopRight;
@@ -586,12 +612,12 @@ namespace CppWinForm1 {
 			// entScaleZ
 			// 
 			this->entScaleZ->DecimalPlaces = 2;
-			this->entScaleZ->Location = System::Drawing::Point(221, 63);
-			this->entScaleZ->Margin = System::Windows::Forms::Padding(2);
+			this->entScaleZ->Location = System::Drawing::Point(295, 78);
+			this->entScaleZ->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entScaleZ->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1000, 0, 0, 0 });
 			this->entScaleZ->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
 			this->entScaleZ->Name = L"entScaleZ";
-			this->entScaleZ->Size = System::Drawing::Size(68, 20);
+			this->entScaleZ->Size = System::Drawing::Size(91, 22);
 			this->entScaleZ->TabIndex = 8;
 			this->entScaleZ->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
 			this->entScaleZ->ValueChanged += gcnew System::EventHandler(this, &EditorForm::entScaleZ_ValueChanged);
@@ -599,12 +625,12 @@ namespace CppWinForm1 {
 			// entScaleY
 			// 
 			this->entScaleY->DecimalPlaces = 2;
-			this->entScaleY->Location = System::Drawing::Point(149, 63);
-			this->entScaleY->Margin = System::Windows::Forms::Padding(2);
+			this->entScaleY->Location = System::Drawing::Point(199, 78);
+			this->entScaleY->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entScaleY->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1000, 0, 0, 0 });
 			this->entScaleY->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
 			this->entScaleY->Name = L"entScaleY";
-			this->entScaleY->Size = System::Drawing::Size(68, 20);
+			this->entScaleY->Size = System::Drawing::Size(91, 22);
 			this->entScaleY->TabIndex = 7;
 			this->entScaleY->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
 			this->entScaleY->ValueChanged += gcnew System::EventHandler(this, &EditorForm::entScaleY_ValueChanged);
@@ -612,12 +638,12 @@ namespace CppWinForm1 {
 			// entScaleX
 			// 
 			this->entScaleX->DecimalPlaces = 2;
-			this->entScaleX->Location = System::Drawing::Point(77, 63);
-			this->entScaleX->Margin = System::Windows::Forms::Padding(2);
+			this->entScaleX->Location = System::Drawing::Point(103, 78);
+			this->entScaleX->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entScaleX->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1000, 0, 0, 0 });
 			this->entScaleX->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
 			this->entScaleX->Name = L"entScaleX";
-			this->entScaleX->Size = System::Drawing::Size(68, 20);
+			this->entScaleX->Size = System::Drawing::Size(91, 22);
 			this->entScaleX->TabIndex = 6;
 			this->entScaleX->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 131072 });
 			this->entScaleX->ValueChanged += gcnew System::EventHandler(this, &EditorForm::entScaleX_ValueChanged);
@@ -625,10 +651,9 @@ namespace CppWinForm1 {
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(22, 42);
-			this->label2->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label2->Location = System::Drawing::Point(29, 52);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(44, 13);
+			this->label2->Size = System::Drawing::Size(58, 17);
 			this->label2->TabIndex = 5;
 			this->label2->Text = L"Position";
 			this->label2->TextAlign = System::Drawing::ContentAlignment::TopRight;
@@ -636,46 +661,45 @@ namespace CppWinForm1 {
 			// entPosZ
 			// 
 			this->entPosZ->DecimalPlaces = 2;
-			this->entPosZ->Location = System::Drawing::Point(221, 41);
-			this->entPosZ->Margin = System::Windows::Forms::Padding(2);
+			this->entPosZ->Location = System::Drawing::Point(295, 50);
+			this->entPosZ->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entPosZ->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
 			this->entPosZ->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, System::Int32::MinValue });
 			this->entPosZ->Name = L"entPosZ";
-			this->entPosZ->Size = System::Drawing::Size(68, 20);
+			this->entPosZ->Size = System::Drawing::Size(91, 22);
 			this->entPosZ->TabIndex = 4;
 			this->entPosZ->ValueChanged += gcnew System::EventHandler(this, &EditorForm::entPosZ_ValueChanged);
 			// 
 			// entPosY
 			// 
 			this->entPosY->DecimalPlaces = 2;
-			this->entPosY->Location = System::Drawing::Point(149, 41);
-			this->entPosY->Margin = System::Windows::Forms::Padding(2);
+			this->entPosY->Location = System::Drawing::Point(199, 50);
+			this->entPosY->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entPosY->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
 			this->entPosY->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, System::Int32::MinValue });
 			this->entPosY->Name = L"entPosY";
-			this->entPosY->Size = System::Drawing::Size(68, 20);
+			this->entPosY->Size = System::Drawing::Size(91, 22);
 			this->entPosY->TabIndex = 3;
 			this->entPosY->ValueChanged += gcnew System::EventHandler(this, &EditorForm::entPosY_ValueChanged);
 			// 
 			// entPosX
 			// 
 			this->entPosX->DecimalPlaces = 2;
-			this->entPosX->Location = System::Drawing::Point(77, 41);
-			this->entPosX->Margin = System::Windows::Forms::Padding(2);
+			this->entPosX->Location = System::Drawing::Point(103, 50);
+			this->entPosX->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entPosX->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
 			this->entPosX->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, System::Int32::MinValue });
 			this->entPosX->Name = L"entPosX";
-			this->entPosX->Size = System::Drawing::Size(68, 20);
+			this->entPosX->Size = System::Drawing::Size(91, 22);
 			this->entPosX->TabIndex = 2;
 			this->entPosX->ValueChanged += gcnew System::EventHandler(this, &EditorForm::entPosX_ValueChanged);
 			// 
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(33, 19);
-			this->label1->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label1->Location = System::Drawing::Point(44, 23);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(35, 13);
+			this->label1->Size = System::Drawing::Size(45, 17);
 			this->label1->TabIndex = 0;
 			this->label1->Text = L"Name";
 			// 
@@ -687,12 +711,12 @@ namespace CppWinForm1 {
 			this->sceneGroupBox->Controls->Add(this->label6);
 			this->sceneGroupBox->Controls->Add(this->label5);
 			this->sceneGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->sceneGroupBox->Location = System::Drawing::Point(0, 163);
-			this->sceneGroupBox->Margin = System::Windows::Forms::Padding(2);
-			this->sceneGroupBox->MinimumSize = System::Drawing::Size(0, 16);
+			this->sceneGroupBox->Location = System::Drawing::Point(0, 196);
+			this->sceneGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->sceneGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->sceneGroupBox->Name = L"sceneGroupBox";
-			this->sceneGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->sceneGroupBox->Size = System::Drawing::Size(279, 80);
+			this->sceneGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->sceneGroupBox->Size = System::Drawing::Size(374, 96);
 			this->sceneGroupBox->TabIndex = 21;
 			this->sceneGroupBox->TabStop = false;
 			this->sceneGroupBox->Text = L"Scene";
@@ -702,10 +726,10 @@ namespace CppWinForm1 {
 			// 
 			this->lutComboBox->FormattingEnabled = true;
 			this->lutComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
-			this->lutComboBox->Location = System::Drawing::Point(76, 42);
-			this->lutComboBox->Margin = System::Windows::Forms::Padding(2);
+			this->lutComboBox->Location = System::Drawing::Point(101, 52);
+			this->lutComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->lutComboBox->Name = L"lutComboBox";
-			this->lutComboBox->Size = System::Drawing::Size(174, 21);
+			this->lutComboBox->Size = System::Drawing::Size(231, 24);
 			this->lutComboBox->TabIndex = 3;
 			this->lutComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::lutComboBox_SelectedIndexChanged);
 			// 
@@ -713,30 +737,28 @@ namespace CppWinForm1 {
 			// 
 			this->skyboxComboBox->FormattingEnabled = true;
 			this->skyboxComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
-			this->skyboxComboBox->Location = System::Drawing::Point(76, 15);
-			this->skyboxComboBox->Margin = System::Windows::Forms::Padding(2);
+			this->skyboxComboBox->Location = System::Drawing::Point(101, 18);
+			this->skyboxComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->skyboxComboBox->Name = L"skyboxComboBox";
-			this->skyboxComboBox->Size = System::Drawing::Size(174, 21);
+			this->skyboxComboBox->Size = System::Drawing::Size(231, 24);
 			this->skyboxComboBox->TabIndex = 2;
 			this->skyboxComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::skyboxComboBox_SelectedIndexChanged);
 			// 
 			// label6
 			// 
 			this->label6->AutoSize = true;
-			this->label6->Location = System::Drawing::Point(39, 50);
-			this->label6->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label6->Location = System::Drawing::Point(52, 62);
 			this->label6->Name = L"label6";
-			this->label6->Size = System::Drawing::Size(28, 13);
+			this->label6->Size = System::Drawing::Size(35, 17);
 			this->label6->TabIndex = 2;
 			this->label6->Text = L"LUT";
 			// 
 			// label5
 			// 
 			this->label5->AutoSize = true;
-			this->label5->Location = System::Drawing::Point(26, 18);
-			this->label5->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label5->Location = System::Drawing::Point(35, 22);
 			this->label5->Name = L"label5";
-			this->label5->Size = System::Drawing::Size(42, 13);
+			this->label5->Size = System::Drawing::Size(53, 17);
 			this->label5->TabIndex = 1;
 			this->label5->Text = L"Skybox";
 			// 
@@ -748,12 +770,12 @@ namespace CppWinForm1 {
 			this->addGroupBox->Controls->Add(this->label4);
 			this->addGroupBox->Controls->Add(this->addItemTypeComboBox);
 			this->addGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->addGroupBox->Location = System::Drawing::Point(0, 79);
-			this->addGroupBox->Margin = System::Windows::Forms::Padding(2);
-			this->addGroupBox->MinimumSize = System::Drawing::Size(0, 16);
+			this->addGroupBox->Location = System::Drawing::Point(0, 96);
+			this->addGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->addGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->addGroupBox->Name = L"addGroupBox";
-			this->addGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->addGroupBox->Size = System::Drawing::Size(279, 84);
+			this->addGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->addGroupBox->Size = System::Drawing::Size(374, 100);
 			this->addGroupBox->TabIndex = 20;
 			this->addGroupBox->TabStop = false;
 			this->addGroupBox->Text = L"Add";
@@ -761,18 +783,18 @@ namespace CppWinForm1 {
 			// 
 			// addItemPrefixTextBox
 			// 
-			this->addItemPrefixTextBox->Location = System::Drawing::Point(76, 46);
+			this->addItemPrefixTextBox->Location = System::Drawing::Point(101, 57);
+			this->addItemPrefixTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->addItemPrefixTextBox->Name = L"addItemPrefixTextBox";
-			this->addItemPrefixTextBox->Size = System::Drawing::Size(174, 20);
+			this->addItemPrefixTextBox->Size = System::Drawing::Size(231, 22);
 			this->addItemPrefixTextBox->TabIndex = 3;
 			// 
 			// label7
 			// 
 			this->label7->AutoSize = true;
-			this->label7->Location = System::Drawing::Point(34, 49);
-			this->label7->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label7->Location = System::Drawing::Point(45, 60);
 			this->label7->Name = L"label7";
-			this->label7->Size = System::Drawing::Size(33, 13);
+			this->label7->Size = System::Drawing::Size(43, 17);
 			this->label7->TabIndex = 2;
 			this->label7->Text = L"Prefix";
 			this->label7->TextAlign = System::Drawing::ContentAlignment::TopRight;
@@ -780,10 +802,9 @@ namespace CppWinForm1 {
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(3, 18);
-			this->label4->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label4->Location = System::Drawing::Point(4, 22);
 			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(65, 13);
+			this->label4->Size = System::Drawing::Size(85, 17);
 			this->label4->TabIndex = 1;
 			this->label4->Text = L"Object Type";
 			// 
@@ -791,10 +812,10 @@ namespace CppWinForm1 {
 			// 
 			this->addItemTypeComboBox->FormattingEnabled = true;
 			this->addItemTypeComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
-			this->addItemTypeComboBox->Location = System::Drawing::Point(76, 15);
-			this->addItemTypeComboBox->Margin = System::Windows::Forms::Padding(2);
+			this->addItemTypeComboBox->Location = System::Drawing::Point(101, 18);
+			this->addItemTypeComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->addItemTypeComboBox->Name = L"addItemTypeComboBox";
-			this->addItemTypeComboBox->Size = System::Drawing::Size(174, 21);
+			this->addItemTypeComboBox->Size = System::Drawing::Size(231, 24);
 			this->addItemTypeComboBox->TabIndex = 0;
 			// 
 			// toolsGroupBox
@@ -806,10 +827,10 @@ namespace CppWinForm1 {
 			this->toolsGroupBox->Controls->Add(this->addItemCheckBox);
 			this->toolsGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
 			this->toolsGroupBox->Location = System::Drawing::Point(0, 0);
-			this->toolsGroupBox->Margin = System::Windows::Forms::Padding(2);
+			this->toolsGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->toolsGroupBox->Name = L"toolsGroupBox";
-			this->toolsGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->toolsGroupBox->Size = System::Drawing::Size(279, 79);
+			this->toolsGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->toolsGroupBox->Size = System::Drawing::Size(374, 96);
 			this->toolsGroupBox->TabIndex = 16;
 			this->toolsGroupBox->TabStop = false;
 			this->toolsGroupBox->Text = L"Tools";
@@ -823,9 +844,10 @@ namespace CppWinForm1 {
 			this->utilsCheckBox->FlatAppearance->CheckedBackColor = System::Drawing::Color::DodgerBlue;
 			this->utilsCheckBox->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
 			this->utilsCheckBox->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->utilsCheckBox->Location = System::Drawing::Point(176, 17);
+			this->utilsCheckBox->Location = System::Drawing::Point(235, 21);
+			this->utilsCheckBox->Margin = System::Windows::Forms::Padding(4);
 			this->utilsCheckBox->Name = L"utilsCheckBox";
-			this->utilsCheckBox->Size = System::Drawing::Size(40, 44);
+			this->utilsCheckBox->Size = System::Drawing::Size(53, 54);
 			this->utilsCheckBox->TabIndex = 32;
 			this->utilsCheckBox->UseVisualStyleBackColor = true;
 			this->utilsCheckBox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::utilsCheckBox_CheckedChanged);
@@ -839,9 +861,10 @@ namespace CppWinForm1 {
 			this->sceneCheckBox->FlatAppearance->CheckedBackColor = System::Drawing::Color::DodgerBlue;
 			this->sceneCheckBox->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
 			this->sceneCheckBox->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->sceneCheckBox->Location = System::Drawing::Point(70, 17);
+			this->sceneCheckBox->Location = System::Drawing::Point(93, 21);
+			this->sceneCheckBox->Margin = System::Windows::Forms::Padding(4);
 			this->sceneCheckBox->Name = L"sceneCheckBox";
-			this->sceneCheckBox->Size = System::Drawing::Size(40, 44);
+			this->sceneCheckBox->Size = System::Drawing::Size(53, 54);
 			this->sceneCheckBox->TabIndex = 31;
 			this->sceneCheckBox->UseVisualStyleBackColor = true;
 			this->sceneCheckBox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::sceneCheckBox_CheckedChanged);
@@ -855,9 +878,10 @@ namespace CppWinForm1 {
 			this->addItemCheckBox->FlatAppearance->CheckedBackColor = System::Drawing::Color::DodgerBlue;
 			this->addItemCheckBox->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
 			this->addItemCheckBox->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->addItemCheckBox->Location = System::Drawing::Point(123, 17);
+			this->addItemCheckBox->Location = System::Drawing::Point(164, 21);
+			this->addItemCheckBox->Margin = System::Windows::Forms::Padding(4);
 			this->addItemCheckBox->Name = L"addItemCheckBox";
-			this->addItemCheckBox->Size = System::Drawing::Size(40, 44);
+			this->addItemCheckBox->Size = System::Drawing::Size(53, 54);
 			this->addItemCheckBox->TabIndex = 30;
 			this->addItemCheckBox->UseVisualStyleBackColor = true;
 			this->addItemCheckBox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::addItemCheckBox_CheckedChanged);
@@ -871,10 +895,10 @@ namespace CppWinForm1 {
 			this->rotateObjButton->FlatAppearance->CheckedBackColor = System::Drawing::Color::Khaki;
 			this->rotateObjButton->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
 			this->rotateObjButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->rotateObjButton->Location = System::Drawing::Point(269, 19);
-			this->rotateObjButton->Margin = System::Windows::Forms::Padding(2);
+			this->rotateObjButton->Location = System::Drawing::Point(359, 23);
+			this->rotateObjButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->rotateObjButton->Name = L"rotateObjButton";
-			this->rotateObjButton->Size = System::Drawing::Size(40, 44);
+			this->rotateObjButton->Size = System::Drawing::Size(53, 54);
 			this->rotateObjButton->TabIndex = 23;
 			this->rotateObjButton->TabStop = true;
 			this->rotateObjButton->UseVisualStyleBackColor = true;
@@ -889,10 +913,10 @@ namespace CppWinForm1 {
 			this->scaleObjButton->FlatAppearance->CheckedBackColor = System::Drawing::Color::Khaki;
 			this->scaleObjButton->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
 			this->scaleObjButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->scaleObjButton->Location = System::Drawing::Point(216, 19);
-			this->scaleObjButton->Margin = System::Windows::Forms::Padding(2);
+			this->scaleObjButton->Location = System::Drawing::Point(288, 23);
+			this->scaleObjButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->scaleObjButton->Name = L"scaleObjButton";
-			this->scaleObjButton->Size = System::Drawing::Size(40, 44);
+			this->scaleObjButton->Size = System::Drawing::Size(53, 54);
 			this->scaleObjButton->TabIndex = 22;
 			this->scaleObjButton->TabStop = true;
 			this->scaleObjButton->UseVisualStyleBackColor = true;
@@ -907,10 +931,10 @@ namespace CppWinForm1 {
 			this->moveObjButton->FlatAppearance->CheckedBackColor = System::Drawing::Color::Khaki;
 			this->moveObjButton->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
 			this->moveObjButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->moveObjButton->Location = System::Drawing::Point(163, 19);
-			this->moveObjButton->Margin = System::Windows::Forms::Padding(2);
+			this->moveObjButton->Location = System::Drawing::Point(217, 23);
+			this->moveObjButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->moveObjButton->Name = L"moveObjButton";
-			this->moveObjButton->Size = System::Drawing::Size(40, 44);
+			this->moveObjButton->Size = System::Drawing::Size(53, 54);
 			this->moveObjButton->TabIndex = 21;
 			this->moveObjButton->TabStop = true;
 			this->moveObjButton->UseVisualStyleBackColor = true;
@@ -925,10 +949,10 @@ namespace CppWinForm1 {
 			this->selectObjButton->FlatAppearance->CheckedBackColor = System::Drawing::Color::Khaki;
 			this->selectObjButton->FlatAppearance->MouseDownBackColor = System::Drawing::SystemColors::ControlDarkDark;
 			this->selectObjButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->selectObjButton->Location = System::Drawing::Point(112, 19);
-			this->selectObjButton->Margin = System::Windows::Forms::Padding(2);
+			this->selectObjButton->Location = System::Drawing::Point(149, 23);
+			this->selectObjButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->selectObjButton->Name = L"selectObjButton";
-			this->selectObjButton->Size = System::Drawing::Size(40, 44);
+			this->selectObjButton->Size = System::Drawing::Size(53, 54);
 			this->selectObjButton->TabIndex = 20;
 			this->selectObjButton->TabStop = true;
 			this->selectObjButton->UseVisualStyleBackColor = true;
@@ -943,19 +967,19 @@ namespace CppWinForm1 {
 			this->topPanel->Controls->Add(this->selectObjButton);
 			this->topPanel->Controls->Add(this->moveObjButton);
 			this->topPanel->Dock = System::Windows::Forms::DockStyle::Top;
-			this->topPanel->Location = System::Drawing::Point(300, 0);
-			this->topPanel->Margin = System::Windows::Forms::Padding(2);
+			this->topPanel->Location = System::Drawing::Point(399, 0);
+			this->topPanel->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->topPanel->Name = L"topPanel";
-			this->topPanel->Size = System::Drawing::Size(723, 71);
+			this->topPanel->Size = System::Drawing::Size(965, 87);
 			this->topPanel->TabIndex = 18;
 			// 
 			// levelsComboBox
 			// 
 			this->levelsComboBox->FormattingEnabled = true;
-			this->levelsComboBox->Location = System::Drawing::Point(582, 19);
-			this->levelsComboBox->Margin = System::Windows::Forms::Padding(2);
+			this->levelsComboBox->Location = System::Drawing::Point(776, 23);
+			this->levelsComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->levelsComboBox->Name = L"levelsComboBox";
-			this->levelsComboBox->Size = System::Drawing::Size(134, 21);
+			this->levelsComboBox->Size = System::Drawing::Size(177, 24);
 			this->levelsComboBox->TabIndex = 25;
 			this->levelsComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::levelsComboBox_SelectedIndexChanged);
 			// 
@@ -967,10 +991,10 @@ namespace CppWinForm1 {
 			this->sceneListButton->FlatAppearance->MouseDownBackColor = System::Drawing::Color::Khaki;
 			this->sceneListButton->FlatAppearance->MouseOverBackColor = System::Drawing::SystemColors::ControlDark;
 			this->sceneListButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->sceneListButton->Location = System::Drawing::Point(16, 19);
-			this->sceneListButton->Margin = System::Windows::Forms::Padding(2);
+			this->sceneListButton->Location = System::Drawing::Point(21, 23);
+			this->sceneListButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->sceneListButton->Name = L"sceneListButton";
-			this->sceneListButton->Size = System::Drawing::Size(40, 44);
+			this->sceneListButton->Size = System::Drawing::Size(53, 54);
 			this->sceneListButton->TabIndex = 24;
 			this->sceneListButton->UseVisualStyleBackColor = true;
 			this->sceneListButton->Click += gcnew System::EventHandler(this, &EditorForm::sceneListButton_Click);
@@ -981,10 +1005,10 @@ namespace CppWinForm1 {
 			this->renderPanel->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Center;
 			this->renderPanel->Controls->Add(this->levelLoading);
 			this->renderPanel->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->renderPanel->Location = System::Drawing::Point(300, 71);
-			this->renderPanel->Margin = System::Windows::Forms::Padding(2);
+			this->renderPanel->Location = System::Drawing::Point(399, 87);
+			this->renderPanel->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->renderPanel->Name = L"renderPanel";
-			this->renderPanel->Size = System::Drawing::Size(723, 563);
+			this->renderPanel->Size = System::Drawing::Size(965, 612);
 			this->renderPanel->TabIndex = 19;
 			// 
 			// levelLoading
@@ -995,47 +1019,50 @@ namespace CppWinForm1 {
 			this->levelLoading->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"levelLoading.Image")));
 			this->levelLoading->InitialImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"levelLoading.InitialImage")));
 			this->levelLoading->Location = System::Drawing::Point(0, 0);
-			this->levelLoading->Margin = System::Windows::Forms::Padding(2);
+			this->levelLoading->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->levelLoading->Name = L"levelLoading";
-			this->levelLoading->Size = System::Drawing::Size(723, 563);
+			this->levelLoading->Size = System::Drawing::Size(965, 612);
 			this->levelLoading->SizeMode = System::Windows::Forms::PictureBoxSizeMode::CenterImage;
-			this->levelLoading->TabIndex = 0;
+			this->levelLoading->TabIndex = 2;
 			this->levelLoading->TabStop = false;
 			this->levelLoading->UseWaitCursor = true;
 			// 
 			// bottomPanel
 			// 
+			this->bottomPanel->Controls->Add(this->lastSelectedList);
 			this->bottomPanel->Dock = System::Windows::Forms::DockStyle::Bottom;
-			this->bottomPanel->Location = System::Drawing::Point(300, 568);
-			this->bottomPanel->Margin = System::Windows::Forms::Padding(2);
+			this->bottomPanel->Location = System::Drawing::Point(399, 699);
+			this->bottomPanel->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->bottomPanel->Name = L"bottomPanel";
-			this->bottomPanel->Size = System::Drawing::Size(723, 66);
-			this->bottomPanel->TabIndex = 20;
+			this->bottomPanel->Size = System::Drawing::Size(965, 81);
+			this->bottomPanel->TabIndex = 21;
 			// 
-			// grassPaingPreserveCheckbox
+			// lastSelectedList
 			// 
-			this->grassPaingPreserveCheckbox->AutoSize = true;
-			this->grassPaingPreserveCheckbox->Location = System::Drawing::Point(164, 16);
-			this->grassPaingPreserveCheckbox->Name = L"grassPaingPreserveCheckbox";
-			this->grassPaingPreserveCheckbox->Size = System::Drawing::Size(96, 17);
-			this->grassPaingPreserveCheckbox->TabIndex = 32;
-			this->grassPaingPreserveCheckbox->Text = L"Preserve mask";
-			this->grassPaingPreserveCheckbox->UseVisualStyleBackColor = true;
-			this->grassPaingPreserveCheckbox->CheckedChanged += gcnew System::EventHandler(this, &EditorForm::grassPaingPreserveCheckbox_CheckedChanged);
+			this->lastSelectedList->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Left));
+			this->lastSelectedList->BackColor = System::Drawing::Color::Gainsboro;
+			this->lastSelectedList->FormattingEnabled = true;
+			this->lastSelectedList->ItemHeight = 16;
+			this->lastSelectedList->Location = System::Drawing::Point(715, 0);
+			this->lastSelectedList->Name = L"lastSelectedList";
+			this->lastSelectedList->Size = System::Drawing::Size(250, 84);
+			this->lastSelectedList->TabIndex = 0;
+			this->lastSelectedList->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::lastSelectedList_SelectedIndexChanged);
 			// 
 			// EditorForm
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->AutoScroll = true;
 			this->AutoSize = true;
 			this->BackColor = System::Drawing::SystemColors::ControlDark;
-			this->ClientSize = System::Drawing::Size(1023, 634);
-			this->Controls->Add(this->bottomPanel);
+			this->ClientSize = System::Drawing::Size(1364, 780);
 			this->Controls->Add(this->renderPanel);
+			this->Controls->Add(this->bottomPanel);
 			this->Controls->Add(this->topPanel);
 			this->Controls->Add(this->sidePanel);
-			this->Margin = System::Windows::Forms::Padding(2);
+			this->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->Name = L"EditorForm";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Editor";
@@ -1044,9 +1071,11 @@ namespace CppWinForm1 {
 			this->sidePanel->PerformLayout();
 			this->grassGroupBox->ResumeLayout(false);
 			this->grassGroupBox->PerformLayout();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassPaintSizeTrack))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassPaintWTrack))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassDensity))->EndInit();
+			this->paintGroupBox->ResumeLayout(false);
+			this->paintGroupBox->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->paintSizeTrack))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->paintWTrack))->EndInit();
 			this->placementGroupBox->ResumeLayout(false);
 			this->placementGroupBox->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->placementOffsetNum))->EndInit();
@@ -1068,6 +1097,7 @@ namespace CppWinForm1 {
 			this->topPanel->ResumeLayout(false);
 			this->renderPanel->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->levelLoading))->EndInit();
+			this->bottomPanel->ResumeLayout(false);
 			this->ResumeLayout(false);
 
 		}
@@ -1095,10 +1125,17 @@ private: System::Void SendAsyncMsgThread(System::Object^ input)
 		{
 			System::Windows::Forms::TreeNode^ node = sceneListForm->getTree()->SelectedNode;
 			change.groupName = marshal_as<std::string>(node->Parent->Text);
-			change.item.name = marshal_as<std::wstring>(node->Text);
+			change.item.name = marshal_as<std::string>(node->Text);
+		}
+		else if (param->subtype == "History")
+		{
+			int idx = lastSelectedList->Items->Count - 1 - lastSelectedList->SelectedIndex;
+			auto& i = selectionHistoryItems[idx];
+			change.groupName = i.group;
+			change.item.name = i.name;
 		}
 		else
-			change.item.name = marshal_as<std::wstring>(selectionListBox->SelectedItem->ToString());
+			change.item.name = marshal_as<std::string>(selectionListBox->SelectedItem->ToString());
 
 		SendMsg(UiMessageId::SelectWorldItem, &change);
 		break;
@@ -1131,24 +1168,24 @@ private: System::Void SendAsyncMsgThread(System::Object^ input)
 			fparam = System::Decimal::ToSingle(grassDensity->Value);
 			change.data = &fparam;
 		}
-		if (change.change == SelectionInfoChange::Id::GrassPaintFill)
+		if (change.change == SelectionInfoChange::Id::PaintFill)
 		{
-			fparam = System::Decimal::ToSingle(grassPaintWTrack->Value)*0.01f;
+			fparam = System::Decimal::ToSingle(paintWTrack->Value)*0.01f;
 			change.data = &fparam;
 		}
-		if (change.change == SelectionInfoChange::Id::GrassPaintAdd || change.change == SelectionInfoChange::Id::GrassPaintRemove)
+		if (change.change == SelectionInfoChange::Id::PaintAdd || change.change == SelectionInfoChange::Id::PaintRemove)
 		{
-			vparam = { System::Decimal::ToSingle(grassPaintWTrack->Value)*0.01f, System::Decimal::ToSingle(grassPaintSizeTrack->Value) , 0};
+			vparam = { System::Decimal::ToSingle(paintWTrack->Value)*0.01f, System::Decimal::ToSingle(paintSizeTrack->Value) , 0};
 			change.data = &vparam;
 		}
-		if (change.change == SelectionInfoChange::Id::GrassPaintSizeChange)
+		if (change.change == SelectionInfoChange::Id::PaintSizeChange)
 		{
-			fparam = System::Decimal::ToSingle(grassPaintSizeTrack->Value);
+			fparam = System::Decimal::ToSingle(paintSizeTrack->Value);
 			change.data = &fparam;
 		}
-		if (change.change == SelectionInfoChange::Id::GrassPaintWChange)
+		if (change.change == SelectionInfoChange::Id::PaintWChange)
 		{
-			fparam = System::Decimal::ToSingle(grassPaintWTrack->Value)*0.01f;
+			fparam = System::Decimal::ToSingle(paintWTrack->Value)*0.01f;
 			change.data = &fparam;
 		}
 		if (change.change == SelectionInfoChange::Id::GrassPaintPreserve)
@@ -1280,6 +1317,14 @@ private: System::Void addItemCheckBox_CheckedChanged(System::Object^  sender, Sy
 	SendAsyncMsg(UiMessageId::AddItemMode);
 }
 
+private: void deselectSelectionEditButtons()
+{
+	selectObjButton->Checked = false;
+	moveObjButton->Checked = false;
+	scaleObjButton->Checked = false;
+	rotateObjButton->Checked = false;
+}
+
 private: System::Void selectObjButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 
 	if (!selectObjButton->Checked)
@@ -1322,11 +1367,24 @@ public: System::Void hideItemInfo()
 	selectionNameButton->Text = "";
 	selectionGroupBox->Hide();
 	grassGroupBox->Hide();
+	paintGroupBox->Hide();
 }
 	
 public: System::Void setLoading(bool enabled)
 {
 	levelLoading->Visible = enabled;
+
+	if (enabled)
+		clearSceneInfo();
+}
+
+public: System::Void clearSceneInfo()
+{
+	hideItemInfo();
+
+	selectionHistoryItems.clear();
+	lastSelectedList->SelectedIndex = -1;
+	lastSelectedList->Items->Clear();
 }
 
 public: System::Void setProperties(EditorProperties* info)
@@ -1358,13 +1416,19 @@ public: System::Void showItemInfo(SelectionInfo* info)
 
 	selectionNameButton->Text = gcnew System::String(info->name.data());
 
+	if (info->names.empty())
+	{
+		if(info->subtype == SelectionInfo::Grass)
+			addToSelectionHistory(selectionNameButton->Text, "Grass");
+		else
+			addToSelectionHistory(selectionNameButton->Text, "Entity");
+	}
+
 	reportSelectionChange = false;
 	bool showGrassInfo = false;
 	if (info->subtype == SelectionInfo::Grass && info->names.empty())
 	{
 		showGrassInfo = true;
-		grassPaintAdd->Checked = false;
-		grassPaintRemove->Checked = false;
 
 		auto subinfo = (GrassSelectionInfo*)info->subtypeData;
 
@@ -1372,6 +1436,15 @@ public: System::Void showItemInfo(SelectionInfo* info)
 		grassPaingPreserveCheckbox->Checked = subinfo->preserveMask;
 
 		grassGroupBox->BringToFront();
+	}
+
+	bool showPaintInfo = info->usePaint;
+	if (showPaintInfo)
+	{
+		paintAdd->Checked = false;
+		paintRemove->Checked = false;
+
+		//paintGroupBox->BringToFront();
 	}
 
 	entPosX->Value = System::Decimal(info->pos.x);
@@ -1385,6 +1458,7 @@ public: System::Void showItemInfo(SelectionInfo* info)
 	reportSelectionChange = true;
 
 	grassGroupBox->Visible = showGrassInfo;
+	paintGroupBox->Visible = showPaintInfo;
 	selectionGroupBox->Show();
 }
 
@@ -1510,24 +1584,24 @@ private: System::Void EditorForm_FormClosing(System::Object^  sender, System::Co
 	SendMsg(UiMessageId::CloseEditor, nullptr);
 }
 
-private: System::Void grassPaintWTrack_Scroll(System::Object^  sender, System::EventArgs^  e) {
-	grassPaintWText->Text = grassPaintWTrack->Value.ToString();
+private: System::Void paintWTrack_Scroll(System::Object^  sender, System::EventArgs^  e) {
+	paintWText->Text = paintWTrack->Value.ToString();
 
 	if (!reportSelectionChange)
 		return;
 
-	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::GrassPaintWChange);
+	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::PaintWChange);
 }
-private: System::Void grassPaintSizeTrack_Scroll(System::Object^  sender, System::EventArgs^  e) {
-	grassPaintSizeText->Text = grassPaintSizeTrack->Value.ToString();
+private: System::Void paintSizeTrack_Scroll(System::Object^  sender, System::EventArgs^  e) {
+	paintSizeText->Text = paintSizeTrack->Value.ToString();
 
 	if (!reportSelectionChange)
 		return;
 
-	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::GrassPaintSizeChange);
+	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::PaintSizeChange);
 }
-private: System::Void grassPaintFill_Click(System::Object^  sender, System::EventArgs^  e) {
-	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::GrassPaintFill);
+private: System::Void paintFill_Click(System::Object^  sender, System::EventArgs^  e) {
+	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::PaintFill);
 }
 private: System::Void grassDensity_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 	if (!reportSelectionChange)
@@ -1535,17 +1609,21 @@ private: System::Void grassDensity_ValueChanged(System::Object^  sender, System:
 
 	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::GrassDensity);
 }
-private: System::Void grassPaintAdd_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-	if (!reportSelectionChange)
+private: System::Void paintAdd_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (!reportSelectionChange || paintAdd->Checked == false)
 		return;
 
-	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::GrassPaintAdd);
+	deselectSelectionEditButtons();
+
+	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::PaintAdd);
 }
-private: System::Void grassPaintRemove_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-	if (!reportSelectionChange)
+private: System::Void paintRemove_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (!reportSelectionChange || paintRemove->Checked == false)
 		return;
 
-	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::GrassPaintRemove);
+	deselectSelectionEditButtons();
+
+	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::PaintRemove);
 }
 private: System::Void grassPaingPreserveCheckbox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 	if (!reportSelectionChange)
@@ -1553,5 +1631,43 @@ private: System::Void grassPaingPreserveCheckbox_CheckedChanged(System::Object^ 
 
 	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::GrassPaintPreserve);
 }
+
+private: void addToSelectionHistory(System::String^ name, System::String^ group)
+{
+	SelectionHistoryItem item;
+	item.name = marshal_as<std::string>(name);
+	item.group = marshal_as<std::string>(group);
+
+	for (auto it = selectionHistoryItems.begin(); it != selectionHistoryItems.end();)
+	{
+		if (it->name == item.name)
+			it = selectionHistoryItems.erase(it);
+		else
+			it++;
+	}
+
+	selectionHistoryItems.push_back(item);
+
+	while (selectionHistoryItems.size() > 6)
+		selectionHistoryItems.erase(selectionHistoryItems.begin());
+
+	lastSelectedList->Items->Clear();
+	lastSelectedList->SelectedIndex = -1;
+
+	for (auto it = selectionHistoryItems.rbegin(); it != selectionHistoryItems.rend(); it++)
+	{
+		auto txt = it->name + " \t(" + it->group + ")";
+		lastSelectedList->Items->Add(gcnew System::String(txt.data()));
+	}
+}
+
+private: System::Void lastSelectedList_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+
+	if (lastSelectedList->SelectedIndex != -1)
+	{
+		SendAsyncMsg(UiMessageId::SelectWorldItem, "History");
+	}
+}
+
 };
 }

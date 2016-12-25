@@ -36,12 +36,53 @@ void GrassDensityMap::fill(float value)
 	grid.fill(value);
 }
 
-void GrassDensityMap::resize(float _minX, float _maxX, float _minY, float _maxY)
+void GrassDensityMap::resize(GrassInfo& grass)
 {
 	auto old = grid;
-	grid.init(_minX, _maxX, _minY, _maxY);
+
+	auto b = grass.bake.layer->mapBounds;
+	grid.init(b.left, b.right, b.top, b.bottom);
+
+	if (old.data == nullptr)
+		copyDensity(grass);
+	else
+		grid.import(old);
 
 	delete old.data;
+}
+
+void GrassDensityMap::relocate(GrassInfo& grass)
+{
+	auto b = grass.bake.layer->mapBounds;
+
+	grid.minX = b.left;
+	grid.maxX = b.right;
+	grid.minY = b.top;
+	grid.maxX = b.bottom;
+
+	apply(grass);
+}
+
+void GrassDensityMap::copyDensity(GrassInfo& grass)
+{
+	auto buffer = grass.bake.layer->getColorMap()->getPixelBox();
+
+	for (size_t h = 0; h < buffer.getHeight(); h++)
+	{
+		for (size_t w = 0; w < buffer.getWidth(); w++)
+		{
+			float xRel = h / (float)buffer.getHeight();
+			float yRel = w / (float)buffer.getWidth();
+
+			auto c = buffer.getColourAt(h, w, 0);
+
+			float xPos = grid.minX + (grid.maxX - grid.minX)*xRel;
+			float yPos = grid.minY + (grid.maxY - grid.minY)*yRel;
+
+			if(grid.inside(xPos, yPos))
+				grid.read(xPos, yPos) = c.a;
+		}
+	}
 }
 
 void GrassDensityMap::preserveOriginal(bool enable)
@@ -65,17 +106,18 @@ void GrassDensityMap::apply(GrassInfo& grass)
 
 			auto c = buffer.getColourAt(h, w, 0);
 
-			float xPos = grass.density.grid.minX + (grass.density.grid.maxX - grass.density.grid.minX)*xRel;
-			float yPos = grass.density.grid.minY + (grass.density.grid.maxY - grass.density.grid.minY)*yRel;
+			float xPos = grid.minX + (grid.maxX - grid.minX)*xRel;
+			float yPos = grid.minY + (grid.maxY - grid.minY)*yRel;
 
-			c.a = (preserve ? c.a : 1.0f) * grid.read(xPos, yPos);
-			//c.a = c.a * (h > 200 || w > 200) ? 1 : 0;
+			if(grid.inside(xPos, yPos))
+				c.a = grid.read(xPos, yPos);
 
 			buffer.setColourAt(c, h, w, 0);
 		}
 	}
 
 	grass.pg->reloadGeometry();
+	grass.pg->update();
 }
 
 float GrassDensityMap::get(float x, float y)
@@ -116,6 +158,25 @@ void GrassDensityMap::WorldGrid::fill(float value)
 		{
 			data[i] = value;
 		}
+}
+
+void GrassDensityMap::WorldGrid::import(WorldGrid& from)
+{
+	float step = 1 / (float)pixelsPerUnit;
+
+	for (int x = 0; x < rows; x++)
+	{
+		for (int y = 0; y < cols; y++)
+		{
+			float wpx = minX + x*step;
+			float wpy = minY + y*step;
+
+			if (from.inside(wpx, wpy))
+			{
+				data[rows*y + x] = from.read(wpx, wpy);
+			}
+		}
+	}
 }
 
 void GrassDensityMap::WorldGrid::init(float _minX, float _maxX, float _minY, float _maxY)

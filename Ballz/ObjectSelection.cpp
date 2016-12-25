@@ -9,7 +9,7 @@
 
 void ObjectSelection::uiSelectItem(SelectWorldItemData& data)
 {
-	auto name = wtos(data.item.name);
+	auto name = data.item.name;
 
 	if(data.groupName == "Entity")
 		if (Global::sceneMgr->hasEntity(name))

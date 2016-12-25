@@ -9,7 +9,8 @@ struct GrassDensityMap
 	void paint(float x, float y, float w, float size);
 
 	void fill(float value);
-	void resize(float minX, float maxX, float minY, float maxY);
+	void resize(GrassInfo& grass);
+	void relocate(GrassInfo& grass);
 
 	void preserveOriginal(bool enable);
 	void apply(GrassInfo& grass);
@@ -21,6 +22,7 @@ struct GrassDensityMap
 
 	struct WorldGrid
 	{
+		void import(WorldGrid& grid);
 		void init(float minX, float maxX, float minY, float maxY);
 		bool inside(float x, float y);
 		float& read(float x, float y);
@@ -34,6 +36,9 @@ struct GrassDensityMap
 	grid;
 
 private:
+
+	void copy(WorldGrid& g);
+	void copyDensity(GrassInfo& grass);
 
 	bool preserve = false;
 
