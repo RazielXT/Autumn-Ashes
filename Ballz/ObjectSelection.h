@@ -2,9 +2,9 @@
 #include "stdafx.h"
 #include "SelectionGizmo.h"
 #include "EditorComm.h"
-#include "EditorItem.h"
 #include "EditorEntity.h"
 #include "EditorGrass.h"
+#include "EditorParticle.h"
 
 struct SelectionInfoChange;
 class EditorControl;
@@ -23,6 +23,8 @@ public:
 
 	void setSelectedGrass(GrassInfo& grass, bool forceDeselect = true);
 
+	void setSelectedParticle(Ogre::ParticleSystem* ps, bool forceDeselect = true);
+
 	void updateUiSelectedInfo();
 
 	Ogre::Entity* pickMouseRayItem();
@@ -34,11 +36,14 @@ public:
 	void uiEditSelection(SelectionInfoChange* change);
 
 	void uiSelectItem(SelectWorldItemData& data);
-	void removeSelection();
-	EditorItem* selected = nullptr;
+	void uiGetWorldItemsInfo(GetWorldItemsData& data);
 
-	EditorEntity selectedEntities;
+	void removeSelection();
+
+	EditorItem* selected = nullptr;
 	EditorGrass selectedGrasses;
+	EditorEntity selectedEntities;
+	EditorParticle selelectedParticles;
 
 	SelectionGizmo gizmo;
 

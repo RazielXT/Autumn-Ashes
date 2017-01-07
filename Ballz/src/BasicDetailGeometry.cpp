@@ -45,15 +45,17 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 
 	Ogre::AxisAlignedBox bbox;
 
-	mBillboardsManager = Global::sceneMgr->createInstanceManager(
-	                         "InstanceMgr", bbName,
-	                         ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, InstanceManager::HWInstancingBasic,
-	                         300, 0);
+	if(!mBillboardsManager)
+		mBillboardsManager = Global::sceneMgr->createInstanceManager(
+		                         "InstanceMgr", bbName,
+		                         ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, InstanceManager::HWInstancingBasic,
+		                         300, 0);
 
-	mTreesManager = Global::sceneMgr->createInstanceManager(
-	                    "InstanceMgr2", treeName,
-	                    ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, InstanceManager::HWInstancingBasic,
-	                    300, 0);
+	if(!mTreesManager)
+		mTreesManager = Global::sceneMgr->createInstanceManager(
+		                    "InstanceMgr2", treeName,
+		                    ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, InstanceManager::HWInstancingBasic,
+		                    300, 0);
 
 	for (float x = xStart; x <= xEnd; x+=xStep)
 		for (float y = yStart; y <= yEnd; y += yStep)
@@ -124,6 +126,9 @@ void BasicDetailGeometry::clear()
 
 	mats.reset();
 	Global::sceneMgr->destroyStaticGeometry(sg);
+
+	mBillboardsManager = nullptr;
+	mTreesManager = nullptr;
 }
 
 bool BasicDetailGeometry::acceptsWeight(float w) const

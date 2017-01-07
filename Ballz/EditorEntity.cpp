@@ -3,11 +3,15 @@
 #include "EditorUiHandler.h"
 #include "GUtils.h"
 #include "GameStateManager.h"
-
+#include "Edit.h"
+#include "EditorControl.h"
 
 void EditorEntity::reset()
 {
 	selected.clear();
+	animLoop.reset();
+	delete matEdit;
+	matEdit = nullptr;
 }
 
 void EditorEntity::setPosition(Ogre::Vector3& pos)
@@ -153,6 +157,16 @@ void EditorEntity::add(Ogre::Entity* ent)
 {
 	selected.push_back(ent);
 	ent->getParentSceneNode()->showBoundingBox(true);
+
+	if (selected.size() == 1 && MaterialEdit::editableEntity(ent))
+	{
+		matEdit = new MaterialEdit(ent);
+	}
+	else
+	{
+		delete matEdit;
+		matEdit = nullptr;
+	}
 }
 
 void EditorEntity::select(Ogre::Entity* ent)
@@ -168,7 +182,8 @@ void EditorEntity::deselect()
 		e->getParentSceneNode()->showBoundingBox(false);
 	}
 
-	selected.clear();
+	animLoop.stop();
+	reset();
 }
 
 bool EditorEntity::filter(std::string& name)
@@ -191,27 +206,105 @@ void EditorEntity::sendUiInfoMessage(EditorUiHandler* handler)
 	UiMessage msg;
 	msg.id = UiMessageId::ShowSelectionInfo;
 	SelectionInfo info;
+	EntitySelectionInfo eInfo;
 
 	if (selected.size() == 1)
 	{
-		info.name = std::wstring(selected[0]->getName().begin(), selected[0]->getName().end());
+		info.name = selected[0]->getName();
 		info.pos = selected[0]->getParentSceneNode()->getPosition();
 		info.scale = selected[0]->getParentSceneNode()->getScale();
+
+		auto animSet = selected[0]->getAllAnimationStates();
+		if (animSet)
+		{
+			auto iter = animSet->getAnimationStateIterator();
+			while (iter.hasMoreElements())
+			{
+				eInfo.animNames.push_back(iter.peekNextKey());
+				iter.moveNext();
+			}
+		}
+
+		info.hasParams = matEdit != nullptr;
+
+		info.typeData = &eInfo;
 	}
 	else
 	{
-		info.name = std::to_wstring(selected.size()) + L" objects";
+		info.name = std::to_string(selected.size()) + " objects";
 		for (auto& e : selected)
-			info.names.push_back(std::wstring(e->getName().begin(), e->getName().end()));
+			info.names.push_back(e->getName());
 
 		info.pos = getPosition();
 		info.scale = selected[0]->getParentSceneNode()->getScale();
 	}
 
 	info.usePaint = false;
+	info.type = ItemType::Entity;
 	msg.data = &info;
 
 	handler->sendMsg(msg);
+}
+
+void EditorEntity::handleSelectionMessage(SelectionInfoChange* change)
+{
+	if (change->change == SelectionInfoChange::Id::ActiveAnimation)
+	{
+		std::string& name = *(std::string*)change->data;
+
+		if (name.empty())
+		{
+			animLoop.stop();
+		}
+		else
+		{
+			animLoop.start(selected[0], name);
+		}
+	}
+	else if (change->change == SelectionInfoChange::Id::GetParams && matEdit)
+	{
+		auto& response = *(EditableParamsResponse*)change->data;
+
+		auto rows = matEdit->getBaseRows();
+		for (auto r : rows)
+		{
+			if (r.type == EditRow::Params)
+			{
+				EditableParams params;
+				params.groupName = matEdit->originName + " " + r.name;
+
+				auto matparams = matEdit->getParams(r.name);
+
+				for (auto& mparam : *matparams)
+				{
+					params.params.push_back({ mparam.name, r.name, EditableParam::Type::Floats, { mparam.size, mparam.buffer[0], mparam.buffer[1], mparam.buffer[2], mparam.buffer[3], mparam.step } });
+				}
+
+				response.params.push_back(params);
+			}
+		}
+	}
+	else if (change->change == SelectionInfoChange::Id::ParamChanged && matEdit)
+	{
+		EditableParam& param = *(EditableParam*)change->data;
+
+		auto params = matEdit->getParams(param.group);
+
+		for (auto& p : *params)
+		{
+			if (p.name == param.name && param.type == EditableParam::Type::Floats)
+			{
+				p.buffer[param.floats.size] = param.floats.buffer[param.floats.size];
+				matEdit->editChanged(p, param.group);
+
+				break;
+			}
+		}
+	}
+	else if (change->change == SelectionInfoChange::Id::SaveParams && matEdit)
+	{
+		matEdit->customAction("Save");
+	}
 }
 
 void EditorEntity::setEntityPosition(Ogre::Entity* ent, Ogre::Vector3& pos)

@@ -90,7 +90,7 @@ void ParticleEdit::merge(ParticleEdit& r, bool addNotExisting)
 	MaterialEdit::merge(r, addNotExisting);
 }
 
-void ParticleEdit::applyChanges(std::map < std::string, ParticleEdit >& changes)
+void ParticleEdit::applyAllChanges(std::map < std::string, ParticleEdit >& changes)
 {
 	for (auto& ps : changes)
 	{

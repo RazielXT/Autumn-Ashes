@@ -70,7 +70,7 @@ private:
 	bool switchingState = false;
 	float switchStateTimer;
 
-	int lastLVL;
+	int lastLVL = -1;
 
 	AudioLibrary audioLib;
 

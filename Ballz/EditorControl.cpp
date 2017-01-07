@@ -63,32 +63,6 @@ void EditorControl::displayItemInfo(EditorItem* item)
 	}
 }
 
-void EditorControl::getWorldItemsInfo(GetWorldItemsData& data)
-{
-	auto it = Global::sceneMgr->getMovableObjectIterator("Entity");
-
-	WorldItemsGroup entityGroup;
-	entityGroup.name = L"Entity";
-	while (it.hasMoreElements())
-	{
-		Ogre::Entity* e = static_cast<Ogre::Entity*>(it.getNext());
-		entityGroup.items.push_back({ e->getName() });
-	}
-	data.groups.push_back(entityGroup);
-
-	auto grasses = Global::gameMgr->geometryMgr->getPagedGrasses();
-	if (!grasses.empty())
-	{
-		WorldItemsGroup grassGroup;
-		grassGroup.name = L"Grass";
-		for (auto& g : grasses)
-		{
-			grassGroup.items.push_back({ g.name });
-		}
-		data.groups.push_back(grassGroup);
-	}
-}
-
 void EditorControl::pressedKey(const OIS::KeyEvent &arg)
 {
 	if (arg.key == OIS::KC_LCONTROL)
@@ -161,7 +135,8 @@ void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID 
 				GUtils::RayInfo rayInfo;
 				if (GUtils::getRayInfo(cam->getDerivedPosition(), cam->getDerivedPosition() + mouseray.getDirection() * 100000, rayInfo))
 				{
-					auto e = GUtils::MakeEntity("aspenLeafs.mesh", rayInfo.pos);
+					auto e = GUtils::MakeEntity("death knight_B.mesh", rayInfo.pos, Ogre::Vector3(1, 1, 1)*0.25f);
+					//auto e = GUtils::MakeEntity("aspenLeafs.mesh", rayInfo.pos);
 					selector.setSelectedEntity(e);
 				}
 			}
@@ -212,7 +187,7 @@ bool EditorControl::update(float tslf)
 				setMode(EditorMode::AddItem);
 				break;
 			case UiMessageId::GetWorldItems:
-				getWorldItemsInfo(*(GetWorldItemsData*)msg.data);
+				selector.uiGetWorldItemsInfo(*(GetWorldItemsData*)msg.data);
 				break;
 			case UiMessageId::SelectWorldItem:
 				selector.uiSelectItem(*(SelectWorldItemData*)msg.data);
@@ -242,6 +217,12 @@ bool EditorControl::update(float tslf)
 			}
 			case UiMessageId::CloseEditor:
 				exit(0);
+				break;
+			case UiMessageId::ReloadGeometry:
+				Global::gameMgr->reloadMeshes();
+				break;
+			case UiMessageId::ReloadShaders:
+				scene.reloadShaders();
 				break;
 			default:
 				break;

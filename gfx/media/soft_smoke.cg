@@ -1,0 +1,102 @@
+
+void softsmoke_vs(uniform float4x4 wpmat,
+    uniform float4x4 wmat,
+    in float4 inPos : POSITION,
+	in float4 inN : NORMAL,
+
+    out float4 pos : POSITION,
+    out float3 uvOut : TEXCOORD0,
+	out float4 dOut : TEXCOORD1,
+	out float3 wpos : TEXCOORD2,
+	
+	in float2 uvIn : TEXCOORD0,
+	in float4 vC : COLOR)
+{
+    pos = mul(wpmat, inPos);
+
+    uvOut.xy=uvIn.xy;
+	uvOut.z=vC.a;
+	
+	dOut=pos;
+	
+	wpos = mul(wmat, inPos).xyz;	
+}
+
+
+void softsmoke_ps(
+	uniform float depthFade,
+	uniform float closeFade,
+	uniform float3 camPos,
+	uniform float4 fogColor,
+	uniform float4 fogParams,
+	uniform float4 screenSize,
+	uniform float3 diffuseColor,
+	uniform float alphaMul,
+	uniform sampler2D material: register(s0),
+	uniform sampler2D depthScene: register(s1),
+	uniform sampler2D depthTrans: register(s2),
+	float2 screenSpace : WPOS,
+	in float3 uv : TEXCOORD0,
+	in float4 d : TEXCOORD1,
+	in float3 wpos : TEXCOORD2,
+	out float4 color0 : COLOR0
+	)
+{
+	if(uv.x<0 || uv.x>1 || uv.y<0 || uv.y>1)
+	discard;
+	
+	/*
+	float depthCloudZ=d.z;
+ 
+	float depthSides = 30;
+	float sideW = abs(uv.xy*2 - 1);
+	depthCloudZ += (sideW*sideW)*depthSides; 
+	*/
+	
+	d/=d.w;
+	
+	float depthCloud = distance(wpos.xyz,camPos) - depthFade*0.5;
+	
+	float2 depthTexCoord = d.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+	depthTexCoord+=0.5f/screenSize.xy;
+	
+	float depthSc=tex2D(depthScene,depthTexCoord).y;   
+	float depthTr=tex2D(depthTrans,depthTexCoord).y;   	
+	float depthEnv = depthTr==0 ? depthSc : min(depthSc,depthTr);
+	
+	if(depthEnv<depthCloud) discard;
+
+	float4 color=tex2D(material, uv.xy)*float4(diffuseColor,1);
+	if(color.a==0) discard;
+
+	float camScale=closeFade;
+	float scale=depthFade;
+
+	/*float roz=saturate(abs(depthCloud-depthEnv)/scale);
+	roz*=0.8;
+
+	roz *= uv.z;*/
+	
+	float objBlend = saturate((depthEnv-depthCloud)/scale);
+	float camBlend = saturate(depthCloud/camScale);
+	
+	color0=color.rgba;
+	color0.a *= alphaMul*objBlend*camBlend*uv.z;
+	
+	//distance fog
+	float insideFog = saturate((depthCloud - fogParams.y) / fogParams.z)*fogColor.a;
+	
+	float3 atmFog = fogColor.rgb*color0.rgb;
+	color0.rgb = lerp(color0.rgb, atmFog, insideFog);
+	
+	//float dim=1;
+	//scale=2.5;
+	//if(depthCloud<scale) dim=depthCloud/scale;
+	//roz=min(roz,dim);
+	
+	//color.rgb=saturate(color.rgb-(1-uv.x));
+	//color.rgb*=saturate((uv.w-20)/5);
+	//color0= float4(color.rgb,color.a*roz*uv.z);
+	
+	//color0=float4(color.rgb*roz,color.r*roz);
+}

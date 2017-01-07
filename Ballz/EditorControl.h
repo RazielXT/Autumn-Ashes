@@ -42,7 +42,6 @@ public:
 	void setSelectMode(SelectionMode mode);
 
 	void displayItemInfo(EditorItem* item);
-	void getWorldItemsInfo(GetWorldItemsData& data);
 
 	virtual void pressedKey(const OIS::KeyEvent &arg) override;
 

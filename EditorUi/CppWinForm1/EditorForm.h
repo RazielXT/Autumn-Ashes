@@ -7,6 +7,7 @@
 #include <msclr\marshal_cppstd.h>
 #include "SceneList.h"
 #include <vector>
+#include <cliext/vector>   
 
 using namespace msclr::interop;
 
@@ -25,6 +26,47 @@ struct SelectionHistoryItem
 };
 
 std::vector<SelectionHistoryItem> selectionHistoryItems;
+
+struct ItemEditableParamInfo
+{
+	EditableParam param;
+	int index;
+};
+std::map<std::string, ItemEditableParamInfo> currentEditableParams;
+
+ItemEditableParamInfo& getEditableParam(System::String^ name)
+{
+	auto nameStr = marshal_as<std::string>(name);
+
+	if (currentEditableParams.find(nameStr) == currentEditableParams.end())
+		return ItemEditableParamInfo();
+	else
+		return currentEditableParams[nameStr];
+}
+
+System::String^ getItemTypeStr(ItemType type)
+{
+	if (type == ItemType::Entity)
+		return "Entity";
+	else if (type == ItemType::Grass)
+		return "Grass";
+	else if (type == ItemType::Particle)
+		return "Particle";
+	else
+		return "Unknown";
+}
+
+ItemType getItemTypeFromStr(System::String^ type)
+{
+	if (type == "Entity")
+		return ItemType::Entity;
+	else if (type == "Grass")
+		return ItemType::Grass;
+	else if (type == "Particle")
+		return ItemType::Particle;
+	else
+		return ItemType::Entity;
+}
 
 namespace CppWinForm1 {
 
@@ -89,13 +131,45 @@ namespace CppWinForm1 {
 	private: System::Windows::Forms::TextBox^  paintSizeText;
 	private: System::Windows::Forms::TextBox^  paintWText;
 	private: System::Windows::Forms::Button^  paintFill;
-	private: System::Windows::Forms::GroupBox^  grassGroupBox;
-	private: System::Windows::Forms::NumericUpDown^  grassDensity;
-	private: System::Windows::Forms::Label^  label15;
+
+
+
 	private: System::Windows::Forms::PictureBox^  levelLoading;
 	private: System::Windows::Forms::Panel^  bottomPanel;
-	private: System::Windows::Forms::ListBox^  lastSelectedList;
+	private: System::Windows::Forms::GroupBox^  entityGroupBox;
+
+	private: System::Windows::Forms::Label^  label10;
+	private: System::Windows::Forms::ComboBox^  animationsComboBox;
+	private: System::Windows::Forms::GroupBox^  grassGroupBox;
 	private: System::Windows::Forms::CheckBox^  grassPaingPreserveCheckbox;
+	private: System::Windows::Forms::NumericUpDown^  grassDensity;
+	private: System::Windows::Forms::Label^  label15;
+	private: System::Windows::Forms::Button^  stopAnimationButton;
+
+	private: System::Windows::Forms::Button^  playAnimationButton;
+	private: System::Windows::Forms::NumericUpDown^  grassSizeHMax;
+
+	private: System::Windows::Forms::NumericUpDown^  grassSizeHMin;
+
+	private: System::Windows::Forms::Label^  label13;
+	private: System::Windows::Forms::NumericUpDown^  grassSizeWMax;
+
+	private: System::Windows::Forms::NumericUpDown^  grassSizeWMin;
+
+	private: System::Windows::Forms::Label^  label14;
+	private: System::Windows::Forms::Button^  reloadShadersbutton;
+	private: System::Windows::Forms::Button^  reloadGeometryButton;
+	private: System::Windows::Forms::GroupBox^  itemParamsGroupBox;
+	private: System::Windows::Forms::Button^  getParamsButton;
+
+
+
+
+
+
+
+	private: System::Windows::Forms::ListBox^  lastSelectedList;
+
 
 
 
@@ -166,7 +240,20 @@ namespace CppWinForm1 {
 		{
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(EditorForm::typeid));
 			this->sidePanel = (gcnew System::Windows::Forms::Panel());
+			this->itemParamsGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->getParamsButton = (gcnew System::Windows::Forms::Button());
+			this->entityGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->stopAnimationButton = (gcnew System::Windows::Forms::Button());
+			this->playAnimationButton = (gcnew System::Windows::Forms::Button());
+			this->label10 = (gcnew System::Windows::Forms::Label());
+			this->animationsComboBox = (gcnew System::Windows::Forms::ComboBox());
 			this->grassGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->grassSizeWMax = (gcnew System::Windows::Forms::NumericUpDown());
+			this->grassSizeWMin = (gcnew System::Windows::Forms::NumericUpDown());
+			this->label14 = (gcnew System::Windows::Forms::Label());
+			this->grassSizeHMax = (gcnew System::Windows::Forms::NumericUpDown());
+			this->grassSizeHMin = (gcnew System::Windows::Forms::NumericUpDown());
+			this->label13 = (gcnew System::Windows::Forms::Label());
 			this->grassPaingPreserveCheckbox = (gcnew System::Windows::Forms::CheckBox());
 			this->grassDensity = (gcnew System::Windows::Forms::NumericUpDown());
 			this->label15 = (gcnew System::Windows::Forms::Label());
@@ -223,9 +310,17 @@ namespace CppWinForm1 {
 			this->renderPanel = (gcnew System::Windows::Forms::Panel());
 			this->levelLoading = (gcnew System::Windows::Forms::PictureBox());
 			this->bottomPanel = (gcnew System::Windows::Forms::Panel());
+			this->reloadShadersbutton = (gcnew System::Windows::Forms::Button());
+			this->reloadGeometryButton = (gcnew System::Windows::Forms::Button());
 			this->lastSelectedList = (gcnew System::Windows::Forms::ListBox());
 			this->sidePanel->SuspendLayout();
+			this->itemParamsGroupBox->SuspendLayout();
+			this->entityGroupBox->SuspendLayout();
 			this->grassGroupBox->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassSizeWMax))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassSizeWMin))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassSizeHMax))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassSizeHMin))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassDensity))->BeginInit();
 			this->paintGroupBox->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->paintSizeTrack))->BeginInit();
@@ -253,6 +348,8 @@ namespace CppWinForm1 {
 			// 
 			this->sidePanel->AutoScroll = true;
 			this->sidePanel->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+			this->sidePanel->Controls->Add(this->itemParamsGroupBox);
+			this->sidePanel->Controls->Add(this->entityGroupBox);
 			this->sidePanel->Controls->Add(this->grassGroupBox);
 			this->sidePanel->Controls->Add(this->paintGroupBox);
 			this->sidePanel->Controls->Add(this->placementGroupBox);
@@ -268,9 +365,111 @@ namespace CppWinForm1 {
 			this->sidePanel->Size = System::Drawing::Size(399, 780);
 			this->sidePanel->TabIndex = 16;
 			// 
+			// itemParamsGroupBox
+			// 
+			this->itemParamsGroupBox->AutoSize = true;
+			this->itemParamsGroupBox->Controls->Add(this->getParamsButton);
+			this->itemParamsGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
+			this->itemParamsGroupBox->Location = System::Drawing::Point(0, 1023);
+			this->itemParamsGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->itemParamsGroupBox->MinimumSize = System::Drawing::Size(0, 20);
+			this->itemParamsGroupBox->Name = L"itemParamsGroupBox";
+			this->itemParamsGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->itemParamsGroupBox->Size = System::Drawing::Size(374, 61);
+			this->itemParamsGroupBox->TabIndex = 29;
+			this->itemParamsGroupBox->TabStop = false;
+			this->itemParamsGroupBox->Text = L"Params";
+			// 
+			// getParamsButton
+			// 
+			this->getParamsButton->Location = System::Drawing::Point(142, 19);
+			this->getParamsButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->getParamsButton->Name = L"getParamsButton";
+			this->getParamsButton->Size = System::Drawing::Size(75, 23);
+			this->getParamsButton->TabIndex = 14;
+			this->getParamsButton->Text = L"Get";
+			this->getParamsButton->UseVisualStyleBackColor = true;
+			this->getParamsButton->Click += gcnew System::EventHandler(this, &EditorForm::getParamsButton_Click);
+			// 
+			// entityGroupBox
+			// 
+			this->entityGroupBox->AutoSize = true;
+			this->entityGroupBox->Controls->Add(this->stopAnimationButton);
+			this->entityGroupBox->Controls->Add(this->playAnimationButton);
+			this->entityGroupBox->Controls->Add(this->label10);
+			this->entityGroupBox->Controls->Add(this->animationsComboBox);
+			this->entityGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
+			this->entityGroupBox->Location = System::Drawing::Point(0, 953);
+			this->entityGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->entityGroupBox->MinimumSize = System::Drawing::Size(0, 20);
+			this->entityGroupBox->Name = L"entityGroupBox";
+			this->entityGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->entityGroupBox->Size = System::Drawing::Size(374, 70);
+			this->entityGroupBox->TabIndex = 28;
+			this->entityGroupBox->TabStop = false;
+			this->entityGroupBox->Text = L"Entity";
+			this->entityGroupBox->Visible = false;
+			// 
+			// stopAnimationButton
+			// 
+			this->stopAnimationButton->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"stopAnimationButton.BackgroundImage")));
+			this->stopAnimationButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->stopAnimationButton->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
+			this->stopAnimationButton->FlatAppearance->MouseDownBackColor = System::Drawing::Color::Khaki;
+			this->stopAnimationButton->FlatAppearance->MouseOverBackColor = System::Drawing::SystemColors::ControlDark;
+			this->stopAnimationButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->stopAnimationButton->Location = System::Drawing::Point(316, 21);
+			this->stopAnimationButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->stopAnimationButton->Name = L"stopAnimationButton";
+			this->stopAnimationButton->Size = System::Drawing::Size(30, 30);
+			this->stopAnimationButton->TabIndex = 26;
+			this->stopAnimationButton->UseVisualStyleBackColor = true;
+			this->stopAnimationButton->Click += gcnew System::EventHandler(this, &EditorForm::stopAnimationButton_Click);
+			// 
+			// playAnimationButton
+			// 
+			this->playAnimationButton->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"playAnimationButton.BackgroundImage")));
+			this->playAnimationButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->playAnimationButton->FlatAppearance->BorderColor = System::Drawing::SystemColors::ControlLight;
+			this->playAnimationButton->FlatAppearance->MouseDownBackColor = System::Drawing::Color::Khaki;
+			this->playAnimationButton->FlatAppearance->MouseOverBackColor = System::Drawing::SystemColors::ControlDark;
+			this->playAnimationButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->playAnimationButton->Location = System::Drawing::Point(280, 21);
+			this->playAnimationButton->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->playAnimationButton->Name = L"playAnimationButton";
+			this->playAnimationButton->Size = System::Drawing::Size(30, 30);
+			this->playAnimationButton->TabIndex = 25;
+			this->playAnimationButton->UseVisualStyleBackColor = true;
+			this->playAnimationButton->Click += gcnew System::EventHandler(this, &EditorForm::playAnimationButton_Click);
+			// 
+			// label10
+			// 
+			this->label10->AutoSize = true;
+			this->label10->Location = System::Drawing::Point(25, 28);
+			this->label10->Name = L"label10";
+			this->label10->Size = System::Drawing::Size(77, 17);
+			this->label10->TabIndex = 3;
+			this->label10->Text = L"Animations";
+			// 
+			// animationsComboBox
+			// 
+			this->animationsComboBox->FormattingEnabled = true;
+			this->animationsComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Placement" });
+			this->animationsComboBox->Location = System::Drawing::Point(102, 25);
+			this->animationsComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->animationsComboBox->Name = L"animationsComboBox";
+			this->animationsComboBox->Size = System::Drawing::Size(170, 24);
+			this->animationsComboBox->TabIndex = 2;
+			// 
 			// grassGroupBox
 			// 
 			this->grassGroupBox->AutoSize = true;
+			this->grassGroupBox->Controls->Add(this->grassSizeWMax);
+			this->grassGroupBox->Controls->Add(this->grassSizeWMin);
+			this->grassGroupBox->Controls->Add(this->label14);
+			this->grassGroupBox->Controls->Add(this->grassSizeHMax);
+			this->grassGroupBox->Controls->Add(this->grassSizeHMin);
+			this->grassGroupBox->Controls->Add(this->label13);
 			this->grassGroupBox->Controls->Add(this->grassPaingPreserveCheckbox);
 			this->grassGroupBox->Controls->Add(this->grassDensity);
 			this->grassGroupBox->Controls->Add(this->label15);
@@ -280,16 +479,82 @@ namespace CppWinForm1 {
 			this->grassGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->grassGroupBox->Name = L"grassGroupBox";
 			this->grassGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
-			this->grassGroupBox->Size = System::Drawing::Size(374, 103);
+			this->grassGroupBox->Size = System::Drawing::Size(374, 149);
 			this->grassGroupBox->TabIndex = 27;
 			this->grassGroupBox->TabStop = false;
 			this->grassGroupBox->Text = L"Grass";
 			this->grassGroupBox->Visible = false;
 			// 
+			// grassSizeWMax
+			// 
+			this->grassSizeWMax->DecimalPlaces = 2;
+			this->grassSizeWMax->Location = System::Drawing::Point(200, 76);
+			this->grassSizeWMax->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->grassSizeWMax->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 20, 0, 0, 0 });
+			this->grassSizeWMax->Name = L"grassSizeWMax";
+			this->grassSizeWMax->Size = System::Drawing::Size(91, 22);
+			this->grassSizeWMax->TabIndex = 39;
+			this->grassSizeWMax->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
+			this->grassSizeWMax->ValueChanged += gcnew System::EventHandler(this, &EditorForm::grassSizeWMax_ValueChanged);
+			// 
+			// grassSizeWMin
+			// 
+			this->grassSizeWMin->DecimalPlaces = 2;
+			this->grassSizeWMin->Location = System::Drawing::Point(103, 76);
+			this->grassSizeWMin->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->grassSizeWMin->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 20, 0, 0, 0 });
+			this->grassSizeWMin->Name = L"grassSizeWMin";
+			this->grassSizeWMin->Size = System::Drawing::Size(91, 22);
+			this->grassSizeWMin->TabIndex = 38;
+			this->grassSizeWMin->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
+			this->grassSizeWMin->ValueChanged += gcnew System::EventHandler(this, &EditorForm::grassSizeWMin_ValueChanged);
+			// 
+			// label14
+			// 
+			this->label14->AutoSize = true;
+			this->label14->Location = System::Drawing::Point(11, 78);
+			this->label14->Name = L"label14";
+			this->label14->Size = System::Drawing::Size(85, 17);
+			this->label14->TabIndex = 37;
+			this->label14->Text = L"Width range";
+			// 
+			// grassSizeHMax
+			// 
+			this->grassSizeHMax->DecimalPlaces = 2;
+			this->grassSizeHMax->Location = System::Drawing::Point(200, 46);
+			this->grassSizeHMax->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->grassSizeHMax->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 20, 0, 0, 0 });
+			this->grassSizeHMax->Name = L"grassSizeHMax";
+			this->grassSizeHMax->Size = System::Drawing::Size(91, 22);
+			this->grassSizeHMax->TabIndex = 36;
+			this->grassSizeHMax->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
+			this->grassSizeHMax->ValueChanged += gcnew System::EventHandler(this, &EditorForm::grassSizeHMax_ValueChanged);
+			// 
+			// grassSizeHMin
+			// 
+			this->grassSizeHMin->DecimalPlaces = 2;
+			this->grassSizeHMin->Location = System::Drawing::Point(103, 46);
+			this->grassSizeHMin->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->grassSizeHMin->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 20, 0, 0, 0 });
+			this->grassSizeHMin->Name = L"grassSizeHMin";
+			this->grassSizeHMin->Size = System::Drawing::Size(91, 22);
+			this->grassSizeHMin->TabIndex = 35;
+			this->grassSizeHMin->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
+			this->grassSizeHMin->ValueChanged += gcnew System::EventHandler(this, &EditorForm::grassSizeHMin_ValueChanged);
+			// 
+			// label13
+			// 
+			this->label13->AutoSize = true;
+			this->label13->Location = System::Drawing::Point(6, 51);
+			this->label13->Name = L"label13";
+			this->label13->Size = System::Drawing::Size(90, 17);
+			this->label13->TabIndex = 34;
+			this->label13->Text = L"Height range";
+			// 
 			// grassPaingPreserveCheckbox
 			// 
 			this->grassPaingPreserveCheckbox->AutoSize = true;
-			this->grassPaingPreserveCheckbox->Location = System::Drawing::Point(103, 61);
+			this->grassPaingPreserveCheckbox->Location = System::Drawing::Point(101, 107);
 			this->grassPaingPreserveCheckbox->Margin = System::Windows::Forms::Padding(4);
 			this->grassPaingPreserveCheckbox->Name = L"grassPaingPreserveCheckbox";
 			this->grassPaingPreserveCheckbox->Size = System::Drawing::Size(159, 21);
@@ -1029,6 +1294,8 @@ namespace CppWinForm1 {
 			// 
 			// bottomPanel
 			// 
+			this->bottomPanel->Controls->Add(this->reloadShadersbutton);
+			this->bottomPanel->Controls->Add(this->reloadGeometryButton);
 			this->bottomPanel->Controls->Add(this->lastSelectedList);
 			this->bottomPanel->Dock = System::Windows::Forms::DockStyle::Bottom;
 			this->bottomPanel->Location = System::Drawing::Point(399, 699);
@@ -1036,6 +1303,26 @@ namespace CppWinForm1 {
 			this->bottomPanel->Name = L"bottomPanel";
 			this->bottomPanel->Size = System::Drawing::Size(965, 81);
 			this->bottomPanel->TabIndex = 21;
+			// 
+			// reloadShadersbutton
+			// 
+			this->reloadShadersbutton->Location = System::Drawing::Point(6, 5);
+			this->reloadShadersbutton->Name = L"reloadShadersbutton";
+			this->reloadShadersbutton->Size = System::Drawing::Size(136, 26);
+			this->reloadShadersbutton->TabIndex = 2;
+			this->reloadShadersbutton->Text = L"Reload shaders";
+			this->reloadShadersbutton->UseVisualStyleBackColor = true;
+			this->reloadShadersbutton->Click += gcnew System::EventHandler(this, &EditorForm::reloadShadersbutton_Click);
+			// 
+			// reloadGeometryButton
+			// 
+			this->reloadGeometryButton->Location = System::Drawing::Point(6, 33);
+			this->reloadGeometryButton->Name = L"reloadGeometryButton";
+			this->reloadGeometryButton->Size = System::Drawing::Size(136, 26);
+			this->reloadGeometryButton->TabIndex = 1;
+			this->reloadGeometryButton->Text = L"Reload geometry";
+			this->reloadGeometryButton->UseVisualStyleBackColor = true;
+			this->reloadGeometryButton->Click += gcnew System::EventHandler(this, &EditorForm::reloadGeometryButton_Click);
 			// 
 			// lastSelectedList
 			// 
@@ -1069,8 +1356,15 @@ namespace CppWinForm1 {
 			this->Closing += gcnew System::ComponentModel::CancelEventHandler(this, &EditorForm::EditorForm_FormClosing);
 			this->sidePanel->ResumeLayout(false);
 			this->sidePanel->PerformLayout();
+			this->itemParamsGroupBox->ResumeLayout(false);
+			this->entityGroupBox->ResumeLayout(false);
+			this->entityGroupBox->PerformLayout();
 			this->grassGroupBox->ResumeLayout(false);
 			this->grassGroupBox->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassSizeWMax))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassSizeWMin))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassSizeHMax))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassSizeHMin))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->grassDensity))->EndInit();
 			this->paintGroupBox->ResumeLayout(false);
 			this->paintGroupBox->PerformLayout();
@@ -1108,6 +1402,7 @@ private: ref class AsyncParam
 public: UiMessageId id;
 public: System::String^ subtype;
 public: int subId;
+public: System::Windows::Forms::Control^ source;
 };
 private: System::Void SendAsyncMsgThread(System::Object^ input)
 {
@@ -1149,7 +1444,10 @@ private: System::Void SendAsyncMsgThread(System::Object^ input)
 	{
 		SelectionInfoChange change;
 		Ogre::Vector3 vparam;
+		Ogre::Vector4 v4param;
+		EditableParam eParam;
 		float fparam;
+		std::string sparam;
 
 		change.change = (SelectionInfoChange::Id)param->subId;
 
@@ -1162,6 +1460,14 @@ private: System::Void SendAsyncMsgThread(System::Object^ input)
 		{
 			vparam = { System::Decimal::ToSingle(entPosX->Value), System::Decimal::ToSingle(entPosY->Value) , System::Decimal::ToSingle(entPosZ->Value) };
 			change.data = &vparam;
+		}
+		if (change.change == SelectionInfoChange::Id::GrassSize)
+		{
+			v4param.x = System::Decimal::ToSingle(grassSizeHMin->Value);
+			v4param.y = System::Decimal::ToSingle(grassSizeHMax->Value);
+			v4param.z = System::Decimal::ToSingle(grassSizeWMin->Value);
+			v4param.w = System::Decimal::ToSingle(grassSizeWMax->Value);
+			change.data = &v4param;
 		}
 		if (change.change == SelectionInfoChange::Id::GrassDensity)
 		{
@@ -1192,6 +1498,30 @@ private: System::Void SendAsyncMsgThread(System::Object^ input)
 		{
 			fparam = grassPaingPreserveCheckbox->Checked ? 1.0f : 0.0f;
 			change.data = &fparam;
+		}
+		if (change.change == SelectionInfoChange::Id::ActiveAnimation)
+		{
+			if(param->subtype != "")
+				sparam = marshal_as<std::string>(animationsComboBox->Text);
+			change.data = &sparam;
+		}
+		if (change.change == SelectionInfoChange::Id::ParamChanged)
+		{
+			auto& info = getEditableParam(param->subtype);
+			
+			if (info.param.name.empty() || !param->source)
+				break;
+
+			if (info.param.type == EditableParam::Type::Floats)
+			{
+				auto item = (System::Windows::Forms::NumericUpDown^) param->source;
+				info.param.floats.buffer[info.index] = System::Decimal::ToSingle(item->Value);
+				eParam = info.param;
+				eParam.floats.size = info.index;
+				change.data = &eParam;
+			}
+			else
+				break;
 		}
 
 		SendMsg(UiMessageId::SelectionInfoChanged, &change);
@@ -1226,8 +1556,10 @@ private: System::Void SendAsyncMsgThread(System::Object^ input)
 	}
 	case UiMessageId::LoadLevel:
 	{
-		auto lvlName = marshal_as<std::string>(levelsComboBox->SelectedItem->ToString());
+		auto lvlName = marshal_as<std::string>(levelsComboBox->SelectedText);
 		SendMsg(UiMessageId::LoadLevel, &lvlName);
+		renderPanel->Focus();
+		break;
 	}
 	default:
 		SendMsg(param->id, nullptr);
@@ -1251,6 +1583,27 @@ private: System::Void SendAsyncMsg(UiMessageId id, const char* subtype)
 	param->id = id;
 	param->subtype = gcnew System::String(subtype);
 	param->subId = 0;
+
+	newThread->Start(param);
+}
+private: System::Void SendAsyncMsg(UiMessageId id, int subid, System::Windows::Forms::Control^ source)
+{
+	System::Threading::Thread^ newThread = gcnew System::Threading::Thread(gcnew System::Threading::ParameterizedThreadStart(this, &EditorForm::SendAsyncMsgThread));
+	auto param = gcnew AsyncParam();
+	param->id = id;
+	param->subtype = source->Name;
+	param->source = source;
+	param->subId = subid;
+
+	newThread->Start(param);
+}	 
+private: System::Void SendAsyncMsg(UiMessageId id, int subid, System::String^ data)
+{
+	System::Threading::Thread^ newThread = gcnew System::Threading::Thread(gcnew System::Threading::ParameterizedThreadStart(this, &EditorForm::SendAsyncMsgThread));
+	auto param = gcnew AsyncParam();
+	param->id = id;
+	param->subtype = data;
+	param->subId = subid;
 
 	newThread->Start(param);
 }
@@ -1368,6 +1721,8 @@ public: System::Void hideItemInfo()
 	selectionGroupBox->Hide();
 	grassGroupBox->Hide();
 	paintGroupBox->Hide();
+	entityGroupBox->Hide();
+	itemParamsGroupBox->Hide();
 }
 	
 public: System::Void setLoading(bool enabled)
@@ -1397,6 +1752,107 @@ public: System::Void setProperties(EditorProperties* info)
 	}
 }
 
+private: void addParamGroupLabel(const char* text, int height)
+{
+	auto label = (gcnew System::Windows::Forms::Label());
+
+	label->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+		static_cast<System::Byte>(0)));
+	label->Location = System::Drawing::Point(25, height);
+	label->Text = gcnew System::String(text);
+	label->Name = label->Text + L"ParamsLabel";
+	label->Size = System::Drawing::Size(330, 17);
+	label->TabIndex = 12;
+	label->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+
+	itemParamsGroupBox->Controls->Add(label);
+}
+
+private: void addEditableParam(EditableParam& param, int height)
+{
+	if (param.type != EditableParam::Type::Floats)
+		return;
+
+	auto label = (gcnew System::Windows::Forms::Label());
+	label->AutoSize = true;
+	label->Location = System::Drawing::Point(25, height);
+	label->Text = gcnew System::String(param.name.data());
+	label->Name = label->Text + L"ParamLabel";
+	label->Size = System::Drawing::Size(77, 17);
+	label->TabIndex = 3;
+	
+	itemParamsGroupBox->Controls->Add(label);
+
+	height += 18;
+
+	reportSelectionChange = false;
+
+	for (int i = 0; i < param.floats.size; i++)
+	{
+		System::Windows::Forms::NumericUpDown^ numeric;
+
+		numeric = (gcnew System::Windows::Forms::NumericUpDown());
+		numeric->DecimalPlaces = 3;
+		numeric->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+		numeric->Maximum = System::Decimal(10000);
+		numeric->Minimum = System::Decimal(-10000);
+		numeric->Size = System::Drawing::Size(75, 22);
+		numeric->TabIndex = 11;
+		numeric->ValueChanged += gcnew System::EventHandler(this, &EditorForm::editParamValueChanged);
+
+		numeric->Location = System::Drawing::Point(32 + 86 * i, height);
+		numeric->Name = gcnew System::String(param.name.data()) + L"Numeric" + System::Int32(i).ToString();
+		numeric->Increment = System::Decimal(param.floats.step);
+		numeric->Value = System::Decimal(param.floats.buffer[i]);
+
+		itemParamsGroupBox->Controls->Add(numeric);
+
+		currentEditableParams[marshal_as<std::string>(numeric->Name)] = { param,i };
+	}	
+
+	reportSelectionChange = true;
+}
+
+private: void initEditableParamsControls(std::vector<EditableParams>& params)
+{
+	int height = 45;
+
+	itemParamsGroupBox->SuspendLayout();
+	for (auto& g : params)
+	{
+		addParamGroupLabel(g.groupName.data(), height);
+		height += 17;
+
+		for (auto& p : g.params)
+		{
+			addEditableParam(p, height);
+			height += 42;
+		}
+	}
+
+	getParamsButton->Text = "Save";
+	itemParamsGroupBox->ResumeLayout();
+}
+
+private: void resetEditableParams()
+{
+	itemParamsGroupBox->Controls->Clear();
+	itemParamsGroupBox->Controls->Add(getParamsButton);
+	getParamsButton->Text = "Get";
+
+	currentEditableParams.clear();
+}
+
+public: System::Void changeItemInfo(SelectionInfoChange* info)
+{
+	if (info->change == SelectionInfoChange::Id::SendParams)
+	{
+		auto resp = (EditableParamsResponse*)info->data;
+
+		initEditableParamsControls(resp->params);
+	}
+}
+
 public: System::Void showItemInfo(SelectionInfo* info)
 {
 	//selectionGroupBox->BringToFront();
@@ -1418,24 +1874,75 @@ public: System::Void showItemInfo(SelectionInfo* info)
 
 	if (info->names.empty())
 	{
-		if(info->subtype == SelectionInfo::Grass)
-			addToSelectionHistory(selectionNameButton->Text, "Grass");
-		else
-			addToSelectionHistory(selectionNameButton->Text, "Entity");
+		addToSelectionHistory(selectionNameButton->Text, getItemTypeStr(info->type));
 	}
 
 	reportSelectionChange = false;
-	bool showGrassInfo = false;
-	if (info->subtype == SelectionInfo::Grass && info->names.empty())
+	bool showGrassGroup = false;
+	bool showEntityGroup = false;
+	bool showParamsGroup = info->hasParams;
+
+	resetEditableParams();
+	
+	if (info->typeData)
 	{
-		showGrassInfo = true;
+		if (info->type == ItemType::Grass)
+		{
+			auto subinfo = (GrassSelectionInfo*)info->typeData;
 
-		auto subinfo = (GrassSelectionInfo*)info->subtypeData;
+			grassDensity->Value = System::Decimal(subinfo->density);
+			grassSizeHMin->Value = System::Decimal(subinfo->minHSize);
+			grassSizeHMax->Value = System::Decimal(subinfo->maxHSize);
+			grassSizeWMin->Value = System::Decimal(subinfo->minWSize);
+			grassSizeWMax->Value = System::Decimal(subinfo->maxWSize);
+			grassPaingPreserveCheckbox->Checked = subinfo->preserveMask;
 
-		grassDensity->Value = System::Decimal(subinfo->density);
-		grassPaingPreserveCheckbox->Checked = subinfo->preserveMask;
+			grassGroupBox->BringToFront();
+			showGrassGroup = true;
+		}
 
-		grassGroupBox->BringToFront();
+		if (info->type == ItemType::Entity)
+		{
+			auto subinfo = (EntitySelectionInfo*)info->typeData;
+
+			animationsComboBox->Items->Clear();
+			animationsComboBox->Text = "";
+			for (auto& a : subinfo->animNames)
+			{
+				animationsComboBox->Items->Add(gcnew System::String(a.data()));
+			}
+
+			if (!subinfo->animNames.empty())
+				animationsComboBox->SelectedIndex = 0;
+
+			entityGroupBox->BringToFront();
+			showEntityGroup = true;
+
+			/*EditableParamsResponse resp;
+			//if (data->change == SelectionInfoChange::Id::GetParams)
+			{
+				auto& paramsData = resp.params;
+
+				EditableParams params;
+				params.groupName = "Hello";
+
+				for (size_t i = 0; i < 15; i++)
+				{
+					EditableParam param;
+					param.size = 2;
+					param.buffer[0] = 5;
+					param.buffer[1] = 10;
+					param.group = params.groupName;
+					param.step = 0.1;
+					param.name = "World" + std::to_string(i);
+					params.params.push_back(param);
+				}
+
+				paramsData.push_back(params);
+			}
+
+			initEditableParamsControls(resp.params);*/
+		}
 	}
 
 	bool showPaintInfo = info->usePaint;
@@ -1443,8 +1950,6 @@ public: System::Void showItemInfo(SelectionInfo* info)
 	{
 		paintAdd->Checked = false;
 		paintRemove->Checked = false;
-
-		//paintGroupBox->BringToFront();
 	}
 
 	entPosX->Value = System::Decimal(info->pos.x);
@@ -1457,8 +1962,10 @@ public: System::Void showItemInfo(SelectionInfo* info)
 
 	reportSelectionChange = true;
 
-	grassGroupBox->Visible = showGrassInfo;
 	paintGroupBox->Visible = showPaintInfo;
+	grassGroupBox->Visible = showGrassGroup;
+	entityGroupBox->Visible = showEntityGroup;
+	itemParamsGroupBox->Visible = showParamsGroup;
 	selectionGroupBox->Show();
 }
 
@@ -1564,7 +2071,7 @@ private: System::Void sceneListButton_Click(System::Object^  sender, System::Eve
 
 	for (auto group : data.groups)
 	{
-		auto id = sceneListTree->Nodes->Add(gcnew TreeNode(gcnew System::String(group.name.data())));
+		auto id = sceneListTree->Nodes->Add(gcnew TreeNode(getItemTypeStr(group.type)));
 
 		for (auto item : group.items)
 		{
@@ -1608,6 +2115,22 @@ private: System::Void grassDensity_ValueChanged(System::Object^  sender, System:
 		return;
 
 	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::GrassDensity);
+}
+private: System::Void grassSizeHMin_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (!reportSelectionChange)
+		return;
+
+SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::GrassSize);
+}
+private: System::Void grassSizeHMax_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (!reportSelectionChange)
+		return;
+
+	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::GrassSize);
+}
+private: System::Void grassSizeWMin_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+}
+private: System::Void grassSizeWMax_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 }
 private: System::Void paintAdd_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 	if (!reportSelectionChange || paintAdd->Checked == false)
@@ -1669,5 +2192,50 @@ private: System::Void lastSelectedList_SelectedIndexChanged(System::Object^  sen
 	}
 }
 
+private: System::Void playAnimationButton_Click(System::Object^  sender, System::EventArgs^  e) {
+
+	if (animationsComboBox->Text != "")
+	{
+		SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::ActiveAnimation, animationsComboBox->Text);
+	}
+}
+
+private: System::Void stopAnimationButton_Click(System::Object^  sender, System::EventArgs^  e) {
+
+	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::ActiveAnimation, "");
+}
+private: System::Void reloadShadersbutton_Click(System::Object^  sender, System::EventArgs^  e) {
+	SendAsyncMsg(UiMessageId::ReloadShaders);
+}
+private: System::Void reloadGeometryButton_Click(System::Object^  sender, System::EventArgs^  e) {
+	SendAsyncMsg(UiMessageId::ReloadGeometry);
+}
+
+private: System::Void editParamValueChanged(System::Object^  sender, System::EventArgs^  e) {
+
+	if (!reportSelectionChange)
+		return;
+
+	auto ctrl = (System::Windows::Forms::Control^) sender;
+	SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::ParamChanged, ctrl);
+}
+
+private: System::Void getParamsButton_Click(System::Object^  sender, System::EventArgs^  e) {
+
+	if (getParamsButton->Text == "Get")
+	{
+		SelectionInfoChange change;
+		EditableParamsResponse resp;
+		change.change = SelectionInfoChange::Id::GetParams;
+		change.data = &resp;
+		SendMsg(UiMessageId::SelectionInfoChanged, &change);
+		
+		initEditableParamsControls(resp.params);
+	}
+	else if (getParamsButton->Text == "Save")
+	{
+		SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::SaveParams);
+	}
+}
 };
 }

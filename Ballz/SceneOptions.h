@@ -12,5 +12,5 @@ public:
 
 	void editScene(SceneSettingsChange* change);
 
-
+	void reloadShaders();
 };

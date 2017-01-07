@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GrassDensityMap.h"
 #include "GeometryManager.h"
+#include "GUtils.h"
 
 GrassDensityMap::GrassDensityMap()
 {
@@ -46,9 +47,22 @@ void GrassDensityMap::resize(GrassInfo& grass)
 	if (old.data == nullptr)
 		copyDensity(grass);
 	else
+	{
 		grid.import(old);
+		apply(grass);
+	}
 
 	delete old.data;
+
+	grid.debug();
+
+	/*if (grid.data == nullptr)
+	{
+		auto b = grass.bake.layer->mapBounds;
+		grid.init(b.left, b.right, b.top, b.bottom);
+	}
+
+	apply(grass);*/
 }
 
 void GrassDensityMap::relocate(GrassInfo& grass)
@@ -160,23 +174,44 @@ void GrassDensityMap::WorldGrid::fill(float value)
 		}
 }
 
-void GrassDensityMap::WorldGrid::import(WorldGrid& from)
+void GrassDensityMap::WorldGrid::debug()
 {
+	GUtils::DebugPrint("grid start", true);
 	float step = 1 / (float)pixelsPerUnit;
 
 	for (int x = 0; x < rows; x++)
 	{
+		std::string line;
+
 		for (int y = 0; y < cols; y++)
 		{
-			float wpx = minX + x*step;
-			float wpy = minY + y*step;
+			line += std::to_string((int)(data[rows*y + x] * 10)) + " ";
+		}
 
-			if (from.inside(wpx, wpy))
+		GUtils::DebugPrint(line, true);
+	}
+}
+
+void GrassDensityMap::WorldGrid::import(WorldGrid& from)
+{
+	float step = 1 / (float)pixelsPerUnit;
+
+	for (int x = 0; x < from.rows; x++)
+	{
+		for (int y = 0; y < from.cols; y++)
+		{
+			float wpx = from.minX + x*step;
+			float wpy = from.minY + y*step;
+
+			if (inside(wpx, wpy))
 			{
-				data[rows*y + x] = from.read(wpx, wpy);
+				read(wpx, wpy) = from.data[from.rows*y + x];
+				//data[rows*y + x] = from.read(wpx, wpy);
 			}
 		}
 	}
+
+	debug();
 }
 
 void GrassDensityMap::WorldGrid::init(float _minX, float _maxX, float _minY, float _maxY)

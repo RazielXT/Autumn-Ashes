@@ -6,10 +6,11 @@ int Edit::idCounter = 5000;
 EditVariable::EditVariable(std::string name_, Ogre::ColourValue color, float step_)
 {
 	name = name_;
-	size = 3;
+	size = 4;
 	buffer[0] = color.r;
 	buffer[1] = color.g;
 	buffer[2] = color.b;
+	buffer[3] = color.a;
 
 	step = step_;
 }

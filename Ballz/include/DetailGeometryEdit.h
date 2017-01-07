@@ -31,7 +31,7 @@ struct DetailGeometryEdit : public MaterialEdit
 	void merge(DetailGeometryEdit& r, bool addNotExisting);
 
 	static DetailGeometryEdit* query();
-	static void applyChanges(std::map < std::string, DetailGeometryEdit >& changes);
+	static void applyAllChanges(std::map < std::string, DetailGeometryEdit >& changes);
 
 protected:
 

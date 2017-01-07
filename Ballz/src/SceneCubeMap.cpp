@@ -84,7 +84,6 @@ Ogre::MaterialPtr SceneCubeMap::applyCubemap(Ogre::MaterialPtr mat, Ogre::Vector
 	if (!r)
 		return mat;
 
-
 	for (auto appliedMat : appliedMaterials)
 	{
 		if (appliedMat.matOriginalName == mat->getName() && appliedMat.cm == r)
@@ -94,8 +93,8 @@ Ogre::MaterialPtr SceneCubeMap::applyCubemap(Ogre::MaterialPtr mat, Ogre::Vector
 	//create new
 	auto newMat = mat->clone(mat->getName() + "_CM" + std::to_string(matId++));
 
-	auto pass = newMat->getTechnique(0)->getPass(1);
-	Ogre::TextureUnitState* t = pass->getTextureUnitState("envCubeMap");
+	auto pass = newMat->getTechnique(0)->getPass(newMat->getTechnique(0)->getNumPasses()-1);
+	Ogre::TextureUnitState* t = pass->getTextureUnitState("reflectionMap");
 	if (r->detectedEdited)
 		t->setTextureName(r->getTextureFullName() + ".dds", Ogre::TEX_TYPE_CUBE_MAP);
 	else

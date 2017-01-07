@@ -24,7 +24,7 @@ public:
 	virtual void customAction(std::string name) override;
 
 	static OptimizedGroupEdit* query();
-	static void applyChanges(const std::map < std::string, OptimizedGroupEdit >& changes);
+	static void applyAllChanges(const std::map < std::string, OptimizedGroupEdit >& changes);
 
 protected:
 

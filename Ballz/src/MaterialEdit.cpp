@@ -15,18 +15,21 @@ MaterialEdit* MaterialEdit::query()
 		if (node && node->numAttachedObjects() > 0)
 		{
 			auto ent = static_cast<Ogre::Entity*>(node->getAttachedObject(0));
-			auto mat = ent->getSubEntity(0)->getMaterial();
 
-			if (mat->getTechnique(0)->getNumPasses() > 0)
+			if (editableEntity(ent))
 			{
-				auto edit = new MaterialEdit(ent);
-
-				return edit;
+				return new MaterialEdit(ent);
 			}
 		}
 	}
 
 	return nullptr;
+}
+
+bool MaterialEdit::editableEntity(Ogre::Entity* ent)
+{
+	auto mat = ent->getSubEntity(0)->getMaterial();
+	return mat->getTechnique(0)->getNumPasses() > 0;
 }
 
 MaterialEdit::MaterialEdit(Ogre::Entity* ent)
@@ -35,7 +38,7 @@ MaterialEdit::MaterialEdit(Ogre::Entity* ent)
 	materialPtr = ent->getSubEntity(0)->getMaterial();
 
 	loadMaterial();
-	changedMaterial = Global::gameMgr->sceneEdits.loadSavedMaterialChanges(*this, entity->getName());
+	changedMaterial = Global::gameMgr->sceneEdits.loadMaterialChanges(*this, entity->getName());
 
 	rows = { { ent->getName(),EditRow::Caption } , { originName,EditRow::Caption },{ "Save",EditRow::Action },{ "VS",EditRow::Params },{ "PS",EditRow::Params } };
 }
@@ -56,27 +59,20 @@ EditVariables* MaterialEdit::getParams(const std::string& row)
 
 void MaterialEdit::editChanged(EditVariable& var, const std::string& row)
 {
+	var.edited = true;
+
+	if (materialPtr.isNull())
+		return;
+
+	materialChanged();
+
 	if (row == "PS")
 	{
-		var.edited = true;
-
-		if (materialPtr.isNull())
-			return;
-
-		materialChanged();
-
 		int pass = materialPtr->getTechnique(0)->getNumPasses() - 1;
 		materialPtr->getTechnique(0)->getPass(pass)->getFragmentProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
 	}
 	if (row == "VS")
 	{
-		var.edited = true;
-
-		if (materialPtr.isNull())
-			return;
-
-		materialChanged();
-
 		int pass = materialPtr->getTechnique(0)->getNumPasses() - 1;
 		materialPtr->getTechnique(0)->getPass(pass)->getVertexProgramParameters()->setNamedConstant(var.name, var.buffer, 1, var.size);
 	}
@@ -87,9 +83,7 @@ void MaterialEdit::customAction(std::string name)
 	if (name == "Save")
 	{
 		if (changedMaterial)
-			Global::gameMgr->sceneEdits.addMaterialEdit(*this, entity->getName());
-		else
-			Global::gameMgr->sceneEdits.removeMaterialEdit(entity->getName());
+			Global::gameMgr->sceneEdits.saveMaterialEdit(entity->getName());
 	}
 }
 
@@ -101,7 +95,7 @@ void MaterialEdit::merge(MaterialEdit& r, bool addNotExisting)
 	mergeParams(r.vsVariables, vsVariables, addNotExisting);
 }
 
-void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& changes)
+void MaterialEdit::applyAllChanges(const std::map < std::string, MaterialEdit >& changes)
 {
 	for (auto& ent : changes)
 	{
@@ -111,7 +105,11 @@ void MaterialEdit::applyChanges(const std::map < std::string, MaterialEdit >& ch
 			auto curMat = e->getSubEntity(0)->getMaterial();
 			auto baseMatName = ent.second.originName.substr(0, ent.second.originName.find_first_of('_'));
 
-			if (SUtils::startsWith(curMat->getName(), baseMatName))
+			auto curName = curMat->getName();
+			if (curName.find("_CM"))
+				curName = curName.substr(0, curName.find("_CM"));
+
+			if (SUtils::startsWith(curName, baseMatName) || SUtils::startsWith(baseMatName, curName))
 				//if (ent.second.originName == curMat->getName())
 			{
 				auto newMat = curMat->clone(curMat->getName() + std::to_string(idCounter++));
@@ -152,8 +150,10 @@ void MaterialEdit::materialChanged()
 		materialPtr = materialPtr->clone(materialPtr->getName() + std::to_string(idCounter++));
 
 		if (entity)
-			entity->setMaterial(materialPtr);
+			entity->getSubEntity(0)->setMaterial(materialPtr);
 	}
+
+	Global::gameMgr->sceneEdits.addMaterialEdit(*this, entity->getName());
 }
 
 void MaterialEdit::resetMaterial()
@@ -163,7 +163,7 @@ void MaterialEdit::resetMaterial()
 	materialPtr = Ogre::MaterialManager::getSingleton().getByName(originName);
 
 	if (entity)
-		entity->setMaterialName(originName);
+		entity->getSubEntity(0)->setMaterial(materialPtr);
 }
 
 std::vector<EditVariable> MaterialEdit::generateVsParams(Ogre::MaterialPtr matPtr)
@@ -186,6 +186,8 @@ std::vector<EditVariable> MaterialEdit::generateShaderEditParams(Ogre::GpuProgra
 {
 	std::vector<EditVariable> vars;
 	auto& l = gpuParams->getConstantDefinitions();
+	auto& al = gpuParams->getAutoConstantList();
+
 	bool skip = true;
 
 	for (auto c : l.map)
@@ -195,12 +197,23 @@ std::vector<EditVariable> MaterialEdit::generateShaderEditParams(Ogre::GpuProgra
 
 		if (c.second.constType <= 4)
 		{
-			EditVariable var;
-			var.name = c.first;
-			var.size = c.second.constType;
-			memcpy(var.buffer, gpuParams->getFloatPointer(c.second.physicalIndex), 4 * var.size);
+			bool autoConstant = false;
 
-			vars.push_back(var);
+			for (auto& ac : al)
+			{
+				if(ac.physicalIndex == c.second.physicalIndex)
+					autoConstant = true;
+			}
+
+			if (!autoConstant)
+			{
+				EditVariable var;
+				var.name = c.first;
+				var.size = c.second.constType;
+				memcpy(var.buffer, gpuParams->getFloatPointer(c.second.physicalIndex), 4 * var.size);
+
+				vars.push_back(var);
+			}
 		}
 	}
 

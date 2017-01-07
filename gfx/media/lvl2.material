@@ -1,0 +1,321 @@
+import refl_material_dynamic_op from "general_refl.material"
+import glass_material_dynamic_op from "general_glass.material"
+
+import material_water_dynamic from "water_dynamic.material"
+import material_water_dynamic_sphere from "water_dynamic.material"
+import material_water_dynamic_rtt from "water_dynamic.material"
+
+import material_water_static from "water_static.material"
+import material_transparent from "general_transparent.material"
+
+import 2tProj_vc_material_static from "general_2texProj_vc.material"
+import 2t_vc_material_static from "general_2tex_vc.material"
+import 2t_material_static from "general_2tex.material"
+import 1tAT_material_static from "general_1texAT.material" 
+import 1t_material_static from "general_1tex.material" 
+import 1tEnv_material_static from "general_1texEnv.material" 
+import 1t_vc_material_static from "general_1tex_vc.material" 
+import leaf_material_dynamic_op from "general_Leaf.material"
+import billboard_material_op from "general_Billboard.material"
+
+import soft_transparent_material from "soft_smoke.material"
+
+material  smokeMat: soft_transparent_material
+{
+	set_texture_alias diffuseMap smoke_PNG966.png
+}
+
+material underwaterSand : 2tProj_vc_material_static
+{
+	set $uvScale "1"
+	set $uvSpreadScale "0.5" 
+	set $uv2Scale "1" 
+
+	//set_texture_alias dispMap wood0_DISP.png
+	set_texture_alias spreadMap spread.png
+	
+	set_texture_alias diffuseMap2 terr_dirt-grass.jpg
+	set_texture_alias normalMap2 grass_diffuse_NORM.tga
+	
+	set_texture_alias diffuseMap marble.png
+	set_texture_alias normalMap marble_NORM.tga
+
+	set_texture_alias projMap Caustics_tex.png
+	
+	set $brightness "0.1"
+	set $diffuseCol "1 1 1"
+	set $specularCol "0.01 0.01 0.005"
+}
+
+material gateTransparent : material_transparent
+{
+	set_texture_alias diffuseMap water.png
+	set_texture_alias normalMap 05_NORMAL.jpg
+
+	set $difUV "1.0 1.0"
+	set $diffuseCol "0.5 0.5 0.6"
+	set $specularCol "10.967 10.97 10.98"
+	set $shininess "128"
+}
+
+material waterWaves : material_water_dynamic_sphere
+{
+	set_texture_alias wavesMap waves.jpg
+	set_texture_alias wavesNormalMap waves_NORM.tga
+	set_texture_alias foamMap foam.png
+	set_texture_alias normalMap 05_NORMAL.jpg
+	
+	set $scaleUv "3 3"
+    set $speedUV "0.3"
+	set $waveSizeSpeedNormalW "2.5 0.05 1"
+}
+
+material waterSheer : material_water_dynamic_rtt
+{
+	set_texture_alias wavesMap waves.jpg
+	set_texture_alias wavesNormalMap waves_NORM.tga
+	set_texture_alias foamMap foam.png
+	set_texture_alias normalMap 05_NORMAL.jpg
+
+	set $speedUV "0.01"
+	set $waveSizeSpeedNormalW "0 0 0"
+}
+
+material waterSheer2 : material_water_static
+{
+	set_texture_alias diffuseMap water.png
+	//set_texture_alias diffuseMap 05_DIFFUSE.jpg
+	set_texture_alias foamMap foam.png
+	set_texture_alias normalMap water_NORM.tga
+
+	set $difUV "1.0 1.0"
+	set $diffuseCol "0.5 0.5 0.6"
+	set $specularCol "10.967 10.97 10.98"
+	set $shininess "128"
+    set $speedUV "2"
+}
+
+material fallenLeaves : 1t_material_static 
+{
+	set_texture_alias diffuseMap LeavesDead0060_7_S.jpg
+	set_texture_alias normalMap LeavesDead0060_7_S_NORM.tga
+	set_texture_alias dispMap LeavesDead0060_7_S_DISP.bmp
+	//set_texture_alias normalDetailMap 05_NORMAL.jpg
+	
+	set $uvScale "0.75"
+	set $detailScale "5"
+	
+	set $diffuseCol "1 1 1"
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	set $shininess "16"
+}
+
+material whiteConcreteMat : 1t_material_static 
+{
+	set_texture_alias diffuseMap ConcreteNew0007_2_S.bmp
+	set_texture_alias normalMap ConcreteNew0007_2_S_NORM.tga
+	//set_texture_alias dispMap NZjZrKrvsTA_DISP.bmp
+	//set_texture_alias normalDetailMap 05_NORMAL.jpg
+	
+	set $uvScale "0.75"
+	set $detailScale "5"
+	
+	set $diffuseCol "1 1 1"
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	set $shininess "16"
+}
+
+material concreteMat : 1tEnv_material_static 
+{
+	set_texture_alias diffuseMap ConcreteNew0007_2_S.bmp
+	set_texture_alias normalMap ConcreteNew0007_2_S_NORM.tga
+	//set_texture_alias dispMap NZjZrKrvsTA_DISP.bmp
+	//set_texture_alias normalDetailMap 05_NORMAL.jpg
+	
+	set $uvScale "0.75"
+	set $detailScale "5"
+	
+	set $diffuseCol "1 1 1"
+	set $specularCol "0.02 0.02 0.05"
+	set $brightness "0.005"
+	set $shininess "16"
+}
+
+material crow : 1tAT_material_static
+{
+	set_texture_alias diffuseMap vorona_256.tif
+	set_texture_alias normalDetailMap rock3_NORM_NORM.tga
+
+	set $diffuseCol "1 1 1"
+	set $brightness "0.3"
+	set $specularCol "0.01036 0.0101 0.0152"
+	set $shininess "16"
+	set $detailScale "10"
+}
+
+material  branch_summerpng: leaf_material_dynamic_op
+{
+	set_texture_alias diffuseMap bush_a.tga
+	set_texture_alias normalMap bush_a_NORM.tga
+
+	set $enlighten "1.4"
+	set $specularCol "1 1 1"
+}
+
+material  bushMat: leaf_material_dynamic_op
+{
+	set_texture_alias diffuseMap bush.dds
+	set_texture_alias normalMap bush_NORM.tga
+
+	set $enlighten "1.5"
+	set $diffuseCol "0.8 0.8 0.75"
+	set $vcWeight "0.5"
+	set $specularCol "1 1 0.5"
+}
+
+material  branch_summer2png: leaf_material_dynamic_op
+{
+	set_texture_alias diffuseMap bush_a.tga
+	set_texture_alias normalMap bush_a_NORM.tga
+	
+	set $diffuseCol "2.0 1.0 0.5"
+	set $enlighten "1"
+	set $specularCol "0.1046281215 0.13446281215 0.10546281215"
+}
+
+material wood03png_ : 1t_vc_material_static
+{
+	set $uvScale "1"
+	set $uvSpreadScale "0.5" 
+	set $uv2Scale "1" 
+	set $uvMinMaxDetailScale "3.7 0.15" 
+
+	set_texture_alias diffuseMap bark_deciduous.dds
+	set_texture_alias normalMap rock3_NORM_NORM.tga
+	set_texture_alias normalDetailMap rock3_NORM_NORM.tga
+	
+	set $diffuseCol "1 1 1"
+	set $specularCol "0.1 0.1 0.1"
+}
+
+material wood1Mat : 1t_material_static 
+{
+	set_texture_alias diffuseMap bark_deciduous.dds
+	set_texture_alias normalMap wood_NORM.tga
+
+	set $difUV "1 1"
+	set $diffuseCol "1 1 1"
+	set $brightness "0.05"
+	set $specularCol "0.1036 0.101 0.152"
+	set $shininess "32"
+}
+
+material wood03png2 : 1t_material_static 
+{
+	set_texture_alias diffuseMap bark_deciduous.dds
+	set_texture_alias normalMap wood_NORM.tga
+
+	set $difUV "1 1"
+	set $diffuseCol "1 1 1"
+	set $brightness "0.05"
+	set $specularCol "0.1036 0.101 0.152"
+	set $shininess "32"
+}
+
+material wood00png : 1t_material_static 
+{
+	set_texture_alias diffuseMap bark_deciduous.dds
+	set_texture_alias normalMap wood_NORM.tga
+
+	set $difUV "1 1"
+	set $diffuseCol "1 1 1"
+	set $brightness "0.05"
+	set $specularCol "0.1036 0.101 0.152"
+	set $shininess "32"
+}
+
+material road1Mat : wood00png
+{
+}
+
+material steel1Mat : wood00png
+{
+}
+ 
+material BushMat : wood00png
+{
+}
+
+material building4Mat : wood00png
+{
+}
+
+material marble2Mat : wood00png
+{
+}
+
+material housesMat : wood00png
+{
+}
+
+material wood07png : 1t_material_static 
+{
+	set_texture_alias diffuseMap wood.png
+	set_texture_alias normalMap wood_NORM.tga
+
+	set $difUV "1 1"
+	set $diffuseCol "1 1 1"
+	set $brightness "0.05"
+	set $specularCol "0.1036 0.101 0.152"
+	set $shininess "32"
+}
+
+material terrainGrassRock : 2t_material_static
+{
+	set $uvScale "4"
+	set $uv2Scale "2"
+	
+	set $uvSpreadScale "2"
+	
+	set_texture_alias diffuseMap grass_diffuse.png
+	set_texture_alias normalMap grass_diffuse_NORM.tga
+
+	set_texture_alias diffuseMap2 rock2.png
+	set_texture_alias normalMap2 rock2_NORM.tga
+	set_texture_alias normalDetailMap rock3_NORM_NORM.tga
+	set_texture_alias dispMap rock2_DISP.png
+	set_texture_alias spreadMap spread.png
+
+	set $diffuseCol "1 1 1"
+	set $specularCol "0.106281215 0.106281215 0.15081215"
+	set $specular2Weight "0"
+	
+	set $brightness "0.015"
+	set $shininess "64"
+}
+
+material rockWall : 2t_vc_material_static
+{
+	set $uvScale "2"
+	set $uv2Scale "2"
+
+	set_texture_alias diffuseMap 3.jpg
+	set_texture_alias normalMap 3_NORM.tga
+	set_texture_alias dispMap 3_DISP.bmp
+
+	set_texture_alias normalDetailMap ConcreteNew0007_2_S_NORM.tga
+	
+	set_texture_alias spreadMap spread.png
+
+	set_texture_alias diffuseMap2 3.jpg
+	set_texture_alias normalMap2 3_NORM.tga
+	set $diffuseCol "1 1 1"
+
+	set $specularCol "0.106281215 0.106281215 0.15081215"
+	set $specular2Weight "0"
+	
+	set $brightness "0.015"
+	set $shininess "64"
+}

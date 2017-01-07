@@ -98,12 +98,6 @@
     <ClCompile Include="src\EventTask.cpp">
       <Filter>Files\Tasks</Filter>
     </ClCompile>
-    <ClCompile Include="src\HandFromGroundReaction.cpp">
-      <Filter>Files\Tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\HandGripReaction.cpp">
-      <Filter>Files\Tasks</Filter>
-    </ClCompile>
     <ClCompile Include="src\LoadNextPart.cpp">
       <Filter>Files\Tasks</Filter>
     </ClCompile>
@@ -374,7 +368,6 @@
     <ClCompile Include="model\PlayerModel.cpp">
       <Filter>Files\Player\Model</Filter>
     </ClCompile>
-    <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EditorControl.cpp">
       <Filter>Files\Editor</Filter>
     </ClCompile>
@@ -408,6 +401,15 @@
     <ClCompile Include="EditorPainter.cpp">
       <Filter>Files\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="AnimationLoop.cpp">
+      <Filter>Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCamera.cpp">
+      <Filter>Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorParticle.cpp">
+      <Filter>Files\Editor\Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -432,12 +434,6 @@
       <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\EventTask.h">
-      <Filter>Files\Tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\HandFromGroundTask.h">
-      <Filter>Files\Tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\HandGripTask.h">
       <Filter>Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="include\lvl1Tasks.h">
@@ -810,6 +806,12 @@
       <Filter>Files\Editor</Filter>
     </ClInclude>
     <ClInclude Include="PaintedItem.h">
+      <Filter>Files\Editor\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationLoop.h">
+      <Filter>Files\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorParticle.h">
       <Filter>Files\Editor\Items</Filter>
     </ClInclude>
   </ItemGroup>

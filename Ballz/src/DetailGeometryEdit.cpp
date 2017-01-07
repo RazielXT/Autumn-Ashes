@@ -111,7 +111,7 @@ DetailGeometryEdit* DetailGeometryEdit::query()
 	return edit;
 }
 
-void DetailGeometryEdit::applyChanges(std::map < std::string, DetailGeometryEdit >& changes)
+void DetailGeometryEdit::applyAllChanges(std::map < std::string, DetailGeometryEdit >& changes)
 {
 	for (auto& savedDg : changes)
 	{

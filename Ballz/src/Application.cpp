@@ -58,11 +58,6 @@ void Application::defineResources()
 			typeName = i->first;
 			archName = i->second;
 			ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
-
-			if (archName.find("levels") != std::string::npos)
-			{
-				ResourceGroupManager::getSingleton().addResourceLocation(archName + "/cubemaps", typeName, secName);
-			}
 		}
 	}
 

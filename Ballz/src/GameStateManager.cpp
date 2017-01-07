@@ -104,8 +104,6 @@ void GameStateManager::switchToLevel(int lvl)
 	gameState = lvl == 0 ? MENU : GAME;
 #endif
 
-	lastLVL = lvl;
-
 	if (Global::player)
 	{
 		delete Global::player;
@@ -114,12 +112,17 @@ void GameStateManager::switchToLevel(int lvl)
 
 	clearLevel();
 
+	lastLVL = lvl;
+
 	if (gameState == GAME)
 	{
 		Global::player = new Player(&wMaterials);
 	}
 
 	auto& lvlInfo = levels[lvl];
+	ResourceGroupManager::getSingleton().addResourceLocation(getCurrentLvlPath(), "FileSystem", "Level");
+	ResourceGroupManager::getSingleton().addResourceLocation(getCurrentLvlPath() + "cubemaps", "FileSystem", "Level");
+	ResourceGroupManager::getSingleton().initialiseResourceGroup("Level");
 
 	GameScene::loadScene(getCurrentLvlScenePath());
 
@@ -133,6 +136,7 @@ void GameStateManager::switchToLevel(int lvl)
 
 	//Global::ppMgr->setColorGradingPreset(lvlInfo.lut);
 	Global::ppMgr->fadeIn(Vector3(0, 0, 0), 2.f, true);
+	Global::ppMgr->setAutoGodraySunDirection();
 
 #ifdef EDITOR
 	Global::editor->uiHandler.sendMsg(UiMessage { UiMessageId::EndLoading });
@@ -304,4 +308,9 @@ void GameStateManager::clearLevel()
 	particleMgr.clear();
 
 	Global::nWorld->setWorldSize(Vector3(-15000, -500, -15000), Vector3(15000, 2000, 15000));
+
+	if (lastLVL != -1)
+	{
+		ResourceGroupManager::getSingleton().destroyResourceGroup("Level");
+	}
 }

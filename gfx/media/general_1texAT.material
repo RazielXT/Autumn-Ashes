@@ -1,0 +1,110 @@
+material 1tAT_material_static
+{
+    set $diffuseCol "1 1 1"
+	set $specular2Weight "1"
+    set $specularCol "1 1 1"
+    set $shininess "32"
+    set $brightness "0.5"  
+
+	set $uvScale "1"
+	set $detailScale "5" 
+	set $alphaTest "0.95" 
+	
+    technique
+    {
+        
+		pass
+		{
+			lighting off
+			colour_write off
+
+			vertex_program_ref myvs_vs
+		    {
+		    }
+
+		    fragment_program_ref myps_ps
+            {
+			 	param_named alphaTest float $alphaTest
+            }
+
+			texture_unit diffuseMap
+            {
+			// filtering anisotropic
+			// max_anisotropy 8
+
+                texture white.bmp
+            }
+		}
+
+        pass
+        {
+
+			depth_write off
+            vertex_program_ref diffuse_vs_1texAT
+            {
+            }
+
+            fragment_program_ref diffuse_ps_1texAT
+            {
+				param_named uvScale float $uvScale
+				param_named detailScale float $detailScale
+				param_named alphaTest float $alphaTest
+				
+				param_named specular2Weight float $specular2Weight
+            }
+
+
+            diffuse $diffuseCol
+            specular $specularCol $brightness $shininess
+            ambient 0 0 0 0
+
+            texture_unit diffuseMap
+            {
+		//filtering trilinear
+                texture white.bmp
+            }
+  
+            texture_unit normalMap
+            {
+//filtering trilinear
+		     texture flat_n.png
+            }
+
+		 texture_unit shadow_tex0
+		 {
+			filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+		
+	       texture_unit shadow_tex1
+		 {
+filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+
+	       texture_unit shadow_tex2
+		 {
+filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+
+		texture_unit shadow_tex3
+		 {
+filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+
+		 texture_unit normalDetailMap
+		 {
+			texture flat_n.png
+		 }
+		 
+        }		
+
+    }
+}
+

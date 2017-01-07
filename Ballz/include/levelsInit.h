@@ -11,6 +11,7 @@
 #include "OgreProgressiveMeshGenerator.h"
 #include "OgreAbsoluteLodStrategy.h"
 #include "OgreDistanceLodStrategy.h"
+#include "..\AnimationLoop.h"
 
 using namespace Ogre;
 
@@ -41,29 +42,6 @@ void createTestLevel()
 
 	new CrowWatch();
 }
-
-class AnimationLoop : public EventTask
-{
-public:
-
-	AnimationLoop(Ogre::Entity* e, std::string anim)
-	{
-		state = e->getAnimationState(anim);
-		state->setLoop(true);
-		state->setEnabled(true);
-	}
-
-	//~Lvl2Update ();
-	bool update(Ogre::Real tslf)
-	{
-		state->addTime(tslf);
-
-		return true;
-	}
-
-private:
-	Ogre::AnimationState* state;
-};
 
 void createTestLevel2()
 {

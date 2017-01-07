@@ -35,3 +35,8 @@ Ogre::ParticleSystem* ParticleManager::getClosestParticle()
 	return ps;
 }
 
+std::vector<Ogre::ParticleSystem*> ParticleManager::getAllParticles()
+{
+	return particles;
+}
+

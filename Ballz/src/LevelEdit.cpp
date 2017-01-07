@@ -128,7 +128,7 @@ void LevelEdit::generateParams()
 	mergeDefaults(temp, ppVariables);
 
 	temp.push_back({ "Ambient", level.ambientColor, 0.025f });
-	temp.push_back({ "FogColor", level.fogColor, 0.025f });
+	temp.push_back({ "FogColor", Ogre::Vector4(level.fogColor.r, level.fogColor.g, level.fogColor.b, level.fogColor.a), 0.025f });
 	temp.push_back({ "FogStartEnd", level.fogStartDistance, level.fogEndDistance});
 	temp.push_back({ "SunColor", level.sunColor, 0.025f });
 	mergeDefaults(temp, envVariables);
@@ -169,7 +169,7 @@ void LevelEdit::applySceneEdit(EditVariable& var)
 	}
 	if (var.name == "FogColor")
 	{
-		level.fogColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2]);
+		level.fogColor = Ogre::ColourValue(var.buffer[0], var.buffer[1], var.buffer[2], var.buffer[3]);
 
 		applyFog();
 	}

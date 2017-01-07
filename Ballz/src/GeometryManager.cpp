@@ -114,11 +114,11 @@ void GeometryManager::bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::Te
 	auto shSetup = Global::sceneMgr->getShadowCameraSetup();
 	PSSMShadowCameraSetup2* pssmSetup = (PSSMShadowCameraSetup2*)shSetup.get();
 
-	Ogre::PSSMShadowCameraSetup2::SplitPointList splitPointList = pssmSetup->getSplitPoints();
+	/*Ogre::PSSMShadowCameraSetup2::SplitPointList splitPointList = pssmSetup->getSplitPoints();
 	auto origSplit = splitPointList[pssmSetup->getSplitCount()];
 	auto bestSplit = std::max(origSplit, std::max(info.size.x, info.size.y));
 	splitPointList[pssmSetup->getSplitCount()] = bestSplit;
-	pssmSetup->setSplitPoints(splitPointList);
+	pssmSetup->setSplitPoints(splitPointList);*/
 
 	auto v = cam->getViewport();
 	uint32_t flag = VisibilityFlag_Normal;
@@ -144,8 +144,8 @@ void GeometryManager::bakeLight(LightBakeInfo& info, Ogre::Camera* cam, Ogre::Te
 
 	info.layer->setColorMap(texture);
 
-	splitPointList[pssmSetup->getSplitCount()] = origSplit;
-	pssmSetup->setSplitPoints(splitPointList);
+	/*splitPointList[pssmSetup->getSplitCount()] = origSplit;
+	pssmSetup->setSplitPoints(splitPointList);*/
 
 	if (ent)
 		ent->setVisibilityFlags(flag);
@@ -156,7 +156,7 @@ void GeometryManager::bakeLight(LightBakeInfo& info)
 	auto fogc = Global::sceneMgr->getFogColour();
 	auto fogs = Global::sceneMgr->getFogStart();
 	auto foge = Global::sceneMgr->getFogEnd();
-	Global::sceneMgr->setFog(FOG_LINEAR, ColourValue::White, 0, 10000, 15000);
+	Global::sceneMgr->setFog(FOG_LINEAR, ColourValue(1,1,1,0), 0, 10000, 15000);
 
 	auto lightBakingCam = Global::sceneMgr->createCamera("lightBaking");
 	lightBakingCam->setNearClipDistance(1);
@@ -198,7 +198,7 @@ void GeometryManager::bakeLights()
 		//e->setVisibilityFlags(e->getVisibilityFlags() & ~VisibilityFlag_Temp);
 	}*/
 
-	Global::sceneMgr->setFog(FOG_LINEAR, ColourValue::White, 0, 10000,15000);
+	Global::sceneMgr->setFog(FOG_LINEAR, ColourValue(1, 1, 1, 0), 0, 10000,15000);
 
 	auto lightBakingCam = Global::sceneMgr->createCamera("lightBaking");
 	lightBakingCam->setNearClipDistance(1);

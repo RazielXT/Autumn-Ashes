@@ -23,8 +23,9 @@ public:
 	void loadChanges();
 	void clear();
 
-	bool loadSavedMaterialChanges(MaterialEdit& edit, std::string entName);
+	bool loadMaterialChanges(MaterialEdit& edit, std::string entName);
 	void addMaterialEdit(MaterialEdit& edit, std::string entName);
+	void saveMaterialEdit(std::string entName);
 	void removeMaterialEdit(std::string entName);
 
 	bool loadSavedParticleChanges(ParticleEdit& edit, std::string particleName);
@@ -63,6 +64,7 @@ private:
 
 	void saveMaterialHistory(std::string path);
 	void loadMaterialHistory(std::string path);
+	std::map<std::string,MaterialEdit> materialEditCurrent;
 	EditedData<MaterialEdit> materialEditHistory;
 
 	void saveParticleHistory(std::string path);

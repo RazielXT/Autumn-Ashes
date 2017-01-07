@@ -36,7 +36,7 @@ struct ParticleEdit : public MaterialEdit
 	void merge(ParticleEdit& r, bool addNotExisting);
 
 	static ParticleEdit* query();
-	static void applyChanges(std::map < std::string, ParticleEdit >& changes);
+	static void applyAllChanges(std::map < std::string, ParticleEdit >& changes);
 	static ParticleChildren particleChildren;
 
 protected:

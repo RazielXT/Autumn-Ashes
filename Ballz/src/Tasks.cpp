@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Tasks.h"
 
-
 float getTaskDelay(Ogre::String& fname)
 {
 	//Delay(5):task
@@ -27,10 +26,6 @@ EventTask* makeTask(Ogre::String fname, float delay)
 {
 	if (fname == "TestReaction")
 		return new TestReaction();
-	else if (fname == "HandFromGroundReaction")
-		return new HandFromGroundReaction();
-	else if (fname == "HandGripReaction")
-		return new HandGripReaction();
 	else if (fname == "EntMovement")
 		return new EntityMovementReaction();
 	else if (fname == "ActivateTriggerTask")

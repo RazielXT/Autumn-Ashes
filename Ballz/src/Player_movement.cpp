@@ -34,17 +34,14 @@ void Player::enableMovement(bool enable)
 
 void Player::move_callback(OgreNewt::Body* me, float timeStep, int threadIndex)
 {
-	if(!flying)
-		me->addForce(gravity);
-
-	me->addForce(forceDirection);
+	me->addForce(forceDirection + gravity);
 }
 
 void Player::updateDirectionForce()
 {
 	if (!wallrunning && !climbing)// && !pParkour->isRolling())
 	{
-		if (!moving && !flying)
+		if (!moving)
 		{
 			body->setMaterialGroupID(wmaterials->plNoMove_mat);
 			startMoveBoost = 1;
@@ -99,18 +96,8 @@ void Player::jump()
 		}
 		else if (jumpCounter != 0)
 		{
-			if (!flying)
-			{
-				flying = true;
-				body->setVelocity(pCamera->getOrientation()*Vector3(0, 0, -15));
-				jumpCounter = 2;
-			}
-			else
-			{
-				flying = false;
-				body->setVelocity(body->getVelocity()*0.5f + Vector3(0, 9, 0));
-				jumpCounter = 0;
-			}
+			body->setVelocity(pCamera->getOrientation()*Vector3(0, 0, -15));
+			jumpCounter = 2;
 		}
 	}
 }
@@ -120,7 +107,6 @@ void Player::manageFall()
 	auto fallVelocity = bodyVelocityL * 3;
 	pParkour->hitGround();
 	jumpCounter = 0;
-	flying = false;
 
 	if (fallVelocity > 50)
 	{
@@ -251,33 +237,11 @@ void Player::updateMovement()
 	//midair
 	else
 	{
-		if (flying)
-		{
-			if (bodyVelocityL < 2)
-				flying = false;
+		forceDirection = pCamera->getOrientation()*movedDir;
+		forceDirection.normalise();
+		forceDirection.y = 0;
 
-			if (moving)
-			{
-				forceDirection = pCamera->getOrientation()*movedDir;
-
-				if(!verticalFlying)
-					forceDirection.y = 0;
-
-				forceDirection.normalise();
-				forceDirection *= 15;// 3 / (1 + bodyVelocity);
-
-				if (!verticalFlying)
-					forceDirection.y = -2;
-			}
-		}
-		else
-		{
-			forceDirection = pCamera->getOrientation()*movedDir;
-			forceDirection.normalise();
-			forceDirection.y = 0;
-
-			forceDirection *= 3;// 3 / (1 + bodyVelocity);
-		}
+		forceDirection *= 3;// 3 / (1 + bodyVelocity);
 	}
 
 
@@ -347,7 +311,7 @@ void Player::updateGroundStats()
 	}
 	else
 	{
-		body->setLinearDamping(flying ? 0.5f : 0.20f);
+		body->setLinearDamping(0.2f);
 
 		if (onGround)
 		{

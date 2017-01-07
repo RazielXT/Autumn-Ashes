@@ -28,7 +28,10 @@ enum class UiMessageId
 	LookAtSelection,
 	PlacementRayUtil,		//float
 	LoadLevel,				//string
-	CloseEditor
+	CloseEditor,
+	ReloadGeometry,
+	ReloadShaders,
+	Ping
 };
 
 struct UiMessage
@@ -46,6 +49,13 @@ struct Vector3
 	float y;
 	float z;
 };
+struct Vector4
+{
+	float x;
+	float y;
+	float z;
+	float w;
+};
 }
 #else
 extern std::string wtos(std::wstring& str);
@@ -59,21 +69,64 @@ struct AddItemModeInfo
 	std::string prefix;
 };
 
+enum class ItemType
+{
+	Entity, Grass, Particle
+};
+
 struct SelectionInfo
 {
-	std::wstring name;
-	std::vector<std::wstring> names;
+	std::string name;
+	std::vector<std::string> names;
 	Ogre::Vector3 pos;
 	Ogre::Vector3 scale;
 
-	bool usePaint;
-	enum {Entity, Grass} subtype = Entity;
-	void* subtypeData;
+	bool usePaint = false;
+	bool hasParams = false;
+	ItemType type = ItemType::Entity;
+	void* typeData = nullptr;
+};
+
+struct EditableParam
+{
+	std::string name;
+	std::string group;
+	enum Type {Floats, Strings} type;
+
+	struct
+	{
+		int size;
+		float buffer[4];
+		float step;
+	}
+	floats;
+
+	std::vector<std::string> strings;
+};
+
+struct EditableParams
+{
+	std::string groupName;
+	std::vector<EditableParam> params;
+};
+
+struct EditableParamsResponse
+{
+	std::vector<EditableParams> params;
+};
+
+struct EntitySelectionInfo
+{
+	std::vector<std::string> animNames;
 };
 
 struct GrassSelectionInfo
 {
 	float density;
+	float minHSize;
+	float maxHSize;
+	float minWSize;
+	float maxWSize;
 	bool preserveMask;
 };
 
@@ -84,7 +137,7 @@ struct WorldItem
 
 struct WorldItemsGroup
 {
-	std::wstring name;
+	ItemType type;
 	std::vector<WorldItem> items;
 };
 
@@ -104,8 +157,10 @@ struct SelectionInfoChange
 	enum class Id
 	{
 		Pos, Scale,
-		GrassDensity, GrassPaintPreserve,
-		PaintOff, PaintAdd, PaintRemove, PaintWChange, PaintSizeChange, PaintFill
+		GrassDensity, GrassSize, GrassPaintPreserve,
+		PaintOff, PaintAdd, PaintRemove, PaintWChange, PaintSizeChange, PaintFill,
+		ActiveAnimation,
+		GetParams, SendParams, ParamChanged, SaveParams
 	}
 	change;
 
@@ -114,10 +169,10 @@ struct SelectionInfoChange
 
 struct GetSceneSettingsData
 {
-	std::vector<std::wstring> skyboxOptions;
+	std::vector<std::string> skyboxOptions;
 	int currentSkyboxId = 0;
 
-	std::vector<std::wstring> lutOptions;
+	std::vector<std::string> lutOptions;
 	int currentLutId = 0;
 };
 

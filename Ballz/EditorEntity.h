@@ -1,5 +1,8 @@
 #pragma once
 #include "EditorItem.h"
+#include "AnimationLoop.h"
+
+struct Edit;
 
 struct EditorEntity : public EditorItem
 {
@@ -26,10 +29,14 @@ struct EditorEntity : public EditorItem
 	std::vector<Ogre::Entity*> selected;
 
 	virtual void sendUiInfoMessage(EditorUiHandler* handler);
-	virtual void handleSelectionMessage(SelectionInfoChange*) {};
+	virtual void handleSelectionMessage(SelectionInfoChange*);
 
 private:
 
+	AnimationLoop animLoop;
+
 	void setEntityPosition(Ogre::Entity*,Ogre::Vector3&);
 	void setEntityOrientation(Ogre::Entity* ent, Ogre::Quaternion& q);
+
+	Edit* matEdit = nullptr;
 };

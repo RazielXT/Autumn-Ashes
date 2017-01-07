@@ -27,7 +27,8 @@ struct MaterialEdit : public Edit
 	void merge(MaterialEdit& r, bool addNotExisting);
 
 	static MaterialEdit* query();
-	static void applyChanges(const std::map < std::string, MaterialEdit >& changes);
+	static bool editableEntity(Ogre::Entity* ent);
+	static void applyAllChanges(const std::map < std::string, MaterialEdit >& changes);
 
 	static void applyMaterialChanges(Ogre::MaterialPtr mat, const MaterialEdit& changes);
 

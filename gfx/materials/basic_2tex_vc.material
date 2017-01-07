@@ -1,0 +1,133 @@
+material basic_2tex_vc
+{
+	set $ambientWeight "1" 
+	set $diffuseCol "1 1 1"
+	set $specularEnvWeight "0 0 0.25 0.25"
+	set $specularCol "1 1 1"
+	set $shininess "32"
+	set $brightness "0.5"
+	set $vcWeight "1"  
+	set $uvScale "1"
+	set $uvSpreadScale "0.5" 
+	set $uv2Scale "1" 
+	set $uvMinMaxDetailScale "3.7 0.15" 
+	set $uvMinMaxDetailW "0.5 0.5" 
+	set $spreadMinMaxW "0.25 1 1 1"
+
+	technique
+	{
+
+		pass
+		{
+			lighting off
+			colour_write off
+
+			vertex_program_ref myvs_vs
+			{
+			}
+		}
+
+		pass
+		{
+			depth_write off
+			
+			vertex_program_ref basic_2tex_vc_vs
+			{
+			}
+
+			fragment_program_ref basic_2tex_vc_ps
+			{
+				param_named diffuseColor float3 $diffuseCol
+				param_named ambientWeight float $ambientWeight
+				param_named uvScale float $uvScale
+				param_named uvSpreadScale float $uvSpreadScale
+				param_named uv2Scale float $uv2Scale
+				param_named detailMinMaxScaleW float4 $uvMinMaxDetailScale $uvMinMaxDetailW
+				param_named vcWeight float $vcWeight
+				param_named specColorPow float4 $specularCol $shininess
+				param_named brightness float $brightness
+				param_named specularEnvWeight float4 $specularEnvWeight
+				param_named spreadMinMaxW float4 $spreadMinMaxW
+				param_named cubemapWPOffset float4 0 0 0 0
+			}
+
+			texture_unit diffuseMap
+			{
+				//filtering trilinear
+				texture white.bmp
+			}
+
+			texture_unit normalMap
+			{
+				//filtering trilinear
+				texture flat_n.png
+			}
+
+			texture_unit dispMap
+			{
+				//filtering trilinear
+				texture gray.bmp
+			}
+
+			texture_unit shadow_tex0
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+
+			texture_unit shadow_tex1
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+
+			texture_unit shadow_tex2
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+
+			texture_unit shadow_tex3
+			{
+				filtering none
+				content_type shadow
+				tex_address_mode clamp
+			}
+
+			texture_unit normalDetailMap
+			{
+				texture flat_n.png
+			}
+			 
+			texture_unit reflectionMap
+			{
+				texture_alias envCubeMap
+				texture Cubemap.dds cubic
+				filtering anisotropic
+				max_anisotropy 8
+			}
+				
+			texture_unit spreadMap
+			{
+				//filtering trilinear
+				texture gray.bmp
+			}
+
+			texture_unit diffuseMap2
+			{
+				//filtering trilinear
+				texture white.bmp
+			}
+
+			texture_unit normalMap2
+			{
+				//filtering trilinear
+				texture flat_n.png
+			}
+		}
+	}
+}
+

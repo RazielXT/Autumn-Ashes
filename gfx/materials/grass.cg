@@ -1,0 +1,72 @@
+void main_vp(
+			float4 iPosition : POSITION,
+			float4 iColor    : COLOR,
+			float2 iUV       : TEXCOORD0,
+			out float4 oPosition : POSITION,
+			out float4 oColor    : COLOR,
+			out float4 oUV       : TEXCOORD0,
+			out float2 insideFog  : TEXCOORD1,
+			uniform float time,
+			uniform float frequency,
+			uniform float4 direction,
+			uniform float4x4 worldViewProj,
+			uniform float3 camPos,
+			uniform float fadeRange,
+			uniform float3 lightDir,
+			uniform float4 fogColor,
+			uniform float4 fogParams)
+{
+	float4 position = iPosition;
+	float dist = distance(camPos.xyz, position.xyz);
+	//oColor.a = saturate(2.0f - (2.0f * dist / (fadeRange+200)));	
+	
+	float oldposx = position.z;
+	float offset = 0;
+	
+	insideFog.x = saturate((dist - fogParams.y) / fogParams.z)*fogColor.a;
+	insideFog.y = dist;
+	
+	oColor.rgb = iColor.rgb;
+	
+	if (iUV.y == 0.0f)
+	{
+		offset = sin(time + oldposx * frequency);
+		position += direction * offset;
+	}
+
+	oPosition = mul(worldViewProj, position);
+	oUV.xy = iUV.xy;
+	oUV.zw = oPosition.zw;
+
+	oColor.a = 1 - saturate((oUV.z-50)/max(50,fadeRange));
+}
+
+void main_fp(float4 uv			: TEXCOORD0, 
+			float2 insideFog			: TEXCOORD1,
+
+			uniform float4 fogColor,
+			
+			float4 iColor    : COLOR,
+
+			uniform sampler2D diffuseMap: register(s0),
+
+			out float4 oColor : COLOR0,
+			out float4 oColor1 : COLOR1,
+			out float4 oColor2 : COLOR2,
+			out float4 oColor3 : COLOR3)
+{ 
+
+	float4 diffTex = tex2D(diffuseMap, uv.xy);
+	if(diffTex.a<0.5) discard;
+
+	float3 clr = iColor.rgb*diffTex.rgb*1.45;
+
+	clr = lerp(clr, fogColor.rgb, insideFog.x);
+	
+	float alphaMul = 1 - saturate(insideFog.y/30)*0.5;
+	
+	oColor = float4(clr, diffTex.a*iColor.a*alphaMul);
+	oColor1= float4(0.5,0.5,0.03,0);
+	oColor2= float4(0,0,0,diffTex.a);
+	oColor3= float4(1 - uv.z/uv.w,insideFog.y,0,1);
+}

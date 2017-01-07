@@ -54,22 +54,30 @@ bool ReflectionTask::start()
 	    (Real)window->getViewport(0)->getActualWidth() /
 	    (Real)window->getViewport(0)->getActualHeight());
 	mReflectCam->setFOVy(camera->getFOVy());
-	//mReflectCam->setVisibilityFlags(2);
+	mReflectCam->setVisibilityFlags(visibilityFlag);
 	Viewport *v = rttTex->addViewport(mReflectCam);
 	v->setClearEveryFrame(true);
 	v->setBackgroundColour(ColourValue::Black);
 	v->setShadowsEnabled(false);
+	v->setVisibilityMask(visibilityFlag);
 
 	MaterialPtr mat = mEntity->getSubEntity(0)->getMaterial();
-	TextureUnitState* t = mat->getTechnique(0)->getPass(0)->getTextureUnitState("reflectionMap");
+	TextureUnitState* t = nullptr;
+
+	auto pass = mat->getTechnique(0)->getPass(mat->getTechnique(0)->getNumPasses()-1);
+	for (int i = 0; i < pass->getNumTextureUnitStates(); i++)
+	{
+		if (pass->getTextureUnitState(i)->getTextureNameAlias() == "rttMap")
+			t = pass->getTextureUnitState(i);
+	}
 
 	if (t == nullptr)
 	{
 		mat = MaterialManager::getSingleton().getByName("material_water_dynamic");
 	}
 
-	mat = mat->clone(mat->getName() + idString);
-	t = mat->getTechnique(0)->getPass(0)->getTextureUnitState("reflectionMap");
+	//mat = mat->clone(mat->getName() + idString);
+	//t = mat->getTechnique(0)->getPass(mat->getTechnique(0)->getNumPasses() - 1)->getTextureUnitState("reflectionMap");
 	t->setTexture(texture);
 	mEntity->setMaterial(mat);
 

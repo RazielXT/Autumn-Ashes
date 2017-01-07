@@ -9,6 +9,7 @@ public:
 
 	void clear();
 	Ogre::ParticleSystem* getClosestParticle();
+	std::vector<Ogre::ParticleSystem*> getAllParticles();
 
 	void addParticle(Ogre::ParticleSystem* ps);
 

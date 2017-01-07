@@ -1,0 +1,105 @@
+material cheap_2normals_material_dynamic_op
+{
+    set $diffuseCol "1 1 1 1"
+    set $specularCol "1 1 1"
+    set $shininess "32"
+    set $brightness "0.5"
+    set $difUV "1 1"
+    set $normUV "1 1"
+
+    technique
+    {
+        
+		pass
+		{
+lighting off
+ colour_write off
+
+         vertex_program_ref givs_vs 
+               {
+               }
+
+		}
+
+        pass
+        {
+
+depth_write off
+            vertex_program_ref diffuse_vs_2nbop
+            {
+            }
+
+            fragment_program_ref diffuse_ps_2nbop
+            {
+			param_named scaleDiff float4 $difUV $normUV
+            }
+
+
+            diffuse $diffuseCol
+            specular $specularCol $brightness $shininess
+            ambient 0 0 0 0
+
+            texture_unit diffuseMap
+            {
+		//filtering trilinear
+                texture white.bmp
+
+		//content_type compositor Bloom rt0 0
+            }
+  
+            texture_unit normalMap
+            {
+		     texture flat_n.png
+			 filtering anisotropic
+			max_anisotropy 8
+
+            }
+
+            texture_unit normalMap2
+            {
+		     texture flat_n.png
+			 filtering anisotropic
+			max_anisotropy 8
+
+            }
+
+		 texture_unit shadow_tex0
+		 {
+			filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+		
+	       texture_unit shadow_tex1
+		 {
+filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+
+	       texture_unit shadow_tex2
+		 {
+filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+
+		texture_unit shadow_tex3
+		 {
+filtering none
+			content_type shadow
+			tex_address_mode clamp
+		 }
+
+		texture_unit
+		 {
+			texture rot.png
+		 }
+
+
+
+        }		
+
+    }
+}
+

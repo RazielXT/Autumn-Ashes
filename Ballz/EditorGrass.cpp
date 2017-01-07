@@ -263,26 +263,30 @@ void EditorGrass::sendUiInfoMessage(EditorUiHandler* handler)
 
 	if (selected.size() == 1)
 	{
-		info.name = std::wstring(selected[0].name.begin(), selected[0].name.end());
+		info.name = selected[0].name;
 		info.pos = selected[0].pg->getSceneNode()->getPosition();
 	}
 	else
 	{
-		info.name = std::to_wstring(selected.size()) + L" objects";
+		info.name = std::to_string(selected.size()) + L" objects";
 		for (auto& e : selected)
-			info.names.push_back(std::wstring(e.name.begin(), e.name.end()));
+			info.names.push_back(e.name);
 
 		info.pos = getPosition();
 	}
 
 	info.scale = Ogre::Vector3(1, 1, 1);
-	info.subtype = SelectionInfo::Grass;
+	info.type = ItemType::Grass;
 	info.usePaint = true;
 
 	GrassSelectionInfo grassInfo;
 	grassInfo.density = selected[0].bake.layer->density;
+	grassInfo.minHSize = selected[0].bake.layer->minHeight;
+	grassInfo.maxHSize = selected[0].bake.layer->maxHeight;
+	grassInfo.minWSize = selected[0].bake.layer->minWidth;
+	grassInfo.maxWSize = selected[0].bake.layer->maxWidth;
 	grassInfo.preserveMask = false;
-	info.subtypeData = &grassInfo;
+	info.typeData = &grassInfo;
 
 	msg.data = &info;
 
@@ -294,6 +298,13 @@ void EditorGrass::handleSelectionMessage(SelectionInfoChange* change)
 	if (change->change == SelectionInfoChange::Id::GrassDensity)
 	{
 		selected[0].bake.layer->setDensity(*(float*)change->data);
+		selected[0].pg->reloadGeometry();
+	}
+	if (change->change == SelectionInfoChange::Id::GrassSize)
+	{
+		Ogre::Vector4& v = *(Ogre::Vector4*)change->data;
+		selected[0].bake.layer->setMinimumSize(v.z, v.x);
+		selected[0].bake.layer->setMaximumSize(v.w, v.y);
 		selected[0].pg->reloadGeometry();
 	}
 	else if (change->change == SelectionInfoChange::Id::GrassPaintPreserve)

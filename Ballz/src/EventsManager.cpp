@@ -62,16 +62,20 @@ void EventsManager::clear()
 void EventsManager::update(Ogre::Real time)
 {
 	//update tasks
-	auto it = currentCachedTasks.begin();
+	updatingCachedTasks = currentCachedTasks;
+	currentCachedTasks.clear();
+
+	auto it = updatingCachedTasks.begin();
 	auto state = Global::gameMgr->gameState;
 
-	while(it != currentCachedTasks.end())
+	while(it != updatingCachedTasks.end())
 	{
 		if (((*it)->stateExecution != state && (*it)->stateExecution != UNDEFINED) || (*it)->update(time))
 			it++;
 		else
-			it = currentCachedTasks.erase(it);
+			it = updatingCachedTasks.erase(it);
 	}
+	currentCachedTasks.insert(currentCachedTasks.begin(), updatingCachedTasks.begin(), updatingCachedTasks.end());
 
 	auto it2 = oneTimeTasks.begin();
 

@@ -191,12 +191,14 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationLoop.cpp" />
     <ClCompile Include="CameraHelp.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EditorControl.cpp" />
     <ClCompile Include="EditorEntity.cpp" />
     <ClCompile Include="EditorGrass.cpp" />
     <ClCompile Include="EditorPainter.cpp" />
+    <ClCompile Include="EditorParticle.cpp" />
     <ClCompile Include="EditorUiHandler.cpp" />
     <ClCompile Include="GrassDensityMap.cpp" />
     <ClCompile Include="JumpBox.cpp" />
@@ -244,7 +246,6 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     <ClCompile Include="src\Gorilla.cpp" />
     <ClCompile Include="src\GrassDetailGeometry.cpp" />
     <ClCompile Include="src\GuiSceneEdit.cpp" />
-    <ClCompile Include="src\HandGripReaction.cpp" />
     <ClCompile Include="src\HeadTransition.cpp" />
     <ClCompile Include="src\ImpostorRenderer.cpp" />
     <ClCompile Include="src\ImpostorTexture.cpp" />
@@ -296,7 +297,6 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Editor|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\TriggerObjectContactCallback.cpp" />
-    <ClCompile Include="src\HandFromGroundReaction.cpp" />
     <ClCompile Include="src\TestReaction.cpp" />
     <ClCompile Include="src\CommonTasks.cpp" />
     <ClCompile Include="src\Reflection.cpp" />
@@ -308,6 +308,7 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     <ClCompile Include="src\ZipLineSlide.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationLoop.h" />
     <ClInclude Include="BinaryHelper.h" />
     <ClInclude Include="CameraHelp.h" />
     <ClInclude Include="EditorCamera.h" />
@@ -316,6 +317,7 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     <ClInclude Include="EditorControl.h" />
     <ClInclude Include="EditorEntity.h" />
     <ClInclude Include="EditorGrass.h" />
+    <ClInclude Include="EditorParticle.h" />
     <ClInclude Include="PaintedItem.h" />
     <ClInclude Include="EditorPainter.h" />
     <ClInclude Include="EditorUiHandler.h" />
@@ -368,7 +370,6 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     <ClInclude Include="include\globals.h" />
     <ClInclude Include="include\Gorilla.h" />
     <ClInclude Include="include\GrassHeightFunction.h" />
-    <ClInclude Include="include\HandGripTask.h" />
     <ClInclude Include="include\InputListener.h" />
     <ClInclude Include="include\levelsInit.h" />
     <ClInclude Include="include\ListLoop.h" />
@@ -434,7 +435,6 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     <ClInclude Include="include\TriggerPlayerContactCallback.h" />
     <ClInclude Include="include\BodyUserData.h" />
     <ClInclude Include="include\EventTask.h" />
-    <ClInclude Include="include\HandFromGroundTask.h" />
     <ClInclude Include="include\Tasks.h" />
     <ClInclude Include="include\TestTask.h" />
     <ClInclude Include="include\TriggerInfo.h" />

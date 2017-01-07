@@ -6,6 +6,49 @@
 #include "GUtils.h"
 #include "GeometryManager.h"
 #include "GameStateManager.h"
+#include "ParticleManager.h"
+
+void ObjectSelection::uiGetWorldItemsInfo(GetWorldItemsData& data)
+{
+	auto it = Global::sceneMgr->getMovableObjectIterator("Entity");
+
+	WorldItemsGroup entityGroup;
+	entityGroup.type = ItemType::Entity;
+	while (it.hasMoreElements())
+	{
+		Ogre::Entity* e = static_cast<Ogre::Entity*>(it.getNext());
+		entityGroup.items.push_back({ e->getName() });
+	}
+	data.groups.push_back(entityGroup);
+
+	auto grasses = Global::gameMgr->geometryMgr->getPagedGrasses();
+	if (!grasses.empty())
+	{
+		WorldItemsGroup grassGroup;
+		grassGroup.type = ItemType::Grass;
+
+		for (auto& g : grasses)
+		{
+			grassGroup.items.push_back({ g.name });
+		}
+
+		data.groups.push_back(grassGroup);
+	}
+
+	auto particles = Global::gameMgr->particleMgr.getAllParticles();
+	if (!particles.empty())
+	{
+		WorldItemsGroup particleGroup;
+		particleGroup.type = ItemType::Particle;
+
+		for (auto& p : particles)
+		{
+			particleGroup.items.push_back({ p->getName() });
+		}
+
+		data.groups.push_back(particleGroup);
+	}
+}
 
 void ObjectSelection::uiSelectItem(SelectWorldItemData& data)
 {
@@ -25,6 +68,12 @@ void ObjectSelection::uiSelectItem(SelectWorldItemData& data)
 			if(g.name == name)
 				setSelectedGrass(g);
 		}
+	}
+
+	if (data.groupName == "Particle")
+	{
+		if(Global::sceneMgr->hasParticleSystem(name))
+			setSelectedParticle(Global::sceneMgr->getParticleSystem(name));
 	}
 
 	if (data.groupName.empty() && selected)
@@ -69,6 +118,18 @@ void ObjectSelection::setMode(SelectionMode mode)
 		addMode = false;
 
 	gizmo.setMode(mode);
+}
+
+void ObjectSelection::setSelectedParticle(Ogre::ParticleSystem* ps, bool forceDeselect)
+{
+	if (selected && (forceDeselect || selected != &selelectedParticles))
+		selected->deselect();
+
+	selected = &selelectedParticles;
+	selelectedParticles.add(ps);
+
+	gizmo.setRoot(selected);
+	updateUiSelectedInfo();
 }
 
 void ObjectSelection::setSelectedGrass(GrassInfo& grass, bool forceDeselect)

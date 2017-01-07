@@ -8,14 +8,18 @@
 
 void SceneEditsLibrary::addMaterialEdit(MaterialEdit& edit, std::string entName)
 {
-	auto& ent = materialEditHistory.data[entName];
-
-	if (ent.originName.empty())
-		ent.originName = edit.originName;
+	auto& ent = materialEditCurrent[entName];
 
 	ent.merge(edit, true);
+}
 
-	saveMaterialHistory(Global::gameMgr->getCurrentLvlPath());
+void SceneEditsLibrary::saveMaterialEdit(std::string entName)
+{
+	if (materialEditCurrent.find(entName) != materialEditCurrent.end())
+	{
+		materialEditHistory.data[entName] = materialEditCurrent[entName];
+		saveMaterialHistory(Global::gameMgr->getCurrentLvlPath());
+	}
 }
 
 void SceneEditsLibrary::removeMaterialEdit(std::string entName)
@@ -36,11 +40,11 @@ void SceneEditsLibrary::removeMaterialEdit(std::string entName)
 	saveMaterialHistory(Global::gameMgr->getCurrentLvlPath());
 }
 
-bool SceneEditsLibrary::loadSavedMaterialChanges(MaterialEdit& edit, std::string entName)
+bool SceneEditsLibrary::loadMaterialChanges(MaterialEdit& edit, std::string entName)
 {
-	auto& ent = materialEditHistory.data.begin();
+	auto& ent = materialEditCurrent.begin();
 
-	while (ent != materialEditHistory.data.end())
+	while (ent != materialEditCurrent.end())
 	{
 		if (ent->first == entName)
 		{
@@ -48,7 +52,7 @@ bool SceneEditsLibrary::loadSavedMaterialChanges(MaterialEdit& edit, std::string
 			if (!SUtils::startsWith(edit.originName, ent->second.originName))
 			{
 				//old save, erase it
-				materialEditHistory.data.erase(ent);
+				materialEditCurrent.erase(ent);
 				return false;
 			}
 			else
@@ -68,23 +72,24 @@ void SceneEditsLibrary::loadChanges()
 	auto path = Global::gameMgr->getCurrentLvlPath();
 
 	loadMaterialHistory(path);
-	MaterialEdit::applyChanges(materialEditHistory.data);
+	MaterialEdit::applyAllChanges(materialEditCurrent);
 
 	loadParticleHistory(path);
-	ParticleEdit::applyChanges(particleEditHistory.data);
+	ParticleEdit::applyAllChanges(particleEditHistory.data);
 
 	loadLevelEdit(path);
 	levelEdits.applyChanges();
 
 	loadOgHistory(path);
-	OptimizedGroupEdit::applyChanges(ogEditHistory.data);
+	OptimizedGroupEdit::applyAllChanges(ogEditHistory.data);
 
 	loadDgHistory(path);
-	DetailGeometryEdit::applyChanges(dgEditHistory.data);
+	DetailGeometryEdit::applyAllChanges(dgEditHistory.data);
 }
 
 void SceneEditsLibrary::clear()
 {
+	materialEditCurrent.clear();
 	materialEditHistory.data.clear();
 	particleEditHistory.data.clear();
 	ParticleEdit::particleChildren.children.clear();
@@ -132,6 +137,8 @@ void SceneEditsLibrary::loadMaterialHistory(std::string path)
 		boost::archive::binary_iarchive ia(ifs);
 
 		ia >> materialEditHistory;
+
+		materialEditCurrent = materialEditHistory.data;
 	}
 }
 

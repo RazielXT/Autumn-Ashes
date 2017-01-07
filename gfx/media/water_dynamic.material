@@ -1,0 +1,167 @@
+material material_water_dynamic
+{
+    set $diffuseCol "0.5 0.5 0.6 1"
+    set $specularCol "1 1 1"
+    set $shininess "32"
+    set $scaleUv "1 1"
+	
+    set $speedUV "0.3"
+	set $waveSizeSpeedNormalW "1 0.05 0.5"
+	set $clearDist "35"
+	
+    technique
+    {
+        
+		pass
+		{
+			colour_write off
+
+			vertex_program_ref water_dLite_vs
+			{
+				param_named waveSizeSpeedNormalW float3 $waveSizeSpeedNormalW
+			}
+			
+			texture_unit wavesMap
+			{
+				texture water_DISP.jpg
+				binding_type vertex 
+			}
+			
+			texture_unit wavesNormalMap
+			{
+				texture flat_n.png
+				binding_type vertex 
+			}
+		}
+		
+        pass
+        {
+			cull_hardware none
+			//scene_blend alpha_blend
+			//depth_write on
+
+            vertex_program_ref water_d_vs
+            {
+				param_named waveSizeSpeedNormalW float3 $waveSizeSpeedNormalW
+            }
+ 
+            fragment_program_ref water_d_ps
+            {
+				param_named diffuseColor float4 $diffuseCol
+				param_named scaleDiff float2 $scaleUv
+             	param_named speed float $speedUV
+				param_named clearDist float $clearDist
+				param_named cubemapWPOffset float4 0 0 0 0
+            }
+
+			specular $specularCol $shininess
+
+			texture_unit wavesMap
+			{
+				texture water_DISP.jpg
+				binding_type vertex 
+			}
+			
+			texture_unit wavesNormalMap
+			{
+				texture flat_n.png
+				binding_type vertex 
+			}	
+
+            texture_unit normalMap
+            {
+		      texture flat_n.png
+            }
+		
+            texture_unit foamMap
+            {
+                texture white.bmp
+            }
+			
+			texture_unit reflectionMap
+			{
+				texture_alias envCubeMap
+				texture Box015_testLvl2.dds cubic
+				filtering anisotropic
+				max_anisotropy 8
+			}
+
+			texture_unit depthMap
+            {
+				content_type compositor ScaryBloomNoSSAO rt0 3
+            }
+        }		
+    }
+
+	
+	technique
+    {
+		scheme WaterDepth
+
+		pass
+        {	 
+            vertex_program_ref water_dLite_vs
+            {
+				param_named waveSizeSpeedNormalW float3 $waveSizeSpeedNormalW
+            }
+ 
+            fragment_program_ref water_depthCheck_ps
+            {
+            }
+
+			texture_unit wavesMap
+			{
+				texture water_DISP.jpg
+				binding_type vertex 
+			}
+        }
+    }
+}
+
+material material_water_dynamic_sphere : material_water_dynamic
+{
+	technique
+    {
+		pass
+        {
+		}
+		
+		pass
+        {
+			fragment_program_ref water_d_sphereMap_ps
+			{
+			}
+			
+			texture_unit reflectionMap
+			{
+				texture_alias envSphereMap
+				filtering anisotropic
+				max_anisotropy 8
+				texture ANGMAP11.JPG
+			}
+		}
+	}
+}
+
+material material_water_dynamic_rtt : material_water_dynamic
+{
+	technique
+    {
+		pass
+        {
+		}
+		
+		pass
+        {
+			fragment_program_ref water_d_rttMap_ps
+			{
+			}
+			
+			texture_unit reflectionMap
+			{
+				texture_alias rttMap
+				texture reflection
+			}
+		}
+	}
+}

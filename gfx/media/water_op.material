@@ -1,0 +1,184 @@
+material base_material_water_op
+{
+    set $diffuseCol "1 1 1 1"
+    set $specularCol "1 1 1"
+    set $shininess "32"
+    set $difUV "1 1"
+    set $speedUV "1"
+
+    technique
+    {
+        
+        pass
+        {
+		scene_blend alpha_blend
+		depth_write off
+
+            vertex_program_ref wdiffuse_vs_op
+            {
+            }
+ 
+            fragment_program_ref wdiffuse_ps_op
+            {
+			param_named scaleDiff float2 $difUV
+             	param_named speed float $speedUV
+            }
+ 
+            diffuse $diffuseCol
+			specular $specularCol $shininess
+            ambient 0 0 0 0
+ 
+            texture_unit diffuseMap
+            {
+                texture white.bmp
+
+            }
+  
+            texture_unit normalMap
+            {
+
+		      texture flat_n.png
+
+            }
+
+		
+            texture_unit groundMap
+            {
+                texture white.bmp
+
+            }
+
+			texture_unit shadow_tex0
+			 {
+			content_type shadow
+			tex_address_mode clamp
+		 	}
+
+			texture_unit shadow_tex1
+			 {
+			content_type shadow
+			tex_address_mode clamp
+		 	}
+
+			texture_unit shadow_tex2
+			 {
+			content_type shadow
+			tex_address_mode clamp
+		 	}
+
+			texture_unit shadow_tex3
+			 {
+			content_type shadow
+			tex_address_mode clamp
+		 	}
+
+        }		
+
+    }
+
+
+	technique
+    {
+
+	scheme ssaoScheme
+	
+	pass
+	{
+		alpha_rejection greater_equal 255
+	}
+    }
+
+
+
+}
+
+
+
+
+
+
+material waterMat : base_material_water_op
+
+{
+set_texture_alias diffuseMap water.png
+set_texture_alias groundMap grass_diffuse.jpg
+set_texture_alias normalMap water_NORM2.dds
+
+set $difUV "3 3"
+ set $diffuseCol "0.5 0.5 1"
+    // specular colour multiplier (for example, red-ish)
+   
+    set $specularCol "10.967 10.97 10.98"
+    // specular power (shininess) (the higher, the sharper the highlights)
+    set $shininess "128"
+
+}
+
+material waterMat3 : base_material_water_op
+
+{
+set_texture_alias diffuseMap water.png
+set_texture_alias groundMap grass_diffuse.jpg
+set_texture_alias normalMap water_NORM2.dds
+
+set $difUV "3 3"
+set $speedUV "2.5"
+ set $diffuseCol "0.5 0.5 1"
+    // specular colour multiplier (for example, red-ish)
+   
+    set $specularCol "10.967 10.97 10.98"
+    // specular power (shininess) (the higher, the sharper the highlights)
+    set $shininess "128"
+
+}
+
+material waterDropMat : base_material_water_op
+
+{
+set_texture_alias diffuseMap cloud.dds
+set_texture_alias groundMap grass_diffuse.jpg
+set_texture_alias normalMap water_NORM2.dds
+
+set $difUV "1 1"
+ set $diffuseCol "0.25 0.35 0.35"
+    // specular colour multiplier (for example, red-ish)
+   
+    set $specularCol "10.967 10.97 10.98"
+    // specular power (shininess) (the higher, the sharper the highlights)
+    set $shininess "128"
+
+}
+
+material waterMat2 : base_material_water_op
+
+{
+set_texture_alias diffuseMap water.png
+set_texture_alias groundMap grass_diffuse.jpg
+set_texture_alias normalMap water_NORM2.dds
+
+set $difUV "30 30"
+ set $diffuseCol "0.5 0.5 1"
+    // specular colour multiplier (for example, red-ish)
+   
+    set $specularCol "0.967 0.97 0.98"
+    // specular power (shininess) (the higher, the sharper the highlights)
+    set $shininess "128"
+
+}
+
+material g_mat : base_material_water_op
+
+{
+set_texture_alias diffuseMap water.png
+set_texture_alias groundMap grass_diffuse.jpg
+set_texture_alias normalMap water_NORM2.dds
+
+set $difUV "3 3"
+ set $diffuseCol "0.5 0.5 1"
+    // specular colour multiplier (for example, red-ish)
+   
+    set $specularCol "0.967 0.97 0.98"
+    // specular power (shininess) (the higher, the sharper the highlights)
+    set $shininess "128"
+
+}

@@ -22,6 +22,7 @@ struct GrassDensityMap
 
 	struct WorldGrid
 	{
+		void debug();
 		void import(WorldGrid& grid);
 		void init(float minX, float maxX, float minY, float maxY);
 		bool inside(float x, float y);
@@ -31,7 +32,7 @@ struct GrassDensityMap
 		float minX, maxX, minY, maxY;
 		int rows, cols;
 		float* data = nullptr;
-		int pixelsPerUnit = 2;
+		const int pixelsPerUnit = 2;
 	}
 	grid;
 

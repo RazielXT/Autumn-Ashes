@@ -17,7 +17,7 @@ struct OptimizedGroup
 
 struct LightBakeInfo
 {
-	Forests::GrassLayer* layer;
+	Forests::GrassLayer* layer = nullptr;
 	Ogre::Vector3 pos;
 	Ogre::Vector2 size;
 	float distance;

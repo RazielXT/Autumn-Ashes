@@ -126,8 +126,6 @@ private:
 	bool alive, immortal;
 	bool moving, right_key, left_key, back_key, forw_key;
 	bool onGround, sprinting, inControl, inMoveControl;
-	bool flying = false;
-	bool verticalFlying = true;
 	char jumpCounter = 0;
 	float sprintTimer = 0;
 

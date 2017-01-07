@@ -736,8 +736,6 @@ void loadLight(const XMLElement* lightElement, SceneNode* node, Ogre::SceneManag
 	const XMLElement* childElement = 0;
 	while (childElement = IterateChildElements(lightElement, childElement))
 	{
-
-
 		String elementName = childElement->Value();
 
 		if (elementName == "colourDiffuse")
@@ -996,6 +994,9 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
 	bool usesDensityMap = (!densityMaps.empty());
 	bool usesColorMap = (!colorMaps.empty());
 
+	auto lmElement = element->NextSiblingElement("Lightmap");
+	bool usesLightmap = lmElement && Ogre::StringConverter::parseBool(lmElement->GetText());
+
 	Ogre::Vector4 bounds;
 	bounds.x = ent->getBoundingBox().getMinimum().x*node->getScale().x + node->getPosition().x;
 	bounds.y = ent->getBoundingBox().getMinimum().z*node->getScale().z + node->getPosition().z;
@@ -1043,7 +1044,7 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
 	grass->setPageLoader(grassLoader);
 	char delim = ';';
 
-	LightBakeInfo bakeInfo{};
+	LightBakeInfo bakeInfo;
 
 	for (int i = 0; i < layersNum; i++)
 	{
@@ -1082,6 +1083,10 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
 			layer->setColorMap("dejavu.png");
 			myLog->logMessage("Grass Area loaded color map " + curColMat, LML_NORMAL);
 			*/
+		}
+
+		//if (usesLightmap || usesColorMap)
+		{
 			bakeInfo.distance = offsets->offset_maxY - offsets->offset_minY;
 			bakeInfo.pos = node->getPosition();
 			bakeInfo.pos.y = offsets->offset_maxY;
@@ -1114,9 +1119,6 @@ void loadGrassArea(const XMLElement* element, Entity* ent, SceneNode* node, Ogre
 
 void loadReflection(const XMLElement* element, Ogre::Entity* ent, SceneNode* node, Ogre::SceneManager* mSceneMgr)
 {
-	Ogre::Vector3 pos = node->getPosition();
-	Ogre::Degree yaw = node->getOrientation().getYaw();
-
 	int mask = Ogre::StringConverter::parseInt(element->GetText());
 
 	ReflectionTask* refl = new ReflectionTask();
@@ -1923,24 +1925,27 @@ void loadActions(const XMLElement* element, void* data, int id = 0)
 			aID = SUtils::strtok_str(tasks, ';');
 			fID = SUtils::strtok_str(functions, ';');
 		}
-
 	}
-
 }
 
-Ogre::MaterialPtr getCorrectMaterial(Ogre::MaterialPtr mat, Ogre::SceneNode* node)
+Ogre::MaterialPtr getCorrectMaterial(Ogre::MaterialPtr mat, Ogre::Entity* ent)
 {
 	auto retMat = mat;
+	auto mainPass = mat->getTechnique(0)->getPass(mat->getTechnique(0)->getNumPasses()-1);
 
-	if (mat->getTechnique(0)->getNumPasses() == 2)
+	//scene reflection
+	Ogre::TextureUnitState* t = mainPass->getTextureUnitState("reflectionMap");
+	if (t)
 	{
-		auto mainPass = mat->getTechnique(0)->getPass(1);
-
-		//scene cubemap
-		Ogre::TextureUnitState* t = mainPass->getTextureUnitState("envCubeMap");
-		if (t)
+		if (t->getTextureNameAlias() == "envCubeMap")
 		{
-			retMat = SceneCubeMap::applyCubemap(mat, node->getPosition());
+			retMat = SceneCubeMap::applyCubemap(mat, ent->getParentSceneNode()->getPosition());
+		}
+		if (t->getTextureNameAlias() == "rttMap")
+		{
+			ReflectionTask* refl = new ReflectionTask();
+			refl->init(ent, 1);
+			Global::eventsMgr->addTask(refl);
 		}
 	}
 
@@ -2051,7 +2056,7 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 		ent->getSubEntity(index)->setMaterialName(GetStringAttribute(childElement, "materialName"));
 
 		//update dynamic materials
-		ent->getSubEntity(index)->setMaterial(getCorrectMaterial(ent->getSubEntity(index)->getMaterial(), node));
+		ent->getSubEntity(index)->setMaterial(getCorrectMaterial(ent->getSubEntity(index)->getMaterial(), ent));
 
 		auto matPtr = ent->getSubEntity(index)->getMaterial();
 
@@ -2073,7 +2078,7 @@ void loadEntity(const XMLElement* entityElement, SceneNode* node, bool visible, 
 	{
 		ent->setRenderQueueGroup(RenderQueue_Water);
 		ent->setVisibilityFlags(VisibilityFlag_Water);
-		ent->setVisible(false);
+		//ent->setVisible(false);
 	}
 
 	if (transparentType)

@@ -12,6 +12,7 @@ class EventsManager
 {
 private:
 
+	std::vector<EventTask*> updatingCachedTasks;
 	std::vector<EventTask*> currentCachedTasks;
 	std::vector<EventTask*> oneTimeTasks;
 	std::vector<bodyUserData*> unavailableTriggers;
