@@ -360,7 +360,7 @@ void DebugKeys::makecube(bool platform)
 	node->attachObject(ent);
 	node->setScale(size);
 	ent->setCastShadows(true);
-	ent->setMaterialName("planksVC");
+	ent->setMaterialName("grassMat");
 	OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::Box(Global::nWorld, size, 0));
 	OgreNewt::Body* body = new OgreNewt::Body(Global::nWorld, col);
 
