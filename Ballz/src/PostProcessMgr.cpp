@@ -24,10 +24,20 @@ PostProcessMgr::PostProcessMgr(Ogre::Camera* cam) : camera(cam), ppListener(&var
 	totalBlacktime = currentBlacktime = 0;
 
 	fadeIn(Ogre::Vector3(0,0,0),2);
+
+	updateTask.injectPostProcess(&Global::ppMgr->vars);
 }
 
 PostProcessMgr::~PostProcessMgr()
 {
+}
+
+void PostProcessMgr::reset()
+{
+	resetValues();
+
+	updateTask.swimming.reset();
+	Global::eventsMgr->addCachedTask(&updateTask);
 }
 
 void PostProcessMgr::resetValues()

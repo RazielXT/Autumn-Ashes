@@ -75,6 +75,9 @@
     <Filter Include="Files\Editor\Items">
       <UniqueIdentifier>{b664013e-8539-407c-bf90-463dcfc7ccdf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\Core\PostProcess">
+      <UniqueIdentifier>{470044b2-f536-4e05-b2f9-d7cb61d1d749}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CrowPath.cpp">
@@ -155,9 +158,6 @@
     <ClCompile Include="src\PlayerParkour.cpp">
       <Filter>Files\Player</Filter>
     </ClCompile>
-    <ClCompile Include="src\PlayerPostProcess.cpp">
-      <Filter>Files\Player</Filter>
-    </ClCompile>
     <ClCompile Include="src\AudioLibrary.cpp">
       <Filter>Files\Core</Filter>
     </ClCompile>
@@ -177,9 +177,6 @@
       <Filter>Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\OgreGpuCommandBufferFlush.cpp">
-      <Filter>Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PostProcessMgr.cpp">
       <Filter>Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\tinyxml2.cpp">
@@ -220,9 +217,6 @@
     </ClCompile>
     <ClCompile Include="src\ImpostorRenderer.cpp">
       <Filter>Files\Core\DetailGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PlayerSwimming.cpp">
-      <Filter>Files\Player</Filter>
     </ClCompile>
     <ClCompile Include="src\WaterCurrent.cpp">
       <Filter>Files\Objects</Filter>
@@ -410,6 +404,15 @@
     <ClCompile Include="EditorParticle.cpp">
       <Filter>Files\Editor\Items</Filter>
     </ClCompile>
+    <ClCompile Include="src\PostProcessMgr.cpp">
+      <Filter>Files\Core\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PostProcessSwimming.cpp">
+      <Filter>Files\Core\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PostProcessUpdate.cpp">
+      <Filter>Files\Core\PostProcess</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -526,14 +529,8 @@
     <ClInclude Include="include\PlayerParkour.h">
       <Filter>Files\Player</Filter>
     </ClInclude>
-    <ClInclude Include="include\PlayerPostProcess.h">
-      <Filter>Files\Player</Filter>
-    </ClInclude>
     <ClInclude Include="include\PSSMCamera.h">
       <Filter>Files\Core\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PostProcessMgr.h">
-      <Filter>Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="include\TriggerObjectContactCallback.h">
       <Filter>Files\Physics</Filter>
@@ -591,9 +588,6 @@
     </ClInclude>
     <ClInclude Include="include\ImpostorRenderer.h">
       <Filter>Files\Core\DetailGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PlayerSwimming.h">
-      <Filter>Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="include\WaterCurrent.h">
       <Filter>Files\Objects</Filter>
@@ -813,6 +807,15 @@
     </ClInclude>
     <ClInclude Include="EditorParticle.h">
       <Filter>Files\Editor\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PostProcessMgr.h">
+      <Filter>Files\Core\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PostProcessSwimming.h">
+      <Filter>Files\Core\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PostProcessUpdate.h">
+      <Filter>Files\Core\PostProcess</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

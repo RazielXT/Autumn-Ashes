@@ -1,22 +1,21 @@
 #include "stdafx.h"
-#include "PlayerPostProcess.h"
-#include "Player.h"
+#include "PostProcessUpdate.h"
 
-PlayerPostProcess::PlayerPostProcess(Player* player) : p(player)
+PostProcessUpdate::PostProcessUpdate()
 {
-	injectPostProcess(&Global::ppMgr->vars);
 	cam = Global::camera->cam;
+	stateExecution = UNDEFINED;
 }
 
-void PlayerPostProcess::injectPostProcess(PostProcessVariables* vars)
+void PostProcessUpdate::injectPostProcess(PostProcessVariables* vars)
 {
 	this->vars = vars;
 }
 
-void PlayerPostProcess::update(float tslf)
+bool PostProcessUpdate::update(float tslf)
 {
 	//visual fall dmg
-	if (vars->hurtEffect > 0 && p->alive)
+	if (vars->hurtEffect > 0)
 	{
 		vars->hurtEffect -= tslf*2.5f;
 		if (vars->hurtEffect < 0) vars->hurtEffect = 0;
@@ -38,4 +37,6 @@ void PlayerPostProcess::update(float tslf)
 	mPreviousFPS = 1 / tslf;
 	prevPos = cam->getDerivedPosition();
 	prevOr = cam->getDerivedOrientation();
+
+	swimming.update(tslf);
 }

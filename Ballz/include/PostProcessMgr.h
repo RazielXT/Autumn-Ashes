@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "LutTexture.h"
 #include "PPListener.h"
+#include "PostProcessUpdate.h"
 
 class PostProcessMgr
 {
@@ -12,6 +13,7 @@ public:
 	PostProcessMgr(Ogre::Camera* camera);
 	~PostProcessMgr();
 
+	void reset();
 	void update(float tslf);
 	void resetValues();
 
@@ -31,6 +33,7 @@ public:
 
 private:
 
+	PostProcessUpdate updateTask;
 	PostProcessListener ppListener;
 	LutTexture	lut;
 

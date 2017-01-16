@@ -4,7 +4,7 @@
 #include "PlayerAudio.h"
 #include "PlayerAutoTarget.h"
 #include "PlayerStateInfo.h"
-#include "PlayerPostProcess.h"
+#include "PostProcessUpdate.h"
 #include "PlayerClimbing.h"
 #include "PlayerCamera.h"
 #include "PlayerGrab.h"
@@ -18,11 +18,11 @@ class GameUi;
 
 class Player
 {
-	friend class PlayerPostProcess;
+	friend class PostProcessUpdate;
 	friend class PlayerClimbing;
 	friend class PlayerGrab;
 	friend class PlayerParkour;
-	friend class PlayerSwimming;
+	friend class PostProcessSwimming;
 	friend class PlayerAbilities;
 	friend class PlayerSliding;
 	friend class PlayerTimeshift;
@@ -77,11 +77,9 @@ public:
 	float bodyVelocityL;
 	float facingWallDistance;
 
-	PlayerPostProcess* pPostProcess;
 	PlayerClimbing* pClimbing;
 	PlayerGrab* pGrabbing;
 	PlayerParkour* pParkour;
-	PlayerSwimming* pSwimming;
 	PlayerAbilities* pAbilities;
 	PlayerSliding* pSliding;
 	PlayerCamera* pCamera;

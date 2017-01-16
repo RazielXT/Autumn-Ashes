@@ -2,7 +2,6 @@
 #include "DebugKeys.h"
 #include "PlayerCamera.h"
 #include "GameStateManager.h"
-#include "PlayerSwimming.h"
 #include "Player.h"
 #include "MUtils.h"
 #include "GUtils.h"

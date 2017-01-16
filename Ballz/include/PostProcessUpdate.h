@@ -1,15 +1,14 @@
 #pragma once
 
 #include "stdafx.h"
+#include "EventTask.h"
+#include "PostProcessSwimming.h"
 
 class Player;
 struct PostProcessVariables;
 
-class PlayerPostProcess
+class PostProcessUpdate : public EventTask
 {
-	friend class Player;
-
-	Player* p;
 	Ogre::Camera* cam;
 	PostProcessVariables* vars;
 
@@ -21,9 +20,11 @@ class PlayerPostProcess
 
 public:
 
-	PlayerPostProcess(Player* player);
+	PostProcessSwimming swimming;
+
+	PostProcessUpdate();
 
 	void injectPostProcess(PostProcessVariables* vars);
 
-	void update(float tslf);
+	bool update(float tslf);
 };
