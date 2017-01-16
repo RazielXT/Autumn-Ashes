@@ -300,7 +300,7 @@ void GameStateManager::clearLevel()
 	Global::sceneMgr->clearScene();
 	Global::eventsMgr->clear();
 	Global::audioLib->reset();
-	Global::ppMgr->resetValues();
+	Global::ppMgr->reset();
 	VolumeDetectionManager::instance.reset();
 	SceneEnergies::reset();
 	Gate::reset();

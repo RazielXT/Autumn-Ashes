@@ -5,16 +5,13 @@
 class Player;
 class WaterCurrent;
 
-class PlayerSwimming
+class PostProcessSwimming
 {
-	friend class Player;
-
-	Player* p;
 	WaterCurrent* currents;
 
 	Ogre::RenderTarget *rttTex;
 	Ogre::TexturePtr texture;
-	Ogre::Camera* mWaterCam;
+	Ogre::Camera* mWaterCam = nullptr;
 	Ogre::SceneNode* mWaterCamNode;
 
 	void initWaterDepthReading();
@@ -43,8 +40,9 @@ public:
 	float outOfWaterTimer = 1.0f;
 
 	bool inWater = false;
-	PlayerSwimming(Player* player);
-	~PlayerSwimming();
+	PostProcessSwimming();
+	~PostProcessSwimming();
 
+	void reset();
 	void update(float tslf);
 };

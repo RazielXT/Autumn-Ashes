@@ -272,7 +272,7 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     <ClCompile Include="src\PlayerHanging.cpp" />
     <ClCompile Include="src\PlayerParkour.cpp" />
     <ClCompile Include="src\PlayerSliding.cpp" />
-    <ClCompile Include="src\PlayerSwimming.cpp" />
+    <ClCompile Include="src\PostProcessSwimming.cpp" />
     <ClCompile Include="src\PlayerTimeshift.cpp" />
     <ClCompile Include="src\Player_movement.cpp" />
     <ClCompile Include="src\PostProcessMgr.cpp" />
@@ -281,7 +281,7 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     <ClCompile Include="src\SceneEditsLibrary.cpp" />
     <ClCompile Include="src\sceneParser.cpp" />
     <ClCompile Include="src\PlayerAutoTarget.cpp" />
-    <ClCompile Include="src\PlayerPostProcess.cpp" />
+    <ClCompile Include="src\PostProcessUpdate.cpp" />
     <ClCompile Include="src\Tasks.cpp" />
     <ClCompile Include="src\tinyxml2.cpp" />
     <ClCompile Include="src\TopSlide.cpp" />
@@ -394,12 +394,12 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     <ClInclude Include="include\PlayerGrab.h" />
     <ClInclude Include="include\PlayerHanging.h" />
     <ClInclude Include="include\PlayerParkour.h" />
-    <ClInclude Include="include\PlayerPostProcess.h" />
+    <ClInclude Include="include\PostProcessUpdate.h" />
     <ClInclude Include="include\DynamicRope.h" />
     <ClInclude Include="include\BasicDetailGeometry.h" />
     <ClInclude Include="include\PlayerSliding.h" />
     <ClInclude Include="include\PlayerStateInfo.h" />
-    <ClInclude Include="include\PlayerSwimming.h" />
+    <ClInclude Include="include\PostProcessSwimming.h" />
     <ClInclude Include="include\PlayerTimeshift.h" />
     <ClInclude Include="include\Pole.h" />
     <ClInclude Include="include\PPListener.h" />

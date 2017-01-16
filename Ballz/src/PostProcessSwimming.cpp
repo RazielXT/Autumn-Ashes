@@ -1,16 +1,13 @@
 #include "stdafx.h"
-#include "PlayerSwimming.h"
-#include "Player.h"
+#include "PostProcessSwimming.h"
 #include "WaterCurrent.h"
 #include "GameStateManager.h"
 
 using namespace Ogre;
 
-PlayerSwimming::PlayerSwimming(Player* player) : p(player)
+PostProcessSwimming::PostProcessSwimming()
 {
-	initWaterDepthReading();
-
-	currents = WaterCurrent::get();
+	//currents = WaterCurrent::get();
 	/*  bubbles = Global::mSceneMgr->createParticleSystem("WaterBubbles", "WaterBubbles");
 	  bubbles->setRenderQueueGroup(91);
 	  bubbles->setVisibilityFlags(8);
@@ -19,13 +16,20 @@ PlayerSwimming::PlayerSwimming(Player* player) : p(player)
 	  bubblesNode->attachObject(bubbles);*/
 }
 
-PlayerSwimming::~PlayerSwimming()
+PostProcessSwimming::~PostProcessSwimming()
 {
-	currents->reset();
-	Global::sceneMgr->destroyCamera(mWaterCam);
+	//currents->reset();
 }
 
-void PlayerSwimming::initWaterDepthReading()
+void PostProcessSwimming::reset()
+{
+	if(mWaterCam)
+		Global::sceneMgr->destroyCamera(mWaterCam);
+
+	initWaterDepthReading();
+}
+
+void PostProcessSwimming::initWaterDepthReading()
 {
 	auto sceneMgr = Global::sceneMgr;
 	auto camera = Global::camera->cam;
@@ -60,7 +64,7 @@ void PlayerSwimming::initWaterDepthReading()
 	v->setSkiesEnabled(false);
 }
 
-void PlayerSwimming::readWaterDepth()
+void PostProcessSwimming::readWaterDepth()
 {
 	float depth;
 	Ogre::PixelBox tempPb(1, 1, 1, Ogre::PF_FLOAT32_R, &depth);
@@ -86,11 +90,11 @@ void PlayerSwimming::readWaterDepth()
 		}
 	}
 
-	mWaterCamNode->setPosition(p->bodyPosition + Vector3(0, 20, 0));
+	mWaterCamNode->setPosition(Global::camera->position + Vector3(0, 20, 0));
 }
 
 
-void PlayerSwimming::enteredWater()
+void PostProcessSwimming::enteredWater()
 {
 	lastPPValues.ColorShift = Global::ppMgr->vars.ColouringShift;
 	lastPPValues.fogColor = Global::sceneMgr->getFogColour();
@@ -100,20 +104,26 @@ void PlayerSwimming::enteredWater()
 	Global::ppMgr->vars.ColouringShift = Ogre::Vector4(1.5f, 1.15f, 1.05f, 0);
 	Global::sceneMgr->setFog(FOG_LINEAR, Ogre::ColourValue(0.4, 0.4, 0.5, 0.85f), 1, 5, 25);
 
-	Global::player->body->setLinearDamping(0.5f);
-	Global::player->gravity = Ogre::Vector3(0, 0.3f, 0) + currents->getCurrent(p->bodyPosition);
+	if (Global::player)
+	{
+		//Global::player->body->setLinearDamping(0.5f);
+		//Global::player->gravity = Ogre::Vector3(0, 0.3f, 0) + currents->getCurrent(p->bodyPosition);
+	}
 }
 
-void PlayerSwimming::leftWater()
+void PostProcessSwimming::leftWater()
 {
 	Global::ppMgr->vars.ColouringShift = lastPPValues.ColorShift;
 	Global::sceneMgr->setFog(FOG_LINEAR, lastPPValues.fogColor, 1, lastPPValues.fogStart, lastPPValues.fogEnd);
 
-	Global::player->body->setLinearDamping(0);
-	Global::player->gravity = Ogre::Vector3(0, -9.0f, 0);
+	if (Global::player)
+	{
+		//Global::player->body->setLinearDamping(0);
+		//Global::player->gravity = Ogre::Vector3(0, -9.0f, 0);
+	}
 }
 
-void PlayerSwimming::update(float tslf)
+void PostProcessSwimming::update(float tslf)
 {
 	readWaterDepth();
 

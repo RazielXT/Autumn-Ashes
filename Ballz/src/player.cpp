@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "PostProcessMgr.h"
-#include "PlayerPostProcess.h"
+#include "PostProcessUpdate.h"
 #include "PlayerParkour.h"
-#include "PlayerSwimming.h"
+#include "PostProcessSwimming.h"
 #include "MUtils.h"
 #include "GameStateManager.h"
 #include "PlayerAbilities.h"
@@ -65,11 +65,9 @@ Player::Player(WorldMaterials* wMaterials) : pAudio(this)
 	initBody();
 
 	autoTarget = new PlayerAutoTarget();
-	pPostProcess = new PlayerPostProcess(this);
 	pClimbing = new PlayerClimbing(this);
 	pGrabbing = new PlayerGrab(this);
 	pParkour = new PlayerParkour(this);
-	pSwimming = new PlayerSwimming(this);
 	pAbilities = new PlayerAbilities(this);
 	pSliding = new PlayerSliding(this);
 	pHanging = new PlayerHanging(this);
@@ -78,8 +76,6 @@ Player::Player(WorldMaterials* wMaterials) : pAudio(this)
 Player::~Player ()
 {
 	delete pAbilities;
-	delete pSwimming;
-	delete pPostProcess;
 	delete pClimbing;
 	delete pGrabbing;
 	delete pParkour;
@@ -409,8 +405,6 @@ void Player::update(Real time)
 	camPosition = Global::camera->position;
 	//pModel->update(time);
 
-	pPostProcess->update(tslf);
-
 	pAudio.update(tslf);
 
 	if (!alive)
@@ -444,7 +438,6 @@ void Player::updateStats()
 		body->setVelocity(20 * body->getVelocity() / bodyVelocityL);
 	}*/
 
-	pSwimming->update(tslf);
 	pAbilities->update(tslf);
 
 	if (hanging)
