@@ -39,4 +39,6 @@ bool PostProcessUpdate::update(float tslf)
 	prevOr = cam->getDerivedOrientation();
 
 	swimming.update(tslf);
+
+	return true;
 }

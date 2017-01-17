@@ -115,7 +115,7 @@ void EditorCamera::movedMouse(const OIS::MouseEvent &evt)
 	if (strafe)
 	{
 		float speed = shift ? 2 : 0.5f;
-		Ogre::Vector3 move(evt.state.X.rel, -evt.state.Y.rel, 0);
+		Ogre::Vector3 move((float)evt.state.X.rel, (float)-evt.state.Y.rel, 0);
 		move = camNode->getOrientation()*move;
 		move *= speed;
 

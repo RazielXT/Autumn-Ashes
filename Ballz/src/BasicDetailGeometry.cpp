@@ -171,7 +171,7 @@ void BasicDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, V
 	ent->setOrientation(randomYaw);
 	ent->setPosition(pos);
 
-	ent->setRenderingDistance(renderFar ? 1000 : 2000);
+	ent->setRenderingDistance(renderFar ? 1000.f : 2000.f);
 
 	renderFar = (renderFar + 1) % 3;
 

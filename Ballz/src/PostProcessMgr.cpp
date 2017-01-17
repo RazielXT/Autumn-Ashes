@@ -25,7 +25,7 @@ PostProcessMgr::PostProcessMgr(Ogre::Camera* cam) : camera(cam), ppListener(&var
 
 	fadeIn(Ogre::Vector3(0,0,0),2);
 
-	updateTask.injectPostProcess(&Global::ppMgr->vars);
+	updateTask.injectPostProcess(&vars);
 }
 
 PostProcessMgr::~PostProcessMgr()

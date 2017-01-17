@@ -483,11 +483,11 @@ void GuiOverlay::clearMenu()
 
 void GuiOverlay::mouseMoveUpdate(int x,int y)
 {
-	x = 1680 * (x / (float)Global::window->getWidth());
-	y = 1050 * (y / (float)Global::window->getHeight());
+	x = (int) (1680.f * (x / (float)Global::window->getWidth()));
+	y = (int) (1050.f * (y / (float)Global::window->getHeight()));
 
-	mousePointer->position(Math::Clamp<float>(x,0,1680-15),Math::Clamp<float>(y,0,1050-22));
-	Vector2 pos(x, y);// = mousePointer->position();
+	mousePointer->position((float)Math::Clamp<int>(x,0,1680-15), (float)Math::Clamp<int>(y,0,1050-22));
+	Vector2 pos((float)x, (float)y);// = mousePointer->position();
 
 	if(currentMenu==OPTIONSM)
 	{
