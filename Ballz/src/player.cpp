@@ -12,6 +12,7 @@
 #include "GameUi.h"
 #include "..\model\PlayerModel.h"
 #include "GUtils.h"
+#include "..\PlayerSwimming.h"
 
 using namespace Ogre;
 
@@ -71,6 +72,7 @@ Player::Player(WorldMaterials* wMaterials) : pAudio(this)
 	pAbilities = new PlayerAbilities(this);
 	pSliding = new PlayerSliding(this);
 	pHanging = new PlayerHanging(this);
+	pSwimming = new PlayerSwimming(this);
 }
 
 Player::~Player ()
@@ -84,6 +86,7 @@ Player::~Player ()
 	delete pCamera;
 	delete autoTarget;
 	delete pHanging;
+	delete pSwimming;
 }
 
 void Player::saveState(PlayerStateInfo& info)

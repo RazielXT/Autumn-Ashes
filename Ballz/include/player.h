@@ -15,6 +15,7 @@
 #include "PlayerModel.h"
 
 class GameUi;
+class PlayerSwimming;
 
 class Player
 {
@@ -22,7 +23,7 @@ class Player
 	friend class PlayerClimbing;
 	friend class PlayerGrab;
 	friend class PlayerParkour;
-	friend class PostProcessSwimming;
+	friend class PlayerSwimming;
 	friend class PlayerAbilities;
 	friend class PlayerSliding;
 	friend class PlayerTimeshift;
@@ -87,6 +88,7 @@ public:
 	PlayerAutoTarget* autoTarget;
 	PlayerHanging* pHanging;
 	PlayerAudio pAudio;
+	PlayerSwimming* pSwimming;
 
 private:
 

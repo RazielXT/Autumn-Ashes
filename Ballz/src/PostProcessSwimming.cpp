@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "PostProcessSwimming.h"
-#include "WaterCurrent.h"
 #include "GameStateManager.h"
+#include "Player.h"
+#include "..\PlayerSwimming.h"
 
 using namespace Ogre;
 
@@ -96,31 +97,16 @@ void PostProcessSwimming::readWaterDepth()
 
 void PostProcessSwimming::enteredWater()
 {
-	lastPPValues.ColorShift = Global::ppMgr->vars.ColouringShift;
 	lastPPValues.fogColor = Global::sceneMgr->getFogColour();
 	lastPPValues.fogStart = Global::sceneMgr->getFogStart();
 	lastPPValues.fogEnd = Global::sceneMgr->getFogEnd();
 
-	Global::ppMgr->vars.ColouringShift = Ogre::Vector4(1.5f, 1.15f, 1.05f, 0);
 	Global::sceneMgr->setFog(FOG_LINEAR, Ogre::ColourValue(0.4, 0.4, 0.5, 0.85f), 1, 5, 25);
-
-	if (Global::player)
-	{
-		//Global::player->body->setLinearDamping(0.5f);
-		//Global::player->gravity = Ogre::Vector3(0, 0.3f, 0) + currents->getCurrent(p->bodyPosition);
-	}
 }
 
 void PostProcessSwimming::leftWater()
 {
-	Global::ppMgr->vars.ColouringShift = lastPPValues.ColorShift;
 	Global::sceneMgr->setFog(FOG_LINEAR, lastPPValues.fogColor, 1, lastPPValues.fogStart, lastPPValues.fogEnd);
-
-	if (Global::player)
-	{
-		//Global::player->body->setLinearDamping(0);
-		//Global::player->gravity = Ogre::Vector3(0, -9.0f, 0);
-	}
 }
 
 void PostProcessSwimming::update(float tslf)
