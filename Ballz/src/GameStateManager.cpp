@@ -168,6 +168,7 @@ void GameStateManager::reloadLevel()
 void GameStateManager::reloadMeshes()
 {
 	GameScene::reloadMeshes(getCurrentLvlPath(), levels[lastLVL].name);
+	GameScene::reloadMeshes(Path::General, "");
 }
 
 bool GameStateManager::insideMenuPressed()

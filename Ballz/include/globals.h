@@ -64,6 +64,7 @@ namespace Path
 {
 extern const char* Levels;
 extern const char* Audio;
+extern const char* General;
 extern const char* LutTextures;
 };
 

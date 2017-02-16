@@ -20,7 +20,7 @@ Player::Player(WorldMaterials* wMaterials) : pAudio(this)
 {
 	camPosition = Ogre::Vector3::ZERO;
 	bodyPosition = Ogre::Vector3::ZERO;
-	gravity = Ogre::Vector3(0, -9.0f, 0);
+	gravity = PlayerSettings::defaultGravity;
 	tslf=0;
 	bodySpeedAccum=0;
 	slowingDown=1;

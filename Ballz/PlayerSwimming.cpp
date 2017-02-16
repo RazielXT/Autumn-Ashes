@@ -7,6 +7,15 @@ PlayerSwimming::PlayerSwimming(Player* p)
 {
 	player = p;
 	currents = WaterCurrent::get();
+
+	/* 
+	bubbles = Global::mSceneMgr->createParticleSystem("WaterBubbles", "WaterBubbles");
+	bubbles->setRenderQueueGroup(91);
+	bubbles->setVisibilityFlags(8);
+
+	bubblesNode = Global::mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	bubblesNode->attachObject(bubbles);
+	*/
 }
 
 PlayerSwimming::~PlayerSwimming()
@@ -23,6 +32,6 @@ void PlayerSwimming::enteredWater(Ogre::Vector3 position)
 void PlayerSwimming::leftWater()
 {
 	player->body->setLinearDamping(0);
-	player->gravity = Ogre::Vector3(0, -9.0f, 0);
+	player->gravity = PlayerSettings::defaultGravity;
 }
 

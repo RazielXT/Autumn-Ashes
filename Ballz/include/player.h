@@ -17,6 +17,11 @@
 class GameUi;
 class PlayerSwimming;
 
+namespace PlayerSettings
+{
+	static const Ogre::Vector3 defaultGravity(0, -9.0f, 0);
+}
+
 class Player
 {
 	friend class PostProcessUpdate;
