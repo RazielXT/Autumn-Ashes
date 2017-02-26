@@ -208,6 +208,7 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     <ClCompile Include="ObjectSelection.cpp" />
     <ClCompile Include="ogre\OgreAbsoluteLodStrategy.cpp" />
     <ClCompile Include="ogre\OgreProgressiveMeshGenerator.cpp" />
+    <ClCompile Include="PlayerSwimming.cpp" />
     <ClCompile Include="SceneOptions.cpp" />
     <ClCompile Include="SceneInteraction.cpp" />
     <ClCompile Include="SelectionGizmo.cpp" />
@@ -324,6 +325,7 @@ copy "$(SolutionDir)Ballz\bin\editor\AutumnAshesEditor.pdb" "D:\OgreSDK\bin\rele
     <ClInclude Include="EditorPainter.h" />
     <ClInclude Include="EditorUiHandler.h" />
     <ClInclude Include="GrassDensityMap.h" />
+    <ClInclude Include="PlayerSwimming.h" />
     <ClInclude Include="SelectionGizmo.h" />
     <ClInclude Include="include\AnimatedTrack.h" />
     <ClInclude Include="include\AnimationBlender.h" />

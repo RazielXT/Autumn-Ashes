@@ -58,10 +58,28 @@ void reloadMeshes(std::string directory, std::string meshPrefix)
 
 				reloaded++;
 			}
+			else
+			{
+				Ogre::SceneManager::MovableObjectIterator iterator = Global::sceneMgr->getMovableObjectIterator("Entity");
+				while (iterator.hasMoreElements())
+				{
+					Ogre::Entity* e = static_cast<Ogre::Entity*>(iterator.getNext());
+					if (e->getMesh()->getName() == meshName)
+					{
+						Ogre::MaterialPtr mat = e->getSubEntity(0)->getMaterial();
+						e->getMesh()->reload();
+						e->setMaterial(mat);
+						e->getMesh()->getSubMesh(0)->setMaterialName(mat->getName());
+						reloaded++;
+
+						break;
+					}
+				}
+			}
 		}
 	}
 
-	lastLoadTime = std::time(nullptr);
+	lastLoadTime = std::time(0);
 	GUtils::DebugPrint(std::to_string(reloaded) + " meshes reloaded");
 }
 

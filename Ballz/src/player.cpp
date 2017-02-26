@@ -12,6 +12,7 @@
 #include "GameUi.h"
 #include "..\model\PlayerModel.h"
 #include "GUtils.h"
+#include "..\PlayerSwimming.h"
 
 using namespace Ogre;
 
@@ -19,7 +20,7 @@ Player::Player(WorldMaterials* wMaterials) : pAudio(this)
 {
 	camPosition = Ogre::Vector3::ZERO;
 	bodyPosition = Ogre::Vector3::ZERO;
-	gravity = Ogre::Vector3(0, -12.0f, 0);
+	gravity = PlayerSettings::defaultGravity;
 	tslf=0;
 	bodySpeedAccum=0;
 	slowingDown=1;
@@ -73,6 +74,7 @@ Player::Player(WorldMaterials* wMaterials) : pAudio(this)
 	pHanging = new PlayerHanging(this);
 
 	customTask = nullptr;
+	pSwimming = new PlayerSwimming(this);
 }
 
 Player::~Player ()
@@ -86,6 +88,7 @@ Player::~Player ()
 	delete pCamera;
 	delete autoTarget;
 	delete pHanging;
+	delete pSwimming;
 }
 
 void Player::saveState(PlayerStateInfo& info)

@@ -15,6 +15,12 @@
 #include "PlayerModel.h"
 
 class GameUi;
+class PlayerSwimming;
+
+namespace PlayerSettings
+{
+static const Ogre::Vector3 defaultGravity(0, -9.0f, 0);
+}
 
 class Player
 {
@@ -22,7 +28,7 @@ class Player
 	friend class PlayerClimbing;
 	friend class PlayerGrab;
 	friend class PlayerParkour;
-	friend class PostProcessSwimming;
+	friend class PlayerSwimming;
 	friend class PlayerAbilities;
 	friend class PlayerSliding;
 	friend class PlayerTimeshift;
@@ -89,6 +95,7 @@ public:
 	PlayerAutoTarget* autoTarget;
 	PlayerHanging* pHanging;
 	PlayerAudio pAudio;
+	PlayerSwimming* pSwimming;
 
 private:
 

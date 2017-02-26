@@ -3,12 +3,9 @@
 #include "stdafx.h"
 
 class Player;
-class WaterCurrent;
 
 class PostProcessSwimming
 {
-	WaterCurrent* currents;
-
 	Ogre::RenderTarget *rttTex;
 	Ogre::TexturePtr texture;
 	Ogre::Camera* mWaterCam = nullptr;
@@ -17,20 +14,10 @@ class PostProcessSwimming
 	void initWaterDepthReading();
 	void readWaterDepth();
 
-	Ogre::ParticleSystem* bubbles;
-	Ogre::SceneNode* bubblesNode;
-
-	Ogre::ParticleSystem* splash;
-	Ogre::SceneNode* splashNode;
-
-	Ogre::ParticleSystem* dust;
-	Ogre::SceneNode* dustNode;
-
 	void enteredWater();
 	void leftWater();
 	struct
 	{
-		Ogre::Vector4 ColorShift;
 		Ogre::ColourValue fogColor;
 		float fogStart, fogEnd;
 	} lastPPValues;

@@ -18,5 +18,6 @@ EditorControl* Global::editor = nullptr;
 bool continueExecution = true;
 
 const char* Path::Levels = "../../media/levels/";
+const char* Path::General = "../../media/general/";
 const char* Path::Audio = "../../media/audio/";
 const char* Path::LutTextures = "../../media/lut/";

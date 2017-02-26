@@ -419,6 +419,9 @@
     <ClCompile Include="ForwardAirDash.cpp">
       <Filter>Files\Player\Events</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerSwimming.cpp">
+      <Filter>Files\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -825,6 +828,9 @@
     </ClInclude>
     <ClInclude Include="ForwardAirDash.h">
       <Filter>Files\Player\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerSwimming.h">
+      <Filter>Files\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
