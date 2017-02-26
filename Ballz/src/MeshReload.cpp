@@ -9,6 +9,7 @@ namespace filesystem = std::experimental::filesystem;
 
 namespace GameScene
 {
+
 bool isMesh(const filesystem::directory_entry& file)
 {
 	if (!filesystem::is_regular_file(file.status()))
@@ -20,7 +21,7 @@ bool isMesh(const filesystem::directory_entry& file)
 	return name.length() > 4 && pos != std::string::npos && name.substr(pos + 1, std::string::npos) == "mesh";
 }
 
-void reloadMeshes(std::string directory, std::string meshPrefix)
+int reloadMeshes(std::string directory)
 {
 	std::vector<std::string> newMeshes;
 
@@ -42,42 +43,51 @@ void reloadMeshes(std::string directory, std::string meshPrefix)
 
 	for (auto& meshName : newMeshes)
 	{
-		if (SUtils::startsWith(meshName, meshPrefix))
+		/*if (SUtils::startsWith(meshName, meshPrefix))
 		{
-			auto name = meshName.substr(0, meshName.find_last_of('.'));
-			name = name.substr(meshPrefix.length());
+		auto name = meshName.substr(0, meshName.find_last_of('.'));
+		name = name.substr(meshPrefix.length());
 
-			if (Global::sceneMgr->hasEntity(name))
+		if (Global::sceneMgr->hasEntity(name))
+		{
+		auto e = Global::sceneMgr->getEntity(name);
+
+		Ogre::MaterialPtr mat = e->getSubEntity(0)->getMaterial();
+		e->getMesh()->reload();
+		e->setMaterial(mat);
+		e->getMesh()->getSubMesh(0)->setMaterialName(mat->getName());
+
+		reloaded++;
+		}
+		else
+		{*/
+
+		Ogre::SceneManager::MovableObjectIterator iterator = Global::sceneMgr->getMovableObjectIterator("Entity");
+		while (iterator.hasMoreElements())
+		{
+			Ogre::Entity* e = static_cast<Ogre::Entity*>(iterator.getNext());
+			if (e->getMesh()->getName() == meshName)
 			{
-				auto e = Global::sceneMgr->getEntity(name);
-
 				Ogre::MaterialPtr mat = e->getSubEntity(0)->getMaterial();
 				e->getMesh()->reload();
 				e->setMaterial(mat);
 				e->getMesh()->getSubMesh(0)->setMaterialName(mat->getName());
-
 				reloaded++;
-			}
-			else
-			{
-				Ogre::SceneManager::MovableObjectIterator iterator = Global::sceneMgr->getMovableObjectIterator("Entity");
-				while (iterator.hasMoreElements())
-				{
-					Ogre::Entity* e = static_cast<Ogre::Entity*>(iterator.getNext());
-					if (e->getMesh()->getName() == meshName)
-					{
-						Ogre::MaterialPtr mat = e->getSubEntity(0)->getMaterial();
-						e->getMesh()->reload();
-						e->setMaterial(mat);
-						e->getMesh()->getSubMesh(0)->setMaterialName(mat->getName());
-						reloaded++;
 
-						break;
-					}
-				}
+				break;
 			}
 		}
 	}
+
+	return reloaded;
+}
+
+void reloadMeshes(std::vector<std::string> directories)
+{
+	int reloaded = 0;
+
+	for (auto& d : directories)
+		reloaded += reloadMeshes(d);
 
 	lastLoadTime = std::time(0);
 	GUtils::DebugPrint(std::to_string(reloaded) + " meshes reloaded");

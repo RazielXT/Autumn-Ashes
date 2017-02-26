@@ -167,8 +167,14 @@ void GameStateManager::reloadLevel()
 
 void GameStateManager::reloadMeshes()
 {
-	GameScene::reloadMeshes(getCurrentLvlPath(), levels[lastLVL].name);
-	GameScene::reloadMeshes(Path::General, "");
+	std::vector<std::string> dirs;
+	dirs.push_back(Path::General);
+
+	auto list = ResourceGroupManager::getSingleton().getResourceLocationList("Level");
+	for (auto loc : list)
+		dirs.push_back(loc->archive->getName());
+
+	GameScene::reloadMeshes(dirs);
 }
 
 bool GameStateManager::insideMenuPressed()
