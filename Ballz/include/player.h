@@ -59,6 +59,8 @@ public:
 	void enableMovement(bool enable);
 	void hideBody();
 
+	void setEvent(EventTask* task);
+
 	OgreNewt::Body* body = nullptr;
 
 	void stopMoving()
@@ -89,6 +91,8 @@ public:
 	PlayerAudio pAudio;
 
 private:
+
+	EventTask* customTask;
 
 	void updateUseGui();
 

@@ -81,14 +81,14 @@ void SendMsg(UiMessageId id, void* vdata)
 
 			for (size_t i = 0; i < 15; i++)
 			{
-				EditableParam param;
+				/*EditableParam param;
 				param.size = 2;
 				param.buffer[0] = 5;
 				param.buffer[1] = 10;
 				param.group = params.groupName;
 				param.step = 0.1;
 				param.name = "World" + std::to_string(i);
-				params.params.push_back(param);
+				params.params.push_back(param);*/
 			}
 
 			paramsData.push_back(params);

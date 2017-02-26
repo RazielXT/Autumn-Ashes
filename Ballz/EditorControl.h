@@ -37,16 +37,19 @@ public:
 	EditorUiHandler& uiHandler;
 
 	enum class EditorMode { None, AddItem, Paint, Select, SelectEdit } mode = EditorMode::None;
+
 	void setMode(EditorMode mode);
 	void setPaintMode(EditorPainter::PaintMode mode);
 	void setSelectMode(SelectionMode mode);
+	void setAddItemMode(AddItemModeInfo* info);
+	AddItemModeInfo addItemModeInfo;
 
 	void displayItemInfo(EditorItem* item);
 
 	virtual void pressedKey(const OIS::KeyEvent &arg) override;
 
 	virtual void releasedKey(const OIS::KeyEvent &arg) override;
-
+	void addItemToScene();
 	ObjectSelection selector;
 	EditorPainter painter;
 	SceneOptions scene;

@@ -138,3 +138,75 @@ bool SwitchColorSchemeFx::update(float tslf)
 
 	return true;
 }
+
+FovPeakEffect::FovPeakEffect()
+{
+}
+
+bool FovPeakEffect::start(float time, float peakTime, float peak, float target /*= 0*/)
+{
+	duration = time;
+	target = target != 0 ? target : Global::camera->defaultFov.valueDegrees();
+	timer = 0;
+
+	spline.clear();
+	spline.addPoint(Ogre::Vector3(0, Global::camera->cam->getFOVy().valueRadians(), 0));
+	spline.addPoint(Ogre::Vector3(peakTime, Ogre::Degree(peak).valueRadians(), 0));
+	spline.addPoint(Ogre::Vector3(duration, Ogre::Degree(target).valueRadians(), 0));
+
+	return true;
+}
+
+bool FovPeakEffect::start(float time, float peakTime, float peak, float peakTime2, float peak2, float target /*= 0*/)
+{
+	duration = time;
+	target = target != 0 ? target : Global::camera->defaultFov.valueDegrees();
+	timer = 0;
+
+	spline.clear();
+	spline.addPoint(Ogre::Vector3(0, Global::camera->cam->getFOVy().valueRadians(), 0));
+	spline.addPoint(Ogre::Vector3(peakTime, Ogre::Degree(peak).valueRadians(), 0));
+	spline.addPoint(Ogre::Vector3(peakTime2, Ogre::Degree(peak2).valueRadians(), 0));
+	spline.addPoint(Ogre::Vector3(duration, Ogre::Degree(target).valueRadians(), 0));
+
+	return true;
+}
+
+bool FovPeakEffect::update(Ogre::Real tslf)
+{
+	timer += tslf;
+
+	if (timer > duration)
+		timer = duration;
+
+	float w = timer / duration;
+
+	auto p = spline.interpolateX(w);
+	Global::camera->cam->setFOVy(Ogre::Radian(p.y));
+
+	return timer < duration;
+}
+
+Ogre::Vector3 ExtendedSpline::interpolateX(float t) const
+{
+	float end = mPoints.back().x;
+	float currentD = end*t;
+
+	unsigned int segIdx = 0;
+	float segW = 0;
+
+	for (size_t i = 1; i < mPoints.size(); i++)
+	{
+		auto& p = mPoints[i];
+		if (p.x >= currentD)
+		{
+			segIdx = i - 1;
+			float startPoint = mPoints[i - 1].x;
+			float segLen = (p.x - startPoint);
+			segW = (i == mPoints.size()) ? 1 : (currentD - startPoint) / segLen;
+			break;
+		}
+	}
+
+	return interpolate(segIdx, segW);
+}

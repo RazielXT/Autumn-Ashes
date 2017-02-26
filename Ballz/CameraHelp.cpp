@@ -7,3 +7,9 @@ void CameraHelp::update()
 	position = cam->getDerivedPosition();
 }
 
+void CameraHelp::init(Ogre::Camera* mCamera)
+{
+	cam = mCamera;
+	defaultFov = cam->getFOVy();
+}
+

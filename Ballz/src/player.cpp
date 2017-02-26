@@ -19,7 +19,7 @@ Player::Player(WorldMaterials* wMaterials) : pAudio(this)
 {
 	camPosition = Ogre::Vector3::ZERO;
 	bodyPosition = Ogre::Vector3::ZERO;
-	gravity = Ogre::Vector3(0, -9.0f, 0);
+	gravity = Ogre::Vector3(0, -12.0f, 0);
 	tslf=0;
 	bodySpeedAccum=0;
 	slowingDown=1;
@@ -71,6 +71,8 @@ Player::Player(WorldMaterials* wMaterials) : pAudio(this)
 	pAbilities = new PlayerAbilities(this);
 	pSliding = new PlayerSliding(this);
 	pHanging = new PlayerHanging(this);
+
+	customTask = nullptr;
 }
 
 Player::~Player ()
@@ -80,7 +82,7 @@ Player::~Player ()
 	delete pGrabbing;
 	delete pParkour;
 	delete pSliding;
-	//delete pModel;
+	delete pModel;
 	delete pCamera;
 	delete autoTarget;
 	delete pHanging;
@@ -138,7 +140,7 @@ void Player::initBody()
 	body->setCustomForceAndTorqueCallback<Player>(&Player::move_callback, this);
 
 	pCamera = new PlayerCamera(this, node);
-	//pModel = new PlayerModel(this, node);
+	pModel = new PlayerModel(this, node);
 
 	ent = mSceneMgr->createEntity("pl_base", "cone_p2.mesh");
 	col_p = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World, ent, 10));
@@ -398,17 +400,34 @@ void Player::hideBody()
 	body->freeze();
 }
 
+void Player::setEvent(EventTask* task)
+{
+	customTask = task;
+	customTask->start();
+}
+
 void Player::update(Real time)
 {
 	tslf = time*Global::timestep;
-	facingDir = Global::camera->direction;
+	//facingDir = Global::camera->direction;
 	camPosition = Global::camera->position;
-	//pModel->update(time);
+	pModel->update(time);
 
 	pAudio.update(tslf);
 
 	if (!alive)
 		return;
+
+	if (customTask)
+	{
+		if (!customTask->update(time))
+		{
+			delete customTask;
+			customTask = nullptr;
+		}
+		else
+			return;
+	}
 
 	updateStats();
 

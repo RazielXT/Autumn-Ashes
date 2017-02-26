@@ -90,6 +90,8 @@ namespace CppWinForm1 {
 		{
 			InitializeComponent();
 			instance = this;
+
+			addGroupBox->Show();
 		}
 
 		HWND getRenderWindowHandle()
@@ -161,6 +163,18 @@ namespace CppWinForm1 {
 	private: System::Windows::Forms::Button^  reloadGeometryButton;
 	private: System::Windows::Forms::GroupBox^  itemParamsGroupBox;
 	private: System::Windows::Forms::Button^  getParamsButton;
+	private: System::Windows::Forms::GroupBox^  addEntityGroupBox;
+
+	private: System::Windows::Forms::TextBox^  addEntityPathTextBox;
+	private: System::Windows::Forms::Button^  addEntitySearchButton;
+
+
+	private: System::Windows::Forms::ComboBox^  addItemTypeComboBox;
+	private: System::Windows::Forms::Label^  label4;
+
+
+
+
 
 
 
@@ -205,10 +219,10 @@ namespace CppWinForm1 {
 	private: System::Windows::Forms::Label^  label6;
 	private: System::Windows::Forms::Label^  label5;
 	private: System::Windows::Forms::GroupBox^  addGroupBox;
-	private: System::Windows::Forms::TextBox^  addItemPrefixTextBox;
-	private: System::Windows::Forms::Label^  label7;
-	private: System::Windows::Forms::Label^  label4;
-	private: System::Windows::Forms::ComboBox^  addItemTypeComboBox;
+
+
+
+
 
 
 
@@ -240,6 +254,9 @@ namespace CppWinForm1 {
 		{
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(EditorForm::typeid));
 			this->sidePanel = (gcnew System::Windows::Forms::Panel());
+			this->addEntityGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->addEntityPathTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->addEntitySearchButton = (gcnew System::Windows::Forms::Button());
 			this->itemParamsGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->getParamsButton = (gcnew System::Windows::Forms::Button());
 			this->entityGroupBox = (gcnew System::Windows::Forms::GroupBox());
@@ -292,10 +309,8 @@ namespace CppWinForm1 {
 			this->label6 = (gcnew System::Windows::Forms::Label());
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->addGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->addItemPrefixTextBox = (gcnew System::Windows::Forms::TextBox());
-			this->label7 = (gcnew System::Windows::Forms::Label());
-			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->addItemTypeComboBox = (gcnew System::Windows::Forms::ComboBox());
+			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->toolsGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->utilsCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->sceneCheckBox = (gcnew System::Windows::Forms::CheckBox());
@@ -314,6 +329,7 @@ namespace CppWinForm1 {
 			this->reloadGeometryButton = (gcnew System::Windows::Forms::Button());
 			this->lastSelectedList = (gcnew System::Windows::Forms::ListBox());
 			this->sidePanel->SuspendLayout();
+			this->addEntityGroupBox->SuspendLayout();
 			this->itemParamsGroupBox->SuspendLayout();
 			this->entityGroupBox->SuspendLayout();
 			this->grassGroupBox->SuspendLayout();
@@ -348,6 +364,7 @@ namespace CppWinForm1 {
 			// 
 			this->sidePanel->AutoScroll = true;
 			this->sidePanel->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+			this->sidePanel->Controls->Add(this->addEntityGroupBox);
 			this->sidePanel->Controls->Add(this->itemParamsGroupBox);
 			this->sidePanel->Controls->Add(this->entityGroupBox);
 			this->sidePanel->Controls->Add(this->grassGroupBox);
@@ -365,12 +382,47 @@ namespace CppWinForm1 {
 			this->sidePanel->Size = System::Drawing::Size(399, 780);
 			this->sidePanel->TabIndex = 16;
 			// 
+			// addEntityGroupBox
+			// 
+			this->addEntityGroupBox->AutoSize = true;
+			this->addEntityGroupBox->Controls->Add(this->addEntityPathTextBox);
+			this->addEntityGroupBox->Controls->Add(this->addEntitySearchButton);
+			this->addEntityGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
+			this->addEntityGroupBox->Location = System::Drawing::Point(0, 1045);
+			this->addEntityGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->addEntityGroupBox->MinimumSize = System::Drawing::Size(0, 20);
+			this->addEntityGroupBox->Name = L"addEntityGroupBox";
+			this->addEntityGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->addEntityGroupBox->Size = System::Drawing::Size(374, 92);
+			this->addEntityGroupBox->TabIndex = 30;
+			this->addEntityGroupBox->TabStop = false;
+			this->addEntityGroupBox->Text = L"Add entity";
+			this->addEntityGroupBox->Visible = false;
+			// 
+			// addEntityPathTextBox
+			// 
+			this->addEntityPathTextBox->Location = System::Drawing::Point(28, 21);
+			this->addEntityPathTextBox->Name = L"addEntityPathTextBox";
+			this->addEntityPathTextBox->Size = System::Drawing::Size(329, 22);
+			this->addEntityPathTextBox->TabIndex = 7;
+			this->addEntityPathTextBox->TextChanged += gcnew System::EventHandler(this, &EditorForm::addEntityPath_TextChanged);
+			// 
+			// addEntitySearchButton
+			// 
+			this->addEntitySearchButton->Location = System::Drawing::Point(28, 49);
+			this->addEntitySearchButton->Name = L"addEntitySearchButton";
+			this->addEntitySearchButton->Size = System::Drawing::Size(75, 23);
+			this->addEntitySearchButton->TabIndex = 4;
+			this->addEntitySearchButton->Text = L"Search";
+			this->addEntitySearchButton->UseVisualStyleBackColor = true;
+			this->addEntitySearchButton->Click += gcnew System::EventHandler(this, &EditorForm::addEntityPathSearch_Click);
+			// 
 			// itemParamsGroupBox
 			// 
 			this->itemParamsGroupBox->AutoSize = true;
 			this->itemParamsGroupBox->Controls->Add(this->getParamsButton);
 			this->itemParamsGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->itemParamsGroupBox->Location = System::Drawing::Point(0, 1023);
+			this->itemParamsGroupBox->Location = System::Drawing::Point(0, 984);
 			this->itemParamsGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->itemParamsGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->itemParamsGroupBox->Name = L"itemParamsGroupBox";
@@ -399,7 +451,7 @@ namespace CppWinForm1 {
 			this->entityGroupBox->Controls->Add(this->label10);
 			this->entityGroupBox->Controls->Add(this->animationsComboBox);
 			this->entityGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->entityGroupBox->Location = System::Drawing::Point(0, 953);
+			this->entityGroupBox->Location = System::Drawing::Point(0, 914);
 			this->entityGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->entityGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->entityGroupBox->Name = L"entityGroupBox";
@@ -474,7 +526,7 @@ namespace CppWinForm1 {
 			this->grassGroupBox->Controls->Add(this->grassDensity);
 			this->grassGroupBox->Controls->Add(this->label15);
 			this->grassGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->grassGroupBox->Location = System::Drawing::Point(0, 804);
+			this->grassGroupBox->Location = System::Drawing::Point(0, 765);
 			this->grassGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->grassGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->grassGroupBox->Name = L"grassGroupBox";
@@ -597,7 +649,7 @@ namespace CppWinForm1 {
 			this->paintGroupBox->Controls->Add(this->paintRemove);
 			this->paintGroupBox->Controls->Add(this->paintWTrack);
 			this->paintGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->paintGroupBox->Location = System::Drawing::Point(0, 605);
+			this->paintGroupBox->Location = System::Drawing::Point(0, 566);
 			this->paintGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->paintGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->paintGroupBox->Name = L"paintGroupBox";
@@ -731,7 +783,7 @@ namespace CppWinForm1 {
 			this->placementGroupBox->Controls->Add(this->placementOffsetNum);
 			this->placementGroupBox->Controls->Add(this->label8);
 			this->placementGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->placementGroupBox->Location = System::Drawing::Point(0, 545);
+			this->placementGroupBox->Location = System::Drawing::Point(0, 506);
 			this->placementGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->placementGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->placementGroupBox->Name = L"placementGroupBox";
@@ -779,7 +831,7 @@ namespace CppWinForm1 {
 			this->utilsGroupBox->Controls->Add(this->label9);
 			this->utilsGroupBox->Controls->Add(this->utilsComboBox);
 			this->utilsGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->utilsGroupBox->Location = System::Drawing::Point(0, 484);
+			this->utilsGroupBox->Location = System::Drawing::Point(0, 445);
 			this->utilsGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->utilsGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->utilsGroupBox->Name = L"utilsGroupBox";
@@ -825,7 +877,7 @@ namespace CppWinForm1 {
 			this->selectionGroupBox->Controls->Add(this->entPosX);
 			this->selectionGroupBox->Controls->Add(this->label1);
 			this->selectionGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->selectionGroupBox->Location = System::Drawing::Point(0, 292);
+			this->selectionGroupBox->Location = System::Drawing::Point(0, 253);
 			this->selectionGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->selectionGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->selectionGroupBox->Name = L"selectionGroupBox";
@@ -976,7 +1028,7 @@ namespace CppWinForm1 {
 			this->sceneGroupBox->Controls->Add(this->label6);
 			this->sceneGroupBox->Controls->Add(this->label5);
 			this->sceneGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
-			this->sceneGroupBox->Location = System::Drawing::Point(0, 196);
+			this->sceneGroupBox->Location = System::Drawing::Point(0, 157);
 			this->sceneGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->sceneGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->sceneGroupBox->Name = L"sceneGroupBox";
@@ -1030,58 +1082,39 @@ namespace CppWinForm1 {
 			// addGroupBox
 			// 
 			this->addGroupBox->AutoSize = true;
-			this->addGroupBox->Controls->Add(this->addItemPrefixTextBox);
-			this->addGroupBox->Controls->Add(this->label7);
-			this->addGroupBox->Controls->Add(this->label4);
 			this->addGroupBox->Controls->Add(this->addItemTypeComboBox);
+			this->addGroupBox->Controls->Add(this->label4);
 			this->addGroupBox->Dock = System::Windows::Forms::DockStyle::Top;
 			this->addGroupBox->Location = System::Drawing::Point(0, 96);
 			this->addGroupBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->addGroupBox->MinimumSize = System::Drawing::Size(0, 20);
 			this->addGroupBox->Name = L"addGroupBox";
 			this->addGroupBox->Padding = System::Windows::Forms::Padding(3, 2, 3, 2);
-			this->addGroupBox->Size = System::Drawing::Size(374, 100);
+			this->addGroupBox->Size = System::Drawing::Size(374, 61);
 			this->addGroupBox->TabIndex = 20;
 			this->addGroupBox->TabStop = false;
 			this->addGroupBox->Text = L"Add";
 			this->addGroupBox->Visible = false;
 			// 
-			// addItemPrefixTextBox
-			// 
-			this->addItemPrefixTextBox->Location = System::Drawing::Point(101, 57);
-			this->addItemPrefixTextBox->Margin = System::Windows::Forms::Padding(4);
-			this->addItemPrefixTextBox->Name = L"addItemPrefixTextBox";
-			this->addItemPrefixTextBox->Size = System::Drawing::Size(231, 22);
-			this->addItemPrefixTextBox->TabIndex = 3;
-			// 
-			// label7
-			// 
-			this->label7->AutoSize = true;
-			this->label7->Location = System::Drawing::Point(45, 60);
-			this->label7->Name = L"label7";
-			this->label7->Size = System::Drawing::Size(43, 17);
-			this->label7->TabIndex = 2;
-			this->label7->Text = L"Prefix";
-			this->label7->TextAlign = System::Drawing::ContentAlignment::TopRight;
-			// 
-			// label4
-			// 
-			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(4, 22);
-			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(85, 17);
-			this->label4->TabIndex = 1;
-			this->label4->Text = L"Object Type";
-			// 
 			// addItemTypeComboBox
 			// 
 			this->addItemTypeComboBox->FormattingEnabled = true;
-			this->addItemTypeComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
+			this->addItemTypeComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Entity" });
 			this->addItemTypeComboBox->Location = System::Drawing::Point(101, 18);
 			this->addItemTypeComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
 			this->addItemTypeComboBox->Name = L"addItemTypeComboBox";
 			this->addItemTypeComboBox->Size = System::Drawing::Size(231, 24);
-			this->addItemTypeComboBox->TabIndex = 0;
+			this->addItemTypeComboBox->TabIndex = 9;
+			this->addItemTypeComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::addItemTypeComboBox_SelectedIndexChanged);
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Location = System::Drawing::Point(47, 21);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(40, 17);
+			this->label4->TabIndex = 8;
+			this->label4->Text = L"Type";
 			// 
 			// toolsGroupBox
 			// 
@@ -1356,6 +1389,8 @@ namespace CppWinForm1 {
 			this->Closing += gcnew System::ComponentModel::CancelEventHandler(this, &EditorForm::EditorForm_FormClosing);
 			this->sidePanel->ResumeLayout(false);
 			this->sidePanel->PerformLayout();
+			this->addEntityGroupBox->ResumeLayout(false);
+			this->addEntityGroupBox->PerformLayout();
 			this->itemParamsGroupBox->ResumeLayout(false);
 			this->entityGroupBox->ResumeLayout(false);
 			this->entityGroupBox->PerformLayout();
@@ -1437,7 +1472,15 @@ private: System::Void SendAsyncMsgThread(System::Object^ input)
 	}
 	case UiMessageId::AddItemMode:
 	{
-		SendMsg(UiMessageId::AddItemMode, nullptr);
+		AddItemModeInfo info;
+
+		if (param->subId == (int)ItemType::Entity)
+		{
+			info.type = ItemType::Entity;
+			info.path = marshal_as<std::string>(addEntityPathTextBox->Text);
+		}
+
+		SendMsg(UiMessageId::AddItemMode, &info);
 		break;
 	}		
 	case UiMessageId::SelectionInfoChanged:
@@ -1658,16 +1701,12 @@ private: System::Void addItemCheckBox_CheckedChanged(System::Object^  sender, Sy
 	if (!((System::Windows::Forms::CheckBox^)sender)->Checked)
 	{
 		addGroupBox->Hide();
+		addEntityGroupBox->Hide();
 		return;
 	}
 
 	addGroupBox->Show();
-
-	AddItemModeInfo info;
-	info.itemType = marshal_as<std::string>(addItemTypeComboBox->Text);
-	info.prefix = marshal_as<std::string>(addItemPrefixTextBox->Text);
-
-	SendAsyncMsg(UiMessageId::AddItemMode);
+	addItemTypeComboBox->Text = addItemTypeComboBox->Text;
 }
 
 private: void deselectSelectionEditButtons()
@@ -2236,6 +2275,44 @@ private: System::Void getParamsButton_Click(System::Object^  sender, System::Eve
 	{
 		SendAsyncMsg(UiMessageId::SelectionInfoChanged, (int)SelectionInfoChange::Id::SaveParams);
 	}
+}
+
+delegate void SelectFileDelegate(System::String^);
+
+void SetAddItemObj(System::String^ fileName)
+{
+	addEntityPathTextBox->Text = fileName;
+}
+
+void SelectFile()
+{
+	OpenFileDialog^ openFileDialog1 = gcnew OpenFileDialog;
+	openFileDialog1->Filter = "Mesh files|*.mesh";
+
+	if (openFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK)
+	{
+		SelectFileDelegate^ d = gcnew SelectFileDelegate(this, &EditorForm::SetAddItemObj);
+		Invoke(d, openFileDialog1->FileName);
+	}
+}
+
+private: System::Void addEntityPathSearch_Click(System::Object^  sender, System::EventArgs^  e) {
+
+	System::Threading::Thread^ newThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &EditorForm::SelectFile));
+	newThread->SetApartmentState(System::Threading::ApartmentState::STA);
+	newThread->Start();
+}
+private: System::Void addEntityPath_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+
+	SendAsyncMsg(UiMessageId::AddItemMode, (int)ItemType::Entity);
+}
+
+private: System::Void addItemTypeComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+
+	addEntityGroupBox->Hide();
+
+	if (addItemTypeComboBox->Text == "Entity")
+		addEntityGroupBox->Show();
 }
 };
 }

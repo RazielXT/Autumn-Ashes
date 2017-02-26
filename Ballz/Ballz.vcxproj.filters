@@ -78,6 +78,9 @@
     <Filter Include="Files\Core\PostProcess">
       <UniqueIdentifier>{470044b2-f536-4e05-b2f9-d7cb61d1d749}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\Player\Events">
+      <UniqueIdentifier>{994139a1-f870-41fd-a87c-e129e9623eb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CrowPath.cpp">
@@ -412,6 +415,9 @@
     </ClCompile>
     <ClCompile Include="src\PostProcessUpdate.cpp">
       <Filter>Files\Core\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="ForwardAirDash.cpp">
+      <Filter>Files\Player\Events</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -816,6 +822,9 @@
     </ClInclude>
     <ClInclude Include="include\PostProcessUpdate.h">
       <Filter>Files\Core\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="ForwardAirDash.h">
+      <Filter>Files\Player\Events</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

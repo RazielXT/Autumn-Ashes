@@ -6,6 +6,8 @@
 #include "MUtils.h"
 #include "GUtils.h"
 #include "..\EditorControl.h"
+#include "EffectsTasks.h"
+#include "..\ForwardAirDash.h"
 
 void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 {
@@ -209,7 +211,8 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 
 	case OIS::KC_0:
 	{
-		Global::player->pCamera->shaker.startShaking(shake[0], shake[1], shake[2], shake[3], shake[4], shake[5], shake[6], shake[7]);
+		Global::player->setEvent(new ForwardAirDash());
+		//Global::player->pCamera->shaker.startShaking(shake[0], shake[1], shake[2], shake[3], shake[4], shake[5], shake[6], shake[7]);
 	}
 	break;
 
@@ -229,12 +232,6 @@ void DebugKeys::pressedKey(const OIS::KeyEvent &arg)
 	{
 		if (Global::gameMgr->gameState == GAME)
 			makecube();
-	}
-	break;
-
-	case OIS::KC_SLASH:
-	{
-		Global::gameMgr->reloadLevel();
 	}
 	break;
 

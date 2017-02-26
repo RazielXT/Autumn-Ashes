@@ -80,6 +80,40 @@ void EditorControl::releasedKey(const OIS::KeyEvent &arg)
 		selector.addMode = false;
 }
 
+void EditorControl::addItemToScene()
+{
+	if (addItemModeInfo.type == ItemType::Entity)
+	{
+		if (addItemModeInfo.path.empty())
+			return;
+
+		auto pathEnd = addItemModeInfo.path.find_last_of('\\') + 1;
+		auto location = addItemModeInfo.path.substr(0, pathEnd);
+		auto name = addItemModeInfo.path.substr(pathEnd);
+
+		auto cam = Global::camera->cam;
+		auto mouseray = SceneInteraction::getMouseRay();
+		GUtils::RayInfo rayInfo;
+		if (GUtils::getRayInfo(cam->getDerivedPosition(), cam->getDerivedPosition() + mouseray.getDirection() * 100000, rayInfo))
+		{
+			try
+			{
+				if (ResourceGroupManager::getSingleton().findResourceLocation("Level", location)->empty())
+					ResourceGroupManager::getSingleton().addResourceLocation(location, "FileSystem", "Level");
+
+				auto e = GUtils::MakeEntity(name, rayInfo.pos, Ogre::Vector3(1, 1, 1)*0.25f);
+				e->setMaterialName("flame_body");
+				//auto e = GUtils::MakeEntity("aspenLeafs.mesh", rayInfo.pos);
+				selector.setSelectedEntity(e);
+			}
+			catch (Ogre::Exception& e)
+			{
+				MessageBoxA(NULL, e.getDescription().c_str(), "An exception has occurred!", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+			}
+		}
+	}
+}
+
 void EditorControl::setMode(EditorMode m)
 {
 	mode = m;
@@ -112,6 +146,13 @@ void EditorControl::setSelectMode(SelectionMode m)
 	selector.setMode(m);
 }
 
+void EditorControl::setAddItemMode(AddItemModeInfo* info)
+{
+	addItemModeInfo = *info;
+
+	setMode(EditorMode::AddItem);
+}
+
 void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
 	if (active)
@@ -130,15 +171,7 @@ void EditorControl::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID 
 			}
 			else if (mode == EditorMode::AddItem)
 			{
-				auto cam = Global::camera->cam;
-				auto mouseray = SceneInteraction::getMouseRay();
-				GUtils::RayInfo rayInfo;
-				if (GUtils::getRayInfo(cam->getDerivedPosition(), cam->getDerivedPosition() + mouseray.getDirection() * 100000, rayInfo))
-				{
-					auto e = GUtils::MakeEntity("death knight_B.mesh", rayInfo.pos, Ogre::Vector3(1, 1, 1)*0.25f);
-					//auto e = GUtils::MakeEntity("aspenLeafs.mesh", rayInfo.pos);
-					selector.setSelectedEntity(e);
-				}
+				addItemToScene();
 			}
 			else if (mode == EditorMode::Paint)
 			{
@@ -184,7 +217,7 @@ bool EditorControl::update(float tslf)
 				setSelectMode(SelectionMode::Rotate);
 				break;
 			case UiMessageId::AddItemMode:
-				setMode(EditorMode::AddItem);
+				setAddItemMode((AddItemModeInfo*)msg.data);
 				break;
 			case UiMessageId::GetWorldItems:
 				selector.uiGetWorldItemsInfo(*(GetWorldItemsData*)msg.data);

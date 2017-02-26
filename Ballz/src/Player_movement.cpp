@@ -243,7 +243,9 @@ void Player::updateMovement()
 		forceDirection *= 3;// 3 / (1 + bodyVelocity);
 	}
 
-
+	facingDir = forceDirection;
+	facingDir.y;
+	facingDir.normalise();
 }
 
 void Player::updateGroundStats()

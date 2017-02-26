@@ -86,7 +86,7 @@ private:
 	Rolling rolling;
 
 	Player* player;
-	Ogre::SceneNode* camnode, *shakeNode, *necknode, *headnode;
+	Ogre::SceneNode* camnode, *shakeNode, *necknode, *headnode, *tpnode;
 
 	CamArrivalInfo cameraArrival;
 	void updateCameraArrival();

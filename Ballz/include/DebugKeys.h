@@ -2,7 +2,6 @@
 
 #include "stdafx.h"
 #include "PostProcessMgr.h"
-#include "EffectsTasks.h"
 
 
 class DebugKeys : public InputListener

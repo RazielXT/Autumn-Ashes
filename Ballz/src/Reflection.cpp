@@ -107,6 +107,7 @@ bool ReflectionTask::update(Ogre::Real tslf)
 {
 	auto camera = Global::sceneMgr->getCamera("Camera");
 	mReflectCam->setPosition(camera->getDerivedPosition());
+	mReflectCam->setFOVy(camera->getFOVy());
 
 	auto or = camera->getDerivedOrientation();
 	mReflectCam->setOrientation(or);

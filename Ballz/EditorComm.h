@@ -63,15 +63,15 @@ extern std::string wtos(void* str);
 extern std::wstring stow(std::string& str);
 #endif
 
-struct AddItemModeInfo
-{
-	std::string itemType;
-	std::string prefix;
-};
-
 enum class ItemType
 {
 	Entity, Grass, Particle
+};
+
+struct AddItemModeInfo
+{
+	ItemType type = ItemType::Entity;
+	std::string path;
 };
 
 struct SelectionInfo

@@ -5,6 +5,32 @@
 #include "EventTask.h"
 #include "PostProcessMgr.h"
 
+class ExtendedSpline : public Ogre::SimpleSpline
+{
+public:
+
+	Ogre::Vector3 interpolateX(float t) const;
+};
+
+class FovPeakEffect : public EventTask
+{
+public:
+
+	FovPeakEffect();
+
+	bool start(float time, float peakTime, float peak, float target = 0);
+	bool start(float time, float peakTime, float peak, float peakTime2, float peak2, float target = 0);
+
+	bool update(Ogre::Real tslf);
+
+private:
+
+	ExtendedSpline spline;
+
+	float timer;
+	float duration;
+};
+
 class QuickScaryBlink : public EventTask
 {
 public:
