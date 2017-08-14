@@ -48,6 +48,11 @@ void ObjectSelection::uiGetWorldItemsInfo(GetWorldItemsData& data)
 
 		data.groups.push_back(particleGroup);
 	}
+
+	WorldItemsGroup lightGroup;
+	lightGroup.type = ItemType::Light;
+	lightGroup.items.push_back({ "Sun" });
+	data.groups.push_back(lightGroup);
 }
 
 void ObjectSelection::uiSelectItem(SelectWorldItemData& data)

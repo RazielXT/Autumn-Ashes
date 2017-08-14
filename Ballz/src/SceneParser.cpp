@@ -1944,7 +1944,7 @@ Ogre::MaterialPtr getCorrectMaterial(Ogre::MaterialPtr mat, Ogre::Entity* ent)
 		if (t->getTextureNameAlias() == "rttMap")
 		{
 			ReflectionTask* refl = new ReflectionTask();
-			refl->init(ent, 1);
+			refl->init(ent, VisibilityFlag_Normal);
 			Global::eventsMgr->addTask(refl);
 		}
 	}

@@ -6,6 +6,7 @@
 #include "..\..\Ballz\EditorComm.h"
 #include <msclr\marshal_cppstd.h>
 #include "SceneList.h"
+#include "LogsList.h"
 #include <vector>
 #include <cliext/vector>   
 
@@ -171,6 +172,11 @@ namespace CppWinForm1 {
 
 	private: System::Windows::Forms::ComboBox^  addItemTypeComboBox;
 	private: System::Windows::Forms::Label^  label4;
+	private: System::Windows::Forms::Button^  ogreLogsButton;
+
+	private: System::Windows::Forms::Button^  playButton;
+	private: System::Windows::Forms::ComboBox^  fpsComboBox;
+
 
 
 
@@ -320,11 +326,14 @@ namespace CppWinForm1 {
 			this->moveObjButton = (gcnew System::Windows::Forms::RadioButton());
 			this->selectObjButton = (gcnew System::Windows::Forms::RadioButton());
 			this->topPanel = (gcnew System::Windows::Forms::Panel());
+			this->fpsComboBox = (gcnew System::Windows::Forms::ComboBox());
+			this->playButton = (gcnew System::Windows::Forms::Button());
 			this->levelsComboBox = (gcnew System::Windows::Forms::ComboBox());
 			this->sceneListButton = (gcnew System::Windows::Forms::Button());
 			this->renderPanel = (gcnew System::Windows::Forms::Panel());
 			this->levelLoading = (gcnew System::Windows::Forms::PictureBox());
 			this->bottomPanel = (gcnew System::Windows::Forms::Panel());
+			this->ogreLogsButton = (gcnew System::Windows::Forms::Button());
 			this->reloadShadersbutton = (gcnew System::Windows::Forms::Button());
 			this->reloadGeometryButton = (gcnew System::Windows::Forms::Button());
 			this->lastSelectedList = (gcnew System::Windows::Forms::ListBox());
@@ -853,6 +862,7 @@ namespace CppWinForm1 {
 			// 
 			// utilsComboBox
 			// 
+			this->utilsComboBox->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 			this->utilsComboBox->FormattingEnabled = true;
 			this->utilsComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Placement" });
 			this->utilsComboBox->Location = System::Drawing::Point(101, 18);
@@ -1041,6 +1051,7 @@ namespace CppWinForm1 {
 			// 
 			// lutComboBox
 			// 
+			this->lutComboBox->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 			this->lutComboBox->FormattingEnabled = true;
 			this->lutComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
 			this->lutComboBox->Location = System::Drawing::Point(101, 52);
@@ -1052,6 +1063,7 @@ namespace CppWinForm1 {
 			// 
 			// skyboxComboBox
 			// 
+			this->skyboxComboBox->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 			this->skyboxComboBox->FormattingEnabled = true;
 			this->skyboxComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Tree" });
 			this->skyboxComboBox->Location = System::Drawing::Point(101, 18);
@@ -1098,6 +1110,7 @@ namespace CppWinForm1 {
 			// 
 			// addItemTypeComboBox
 			// 
+			this->addItemTypeComboBox->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 			this->addItemTypeComboBox->FormattingEnabled = true;
 			this->addItemTypeComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Entity" });
 			this->addItemTypeComboBox->Location = System::Drawing::Point(101, 18);
@@ -1258,6 +1271,8 @@ namespace CppWinForm1 {
 			// 
 			// topPanel
 			// 
+			this->topPanel->Controls->Add(this->fpsComboBox);
+			this->topPanel->Controls->Add(this->playButton);
 			this->topPanel->Controls->Add(this->levelsComboBox);
 			this->topPanel->Controls->Add(this->sceneListButton);
 			this->topPanel->Controls->Add(this->rotateObjButton);
@@ -1271,11 +1286,40 @@ namespace CppWinForm1 {
 			this->topPanel->Size = System::Drawing::Size(965, 87);
 			this->topPanel->TabIndex = 18;
 			// 
+			// fpsComboBox
+			// 
+			this->fpsComboBox->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->fpsComboBox->FormattingEnabled = true;
+			this->fpsComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(5) { L"0 FPS", L"15 FPS", L"30 FPS", L"50 FPS", L"Unlimited" });
+			this->fpsComboBox->Location = System::Drawing::Point(881, 39);
+			this->fpsComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->fpsComboBox->MaxDropDownItems = 20;
+			this->fpsComboBox->Name = L"fpsComboBox";
+			this->fpsComboBox->Size = System::Drawing::Size(72, 24);
+			this->fpsComboBox->TabIndex = 28;
+			this->fpsComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &EditorForm::fpsComboBox_SelectedIndexChanged);
+			// 
+			// playButton
+			// 
+			this->playButton->BackColor = System::Drawing::Color::Transparent;
+			this->playButton->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"playButton.BackgroundImage")));
+			this->playButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->playButton->FlatAppearance->BorderSize = 0;
+			this->playButton->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->playButton->Location = System::Drawing::Point(699, 23);
+			this->playButton->Name = L"playButton";
+			this->playButton->Size = System::Drawing::Size(51, 54);
+			this->playButton->TabIndex = 27;
+			this->playButton->UseVisualStyleBackColor = false;
+			this->playButton->Click += gcnew System::EventHandler(this, &EditorForm::playButton_Click);
+			// 
 			// levelsComboBox
 			// 
+			this->levelsComboBox->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 			this->levelsComboBox->FormattingEnabled = true;
-			this->levelsComboBox->Location = System::Drawing::Point(776, 23);
+			this->levelsComboBox->Location = System::Drawing::Point(776, 11);
 			this->levelsComboBox->Margin = System::Windows::Forms::Padding(3, 2, 3, 2);
+			this->levelsComboBox->MaxDropDownItems = 20;
 			this->levelsComboBox->Name = L"levelsComboBox";
 			this->levelsComboBox->Size = System::Drawing::Size(177, 24);
 			this->levelsComboBox->TabIndex = 25;
@@ -1327,6 +1371,7 @@ namespace CppWinForm1 {
 			// 
 			// bottomPanel
 			// 
+			this->bottomPanel->Controls->Add(this->ogreLogsButton);
 			this->bottomPanel->Controls->Add(this->reloadShadersbutton);
 			this->bottomPanel->Controls->Add(this->reloadGeometryButton);
 			this->bottomPanel->Controls->Add(this->lastSelectedList);
@@ -1336,6 +1381,16 @@ namespace CppWinForm1 {
 			this->bottomPanel->Name = L"bottomPanel";
 			this->bottomPanel->Size = System::Drawing::Size(965, 81);
 			this->bottomPanel->TabIndex = 21;
+			// 
+			// ogreLogsButton
+			// 
+			this->ogreLogsButton->Location = System::Drawing::Point(573, 5);
+			this->ogreLogsButton->Name = L"ogreLogsButton";
+			this->ogreLogsButton->Size = System::Drawing::Size(136, 26);
+			this->ogreLogsButton->TabIndex = 3;
+			this->ogreLogsButton->Text = L"Ogre Logs";
+			this->ogreLogsButton->UseVisualStyleBackColor = true;
+			this->ogreLogsButton->Click += gcnew System::EventHandler(this, &EditorForm::ogreLogsButton_Click);
 			// 
 			// reloadShadersbutton
 			// 
@@ -1439,6 +1494,12 @@ public: System::String^ subtype;
 public: int subId;
 public: System::Windows::Forms::Control^ source;
 };
+
+void deselect()
+{
+	renderPanel->Focus();
+}
+
 private: System::Void SendAsyncMsgThread(System::Object^ input)
 {
 	AsyncParam^ param = (AsyncParam^)input;
@@ -1578,16 +1639,17 @@ private: System::Void SendAsyncMsgThread(System::Object^ input)
 		if (param->subtype == "Sky")
 		{
 			change.change = SceneSettingsChange::SceneChange::Skybox;
-			name = marshal_as<std::string>(skyboxComboBox->SelectedText);
+			name = marshal_as<std::string>(skyboxComboBox->SelectedItem->ToString());
 			change.data = &name;
 		}	
 		if (param->subtype == "Lut")
 		{
 			change.change = SceneSettingsChange::SceneChange::Lut;
-			name = marshal_as<std::string>(lutComboBox->SelectedText);
+			name = marshal_as<std::string>(lutComboBox->SelectedItem->ToString());
 			change.data = &name;
 		}
 
+		deselect();
 		SendMsg(UiMessageId::SceneSettingsChanged, &change);
 		break;
 	}		
@@ -1599,14 +1661,20 @@ private: System::Void SendAsyncMsgThread(System::Object^ input)
 	}
 	case UiMessageId::LoadLevel:
 	{
-		auto lvlName = marshal_as<std::string>(levelsComboBox->SelectedText);
+		auto lvlName = marshal_as<std::string>(levelsComboBox->SelectedItem->ToString());
 		SendMsg(UiMessageId::LoadLevel, &lvlName);
-		renderPanel->Focus();
+		deselect();
 		break;
 	}
 	default:
-		SendMsg(param->id, nullptr);
+	{
+		int subid = param->subId;
+		if (subid != -1)
+			SendMsg(param->id, &subid);
+		else
+			SendMsg(param->id, nullptr);
 		break;
+	}
 	}
 }
 private: System::Void SendAsyncMsg(UiMessageId id, int subid)
@@ -1625,7 +1693,7 @@ private: System::Void SendAsyncMsg(UiMessageId id, const char* subtype)
 	auto param = gcnew AsyncParam();
 	param->id = id;
 	param->subtype = gcnew System::String(subtype);
-	param->subId = 0;
+	param->subId = -1;
 
 	newThread->Start(param);
 }
@@ -2096,6 +2164,11 @@ private: System::Void rayButton_Click(System::Object^  sender, System::EventArgs
 	SendAsyncMsg(UiMessageId::PlacementRayUtil);
 }
 
+private: System::Void ogreLogsButton_Click(System::Object^  sender, System::EventArgs^  e) {
+	auto logs = gcnew LogsList();
+	logs->Visible = true;
+}
+
 private: System::Void sceneListButton_Click(System::Object^  sender, System::EventArgs^  e) {
 
 	if (!sceneListForm || sceneListForm->Visible == false)
@@ -2313,6 +2386,16 @@ private: System::Void addItemTypeComboBox_SelectedIndexChanged(System::Object^  
 
 	if (addItemTypeComboBox->Text == "Entity")
 		addEntityGroupBox->Show();
+}
+
+private: System::Void playButton_Click(System::Object^  sender, System::EventArgs^  e) {
+
+	SendAsyncMsg(UiMessageId::ActivatePlayMode);
+}
+private: System::Void fpsComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+
+	int fps = fpsComboBox->SelectedIndex == 4 ? 200 : fpsComboBox->SelectedIndex * 15;
+	SendAsyncMsg(UiMessageId::SetRedrawSettings, fps);
 }
 };
 }

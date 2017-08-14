@@ -25,6 +25,6 @@ public:
 	virtual bool update(float tslf) override;
 
 	bool strafe = false;
-	bool front, back, left, right, shift, space;
+	bool front, back, left, right, shift, alt, ctrl, space;
 	Ogre::SceneNode* camNode = nullptr;
 };

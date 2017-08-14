@@ -22,10 +22,10 @@ void uiMsgCallback(UiMessage* msg)
 	{
 		GetSceneSettingsData* data = (GetSceneSettingsData*)msg->data;
 
-		data->lutOptions.push_back(std::wstring(L"cool"));
+		data->lutOptions.push_back("cool");
 		data->currentLutId = 0;
 
-		data->skyboxOptions.push_back(L"TCENoonSkyBox");
+		data->skyboxOptions.push_back("TCENoonSkyBox");
 		data->currentSkyboxId = 0;
 	}
 }
@@ -40,7 +40,7 @@ int main()
 	CommLib lib;
 
 	UI_MSG_FUNC sender;
-	lib.init(&sender, uiMsgCallback, uiEnd, 0);
+	lib.init(&sender, uiMsgCallback, 0, 0);
 
 	lib.h.join();
 

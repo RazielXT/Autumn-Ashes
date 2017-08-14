@@ -31,6 +31,8 @@ enum class UiMessageId
 	CloseEditor,
 	ReloadGeometry,
 	ReloadShaders,
+	SetRedrawSettings,			//int
+	ActivatePlayMode,
 	Ping
 };
 
@@ -65,7 +67,7 @@ extern std::wstring stow(std::string& str);
 
 enum class ItemType
 {
-	Entity, Grass, Particle
+	Entity, Grass, Particle, Light
 };
 
 struct AddItemModeInfo

@@ -32,13 +32,13 @@ void EditorCamera::enable()
 		}
 	}
 
-	front = back = left = right = shift = space = strafe = false;
+	front = back = left = right = shift = space = ctrl = alt = strafe = false;
 }
 
 void EditorCamera::disable()
 {
 	unregisterInputListening();
-	front = back = left = right = shift = space = strafe = false;
+	front = back = left = right = shift = space = ctrl = alt = strafe = false;
 }
 
 void EditorCamera::returnToPlayer()
@@ -82,6 +82,12 @@ void EditorCamera::pressedKey(const OIS::KeyEvent &arg)
 	case OIS::KC_SPACE:
 		space = true;
 		break;
+	case OIS::KC_LCONTROL:
+		ctrl = true;
+		break;
+	case OIS::KC_LMENU:
+		alt = true;
+		break;
 	}
 }
 
@@ -107,6 +113,12 @@ void EditorCamera::releasedKey(const OIS::KeyEvent &arg)
 	case OIS::KC_SPACE:
 		space = false;
 		break;
+	case OIS::KC_LCONTROL:
+		ctrl = false;
+		break;
+	case OIS::KC_LMENU:
+		alt = false;
+		break;
 	}
 }
 
@@ -114,7 +126,7 @@ void EditorCamera::movedMouse(const OIS::MouseEvent &evt)
 {
 	if (strafe)
 	{
-		float speed = shift ? 2 : 0.5f;
+		float speed = shift ? 2 : (ctrl ? 0.1f : 0.5f);
 		Ogre::Vector3 move((float)evt.state.X.rel, (float)-evt.state.Y.rel, 0);
 		move = camNode->getOrientation()*move;
 		move *= speed;
@@ -145,13 +157,13 @@ bool EditorCamera::update(float tslf)
 	if (!camNode)
 		return false;
 
-	int speed = shift ? 400 : 50;
+	int speed = shift ? 400 : (ctrl ? 10 : 50);
 	Ogre::Vector3 direction;
 
 	if (left) direction += Ogre::Vector3(-1, 0, 0);
 	if (right) direction += Ogre::Vector3(1, 0, 0);
-	if (front) direction += Ogre::Vector3(0, 0, -1);
-	if (back) direction += Ogre::Vector3(0, 0, 1);
+	if (front) direction += alt ? Ogre::Vector3(0, 1, 0) : Ogre::Vector3(0, 0, -1);
+	if (back) direction += alt ? Ogre::Vector3(0, -1, 0) : Ogre::Vector3(0, 0, 1);
 	if (space) direction += Ogre::Vector3(0, 1, 0);
 
 	direction = camNode->getOrientation()*direction;

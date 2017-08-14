@@ -91,9 +91,37 @@ MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneMana
 
 }
 
+float getTslf(float time)
+{
+#ifdef EDITOR
+	if (Global::editor->active)
+	{
+		float addTime = 0;
+		if (Global::editor->scene.fpsCap == 0)
+			addTime = 0.1f;
+		else
+		{
+			float maxFpsD = 1 / Global::editor->scene.fpsCap;
+			if (time < maxFpsD)
+				addTime = (maxFpsD - time);
+		}
+
+		if (addTime > 0)
+		{
+			time += addTime;
+			Sleep(addTime * 1000);
+		}
+	}
+#else
+	time = std::min(0.1f, time);
+#endif // EDITOR
+
+	return Global::tslf = time;
+}
+
 bool MainListener::frameStarted(const FrameEvent& evt)
 {
-	float tslf = Global::tslf = std::min(0.1f, evt.timeSinceLastFrame);
+	float tslf = getTslf(evt.timeSinceLastFrame);
 
 	postProcMgr->update(tslf);
 	geometryMgr->update();
@@ -136,12 +164,17 @@ bool MainListener::keyPressed(const OIS::KeyEvent &arg)
 	}
 	case OIS::KC_ESCAPE:
 	{
+#ifdef EDITOR
+		if(!editor.active)
+			editor.toggleActivePlay();
+#else
 		gameMgr->escapePressed();
 
 		if (gameMgr->gameState == MENU)
 		{
 			continueExecution = false;
 		}
+#endif
 
 		break;
 	}

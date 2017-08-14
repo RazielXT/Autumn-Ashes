@@ -26,9 +26,18 @@
     <ClInclude Include="SceneList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LogsList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="EditorForm.resx">
+      <Filter>Resource Files</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SceneList.resx">
+      <Filter>Resource Files</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogsList.resx">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
   </ItemGroup>

@@ -18,6 +18,7 @@
     <ProjectName>AutumnAshes</ProjectName>
     <ProjectGuid>{5C2C3E15-A84B-4C96-8884-356E6F86BB6B}</ProjectGuid>
     <RootNamespace>Ballz</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">

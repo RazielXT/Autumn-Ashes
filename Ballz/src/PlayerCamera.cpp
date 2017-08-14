@@ -36,7 +36,7 @@ PlayerCamera::PlayerCamera(Player* p, Ogre::SceneNode* base)
 	camnode->setPosition(Vector3(0, 0, 0));
 
 	auto tpcenternode = camnode->createChildSceneNode("tcNod");
-	tpcenternode->setPosition(Vector3(0, 5, 0));
+	tpcenternode->setPosition(Vector3(0, 7, 0));
 
 	tpnode = tpcenternode->createChildSceneNode("tNod");
 	tpnode->attachObject(camera);

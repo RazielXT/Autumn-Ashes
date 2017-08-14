@@ -257,6 +257,15 @@ bool EditorControl::update(float tslf)
 			case UiMessageId::ReloadShaders:
 				scene.reloadShaders();
 				break;
+			case UiMessageId::SetRedrawSettings:
+			{
+				scene.fpsCap = (float) *(int*)msg.data;
+				Global::window->setAutoUpdated(scene.fpsCap != 0);
+				break;
+			}
+			case UiMessageId::ActivatePlayMode:
+				toggleActivePlay();
+				break;
 			default:
 				break;
 			}

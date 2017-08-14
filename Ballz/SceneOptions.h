@@ -13,4 +13,6 @@ public:
 	void editScene(SceneSettingsChange* change);
 
 	void reloadShaders();
+
+	float fpsCap = 30;
 };

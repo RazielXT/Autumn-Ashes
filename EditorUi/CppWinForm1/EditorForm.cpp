@@ -6,6 +6,7 @@
 using namespace System;
 using namespace System::Windows::Forms;
 
+void debugInit();
 
 [STAThread]
 void FormsMain(HWND* hwnd, HWND* parent)
@@ -20,6 +21,8 @@ void FormsMain(HWND* hwnd, HWND* parent)
 
 	if (parent)
 		*parent = form.getTopWindowHandle();
+	else
+		debugInit();
 
 	Application::Run(%form);
 }
@@ -42,6 +45,14 @@ void FormsUpdate(UiMessage* msg)
 		CppWinForm1::EditorForm::instance->setLoading(false);
 	if (msg->id == UiMessageId::SetEditorProperties)
 		CppWinForm1::EditorForm::instance->setProperties((EditorProperties*)msg->data);
+}
+
+void debugInit()
+{
+	EditorProperties prop;
+	prop.levels.push_back("lvl1");
+	UiMessage msg = { UiMessageId::SetEditorProperties , &prop };
+	FormsUpdate(&msg);
 }
 
 #ifdef NO_LIB
