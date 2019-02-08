@@ -67,7 +67,7 @@ bool ReflectionTask::start()
 	auto pass = mat->getTechnique(0)->getPass(mat->getTechnique(0)->getNumPasses()-1);
 	for (int i = 0; i < pass->getNumTextureUnitStates(); i++)
 	{
-		if (pass->getTextureUnitState(i)->getTextureNameAlias() == "rttMap")
+		if (pass->getTextureUnitState(i)->getTextureNameAlias() == "reflectionMap" || pass->getTextureUnitState(i)->getTextureNameAlias() == "rttMap")
 			t = pass->getTextureUnitState(i);
 	}
 
@@ -75,10 +75,12 @@ bool ReflectionTask::start()
 	{
 		mat = MaterialManager::getSingleton().getByName("material_water_dynamic");
 	}
+	
+	t->setTexture(texture);
 
 	//mat = mat->clone(mat->getName() + idString);
 	//t = mat->getTechnique(0)->getPass(mat->getTechnique(0)->getNumPasses() - 1)->getTextureUnitState("reflectionMap");
-	t->setTexture(texture);
+	
 	mEntity->setMaterial(mat);
 
 	/*MaterialPtr mat = MaterialManager::getSingleton().getByName("waterMatVC");

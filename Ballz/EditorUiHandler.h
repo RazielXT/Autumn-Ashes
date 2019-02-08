@@ -14,8 +14,8 @@ struct EditorUiHandler
 
 	bool isActiveUi();
 
-	HWND outputWindowHwnd;
-	HWND topWindowHwnd;
+	HWND outputWindowHwnd = 0;
+	HWND topWindowHwnd = 0;
 
 protected:
 

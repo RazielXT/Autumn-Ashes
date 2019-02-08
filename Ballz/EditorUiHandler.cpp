@@ -22,6 +22,9 @@ bool EditorUiHandler::ensureUi()
 	if (uiStarted)
 		return false;
 
+	outputWindowHwnd = nullptr;
+	topWindowHwnd = nullptr;
+
 	if (lib.init(&sender, handleMsg, &outputWindowHwnd, &topWindowHwnd))
 	{
 		uiStarted = true;

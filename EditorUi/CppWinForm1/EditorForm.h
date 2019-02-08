@@ -2024,7 +2024,6 @@ public: System::Void showItemInfo(SelectionInfo* info)
 
 			entityGroupBox->BringToFront();
 			showEntityGroup = true;
-
 			/*EditableParamsResponse resp;
 			//if (data->change == SelectionInfoChange::Id::GetParams)
 			{
@@ -2071,7 +2070,7 @@ public: System::Void showItemInfo(SelectionInfo* info)
 
 	paintGroupBox->Visible = showPaintInfo;
 	grassGroupBox->Visible = showGrassGroup;
-	entityGroupBox->Visible = showEntityGroup;
+	//entityGroupBox->Visible = showEntityGroup;
 	itemParamsGroupBox->Visible = showParamsGroup;
 	selectionGroupBox->Show();
 }

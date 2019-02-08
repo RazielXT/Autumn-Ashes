@@ -259,7 +259,7 @@ void main_ps(
 	#else
 	color0 = float4(outColor, 1);
 	#endif
-	
+
 	color1 = float4(0, 0, 0, brightness + specWeight*saturate(specular.w));
 	color2 = float4(0, 0, 0, 1);
 	color3 = float4(1 - IN.uv.z / IN.uv.w, dist, 0, 1);

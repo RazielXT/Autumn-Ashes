@@ -82,5 +82,5 @@ abstract material billboard_instancing
 
 material billboardTest : billboard_instancing
 {
-	set_texture_alias Diffuse bush_a.tga
+	set_texture_alias Diffuse Tree-PNG.png
 }

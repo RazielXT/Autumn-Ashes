@@ -1,0 +1,166 @@
+#include "shadow.cg"
+#include "filters.cg"
+#include "common.cg"
+
+struct VIn
+{
+	float4 p : POSITION;
+	float3 n : NORMAL;
+	float3 t : TANGENT;
+	float2 uv : TEXCOORD0;
+};
+
+struct VOut
+{
+	float4 p : POSITION;
+	float4 uv : TEXCOORD0;
+	float3 wp : TEXCOORD1;
+	float3 n : TEXCOORD2;
+	float3 t : TEXCOORD3;
+	float3 b : TEXCOORD4;
+	float3 opos : TEXCOORD5;
+};
+
+struct PIn
+{
+	float4 uv : TEXCOORD0;
+	float3 wp : TEXCOORD1;
+	float3 n : TEXCOORD2;
+	float3 t : TEXCOORD3;
+	float3 b : TEXCOORD4;
+	float3 opos : TEXCOORD5;
+};
+
+
+VOut main_vs(VIn IN,
+	uniform float4x4 wMat,
+	uniform float4x4 wvpMat,
+	uniform float time
+	)
+{
+	VOut OUT;
+	
+	//IN.p.yz += abs(sin((IN.p.x + IN.p.y + IN.p.z)/5+ time*5))*2;
+		
+	OUT.wp.xyz = mul(wMat, IN.p).xyz;
+	OUT.p = mul(wvpMat, IN.p);
+	OUT.opos = IN.p.xyz;
+	
+	OUT.uv.xy = IN.uv.xy;
+	OUT.uv.zw = OUT.p.zw;
+
+	OUT.n.xyz = IN.n;
+	OUT.t.xyz = IN.t;
+	OUT.b.xyz = cross(IN.t, IN.n);
+	
+	//OUT.n.xyz = IN.n;//mul((float3x3)wMat, IN.n).xyz;
+
+	return OUT;
+}
+
+float3 triplanarMap(sampler2D map, float3 worldPos, float3 worldNormal, float sharpness, float scale, float3 offset)
+{
+	float2 yUV = offset.xz + worldPos.xz / scale;
+	float2 xUV = offset.zy + worldPos.zy / scale;
+	float2 zUV = offset.xy + worldPos.xy / scale;
+	
+	float3 yDiff = tex2D(map, yUV);
+	float3 xDiff = tex2D(map, xUV);
+	float3 zDiff = tex2D(map, zUV);
+	
+	float3 blendWeights = pow (abs(worldNormal), sharpness);
+	blendWeights = blendWeights / (blendWeights.x + blendWeights.y + blendWeights.z);
+	
+	return xDiff * blendWeights.x + yDiff * blendWeights.y + zDiff * blendWeights.z;
+}
+
+float3 triplanarMapB(sampler2D map, float3 worldPos, float3 worldNormal, float3 offset, float scale)
+{
+	return triplanarMap(map, worldPos, worldNormal, 3, scale, offset);
+}
+
+void main_ps(
+	PIn IN,
+	uniform float3 camPos,
+	uniform float time,
+	uniform float4x4 iTWMat,
+	uniform float uvScale,
+	uniform float speed,
+	uniform	float fireDotMin,
+	uniform	float fireDotPass,
+	uniform float3 fireDirection,
+	
+	uniform sampler2D diffuseMap : register(s0),
+	
+	out float4 color0 : COLOR0,
+	out float4 color1 : COLOR1,
+	out float4 color2 : COLOR2,
+	out float4 color3 : COLOR3
+	)
+{
+	time += 5;
+	time *= 0.13*speed;
+	//IN.uv.y += time*0.2;
+	//IN.uv.xy *= 0.5;
+
+	fireDirection = normalize(fireDirection);
+	
+	float3 uvTex = triplanarMapB(diffuseMap, IN.opos.xyz, IN.n.xyz, time, uvScale);
+	float3 uvTex2 = triplanarMapB(diffuseMap, IN.opos.xyz, IN.n.xyz, time*0.5, uvScale);
+	float fireTexturesDiff = 1.0;
+	
+	float3 diffuseTex = triplanarMapB(diffuseMap, IN.opos.xyz + time, IN.n.xyz, time*fireDirection + 0.05*float3(uvTex.x, uvTex2.x, uvTex.y), uvScale); //float3(0,time*0.8,time*0.5)
+	diffuseTex += triplanarMapB(diffuseMap, IN.opos.xyz + time, IN.n.xyz, time*fireDirection*fireTexturesDiff + 0.05*float3(uvTex.x, uvTex2.x, uvTex.y), uvScale); //float3(0, time*1.2,0)
+
+	diffuseTex /= 2;	
+	//diffuseTex.rb = diffuseTex.br;
+	//diffuseTex = diffuseTex*0.5 + 0.5;
+	
+	float fireAlpha = diffuseTex.r;
+	
+	float3 camDir = IN.wp.xyz - camPos;
+	float dist = length(camDir);
+	camDir = normalize(camDir);
+
+	float3 normalTex = float3(0.5,0.5,1);
+	float3 normal = transformNormal(IN.t.xyz, IN.b.xyz, IN.n.xyz, normalTex, iTWMat);
+	
+	float rawProd = dot(camDir, normal);
+	float dotProd = abs(rawProd);
+	
+	/*float shadowDotMin = 0.5;
+	if(diffuseTex.r*dotProd > shadowDotMin)
+	{
+		diffuseTex *= 1-(dotProd-shadowDotMin)/(1-shadowDotMin);
+		diffuseTex *= 2;
+	}	
+	else*/
+	{
+		float fireFullDotMin = saturate(fireDotMin + fireDotPass);
+	
+		//fireDotMin = saturate(fireDotMin - fmod(time,0.5)*2);
+		//fireFullDotMin = saturate(fireFullDotMin - fmod(time,0.5)*2);
+		
+		//if(dotProd < fireDotMin)
+		//	discard;
+		
+		float adjMinFull = (fireFullDotMin - fireDotMin);
+		float adjDotProd = saturate((dotProd - fireDotMin)/adjMinFull);
+		
+		if(adjDotProd < fireAlpha)
+			discard;
+		
+		//if(diffuseTex.r < 0.95)
+		//	diffuseTex.rgb = diffuseTex.rgb*0.3;
+		//diffuseTex.rgb *= 2;
+		//diffuseTex.rgb = pow(diffuseTex.rgb,3);
+	}	
+	
+	color0.rgb = pow(diffuseTex.rgb,4);
+	
+	//color0.rgb = color0.rgb*0.01 + dotProd;
+	
+	color1 = float4(0, 0, 0, 0);
+	color2 = float4(0, 0, 0, 1);
+	color3 = float4(1 - IN.uv.z / IN.uv.w, dist, 0, 1);
+}

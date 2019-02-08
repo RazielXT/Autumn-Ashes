@@ -94,7 +94,7 @@ void PlayerAudio::surfaceSliding(int groundId)
 
 void PlayerAudio::playWalkingSound(float x, float y, float z, int groundID, float volume)
 {
-	if (groundID > MaterialsTypesMax)
+	if (groundID > MaterialsTypesMax || groundID < 0)
 		return;
 
 	auto& sounds = movementAudio[groundID];

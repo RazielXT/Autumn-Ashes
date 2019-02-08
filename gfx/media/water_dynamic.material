@@ -161,6 +161,7 @@ material material_water_dynamic_rtt : material_water_dynamic
 			{
 				texture_alias rttMap
 				texture reflection
+				tex_address_mode mirror
 			}
 		}
 	}

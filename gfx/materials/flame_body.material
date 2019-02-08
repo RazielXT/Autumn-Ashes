@@ -1,0 +1,36 @@
+material flame_body
+{
+	set $uvScale "50"
+	set $speed "1"
+	set $fireDotMin "0.375"
+	set $fireDotPass "0.5"
+	set $fireDirection "0 1 0"
+	
+	technique
+	{
+		pass
+		{
+			//depth_write off
+			//depth_check off
+			//cull_hardware none
+			
+			vertex_program_ref flame_body_vs
+			{
+			}
+
+			fragment_program_ref flame_body_ps
+			{
+				param_named uvScale float $uvScale
+				param_named speed float $speed
+				param_named fireDotMin float $fireDotMin
+				param_named fireDotPass float $fireDotPass
+				param_named fireDirection float3 $fireDirection
+			}
+
+			texture_unit diffuseMap
+			{
+				texture fire.jpg
+			}
+		}
+	}
+}

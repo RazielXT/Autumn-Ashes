@@ -74,6 +74,8 @@ material concreteVc : basic_1tex_vc
 	//set_texture_alias diffuseMap ConcreteNew0007_2_S.bmp //ConcreteNew0007_2_S.dds
 	set_texture_alias normalMap ConcreteNew0007_2_S_NORM.tga
 	set_texture_alias dispMap ConcreteNew0007_2_S_DISP.bmp
+	
+	set $uvScale "3"
 }
 
 material niceRed : basic_1tex 
@@ -109,6 +111,11 @@ material orangeVc : concreteVc
 material greyVc : concreteVc
 {
 	set $diffuseCol "0.275 0.3 0.3"
+}
+
+material black : basic_1tex
+{
+	set $diffuseCol "0.05 0.05 0.05"
 }
 
 material redFlag : basic_1tex 
@@ -265,8 +272,9 @@ material oldWallMat : basic_2tex_vc
 	set_texture_alias normalMap brick19_NORM.tga
 	set_texture_alias dispMap brick19_DISP.jpg
 
-	set_texture_alias diffuseMap2 dejavu.png
-	//set_texture_alias normalMap2 rock2_NORM.tga
+	set_texture_alias diffuseMap2 SilveryBlue.jpg
+//	set_texture_alias diffuseMap2 dejavu.png
+	set_texture_alias normalMap2 rock2_NORM.tga
 	
 	set_texture_alias normalDetailMap rock2_NORM.tga
 	set_texture_alias spreadMap brick19_DISP.jpg

@@ -5,7 +5,7 @@
 
 using namespace Ogre;
 
-const Ogre::Vector3 tpPos(0, 0, 18);
+const Ogre::Vector3 tpPos(0, 0, 0);//18);
 
 PlayerCamera::PlayerCamera(Player* p, Ogre::SceneNode* base)
 {
@@ -36,11 +36,11 @@ PlayerCamera::PlayerCamera(Player* p, Ogre::SceneNode* base)
 	camnode->setPosition(Vector3(0, 0, 0));
 
 	auto tpcenternode = camnode->createChildSceneNode("tcNod");
-	tpcenternode->setPosition(Vector3(0, 7, 0));
+	//tpcenternode->setPosition(Vector3(0, 7, 0));
 
 	tpnode = tpcenternode->createChildSceneNode("tNod");
 	tpnode->attachObject(camera);
-	tpnode->setPosition(tpPos);
+	//tpnode->setPosition(tpPos);
 
 	rolling.setTargetNodes(camnode, headnode);
 }
@@ -292,7 +292,7 @@ void PlayerCamera::updateHead()
 		float walkAngleSize = 0.10f;
 
 		//walking camera
-		/*if (!player->surfaceSliding && ((player->moving && !player->climbing && !rolling.active() && player->onGround && (player->bodyVelocityL > 2)) || player->wallrunning))
+		if (!player->surfaceSliding && ((player->moving && !player->climbing && !rolling.active() && player->onGround && (player->bodyVelocityL > 2)) || player->wallrunning))
 		{
 			float sprintFactor = player->sprinting ? 2.0f : 1.0f;
 			float walkSize = player->wallrunning ? 1.15f : 1.0f;
@@ -344,7 +344,7 @@ void PlayerCamera::updateHead()
 				auto rad = Degree(sinVal*(player->bodyVelocityL + 1))*walkAngleSize;
 				camnode->setOrientation(Quaternion(rad, Vector3(0, 0, 1)));
 			}
-		}*/
+		}
 
 		//roll camera a bit while turning
 		if (player->onGround && player->forw_key && abs(player->mouseX) > 5)

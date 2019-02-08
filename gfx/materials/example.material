@@ -1,0 +1,21 @@
+material example
+{
+	technique
+	{
+		pass
+		{
+			vertex_program_ref example_vs
+			{
+			}
+
+			fragment_program_ref example_ps
+			{
+			}
+
+			texture_unit diffuseMap
+			{
+				texture 3_DISP.bmp
+			}
+		}
+	}
+}

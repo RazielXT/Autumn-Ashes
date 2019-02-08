@@ -1,0 +1,24 @@
+vertex_program example_vs cg
+{
+	source example.cg
+	profiles vs_3_0 arbvp1
+	entry_point main_vs
+
+	default_params
+	{
+		param_named_auto wMat world_matrix
+		param_named_auto wvpMat worldviewproj_matrix
+	}
+}
+
+fragment_program example_ps cg
+{
+	source example.cg
+	profiles ps_3_0 arbfp1
+	entry_point main_ps
+
+	default_params
+	{
+		param_named_auto camPos camera_position
+    }
+}

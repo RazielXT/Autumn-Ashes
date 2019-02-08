@@ -278,11 +278,11 @@ float4 CombineScene_fp
 	
 	float odepthZ = tex2D(depth, uv).g;
 	float depthZ = tex2D(depth, uv+dist).g;
-	/*if(depthZ<odepthZ)
+	if(depthZ<odepthZ)
 	{
 		depthZ = odepthZ;
 		dist = 0;
-	}*/
+	}
 	
 	float4 scene = tex2D(sceneMap, uv+dist);
 	

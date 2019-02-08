@@ -51,11 +51,16 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 		                         ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, InstanceManager::HWInstancingBasic,
 		                         300, 0);
 
+	//mBillboardsManager->setBatchesAsStaticAndUpdate(true);
+	mBillboardsManager->setSetting(InstanceManager::CAST_SHADOWS, false);
+
 	if(!mTreesManager)
 		mTreesManager = Global::sceneMgr->createInstanceManager(
 		                    "InstanceMgr2", treeName,
 		                    ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, InstanceManager::HWInstancingBasic,
 		                    300, 0);
+
+	mTreesManager->setSetting(InstanceManager::CAST_SHADOWS, true);
 
 	for (float x = xStart; x <= xEnd; x+=xStep)
 		for (float y = yStart; y <= yEnd; y += yStep)
@@ -81,7 +86,7 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 			if (gridInfo.target)
 				foundRay = GUtils::getRayFilteredInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray, gridInfo.target);
 			else
-				foundRay = GUtils::getRayInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, -1, 0), gridInfo.rayDistance, ray);
+				foundRay = GUtils::getRayInfo(pos.pos, gridInfo.node->getOrientation()*Vector3(0, 1, 0), gridInfo.rayDistance, ray);
 
 			if (foundRay && ray.normal.y >= info.maxSteepY && acceptsWeight(w))
 			{
@@ -96,7 +101,7 @@ void BasicDetailGeometry::addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo
 
 	//sg->build();
 
-	//mCurrentManager->setBatchesAsStaticAndUpdate(true);
+	
 
 	LoadedDG dgInfo;
 	dgInfo.sg = sg;
@@ -170,17 +175,16 @@ void BasicDetailGeometry::placeObject(Vector3 pos, Quaternion or, float scale, V
 	InstancedEntity *ent = mBillboardsManager->createInstancedEntity("billboardTest"); //aspenTreeInstanced
 	ent->setOrientation(randomYaw);
 	ent->setPosition(pos);
-
 	ent->setRenderingDistance(renderFar ? 1000.f : 2000.f);
+	ent->setVisibilityFlags(VisibilityFlag_Instanced);
 
 	renderFar = (renderFar + 1) % 3;
-
-	mTreesManager->setSetting(InstanceManager::CAST_SHADOWS, false);
 
 	ent = mTreesManager->createInstancedEntity("aspenTreeInstanced"); //aspenTreeInstanced
 	ent->setOrientation(randomYaw);
 	ent->setPosition(pos);
 	ent->setRenderingDistance(300);
+	ent->setVisibilityFlags(1);
 
 	/*OgreNewt::ConvexCollisionPtr col = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(Global::mWorld, ent, 0));
 	auto body = new OgreNewt::Body(Global::mWorld, col);

@@ -78,7 +78,7 @@ float getPssmShadow(float surfaceNormalDot, float depth, sampler2D shadowMap0, f
 
 		adder2 += (1 - saturate(norm))*0.5*shFil;
 			
-		/*if (depth <= 12)
+		if (depth <= 12)
 		{
 			shadowing = shadowSmooth(shadowMap0, shadowMapPos0, 0.0000015*adder, shTex);
 		}
@@ -90,7 +90,7 @@ float getPssmShadow(float surfaceNormalDot, float depth, sampler2D shadowMap0, f
 		{
 			shadowing = shadowSmooth(shadowMap2, shadowMapPos2, 0.00000037*adder, shTex);
 		}
-		else// if (depth <= 600)*/
+		else// if (depth <= 600)
 		{
 			shadowing = shadowSmooth(shadowMap3, shadowMapPos3, 0.0000002*adder2, shTex);
 		}

@@ -84,7 +84,7 @@ Player::~Player ()
 	delete pGrabbing;
 	delete pParkour;
 	delete pSliding;
-	delete pModel;
+	//delete pModel;
 	delete pCamera;
 	delete autoTarget;
 	delete pHanging;
@@ -143,7 +143,7 @@ void Player::initBody()
 	body->setCustomForceAndTorqueCallback<Player>(&Player::move_callback, this);
 
 	pCamera = new PlayerCamera(this, node);
-	pModel = new PlayerModel(this, node);
+	//pModel = new PlayerModel(this, node);
 
 	ent = mSceneMgr->createEntity("pl_base", "cone_p2.mesh");
 	col_p = OgreNewt::ConvexCollisionPtr(new OgreNewt::CollisionPrimitives::ConvexHull(m_World, ent, 10));
@@ -414,7 +414,7 @@ void Player::update(Real time)
 	tslf = time*Global::timestep;
 	//facingDir = Global::camera->direction;
 	camPosition = Global::camera->position;
-	pModel->update(time);
+	//pModel->update(time);
 
 	pAudio.update(tslf);
 
