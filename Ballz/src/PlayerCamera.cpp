@@ -32,14 +32,14 @@ PlayerCamera::PlayerCamera(Player* p, Ogre::SceneNode* base)
 	shakeNode->setPosition(Vector3(0, 0, 0));
 
 	camnode = shakeNode->createChildSceneNode("CamNod");
-	//camnode->attachObject(camera);
+	camnode->attachObject(camera);
 	camnode->setPosition(Vector3(0, 0, 0));
 
-	auto tpcenternode = camnode->createChildSceneNode("tcNod");
+	//auto tpcenternode = camnode->createChildSceneNode("tcNod");
 	//tpcenternode->setPosition(Vector3(0, 7, 0));
 
-	tpnode = tpcenternode->createChildSceneNode("tNod");
-	tpnode->attachObject(camera);
+	//tpnode = tpcenternode->createChildSceneNode("tNod");
+	//tpnode->attachObject(camera);
 	//tpnode->setPosition(tpPos);
 
 	rolling.setTargetNodes(camnode, headnode);
@@ -117,7 +117,7 @@ void PlayerCamera::nodHead(float velocity)
 Ogre::Camera* PlayerCamera::detachCamera()
 {
 	ownsCamera = false;
-	tpnode->detachObject(camera);
+	camnode->detachObject(camera);
 
 	return camera;
 }
@@ -137,7 +137,7 @@ void PlayerCamera::attachCamera(bool silent)
 	{
 		camera->detachFromParent();
 		camera->setDirection(Ogre::Vector3(0, 0, -1));
-		tpnode->attachObject(camera);
+		camnode->attachObject(camera);
 
 		return;
 	}
@@ -161,13 +161,13 @@ void PlayerCamera::attachCamera(bool silent)
 	camnode->setOrientation(Ogre::Quaternion::IDENTITY);
 	//camnode->setPosition(Vector3(0,0,0));
 
-	tpnode->setOrientation(Ogre::Quaternion::IDENTITY);
+	//tpnode->setOrientation(Ogre::Quaternion::IDENTITY);
 
 	rotateCamera(camera->getDerivedOrientation());
 
 	camera->detachFromParent();
 	camera->setDirection(Ogre::Vector3(0, 0, -1));
-	tpnode->attachObject(camera);
+	camnode->attachObject(camera);
 }
 
 void PlayerCamera::attachCameraWithTransition(float duration)
@@ -196,15 +196,15 @@ void PlayerCamera::updateCameraArrival()
 		if (cameraArrival.timer <= 0)
 		{
 			camera->detachFromParent();
-			tpnode->attachObject(camera);
+			camnode->attachObject(camera);
 			Global::sceneMgr->destroySceneNode(cameraArrival.tempNode);
 			cameraArrival.tempNode = nullptr;
 		}
 		else
 		{
 			auto w = cameraArrival.timer / cameraArrival.duration;
-			auto pos = cameraArrival.pos*w + tpnode->_getDerivedPosition()*(1 - w);
-			auto or = Quaternion::Slerp(1 - w, cameraArrival.dir, tpnode->_getDerivedOrientation(), true);
+			auto pos = cameraArrival.pos*w + camnode->_getDerivedPosition()*(1 - w);
+			auto or = Quaternion::Slerp(1 - w, cameraArrival.dir, camnode->_getDerivedOrientation(), true);
 
 			cameraArrival.tempNode->setPosition(pos);
 			cameraArrival.tempNode->setOrientation(or );
@@ -242,8 +242,8 @@ void PlayerCamera::rotateCamera(Real yaw, Real pitch)
 	else
 	{
 		//damping of turning speed if moving quickly midair
-		//if (!player->onGround && player->bodyVelocityL > 10)
-		//	yaw *= std::max(0.1f, (100 - player->bodyVelocityL) / 90.f);
+		if (!player->onGround && player->bodyVelocityL > 10)
+			yaw *= std::max(0.1f, (100 - player->bodyVelocityL) / 90.f);
 
 		necknode->yaw(Degree(yaw), Node::TS_WORLD);
 	}
@@ -374,7 +374,7 @@ void PlayerCamera::updateHead()
 		player->mouseX = 0;
 	}
 
-
+	/*
 	auto camStart = camnode->_getDerivedPosition() - Global::camera->direction*2;
 	auto camEnd = camStart - Global::camera->direction * 8;
 
@@ -382,14 +382,14 @@ void PlayerCamera::updateHead()
 	ray.offset = 1;
 	GUtils::getRayInfo(camStart, camEnd, ray);
 
-	tpnode->setPosition(tpPos*(0.2 + 0.8*ray.offset));
+	tpnode->setPosition(tpPos*(0.2 + 0.8*ray.offset));*/
 
 	updateCameraArrival();
 }
 
 Ogre::SceneNode* PlayerCamera::getCamNode()
 {
-	return tpnode;
+	return camnode;
 }
 
 float PlayerCamera::afterFall(float rollDuration, bool doRoll)

@@ -39,13 +39,14 @@ void Player::move_callback(OgreNewt::Body* me, float timeStep, int threadIndex)
 
 void Player::updateDirectionForce()
 {
+	forceDirection = Vector3::ZERO;
+
 	if (!wallrunning && !climbing)// && !pParkour->isRolling())
 	{
 		if (!moving)
 		{
 			body->setMaterialGroupID(wmaterials->plNoMove_mat);
 			startMoveBoost = 1;
-			forceDirection = Vector3::ZERO;
 		}
 		else
 		{
@@ -113,8 +114,8 @@ void Player::manageFall()
 
 		if(!controlled)
 		{
-			//pPostProcess->vars->hurtEffect = std::min(fallVelocity / 7.0f, 8.0f);
-			//pAudio.playHurtSound(bodyPosition.x, bodyPosition.y, bodyPosition.z);
+			Global::ppMgr->vars.hurtEffect = std::min(fallVelocity / 7.0f, 8.0f);
+			pAudio.playHurtSound(bodyPosition.x, bodyPosition.y, bodyPosition.z);
 
 			pCamera->shaker.startShaking(1.5, 1.5, 0.5, 1, 1, 0.7, 0.35, 1, true);
 
@@ -123,8 +124,8 @@ void Player::manageFall()
 	}
 	else
 	{
-		if (fallVelocity < 30)
-			return;
+		//if (fallVelocity < 30)
+		//	return;
 
 		if(sprintTimer < 0.3f)
 			pParkour->afterFall(false);
@@ -176,16 +177,13 @@ void Player::updateMovement()
 	else if (onGround)
 	{
 		forceDirection = pCamera->getOrientation()*movedDir;
-		forceDirection.y = 0;
 		forceDirection.normalise();
+		forceDirection.y = 0;
 
 		Vector3 lookDirection = pCamera->getFacingDirection();
 		lookDirection.y = 0;
 		Vector3 vel = body->getVelocity();
 		vel.y = 0;
-		
-		if (vel.length() > 100)
-			vel.x++;
 
 		if (gNormal.y > 0.8f)
 			forceDirection += (1 - gNormal.y)*forceDirection * 2;
@@ -210,8 +208,8 @@ void Player::updateMovement()
 			forceDirection *= movespeed*ebd*slowingDown;
 		}
 
-		if(forceDirection.dotProduct(gNormal)>=0)
-			forceDirection += -gNormal.y*gNormal;
+		//if(forceDirection.dotProduct(gNormal)>=0)
+		//	forceDirection += -gNormal.y*gNormal;
 
 		if (gNormal.y > 0.7f)
 		{
@@ -229,6 +227,9 @@ void Player::updateMovement()
 	}
 	//midair
 	else
+		forceDirection *= 1.5;
+
+	/*else
 	{
 		forceDirection = pCamera->getOrientation()*movedDir;
 		forceDirection.normalise();
@@ -238,8 +239,8 @@ void Player::updateMovement()
 	}
 
 	facingDir = forceDirection;
-	facingDir.y;
 	facingDir.normalise();
+	*/
 }
 
 void Player::updateGroundStats()
@@ -247,7 +248,7 @@ void Player::updateGroundStats()
 	updateUseGui();
 
 	OgreNewt::Body* groundBody = nullptr;
-	OgreNewt::BasicRaycast ray(m_World, (bodyPosition - Vector3(0, 0.8, 0)), (bodyPosition - Vector3(0, 1.6, 0)), false);
+	OgreNewt::BasicRaycast ray(m_World, (bodyPosition - Vector3(0, 1.6, 0)), (bodyPosition - Vector3(0, 2.6, 0)), false);
 	OgreNewt::BasicRaycast::BasicRaycastInfo info = ray.getFirstHit();
 
 	if (info.mBody)
@@ -268,7 +269,7 @@ void Player::updateGroundStats()
 	}
 	else
 	{
-		OgreNewt::BasicConvexcast rayc(m_World, col_p, (bodyPosition - Vector3(0, 1, 0)), Ogre::Quaternion::IDENTITY, (bodyPosition - Vector3(0, 1.5, 0)), 1, 1);
+		OgreNewt::BasicConvexcast rayc(m_World, col_p, (bodyPosition - Vector3(0, 2, 0)), Ogre::Quaternion::IDENTITY, (bodyPosition - Vector3(0, 2.5, 0)), 1, 1);
 		OgreNewt::BasicConvexcast::ConvexcastContactInfo infoc = rayc.getInfoAt(0);
 		if (infoc.mBody)
 		{

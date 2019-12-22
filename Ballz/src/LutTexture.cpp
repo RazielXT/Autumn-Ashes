@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "LutTexture.h"
-#include <filesystem>
+#include <boost/filesystem.hpp>
 #include "SUtils.h"
 
 LutTexture::LutTexture()
@@ -17,9 +17,10 @@ std::vector<std::string> LutTexture::getAvailableTextures()
 {
 	if (textures.empty())
 	{
-		for (auto& p : std::experimental::filesystem::directory_iterator(Path::LutTextures))
+		for (boost::filesystem::directory_iterator itr(Path::LutTextures); itr != boost::filesystem::directory_iterator(); ++itr)
+		//for (auto& p : boost::filesystem::directory_iterator(Path::LutTextures))
 		{
-			std::string name = p.path().string();
+			std::string name = itr->path().string();
 			if (SUtils::endsWith(name, "png"))
 			{
 				name = name.substr(name.find_last_of('\\') + 1);
@@ -78,9 +79,9 @@ bool LutTexture::loadVolumeTextureFrom2D(Ogre::TexturePtr lutTex)
 				{
 					auto col = pixelLutBox.getColourAt(j + LUTres*k,i,0);
 
-					*pDest++ = col.r*255; // B
-					*pDest++ = col.g*255; // G
-					*pDest++ = col.b*255; // R
+					*pDest++ = (Ogre::uint8)(col.r*255); // B
+					*pDest++ = (Ogre::uint8)(col.g*255); // G
+					*pDest++ = (Ogre::uint8)(col.b*255); // R
 					*pDest++ = 1;                 // A
 				}
 

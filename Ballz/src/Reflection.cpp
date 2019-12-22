@@ -74,6 +74,7 @@ bool ReflectionTask::start()
 	if (t == nullptr)
 	{
 		mat = MaterialManager::getSingleton().getByName("material_water_dynamic");
+		t = mat->getTechnique(0)->getPass(mat->getTechnique(0)->getNumPasses() - 1)->getTextureUnitState("reflectionMap");
 	}
 	
 	t->setTexture(texture);

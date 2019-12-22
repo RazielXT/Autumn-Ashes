@@ -1,11 +1,12 @@
 #include "stdafx.h"
 
 #include "GameScene.h"
-#include <filesystem>
 #include "SUtils.h"
 #include "GUtils.h"
 
-namespace filesystem = std::experimental::filesystem;
+#include <boost/filesystem.hpp>
+
+namespace filesystem = boost::filesystem;
 
 namespace GameScene
 {
@@ -29,8 +30,7 @@ int reloadMeshes(std::string directory)
 	{
 		if (isMesh(p))
 		{
-			auto ftime = filesystem::last_write_time(p.path());
-			auto time = filesystem::file_time_type::clock::to_time_t(ftime);
+			auto time = filesystem::last_write_time(p.path());
 
 			if (time > lastLoadTime)
 			{

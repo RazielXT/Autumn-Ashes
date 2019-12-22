@@ -4,6 +4,7 @@
 #include "MUtils.h"
 #include "JumpBox.h"
 #include "PlayerAutoTarget.h"
+#include "GUtils.h"
 
 PlayerParkour::PlayerParkour(Player* player) : p(player), body(player->body)
 {
@@ -19,7 +20,7 @@ void PlayerParkour::doWalljump()
 	p->pCamera->nodHead(30);
 	p->playWalkSound();
 
-	//GUtils::DebugPrint("walljump");
+	GUtils::DebugPrint("walljump");
 }
 
 bool PlayerParkour::spacePressed()
@@ -47,10 +48,10 @@ bool PlayerParkour::spacePressed()
 			{
 				jumpDir = -jumpDir.reflect(wallrunCurrentDir);
 				jumpDir /= (1 + dotJump * 2);
-				//GUtils::DebugPrint("Side jump with dot walldir dot " + std::to_string(dotJump));
+				GUtils::DebugPrint("Side jump with dot walldir dot " + std::to_string(dotJump));
 			}
 			else
-				//GUtils::DebugPrint("Normal jump");
+				GUtils::DebugPrint("Normal jump");
 
 				jumpDir.y = 1;
 			jumpDir = MUtils::lerp(jumpDir * 8, wall_normal * 4, dotJump);
@@ -107,7 +108,7 @@ bool PlayerParkour::updateParkourPossibility()
 		ret = tryWallClimb();
 
 	if (!ret && p->forw_key)
-		ret = tryWallrun();
+ 		ret = tryWallrun();
 
 	return ret;
 }

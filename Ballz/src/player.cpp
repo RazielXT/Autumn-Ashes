@@ -114,8 +114,8 @@ void Player::initBody()
 	Ogre::Entity* ent = mSceneMgr->createEntity("playerBody", "play2.mesh");
 	SceneNode* node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CenterNode");
 	node->attachObject(ent);
-	node->setScale(0.5, 0.5, 0.5);
-	node->setPosition(Ogre::Vector3(0, 100, 0));
+	//node->setScale(0.5, 0.5, 0.5);
+	//node->setPosition(Ogre::Vector3(0, 100, 0));
 	//ent->setCastShadows(true);
 	ent->setVisible(false);
 	//ent->setMaterialName("redConcrete");
@@ -412,7 +412,7 @@ void Player::setEvent(EventTask* task)
 void Player::update(Real time)
 {
 	tslf = time*Global::timestep;
-	//facingDir = Global::camera->direction;
+	facingDir = Global::camera->direction;
 	camPosition = Global::camera->position;
 	//pModel->update(time);
 

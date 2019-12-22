@@ -143,7 +143,7 @@ void GameStateManager::switchToLevel(int lvl)
 #endif
 }
 
-void GameStateManager::switchToLevel(std::string& lvl)
+void GameStateManager::switchToLevel(const std::string& lvl)
 {
 	for (size_t i = 0; i < levels.size(); i++)
 	{

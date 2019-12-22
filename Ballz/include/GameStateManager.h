@@ -36,7 +36,7 @@ public:
 
 	void switchToMainMenu();
 	void switchToLevel(int lvl);
-	void switchToLevel(std::string& lvl);
+	void switchToLevel(const std::string& lvl);
 
 	void restartLevel();
 	void reloadLevel();

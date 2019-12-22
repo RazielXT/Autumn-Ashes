@@ -9,7 +9,7 @@ class BasicDetailGeometry : public DetailGeometry
 {
 public:
 
-	virtual ~BasicDetailGeometry() {}
+	virtual ~BasicDetailGeometry() { clear(); }
 
 	virtual void addGeometry(MaskGrid& grid, GeometryMaskInfo& gridInfo, DetailGeometryParams& info);
 	virtual void clear();

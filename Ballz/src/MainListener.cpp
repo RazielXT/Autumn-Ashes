@@ -86,7 +86,8 @@ MainListener::MainListener(OIS::Keyboard *keyboard, OIS::Mouse *mouse, SceneMana
 	editor.initEditorProperties();
 	gameMgr->switchToLevel(0);
 #else
-	gameMgr->switchToMainMenu();
+	//gameMgr->switchToMainMenu();
+	gameMgr->switchToLevel("Test1");
 #endif // EDITOR
 
 }

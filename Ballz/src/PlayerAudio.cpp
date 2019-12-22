@@ -117,7 +117,7 @@ void PlayerAudio::playWalkingSound(float x, float y, float z, int groundID, floa
 
 void PlayerAudio::playHurtSound(float x, float y, float z)
 {
-	audio->playSound(hurtAudio, x, y, z, true, 10);
+	audio->playSound(hurtAudio, x, y, z, true, 10, 0.2f);
 }
 
 void PlayerAudio::playClimbSound(float x, float y, float z)
